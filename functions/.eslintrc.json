@@ -1,0 +1,16 @@
+{
+  "root": true,
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": ["google"],
+  "rules": {
+    "quotes": ["error", "double"]
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "ignorePatterns": ["/lib/**/*"]
+}

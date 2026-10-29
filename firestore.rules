@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // -------------------------------------------------------------------------
+    // AUTH + FIRESTORE ONLY
+    // -------------------------------------------------------------------------
+    // Firebase is used for Authentication (email/password) and text data only.
+    // A user's role and academy context live in their `users/{uid}` document.
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userProfile() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn()
+        && exists(userProfile())
+        && get(userProfile()).data.role == 'super_admin';
+    }
+
+    // Each signed-in user owns their profile document.
+    match /users/{uid} {
+      allow read, write: if isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Academies: an owner creates/updates their own; Super Admin manages all.
+    match /academies/{academyId} {
+      allow create: if isSignedIn()
+        && request.resource.data.ownerUid == request.auth.uid;
+      allow read: if isSignedIn()
+        && (resource.data.ownerUid == request.auth.uid || isSuperAdmin());
+      allow update: if isSignedIn()
+        && (resource.data.ownerUid == request.auth.uid || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    // Academy codes map a human-friendly code to an academy id.
+    match /academy_codes/{code} {
+      allow create: if isSignedIn();
+      allow read: if isSignedIn();
+    }
+
+    // -------------------------------------------------------------------------
+    // SECURE BY DEFAULT
+    // -------------------------------------------------------------------------
+    // Everything else stays locked down.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
