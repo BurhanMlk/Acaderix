@@ -207,6 +207,12 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
   ) {
     final academyName = academyData['name'] as String? ?? 'Academy';
     final academyCode = academyData['code'] as String? ?? '';
+    final ownerName = (academyData['ownerName'] as String? ??
+            academyData['adminName'] as String? ??
+            academyData['owner'] as String? ??
+            subData?['ownerName'] as String? ??
+            '')
+        .trim();
     final logoUrl = (academyData['logoUrl'] as String? ??
             academyData['logo'] as String? ??
             academyData['imageUrl'] as String? ??
@@ -230,6 +236,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyCode: academyCode,
         logoUrl: logoUrl,
         ownerEmail: ownerEmail,
+        ownerName: ownerName,
         rawStatus: rawStatus,
         planName: planName,
         statusReason:
@@ -245,6 +252,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyCode: academyCode,
         logoUrl: logoUrl,
         ownerEmail: ownerEmail,
+        ownerName: ownerName,
         rawStatus: rawStatus,
         planName: planName,
         statusReason:
@@ -288,6 +296,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyCode: academyCode,
         logoUrl: logoUrl,
         ownerEmail: ownerEmail,
+        ownerName: ownerName,
         rawStatus: rawStatus,
         renewalDate: renewalDate,
         paymentStatus: paymentStatus,
@@ -306,6 +315,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyCode: academyCode,
         logoUrl: logoUrl,
         ownerEmail: ownerEmail,
+        ownerName: ownerName,
         rawStatus: rawStatus,
         renewalDate: renewalDate,
         paymentStatus: paymentStatus,
@@ -323,6 +333,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
       academyCode: academyCode,
       logoUrl: logoUrl,
       ownerEmail: ownerEmail,
+      ownerName: ownerName,
       rawStatus: rawStatus,
       renewalDate: renewalDate,
       paymentStatus: paymentStatus,

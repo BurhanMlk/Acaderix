@@ -18,6 +18,7 @@ class AcademyAccessInfo {
     this.academyCode = '',
     this.logoUrl = '',
     this.ownerEmail = '',
+    this.ownerName = '',
     this.rawStatus = 'pending',
     this.renewalDate,
     this.paymentStatus = 'paid',
@@ -33,6 +34,7 @@ class AcademyAccessInfo {
   final String academyCode;
   final String logoUrl;
   final String ownerEmail;
+  final String ownerName;
   final String rawStatus; // 'active', 'suspended', 'pending'
   final DateTime? renewalDate;
   final String paymentStatus; // 'paid', 'unpaid', 'overdue'
@@ -54,6 +56,7 @@ class AcademyAccessInfo {
     String? academyCode,
     String? logoUrl,
     String? ownerEmail,
+    String? ownerName,
     String? rawStatus,
     DateTime? renewalDate,
     String? paymentStatus,
@@ -69,6 +72,7 @@ class AcademyAccessInfo {
       academyCode: academyCode ?? this.academyCode,
       logoUrl: logoUrl ?? this.logoUrl,
       ownerEmail: ownerEmail ?? this.ownerEmail,
+      ownerName: ownerName ?? this.ownerName,
       rawStatus: rawStatus ?? this.rawStatus,
       renewalDate: renewalDate ?? this.renewalDate,
       paymentStatus: paymentStatus ?? this.paymentStatus,

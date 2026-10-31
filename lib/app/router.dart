@@ -33,15 +33,24 @@ import '../features/super_admin/presentation/screens/super_admin_shell.dart';
 import '../features/super_admin/presentation/screens/subscriptions_screen.dart';
 import '../features/academy_admin/application/academy_access_provider.dart';
 import '../features/academy_admin/domain/academy_access_models.dart';
+import '../features/academy_admin/presentation/screens/academy_admin_dashboard.dart';
 import '../features/academy_admin/presentation/screens/academy_admin_shell.dart';
 import '../features/academy_admin/presentation/screens/academy_status_notice_screen.dart';
+import '../features/admissions/domain/student.dart';
 import '../features/admissions/presentation/screens/add_student_screen.dart';
+import '../features/admissions/presentation/screens/edit_student_screen.dart';
 import '../features/admissions/presentation/screens/students_list_screen.dart';
 import '../features/fees/presentation/screens/fees_screen.dart';
 import '../features/attendance/presentation/screens/attendance_screen.dart';
 import '../features/exams/presentation/screens/results_screen.dart';
+import '../features/staff/domain/staff.dart';
+import '../features/staff/presentation/screens/add_staff_screen.dart';
+import '../features/staff/presentation/screens/edit_staff_screen.dart';
 import '../features/staff/presentation/screens/staff_list_screen.dart';
 import '../features/staff/presentation/screens/staff_shell.dart';
+import '../features/branches/domain/branch.dart';
+import '../features/branches/presentation/screens/add_branch_screen.dart';
+import '../features/branches/presentation/screens/edit_branch_screen.dart';
 import '../features/branches/presentation/screens/branches_list_screen.dart';
 import '../features/student/presentation/screens/student_shell.dart';
 
@@ -80,11 +89,16 @@ abstract final class AppRoutes {
   static const String academyStatus = '/academy-status';
   static const String studentsList = '/academy-admin/students';
   static const String addStudent = '/academy-admin/students/new';
+  static const String editStudent = '/academy-admin/students/edit';
   static const String fees = '/academy-admin/fees';
   static const String attendance = '/academy-admin/attendance';
   static const String results = '/academy-admin/results';
   static const String staffList = '/academy-admin/staff';
+  static const String addStaff = '/academy-admin/staff/new';
+  static const String editStaff = '/academy-admin/staff/edit';
   static const String branchesList = '/academy-admin/branches';
+  static const String addBranch = '/academy-admin/branches/new';
+  static const String editBranch = '/academy-admin/branches/edit';
 
   static const String staff = '/staff';
   static const String student = '/student';
@@ -140,11 +154,16 @@ final Map<AppRole, Set<String>> _roleRoutes = {
     AppRoutes.academyStatus,
     AppRoutes.studentsList,
     AppRoutes.addStudent,
+    AppRoutes.editStudent,
     AppRoutes.fees,
     AppRoutes.attendance,
     AppRoutes.results,
     AppRoutes.staffList,
+    AppRoutes.addStaff,
+    AppRoutes.editStaff,
     AppRoutes.branchesList,
+    AppRoutes.addBranch,
+    AppRoutes.editBranch,
   },
   AppRole.staff: {AppRoutes.staff},
   AppRole.student: {AppRoutes.student},
@@ -339,9 +358,68 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-      GoRoute(
-        path: AppRoutes.academyAdmin,
-        builder: (context, state) => const AcademyAdminShell(),
+      ShellRoute(
+        builder: (context, state, child) => AcademyAdminShell(
+          location: state.matchedLocation,
+          child: child,
+        ),
+        routes: [
+          GoRoute(
+            path: AppRoutes.academyAdmin,
+            builder: (context, state) => const AcademyAdminDashboard(),
+          ),
+          GoRoute(
+            path: AppRoutes.branchesList,
+            builder: (context, state) => const BranchesListScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.addBranch,
+            builder: (context, state) => const AddBranchScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.editBranch,
+            builder: (context, state) =>
+                EditBranchScreen(branch: state.extra as Branch),
+          ),
+          GoRoute(
+            path: AppRoutes.studentsList,
+            builder: (context, state) => const StudentsListScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.addStudent,
+            builder: (context, state) => const AddStudentScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.editStudent,
+            builder: (context, state) =>
+                EditStudentScreen(student: state.extra as Student),
+          ),
+          GoRoute(
+            path: AppRoutes.staffList,
+            builder: (context, state) => const StaffListScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.addStaff,
+            builder: (context, state) => const AddStaffScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.editStaff,
+            builder: (context, state) =>
+                EditStaffScreen(staff: state.extra as Staff),
+          ),
+          GoRoute(
+            path: AppRoutes.fees,
+            builder: (context, state) => const FeesScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.attendance,
+            builder: (context, state) => const AttendanceScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.results,
+            builder: (context, state) => const ResultsScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.academyStatus,
@@ -355,34 +433,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                   );
           return AcademyStatusNoticeScreen(accessInfo: access);
         },
-      ),
-      GoRoute(
-        path: AppRoutes.studentsList,
-        builder: (context, state) => const StudentsListScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.addStudent,
-        builder: (context, state) => const AddStudentScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.fees,
-        builder: (context, state) => const FeesScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.attendance,
-        builder: (context, state) => const AttendanceScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.results,
-        builder: (context, state) => const ResultsScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.staffList,
-        builder: (context, state) => const StaffListScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.branchesList,
-        builder: (context, state) => const BranchesListScreen(),
       ),
       GoRoute(
         path: AppRoutes.staff,
