@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Student {
 
- String get id; String get academyId; String get fullName; String get fatherName; String get motherName; DateTime? get dateOfBirth; String get gender; String get phone; String get guardianPhone; String get guardianRelation; String get address; String get photoUrl; DateTime? get admissionDate; String get previousInstitute; String get academicSession; String get rollNumber; String get status; String get notes;
+ String get id; String get academyId; String get fullName; String get fatherName; String get motherName; DateTime? get dateOfBirth; String get gender; String get phone; String get guardianPhone; String get guardianRelation; String get address; String get photoUrl; DateTime? get admissionDate; String get previousInstitute; String get academicSession; String get rollNumber; String get status; String get notes; String get branchId;
 /// Create a copy of Student
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $StudentCopyWith<Student> get copyWith => _$StudentCopyWithImpl<Student>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Student&&(identical(other.id, id) || other.id == id)&&(identical(other.academyId, academyId) || other.academyId == academyId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.fatherName, fatherName) || other.fatherName == fatherName)&&(identical(other.motherName, motherName) || other.motherName == motherName)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.guardianPhone, guardianPhone) || other.guardianPhone == guardianPhone)&&(identical(other.guardianRelation, guardianRelation) || other.guardianRelation == guardianRelation)&&(identical(other.address, address) || other.address == address)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.admissionDate, admissionDate) || other.admissionDate == admissionDate)&&(identical(other.previousInstitute, previousInstitute) || other.previousInstitute == previousInstitute)&&(identical(other.academicSession, academicSession) || other.academicSession == academicSession)&&(identical(other.rollNumber, rollNumber) || other.rollNumber == rollNumber)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Student&&(identical(other.id, id) || other.id == id)&&(identical(other.academyId, academyId) || other.academyId == academyId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.fatherName, fatherName) || other.fatherName == fatherName)&&(identical(other.motherName, motherName) || other.motherName == motherName)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.guardianPhone, guardianPhone) || other.guardianPhone == guardianPhone)&&(identical(other.guardianRelation, guardianRelation) || other.guardianRelation == guardianRelation)&&(identical(other.address, address) || other.address == address)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.admissionDate, admissionDate) || other.admissionDate == admissionDate)&&(identical(other.previousInstitute, previousInstitute) || other.previousInstitute == previousInstitute)&&(identical(other.academicSession, academicSession) || other.academicSession == academicSession)&&(identical(other.rollNumber, rollNumber) || other.rollNumber == rollNumber)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.branchId, branchId) || other.branchId == branchId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,academyId,fullName,fatherName,motherName,dateOfBirth,gender,phone,guardianPhone,guardianRelation,address,photoUrl,admissionDate,previousInstitute,academicSession,rollNumber,status,notes);
+int get hashCode => Object.hashAll([runtimeType,id,academyId,fullName,fatherName,motherName,dateOfBirth,gender,phone,guardianPhone,guardianRelation,address,photoUrl,admissionDate,previousInstitute,academicSession,rollNumber,status,notes,branchId]);
 
 @override
 String toString() {
-  return 'Student(id: $id, academyId: $academyId, fullName: $fullName, fatherName: $fatherName, motherName: $motherName, dateOfBirth: $dateOfBirth, gender: $gender, phone: $phone, guardianPhone: $guardianPhone, guardianRelation: $guardianRelation, address: $address, photoUrl: $photoUrl, admissionDate: $admissionDate, previousInstitute: $previousInstitute, academicSession: $academicSession, rollNumber: $rollNumber, status: $status, notes: $notes)';
+  return 'Student(id: $id, academyId: $academyId, fullName: $fullName, fatherName: $fatherName, motherName: $motherName, dateOfBirth: $dateOfBirth, gender: $gender, phone: $phone, guardianPhone: $guardianPhone, guardianRelation: $guardianRelation, address: $address, photoUrl: $photoUrl, admissionDate: $admissionDate, previousInstitute: $previousInstitute, academicSession: $academicSession, rollNumber: $rollNumber, status: $status, notes: $notes, branchId: $branchId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $StudentCopyWith<$Res>  {
   factory $StudentCopyWith(Student value, $Res Function(Student) _then) = _$StudentCopyWithImpl;
 @useResult
 $Res call({
- String id, String academyId, String fullName, String fatherName, String motherName, DateTime? dateOfBirth, String gender, String phone, String guardianPhone, String guardianRelation, String address, String photoUrl, DateTime? admissionDate, String previousInstitute, String academicSession, String rollNumber, String status, String notes
+ String id, String academyId, String fullName, String fatherName, String motherName, DateTime? dateOfBirth, String gender, String phone, String guardianPhone, String guardianRelation, String address, String photoUrl, DateTime? admissionDate, String previousInstitute, String academicSession, String rollNumber, String status, String notes, String branchId
 });
 
 
@@ -65,7 +65,7 @@ class _$StudentCopyWithImpl<$Res>
 
 /// Create a copy of Student
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? academyId = null,Object? fullName = null,Object? fatherName = null,Object? motherName = null,Object? dateOfBirth = freezed,Object? gender = null,Object? phone = null,Object? guardianPhone = null,Object? guardianRelation = null,Object? address = null,Object? photoUrl = null,Object? admissionDate = freezed,Object? previousInstitute = null,Object? academicSession = null,Object? rollNumber = null,Object? status = null,Object? notes = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? academyId = null,Object? fullName = null,Object? fatherName = null,Object? motherName = null,Object? dateOfBirth = freezed,Object? gender = null,Object? phone = null,Object? guardianPhone = null,Object? guardianRelation = null,Object? address = null,Object? photoUrl = null,Object? admissionDate = freezed,Object? previousInstitute = null,Object? academicSession = null,Object? rollNumber = null,Object? status = null,Object? notes = null,Object? branchId = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,academyId: null == academyId ? _self.academyId : academyId // ignore: cast_nullable_to_non_nullable
@@ -85,6 +85,7 @@ as String,academicSession: null == academicSession ? _self.academicSession : aca
 as String,rollNumber: null == rollNumber ? _self.rollNumber : rollNumber // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
+as String,branchId: null == branchId ? _self.branchId : branchId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -170,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String academyId,  String fullName,  String fatherName,  String motherName,  DateTime? dateOfBirth,  String gender,  String phone,  String guardianPhone,  String guardianRelation,  String address,  String photoUrl,  DateTime? admissionDate,  String previousInstitute,  String academicSession,  String rollNumber,  String status,  String notes)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String academyId,  String fullName,  String fatherName,  String motherName,  DateTime? dateOfBirth,  String gender,  String phone,  String guardianPhone,  String guardianRelation,  String address,  String photoUrl,  DateTime? admissionDate,  String previousInstitute,  String academicSession,  String rollNumber,  String status,  String notes,  String branchId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Student() when $default != null:
-return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.motherName,_that.dateOfBirth,_that.gender,_that.phone,_that.guardianPhone,_that.guardianRelation,_that.address,_that.photoUrl,_that.admissionDate,_that.previousInstitute,_that.academicSession,_that.rollNumber,_that.status,_that.notes);case _:
+return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.motherName,_that.dateOfBirth,_that.gender,_that.phone,_that.guardianPhone,_that.guardianRelation,_that.address,_that.photoUrl,_that.admissionDate,_that.previousInstitute,_that.academicSession,_that.rollNumber,_that.status,_that.notes,_that.branchId);case _:
   return orElse();
 
 }
@@ -191,10 +192,10 @@ return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.m
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String academyId,  String fullName,  String fatherName,  String motherName,  DateTime? dateOfBirth,  String gender,  String phone,  String guardianPhone,  String guardianRelation,  String address,  String photoUrl,  DateTime? admissionDate,  String previousInstitute,  String academicSession,  String rollNumber,  String status,  String notes)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String academyId,  String fullName,  String fatherName,  String motherName,  DateTime? dateOfBirth,  String gender,  String phone,  String guardianPhone,  String guardianRelation,  String address,  String photoUrl,  DateTime? admissionDate,  String previousInstitute,  String academicSession,  String rollNumber,  String status,  String notes,  String branchId)  $default,) {final _that = this;
 switch (_that) {
 case _Student():
-return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.motherName,_that.dateOfBirth,_that.gender,_that.phone,_that.guardianPhone,_that.guardianRelation,_that.address,_that.photoUrl,_that.admissionDate,_that.previousInstitute,_that.academicSession,_that.rollNumber,_that.status,_that.notes);case _:
+return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.motherName,_that.dateOfBirth,_that.gender,_that.phone,_that.guardianPhone,_that.guardianRelation,_that.address,_that.photoUrl,_that.admissionDate,_that.previousInstitute,_that.academicSession,_that.rollNumber,_that.status,_that.notes,_that.branchId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -211,10 +212,10 @@ return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.m
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String academyId,  String fullName,  String fatherName,  String motherName,  DateTime? dateOfBirth,  String gender,  String phone,  String guardianPhone,  String guardianRelation,  String address,  String photoUrl,  DateTime? admissionDate,  String previousInstitute,  String academicSession,  String rollNumber,  String status,  String notes)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String academyId,  String fullName,  String fatherName,  String motherName,  DateTime? dateOfBirth,  String gender,  String phone,  String guardianPhone,  String guardianRelation,  String address,  String photoUrl,  DateTime? admissionDate,  String previousInstitute,  String academicSession,  String rollNumber,  String status,  String notes,  String branchId)?  $default,) {final _that = this;
 switch (_that) {
 case _Student() when $default != null:
-return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.motherName,_that.dateOfBirth,_that.gender,_that.phone,_that.guardianPhone,_that.guardianRelation,_that.address,_that.photoUrl,_that.admissionDate,_that.previousInstitute,_that.academicSession,_that.rollNumber,_that.status,_that.notes);case _:
+return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.motherName,_that.dateOfBirth,_that.gender,_that.phone,_that.guardianPhone,_that.guardianRelation,_that.address,_that.photoUrl,_that.admissionDate,_that.previousInstitute,_that.academicSession,_that.rollNumber,_that.status,_that.notes,_that.branchId);case _:
   return null;
 
 }
@@ -226,7 +227,7 @@ return $default(_that.id,_that.academyId,_that.fullName,_that.fatherName,_that.m
 @JsonSerializable()
 
 class _Student implements Student {
-  const _Student({required this.id, required this.academyId, this.fullName = '', this.fatherName = '', this.motherName = '', this.dateOfBirth, this.gender = '', this.phone = '', this.guardianPhone = '', this.guardianRelation = '', this.address = '', this.photoUrl = '', this.admissionDate, this.previousInstitute = '', this.academicSession = '', this.rollNumber = '', this.status = 'active', this.notes = ''});
+  const _Student({required this.id, required this.academyId, this.fullName = '', this.fatherName = '', this.motherName = '', this.dateOfBirth, this.gender = '', this.phone = '', this.guardianPhone = '', this.guardianRelation = '', this.address = '', this.photoUrl = '', this.admissionDate, this.previousInstitute = '', this.academicSession = '', this.rollNumber = '', this.status = 'active', this.notes = '', this.branchId = ''});
   factory _Student.fromJson(Map<String, dynamic> json) => _$StudentFromJson(json);
 
 @override final  String id;
@@ -247,6 +248,7 @@ class _Student implements Student {
 @override@JsonKey() final  String rollNumber;
 @override@JsonKey() final  String status;
 @override@JsonKey() final  String notes;
+@override@JsonKey() final  String branchId;
 
 /// Create a copy of Student
 /// with the given fields replaced by the non-null parameter values.
@@ -261,16 +263,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Student&&(identical(other.id, id) || other.id == id)&&(identical(other.academyId, academyId) || other.academyId == academyId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.fatherName, fatherName) || other.fatherName == fatherName)&&(identical(other.motherName, motherName) || other.motherName == motherName)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.guardianPhone, guardianPhone) || other.guardianPhone == guardianPhone)&&(identical(other.guardianRelation, guardianRelation) || other.guardianRelation == guardianRelation)&&(identical(other.address, address) || other.address == address)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.admissionDate, admissionDate) || other.admissionDate == admissionDate)&&(identical(other.previousInstitute, previousInstitute) || other.previousInstitute == previousInstitute)&&(identical(other.academicSession, academicSession) || other.academicSession == academicSession)&&(identical(other.rollNumber, rollNumber) || other.rollNumber == rollNumber)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Student&&(identical(other.id, id) || other.id == id)&&(identical(other.academyId, academyId) || other.academyId == academyId)&&(identical(other.fullName, fullName) || other.fullName == fullName)&&(identical(other.fatherName, fatherName) || other.fatherName == fatherName)&&(identical(other.motherName, motherName) || other.motherName == motherName)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.guardianPhone, guardianPhone) || other.guardianPhone == guardianPhone)&&(identical(other.guardianRelation, guardianRelation) || other.guardianRelation == guardianRelation)&&(identical(other.address, address) || other.address == address)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.admissionDate, admissionDate) || other.admissionDate == admissionDate)&&(identical(other.previousInstitute, previousInstitute) || other.previousInstitute == previousInstitute)&&(identical(other.academicSession, academicSession) || other.academicSession == academicSession)&&(identical(other.rollNumber, rollNumber) || other.rollNumber == rollNumber)&&(identical(other.status, status) || other.status == status)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.branchId, branchId) || other.branchId == branchId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,academyId,fullName,fatherName,motherName,dateOfBirth,gender,phone,guardianPhone,guardianRelation,address,photoUrl,admissionDate,previousInstitute,academicSession,rollNumber,status,notes);
+int get hashCode => Object.hashAll([runtimeType,id,academyId,fullName,fatherName,motherName,dateOfBirth,gender,phone,guardianPhone,guardianRelation,address,photoUrl,admissionDate,previousInstitute,academicSession,rollNumber,status,notes,branchId]);
 
 @override
 String toString() {
-  return 'Student(id: $id, academyId: $academyId, fullName: $fullName, fatherName: $fatherName, motherName: $motherName, dateOfBirth: $dateOfBirth, gender: $gender, phone: $phone, guardianPhone: $guardianPhone, guardianRelation: $guardianRelation, address: $address, photoUrl: $photoUrl, admissionDate: $admissionDate, previousInstitute: $previousInstitute, academicSession: $academicSession, rollNumber: $rollNumber, status: $status, notes: $notes)';
+  return 'Student(id: $id, academyId: $academyId, fullName: $fullName, fatherName: $fatherName, motherName: $motherName, dateOfBirth: $dateOfBirth, gender: $gender, phone: $phone, guardianPhone: $guardianPhone, guardianRelation: $guardianRelation, address: $address, photoUrl: $photoUrl, admissionDate: $admissionDate, previousInstitute: $previousInstitute, academicSession: $academicSession, rollNumber: $rollNumber, status: $status, notes: $notes, branchId: $branchId)';
 }
 
 
@@ -281,7 +283,7 @@ abstract mixin class _$StudentCopyWith<$Res> implements $StudentCopyWith<$Res> {
   factory _$StudentCopyWith(_Student value, $Res Function(_Student) _then) = __$StudentCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String academyId, String fullName, String fatherName, String motherName, DateTime? dateOfBirth, String gender, String phone, String guardianPhone, String guardianRelation, String address, String photoUrl, DateTime? admissionDate, String previousInstitute, String academicSession, String rollNumber, String status, String notes
+ String id, String academyId, String fullName, String fatherName, String motherName, DateTime? dateOfBirth, String gender, String phone, String guardianPhone, String guardianRelation, String address, String photoUrl, DateTime? admissionDate, String previousInstitute, String academicSession, String rollNumber, String status, String notes, String branchId
 });
 
 
@@ -298,7 +300,7 @@ class __$StudentCopyWithImpl<$Res>
 
 /// Create a copy of Student
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? academyId = null,Object? fullName = null,Object? fatherName = null,Object? motherName = null,Object? dateOfBirth = freezed,Object? gender = null,Object? phone = null,Object? guardianPhone = null,Object? guardianRelation = null,Object? address = null,Object? photoUrl = null,Object? admissionDate = freezed,Object? previousInstitute = null,Object? academicSession = null,Object? rollNumber = null,Object? status = null,Object? notes = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? academyId = null,Object? fullName = null,Object? fatherName = null,Object? motherName = null,Object? dateOfBirth = freezed,Object? gender = null,Object? phone = null,Object? guardianPhone = null,Object? guardianRelation = null,Object? address = null,Object? photoUrl = null,Object? admissionDate = freezed,Object? previousInstitute = null,Object? academicSession = null,Object? rollNumber = null,Object? status = null,Object? notes = null,Object? branchId = null,}) {
   return _then(_Student(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,academyId: null == academyId ? _self.academyId : academyId // ignore: cast_nullable_to_non_nullable
@@ -318,6 +320,7 @@ as String,academicSession: null == academicSession ? _self.academicSession : aca
 as String,rollNumber: null == rollNumber ? _self.rollNumber : rollNumber // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,notes: null == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
+as String,branchId: null == branchId ? _self.branchId : branchId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

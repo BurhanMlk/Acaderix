@@ -10,4 +10,5 @@ abstract interface class StudentRepository {
 
   Future<void> create(Student student);
   Future<void> update(Student student);
+  Future<void> delete(String academyId, String studentId);
 }

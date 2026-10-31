@@ -7,19 +7,12 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/loading_button.dart';
 import '../../../../shared/current_academy_provider.dart';
+import '../../../../shared/selected_branch_provider.dart';
+import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../application/student_repository_provider.dart';
 import '../../domain/student.dart';
 
-/// Multi-field student admission form.
-///
-/// On submit the flow: validates → allocates a six-digit roll number via a
-/// Firestore transaction → generates a temporary four-digit PIN → creates the
-/// student record → shows a one-time credential slip.
-///
-/// Production deployments should call the `admitStudent` Cloud Function
-/// (functions/src/index.ts) so the temporary PIN is hashed server-side and
-/// never persisted in plaintext; this client-side flow is the offline/dev
-/// preview of that workflow.
+/// Multi-field student admission form with branch selection and auto-roll allocation.
 class AddStudentScreen extends ConsumerStatefulWidget {
   const AddStudentScreen({super.key});
 
@@ -40,8 +33,15 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
   final _monthlyFee = TextEditingController();
   final _address = TextEditingController();
 
+  String? _branchId;
   bool _submitting = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _branchId = ref.read(selectedBranchIdProvider);
+  }
 
   @override
   void dispose() {
@@ -83,6 +83,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
       final student = Student(
         id: const Uuid().v4(),
         academyId: academyId,
+        branchId: _branchId ?? '',
         fullName: _fullName.text.trim(),
         fatherName: _fatherName.text.trim(),
         guardianPhone: _guardianPhone.text.trim(),
@@ -95,6 +96,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
       );
 
       await repository.create(student);
+      ref.invalidate(studentsStreamProvider(academyId));
 
       if (!mounted) return;
       await _showCredentialSlip(rollNumber: rollNumber, pin: pin);
@@ -114,19 +116,67 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Student Credentials'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        title: Row(
           children: [
-            const Text(
-              'Share these credentials with the student once. The PIN is '
-              'temporary and will not be shown again.',
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.vpn_key_outlined,
+                color: Color(0xFFA5B4FC),
+                size: 20,
+              ),
             ),
-            const SizedBox(height: 16),
-            _CredentialRow(label: 'Roll Number', value: rollNumber),
-            _CredentialRow(label: 'Temporary PIN', value: pin),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                'Student Credentials',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
+        ),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'A student account has been created. The PIN below is '
+                  'temporary and will not be shown again.',
+                  style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.12),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      _CredentialRow(label: 'Roll Number', value: rollNumber),
+                      const Divider(color: Colors.white12, height: 16),
+                      _CredentialRow(label: 'Temporary PIN', value: pin),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         actions: [
           FilledButton(
@@ -140,8 +190,11 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final academyId = ref.watch(currentAcademyIdProvider) ?? '';
+    final branchesAsync = ref.watch(branchesStreamProvider(academyId));
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Admit Student')),
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -192,12 +245,75 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
               AppTextField(
                 controller: _classId,
                 label: 'Class',
-                hint: 'e.g. Class 9',
+                hint: 'e.g. Class 10',
                 icon: Icons.school_outlined,
                 textInputAction: TextInputAction.next,
                 validator: (v) => Validators.required(v, 'Class'),
               ),
               const SizedBox(height: 12),
+              // Branch Assignment
+              branchesAsync.when(
+                data: (branches) {
+                  if (branches.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: DropdownButtonFormField<String?>(
+                      initialValue: _branchId,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Assigned Campus / Branch',
+                        prefixIcon: Icon(Icons.account_balance_outlined),
+                      ),
+                      dropdownColor: const Color(0xFF1E293B),
+                      selectedItemBuilder: (context) {
+                        return [
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Main Campus (Default)',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          ...branches.map(
+                            (b) => Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                b.city.isNotEmpty ? '${b.name} (${b.city})' : b.name,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ),
+                        ];
+                      },
+                      items: [
+                        const DropdownMenuItem<String?>(
+                          value: null,
+                          child: Text(
+                            'Main Campus (Default)',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        ...branches.map(
+                          (b) => DropdownMenuItem<String?>(
+                            value: b.id,
+                            child: Text(
+                              b.city.isNotEmpty ? '${b.name} (${b.city})' : b.name,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                      onChanged: (val) => setState(() => _branchId = val),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
+              ),
               AppTextField(
                 controller: _batchId,
                 label: 'Batch',

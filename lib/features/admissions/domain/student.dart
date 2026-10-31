@@ -25,6 +25,7 @@ abstract class Student with _$Student {
     @Default('') String rollNumber,
     @Default('active') String status,
     @Default('') String notes,
+    @Default('') String branchId,
   }) = _Student;
 
   factory Student.fromJson(Map<String, dynamic> json) =>

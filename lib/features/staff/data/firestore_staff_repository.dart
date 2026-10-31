@@ -34,6 +34,11 @@ final class FirestoreStaffRepository implements StaffRepository {
     ).doc(staff.id).set(data, SetOptions(merge: true));
   }
 
+  @override
+  Future<void> delete(String academyId, String staffId) {
+    return _collection(academyId).doc(staffId).delete();
+  }
+
   Staff _fromDoc(String id, Map<String, dynamic> data) =>
       Staff.fromJson({...data, 'id': id});
 }

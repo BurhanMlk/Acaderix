@@ -66,6 +66,11 @@ final class FirestoreStudentRepository implements StudentRepository {
     ).doc(student.id).set(data, SetOptions(merge: true));
   }
 
+  @override
+  Future<void> delete(String academyId, String studentId) {
+    return _collection(academyId).doc(studentId).delete();
+  }
+
   Student _fromDoc(String id, Map<String, dynamic> data) =>
       Student.fromJson({...data, 'id': id});
 }

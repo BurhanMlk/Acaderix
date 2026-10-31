@@ -29,6 +29,7 @@ _Student _$StudentFromJson(Map<String, dynamic> json) => _Student(
   rollNumber: json['rollNumber'] as String? ?? '',
   status: json['status'] as String? ?? 'active',
   notes: json['notes'] as String? ?? '',
+  branchId: json['branchId'] as String? ?? '',
 );
 
 Map<String, dynamic> _$StudentToJson(_Student instance) => <String, dynamic>{
@@ -50,4 +51,5 @@ Map<String, dynamic> _$StudentToJson(_Student instance) => <String, dynamic>{
   'rollNumber': instance.rollNumber,
   'status': instance.status,
   'notes': instance.notes,
+  'branchId': instance.branchId,
 };
