@@ -30,19 +30,24 @@ service cloud.firestore {
     }
 
     // Academies: an owner creates/updates their own; Super Admin manages all.
+    // Public read allows pre-login verification of academy standing without issuing tokens.
     match /academies/{academyId} {
       allow create: if isSignedIn()
         && request.resource.data.ownerUid == request.auth.uid;
-      allow read: if isSuperAdmin()
-        || (isSignedIn() && resource.data.ownerUid == request.auth.uid);
+      allow read: if true;
       allow update: if isSuperAdmin()
         || (isSignedIn() && resource.data.ownerUid == request.auth.uid);
       allow delete: if isSuperAdmin();
 
       // All subcollections under an academy (students, staff, branches, fees, attendance, etc.)
+      // Enforces active tenant standing: pending or suspended academies are blocked at server level.
       match /{subcollection}/{docId=**} {
         allow read, write, delete: if isSuperAdmin()
-          || (isSignedIn() && get(/databases/$(database)/documents/academies/$(academyId)).data.ownerUid == request.auth.uid);
+          || (
+            isSignedIn()
+            && get(/databases/$(database)/documents/academies/$(academyId)).data.ownerUid == request.auth.uid
+            && get(/databases/$(database)/documents/academies/$(academyId)).data.status == 'active'
+          );
       }
     }
 
@@ -53,11 +58,10 @@ service cloud.firestore {
       allow delete: if isSuperAdmin();
     }
 
-    // Subscriptions: Super Admin manages all; Academy Admin can read their own.
+    // Subscriptions: Super Admin manages all; read permitted for pre-login standing verification.
     match /subscriptions/{subscriptionId} {
       allow read, write, delete: if isSuperAdmin();
-      allow read: if isSignedIn()
-        && (exists(userProfile()) && resource.data.academyId == get(userProfile()).data.academyId);
+      allow read: if true;
     }
 
     // Subscription Plans: Anyone authenticated can read; Super Admin can manage.

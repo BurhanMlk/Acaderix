@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../shared/role_shell.dart';
+import '../../../auth/application/auth_controller.dart';
 import '../../application/academy_access_provider.dart';
 import 'academy_admin_dashboard.dart';
 import 'academy_status_notice_screen.dart';
@@ -61,6 +62,10 @@ class AcademyAdminShell extends ConsumerWidget {
       ),
       data: (access) {
         if (!access.isActive) {
+          // Revoke active session and token immediately if status becomes inactive
+          Future.microtask(() {
+            ref.read(authControllerProvider.notifier).signOut();
+          });
           return AcademyStatusNoticeScreen(accessInfo: access);
         }
 

@@ -16,6 +16,7 @@ class AcademyAccessInfo {
     required this.academyId,
     this.academyName = '',
     this.academyCode = '',
+    this.ownerEmail = '',
     this.rawStatus = 'pending',
     this.renewalDate,
     this.paymentStatus = 'paid',
@@ -29,6 +30,7 @@ class AcademyAccessInfo {
   final String academyId;
   final String academyName;
   final String academyCode;
+  final String ownerEmail;
   final String rawStatus; // 'active', 'suspended', 'pending'
   final DateTime? renewalDate;
   final String paymentStatus; // 'paid', 'unpaid', 'overdue'
@@ -42,6 +44,36 @@ class AcademyAccessInfo {
   bool get isPending => state == AcademyAccessState.pending;
   bool get isExpired => state == AcademyAccessState.expired;
   bool get isNotFound => state == AcademyAccessState.notFound;
+
+  AcademyAccessInfo copyWith({
+    AcademyAccessState? state,
+    String? academyId,
+    String? academyName,
+    String? academyCode,
+    String? ownerEmail,
+    String? rawStatus,
+    DateTime? renewalDate,
+    String? paymentStatus,
+    String? planName,
+    String? supportPhone,
+    String? supportEmail,
+    String? statusReason,
+  }) {
+    return AcademyAccessInfo(
+      state: state ?? this.state,
+      academyId: academyId ?? this.academyId,
+      academyName: academyName ?? this.academyName,
+      academyCode: academyCode ?? this.academyCode,
+      ownerEmail: ownerEmail ?? this.ownerEmail,
+      rawStatus: rawStatus ?? this.rawStatus,
+      renewalDate: renewalDate ?? this.renewalDate,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+      planName: planName ?? this.planName,
+      supportPhone: supportPhone ?? this.supportPhone,
+      supportEmail: supportEmail ?? this.supportEmail,
+      statusReason: statusReason ?? this.statusReason,
+    );
+  }
 
   int? get daysRemaining {
     if (renewalDate == null) return null;

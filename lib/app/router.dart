@@ -101,6 +101,7 @@ const Set<String> _publicRoutes = {
   AppRoutes.staffLogin,
   AppRoutes.studentLogin,
   AppRoutes.forgotPassword,
+  AppRoutes.academyStatus,
 };
 
 /// Entry routes a signed-in user should be redirected away from.
@@ -345,11 +346,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.academyStatus,
         builder: (context, state) {
-          final access = ref.watch(academyAccessProvider).value ??
-              const AcademyAccessInfo(
-                state: AcademyAccessState.pending,
-                academyId: '',
-              );
+          final access = state.extra is AcademyAccessInfo
+              ? state.extra as AcademyAccessInfo
+              : ref.watch(academyAccessProvider).value ??
+                  const AcademyAccessInfo(
+                    state: AcademyAccessState.pending,
+                    academyId: '',
+                  );
           return AcademyStatusNoticeScreen(accessInfo: access);
         },
       ),

@@ -122,6 +122,84 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
     return _evaluateAccess(academyId, academySnap.data()!, subData);
   }
 
+  @override
+  Future<AcademyAccessInfo> findAndCheckAcademyByEmail(String email) async {
+    final cleanEmail = email.trim();
+    if (cleanEmail.isEmpty) {
+      return const AcademyAccessInfo(
+        state: AcademyAccessState.notFound,
+        academyId: '',
+        statusReason: 'Email is required to locate your academy.',
+      );
+    }
+
+    final lowerEmail = cleanEmail.toLowerCase();
+
+    // 1. Search academies collection by ownerEmail (case sensitive and lower)
+    QuerySnapshot<Map<String, dynamic>> snap = await _firestore
+        .collection(FirestorePaths.academies)
+        .where('ownerEmail', isEqualTo: cleanEmail)
+        .limit(1)
+        .get();
+
+    if (snap.docs.isEmpty && cleanEmail != lowerEmail) {
+      snap = await _firestore
+          .collection(FirestorePaths.academies)
+          .where('ownerEmail', isEqualTo: lowerEmail)
+          .limit(1)
+          .get();
+    }
+
+    // 2. Search by 'email' field fallback
+    if (snap.docs.isEmpty) {
+      snap = await _firestore
+          .collection(FirestorePaths.academies)
+          .where('email', isEqualTo: cleanEmail)
+          .limit(1)
+          .get();
+    }
+
+    // 3. Fallback: Search in users collection to see if we can resolve academyId
+    if (snap.docs.isEmpty) {
+      final userSnap = await _firestore
+          .collection(FirestorePaths.users)
+          .where('email', isEqualTo: cleanEmail)
+          .limit(1)
+          .get();
+      if (userSnap.docs.isNotEmpty) {
+        final acadId = userSnap.docs.first.data()['academyId'] as String?;
+        if (acadId != null && acadId.isNotEmpty) {
+          return getAcademyAccess(acadId);
+        }
+      }
+    }
+
+    if (snap.docs.isEmpty) {
+      return AcademyAccessInfo(
+        state: AcademyAccessState.notFound,
+        academyId: '',
+        ownerEmail: cleanEmail,
+        statusReason:
+            'No academy found registered under $cleanEmail. Please check your email or contact Super Admin.',
+      );
+    }
+
+    final doc = snap.docs.first;
+    final academyId = doc.id;
+    final academyData = doc.data();
+
+    Map<String, dynamic>? subData;
+    try {
+      final subSnap = await _firestore
+          .collection(FirestorePaths.subscriptions)
+          .doc(academyId)
+          .get();
+      if (subSnap.exists) subData = subSnap.data();
+    } catch (_) {}
+
+    return _evaluateAccess(academyId, academyData, subData);
+  }
+
   AcademyAccessInfo _evaluateAccess(
     String academyId,
     Map<String, dynamic> academyData,
@@ -129,6 +207,10 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
   ) {
     final academyName = academyData['name'] as String? ?? 'Academy';
     final academyCode = academyData['code'] as String? ?? '';
+    final ownerEmail = (academyData['ownerEmail'] as String? ??
+            academyData['email'] as String? ??
+            '')
+        .trim();
     final rawStatus =
         (academyData['status'] as String? ?? 'pending').toLowerCase();
     final planName = academyData['subscriptionPlan'] as String? ?? 'Standard';
@@ -140,6 +222,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyId: academyId,
         academyName: academyName,
         academyCode: academyCode,
+        ownerEmail: ownerEmail,
         rawStatus: rawStatus,
         planName: planName,
         statusReason:
@@ -153,6 +236,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyId: academyId,
         academyName: academyName,
         academyCode: academyCode,
+        ownerEmail: ownerEmail,
         rawStatus: rawStatus,
         planName: planName,
         statusReason:
@@ -194,6 +278,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyId: academyId,
         academyName: academyName,
         academyCode: academyCode,
+        ownerEmail: ownerEmail,
         rawStatus: rawStatus,
         renewalDate: renewalDate,
         paymentStatus: paymentStatus,
@@ -210,6 +295,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyId: academyId,
         academyName: academyName,
         academyCode: academyCode,
+        ownerEmail: ownerEmail,
         rawStatus: rawStatus,
         renewalDate: renewalDate,
         paymentStatus: paymentStatus,
@@ -225,6 +311,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
       academyId: academyId,
       academyName: academyName,
       academyCode: academyCode,
+      ownerEmail: ownerEmail,
       rawStatus: rawStatus,
       renewalDate: renewalDate,
       paymentStatus: paymentStatus,

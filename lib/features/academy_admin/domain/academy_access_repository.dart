@@ -7,4 +7,8 @@ abstract class AcademyAccessRepository {
 
   /// Fetches the current access and subscription status of an academy once.
   Future<AcademyAccessInfo> getAcademyAccess(String academyId);
+
+  /// Locates an academy by owner or admin email and verifies its standing
+  /// BEFORE issuing any authentication token or session.
+  Future<AcademyAccessInfo> findAndCheckAcademyByEmail(String email);
 }

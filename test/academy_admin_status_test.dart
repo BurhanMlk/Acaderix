@@ -1,3 +1,4 @@
+import 'package:academy_management/app/router.dart';
 import 'package:academy_management/core/constants/roles.dart';
 import 'package:academy_management/features/academy_admin/application/academy_access_provider.dart';
 import 'package:academy_management/features/academy_admin/application/academy_admin_providers.dart';
@@ -12,6 +13,7 @@ import 'package:academy_management/features/auth/application/auth_controller.dar
 import 'package:academy_management/features/auth/domain/app_user.dart';
 import 'package:academy_management/features/auth/domain/auth_repository.dart';
 import 'package:academy_management/features/auth/domain/auth_state.dart';
+import 'package:academy_management/features/auth/presentation/screens/academy_admin_login_screen.dart';
 import 'package:academy_management/features/branches/domain/branch.dart';
 import 'package:academy_management/features/exams/domain/exam.dart';
 import 'package:academy_management/features/exams/domain/exam_result.dart';
@@ -22,6 +24,7 @@ import 'package:academy_management/shared/current_academy_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 class _FakeAcademyAccessRepository implements AcademyAccessRepository {
   _FakeAcademyAccessRepository(this._currentInfo);
@@ -41,9 +44,31 @@ class _FakeAcademyAccessRepository implements AcademyAccessRepository {
   Future<AcademyAccessInfo> getAcademyAccess(String academyId) async {
     return _currentInfo;
   }
+
+  @override
+  Future<AcademyAccessInfo> findAndCheckAcademyByEmail(String email) async {
+    return _currentInfo;
+  }
 }
 
 class _FakeAuthRepo implements AuthRepository {
+  bool signInCalled = false;
+  String? signedInEmail;
+
+  @override
+  Future<AppUser> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    signInCalled = true;
+    signedInEmail = email;
+    return AppUser(
+      id: 'admin_123',
+      email: email,
+      role: AppRole.academyAdmin,
+      academyId: 'acad_123',
+    );
+  }
   @override
   Stream<AuthState> authStateChanges() async* {
     yield const AuthState.authenticated(
@@ -394,5 +419,157 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
     });
+
+    testWidgets(
+      'Pre-login gating: does NOT sign in or issue token if academy is suspended or pending',
+      (tester) async {
+        tester.view.physicalSize = const Size(1000, 1800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final fakeAuth = _FakeAuthRepo();
+        final suspendedInfo = const AcademyAccessInfo(
+          state: AcademyAccessState.suspended,
+          academyId: 'acad_suspended',
+          academyName: 'Suspended Academy',
+          academyCode: 'ACD-999',
+          rawStatus: 'suspended',
+          ownerEmail: 'suspended@academy.com',
+          statusReason: 'Suspended by admin',
+        );
+        final accessRepo = _FakeAcademyAccessRepository(suspendedInfo);
+
+        final router = GoRouter(
+          initialLocation: AppRoutes.academyAdminLogin,
+          routes: [
+            GoRoute(
+              path: AppRoutes.academyAdminLogin,
+              builder: (context, state) => const AcademyAdminLoginScreen(),
+            ),
+            GoRoute(
+              path: AppRoutes.academyStatus,
+              builder: (context, state) {
+                final access =
+                    state.extra as AcademyAccessInfo? ?? suspendedInfo;
+                return AcademyStatusNoticeScreen(accessInfo: access);
+              },
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authRepositoryProvider.overrideWithValue(fakeAuth),
+              academyAccessRepositoryProvider.overrideWithValue(accessRepo),
+            ],
+            child: MaterialApp.router(
+              routerConfig: router,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Fill in email and password
+        await tester.enterText(
+          find.byType(TextFormField).first,
+          'suspended@academy.com',
+        );
+        await tester.enterText(
+          find.byType(TextFormField).last,
+          'secret123',
+        );
+
+        // Tap Sign In button
+        final signInBtn = find.widgetWithText(FilledButton, 'Sign In');
+        expect(signInBtn, findsOneWidget);
+        await tester.tap(signInBtn);
+        await tester.pumpAndSettle();
+
+        // 1. Verify signInWithEmailAndPassword was NEVER CALLED (NO token issued!)
+        expect(fakeAuth.signInCalled, isFalse);
+
+        // 2. Verify routed to AcademyStatusNoticeScreen showing suspended notice
+        expect(find.text('ACCOUNT SUSPENDED'), findsOneWidget);
+        expect(find.text('Suspended Academy'), findsOneWidget);
+        expect(find.text('+92 300 1234567'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Pre-login gating: calls signInWithEmailAndPassword & issues token ONLY when academy is active',
+      (tester) async {
+        tester.view.physicalSize = const Size(1000, 1800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final fakeAuth = _FakeAuthRepo();
+        final activeInfo = AcademyAccessInfo(
+          state: AcademyAccessState.active,
+          academyId: 'acad_active',
+          academyName: 'Active Academy',
+          academyCode: 'ACD-111',
+          rawStatus: 'active',
+          ownerEmail: 'active@academy.com',
+          renewalDate: DateTime.now().add(const Duration(days: 20)),
+          paymentStatus: 'paid',
+        );
+        final accessRepo = _FakeAcademyAccessRepository(activeInfo);
+
+        final router = GoRouter(
+          initialLocation: AppRoutes.academyAdminLogin,
+          routes: [
+            GoRoute(
+              path: AppRoutes.academyAdminLogin,
+              builder: (context, state) => const AcademyAdminLoginScreen(),
+            ),
+            GoRoute(
+              path: AppRoutes.academyAdmin,
+              builder: (context, state) => const Scaffold(
+                body: Text('Academy Admin Dashboard Home'),
+              ),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authRepositoryProvider.overrideWithValue(fakeAuth),
+              academyAccessRepositoryProvider.overrideWithValue(accessRepo),
+            ],
+            child: MaterialApp.router(
+              routerConfig: router,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Fill in email and password
+        await tester.enterText(
+          find.byType(TextFormField).first,
+          'active@academy.com',
+        );
+        await tester.enterText(
+          find.byType(TextFormField).last,
+          'secret123',
+        );
+
+        // Tap Sign In button
+        final signInBtn = find.widgetWithText(FilledButton, 'Sign In');
+        expect(signInBtn, findsOneWidget);
+        await tester.tap(signInBtn);
+        await tester.pumpAndSettle();
+
+        // 1. Verify signInWithEmailAndPassword WAS CALLED (Token issued!)
+        expect(fakeAuth.signInCalled, isTrue);
+        expect(fakeAuth.signedInEmail, 'active@academy.com');
+
+        // 2. Verify navigated to Academy Admin dashboard
+        expect(find.text('Academy Admin Dashboard Home'), findsOneWidget);
+      },
+    );
   });
 }

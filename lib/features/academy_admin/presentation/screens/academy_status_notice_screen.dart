@@ -2,7 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../app/router.dart';
 import '../../../../core/utils/date_formatters.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../auth/application/auth_controller.dart';
@@ -26,19 +28,52 @@ class AcademyStatusNoticeScreen extends ConsumerStatefulWidget {
 
 class _AcademyStatusNoticeScreenState
     extends ConsumerState<AcademyStatusNoticeScreen> {
+  late AcademyAccessInfo _info;
   bool _isRefreshing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _info = widget.accessInfo;
+  }
+
+  @override
+  void didUpdateWidget(AcademyStatusNoticeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.accessInfo != oldWidget.accessInfo) {
+      _info = widget.accessInfo;
+    }
+  }
 
   Future<void> _refreshStatus() async {
     setState(() => _isRefreshing = true);
-    ref.invalidate(academyAccessProvider);
-    // Give Firestore / stream a moment to settle
-    await Future.delayed(const Duration(milliseconds: 600));
+    await Future.delayed(const Duration(milliseconds: 300));
+    try {
+      final accessRepo = ref.read(academyAccessRepositoryProvider);
+      AcademyAccessInfo updated;
+      if (_info.academyId.isNotEmpty) {
+        updated = await accessRepo.getAcademyAccess(_info.academyId);
+      } else if (_info.ownerEmail.isNotEmpty) {
+        updated = await accessRepo.findAndCheckAcademyByEmail(_info.ownerEmail);
+      } else {
+        updated = _info;
+      }
+      ref.invalidate(academyAccessProvider);
+      if (mounted) {
+        setState(() => _info = updated);
+      }
+    } catch (_) {}
     if (mounted) {
       setState(() => _isRefreshing = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Checking latest academy status...'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(_info.isActive
+              ? 'Status updated: Academy is now Active! You can sign in.'
+              : 'Status: ${_info.rawStatus.toUpperCase()}. Please contact Super Admin if you need help.'),
+          backgroundColor: _info.isActive
+              ? const Color(0xFF10B981)
+              : const Color(0xFF6366F1),
+          duration: const Duration(seconds: 3),
         ),
       );
     }
@@ -85,7 +120,7 @@ class _AcademyStatusNoticeScreenState
 
   @override
   Widget build(BuildContext context) {
-    final info = widget.accessInfo;
+    final info = _info;
 
     // Determine visual theme according to access state
     final (
@@ -182,11 +217,16 @@ class _AcademyStatusNoticeScreenState
                         ],
                       ),
                       TextButton.icon(
-                        onPressed: () => ref
-                            .read(authControllerProvider.notifier)
-                            .signOut(),
-                        icon: const Icon(Icons.logout, size: 16),
-                        label: const Text('Sign Out'),
+                        onPressed: () {
+                          ref.read(authControllerProvider.notifier).signOut();
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go(AppRoutes.academyAdminLogin);
+                          }
+                        },
+                        icon: const Icon(Icons.arrow_back_rounded, size: 16),
+                        label: const Text('Back to Login'),
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.white70,
                         ),
@@ -624,6 +664,40 @@ class _AcademyStatusNoticeScreenState
                   ),
                   const SizedBox(height: 24),
 
+                  // If status updated to active after check, provide one-tap sign in
+                  if (info.isActive)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: FilledButton.icon(
+                          onPressed: () {
+                            if (context.canPop()) {
+                              context.pop();
+                            } else {
+                              context.go(AppRoutes.academyAdminLogin);
+                            }
+                          },
+                          icon: const Icon(Icons.login_rounded),
+                          label: const Text(
+                            'Academy is Active — Sign In Now',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFF10B981),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
                   // Actions: Check Status Again / Refresh
                   SizedBox(
                     width: double.infinity,
@@ -660,16 +734,21 @@ class _AcademyStatusNoticeScreenState
                   ),
                   const SizedBox(height: 12),
 
-                  // Log Out Secondary Action
+                  // Back to Login Secondary Action
                   SizedBox(
                     width: double.infinity,
                     height: 48,
                     child: OutlinedButton.icon(
-                      onPressed: () => ref
-                          .read(authControllerProvider.notifier)
-                          .signOut(),
-                      icon: const Icon(Icons.logout_rounded, size: 18),
-                      label: const Text('Log Out'),
+                      onPressed: () {
+                        ref.read(authControllerProvider.notifier).signOut();
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go(AppRoutes.academyAdminLogin);
+                        }
+                      },
+                      icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                      label: const Text('Back to Login'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white70,
                         side: BorderSide(

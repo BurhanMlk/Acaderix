@@ -59,13 +59,12 @@
 
 - [x] Academy Admin dashboard with transparent glass theme & module navigation
 - [x] Academy Admin Status & Subscription Access Gating (Real-Time):
-  - On login and ongoing session, continuously verify:
-    1. Academy approval status is `active` (not `pending` or `suspended`)
-    2. Subscription renewal date has not expired (`daysRemaining >= 0`)
-    3. Subscription payment status is `paid`
-  - When non-active or payment overdue, gate navigation and display dedicated `AcademyStatusNoticeScreen` (`/academy-status`)
+  - **Pre-Login Security Check & Token Gating:** Uses admin info (email) to locate academy and verify standing BEFORE signing in:
+    - If status is `pending`, `suspended`, `expired`, or payment is overdue: **no Firebase token is issued** and `signInWithEmailAndPassword` is never called. User is shown `AcademyStatusNoticeScreen` with Super Admin contact info without creating an authenticated session.
+    - If status is `active`, subscription is valid, and payment is cleared: authenticates credentials and issues the session token into dashboard.
+  - **Firestore Security Rules Reinforcement:** Subcollections (`students`, `staff`, `fees`, `branches`, `attendance`, `marks`) enforce `data.status == 'active'` so unapproved or suspended academies cannot query database subcollections even with an ID token.
   - Dedicated Super Admin contact card with phone (`+92 300 1234567`), email, one-tap copy to clipboard, and manual status check button
-  - Real-time reactive stream: automatically routes into dashboard without re-login when Super Admin activates or extends the academy
+  - Real-time reactive stream & auto-revocation: immediately terminates session if academy is suspended or expires during an active session
   - Auth repository fallback: automatically resolves `academyId` from `academies` by `ownerUid` or `ownerEmail` if unlinked in `users/{uid}`
 - [ ] Multi-step academy registration flow (next iteration)
 
@@ -103,13 +102,13 @@
 
 - [x] Secure-by-default Firestore/Storage rules with subscriptions security
 - [x] Privileged Cloud Functions with explicit authorization
-- [x] Comprehensive automated test suite (46 unit & widget tests)
+- [x] Comprehensive automated test suite (48 unit & widget tests)
 - [ ] Granular role/tenant rules + Firebase Emulator tests (next iteration)
 
 ## Validation (latest)
 
 - `flutter analyze` → No issues found! (0 warnings/errors)
-- `flutter test` → 46/46 tests passed!
+- `flutter test` → 48/48 tests passed!
 
 ## Notes
 

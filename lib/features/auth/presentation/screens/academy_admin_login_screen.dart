@@ -41,27 +41,38 @@ class _AcademyAdminLoginScreenState
       _error = null;
     });
     try {
+      final email = _email.text.trim();
+      final password = _password.text;
+
+      // 1. Pre-login verification: First use the admin email info to locate the
+      // academy and check its status BEFORE signing in and issuing any token.
+      final accessRepo = ref.read(academyAccessRepositoryProvider);
+      final access = await accessRepo.findAndCheckAcademyByEmail(email);
+
+      if (!mounted) return;
+
+      // 2. If the academy is not active (pending, suspended, expired, or not found):
+      // DO NOT SIGN IN. DO NOT ISSUE TOKEN.
+      // Redirect directly to the dedicated notice screen with Super Admin contact info.
+      if (!access.isActive) {
+        context.push(
+          AppRoutes.academyStatus,
+          extra: access,
+        );
+        return;
+      }
+
+      // 3. ONLY if the academy is confirmed active, unexpired, and paid:
+      // Proceed to authenticate credentials and issue the session token.
       final user = await ref
           .read(authControllerProvider.notifier)
           .signInWithEmailAndPassword(
-            email: _email.text,
-            password: _password.text,
+            email: email,
+            password: password,
           );
       if (!mounted) return;
 
-      try {
-        final access = await ref.read(academyAccessProvider.future);
-        if (mounted) {
-          if (access.isActive) {
-            context.go(AppRoutes.academyAdmin);
-          } else {
-            context.go(AppRoutes.academyStatus);
-          }
-          return;
-        }
-      } catch (_) {}
-
-      if (mounted) context.go(homeForRole(user.role));
+      context.go(homeForRole(user.role));
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } catch (_) {
