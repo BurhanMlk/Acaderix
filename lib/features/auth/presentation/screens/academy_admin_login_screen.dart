@@ -8,6 +8,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
 import '../../../academy_admin/application/academy_access_provider.dart';
+import '../../../academy_admin/domain/academy_access_models.dart';
 import '../../application/auth_controller.dart';
 
 /// Email/password sign in for academy administrators.
@@ -46,15 +47,21 @@ class _AcademyAdminLoginScreenState
 
       // 1. Pre-login verification: First use the admin email info to locate the
       // academy and check its status BEFORE signing in and issuing any token.
-      final accessRepo = ref.read(academyAccessRepositoryProvider);
-      final access = await accessRepo.findAndCheckAcademyByEmail(email);
+      AcademyAccessInfo? access;
+      try {
+        final accessRepo = ref.read(academyAccessRepositoryProvider);
+        access = await accessRepo.findAndCheckAcademyByEmail(email);
+      } catch (_) {
+        // If unauthenticated Firestore queries are denied by remote security rules,
+        // fallback to post-login verification with immediate token revocation if inactive.
+        access = null;
+      }
 
       if (!mounted) return;
 
-      // 2. If the academy is not active (pending, suspended, expired, or not found):
+      // 2. If pre-login verified that academy is not active:
       // DO NOT SIGN IN. DO NOT ISSUE TOKEN.
-      // Redirect directly to the dedicated notice screen with Super Admin contact info.
-      if (!access.isActive) {
+      if (access != null && !access.isActive) {
         context.push(
           AppRoutes.academyStatus,
           extra: access,
@@ -62,8 +69,7 @@ class _AcademyAdminLoginScreenState
         return;
       }
 
-      // 3. ONLY if the academy is confirmed active, unexpired, and paid:
-      // Proceed to authenticate credentials and issue the session token.
+      // 3. Authenticate credentials:
       final user = await ref
           .read(authControllerProvider.notifier)
           .signInWithEmailAndPassword(
@@ -72,7 +78,22 @@ class _AcademyAdminLoginScreenState
           );
       if (!mounted) return;
 
-      context.go(homeForRole(user.role));
+      // 4. If pre-login check was not possible due to remote rules, verify now with auth:
+      if (access == null) {
+        try {
+          final postLoginAccess = await ref.read(academyAccessProvider.future);
+          if (!postLoginAccess.isActive) {
+            // Academy is not active! Immediately revoke token and clear session!
+            await ref.read(authControllerProvider.notifier).signOut();
+            if (mounted) {
+              context.push(AppRoutes.academyStatus, extra: postLoginAccess);
+            }
+            return;
+          }
+        } catch (_) {}
+      }
+
+      if (mounted) context.go(homeForRole(user.role));
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } catch (_) {
