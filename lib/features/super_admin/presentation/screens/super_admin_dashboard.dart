@@ -1,9 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
-import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton.dart';
@@ -11,17 +11,18 @@ import '../../../../core/widgets/stat_card.dart';
 import '../../application/super_admin_providers.dart';
 import '../../domain/academy.dart';
 import '../super_admin_modules.dart';
+import '../widgets/academy_avatar.dart';
 
 const List<Color> _moduleColors = [
-  Color(0xFF6366F1), // indigo
-  Color(0xFF0EA5E9), // sky
-  Color(0xFF14B8A6), // teal
-  Color(0xFFA855F7), // purple
-  Color(0xFFF59E0B), // amber
-  Color(0xFF64748B), // slate
+  Color(0xFF6366F1), // Indigo
+  Color(0xFF14B8A6), // Teal
+  Color(0xFFF59E0B), // Amber
+  Color(0xFFA855F7), // Purple
+  Color(0xFFEC4899), // Pink
+  Color(0xFF38BDF8), // Sky Blue
 ];
 
-/// Super Admin dashboard with quick module access and live platform stats.
+/// Super Admin dashboard with signature transparent glassmorphism theme.
 class SuperAdminDashboard extends ConsumerWidget {
   const SuperAdminDashboard({super.key});
 
@@ -33,42 +34,61 @@ class SuperAdminDashboard extends ConsumerWidget {
       onRefresh: () async => ref.invalidate(academiesStreamProvider),
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
-          Text(
-            'Platform Overview',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Manage academies, subscriptions and broadcasts from one place.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 24),
-          GridView.count(
-            crossAxisCount: 3,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.15,
+          const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (var i = 0; i < superAdminModules.length; i++)
-                _ModuleCard(
-                  module: superAdminModules[i],
-                  color: _moduleColors[i % _moduleColors.length],
-                  onTap: () => context.go(superAdminModules[i].route),
+              Text(
+                'Platform Overview',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
                 ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Manage academies, subscriptions and platform settings.',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 28),
-          Text(
+          const SizedBox(height: 20),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isPhone = constraints.maxWidth < 480;
+              final crossAxisCount =
+                  isPhone ? 2 : (constraints.maxWidth < 800 ? 3 : 4);
+              final childAspectRatio = isPhone ? 1.45 : 1.2;
+
+              return GridView.count(
+                crossAxisCount: crossAxisCount,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: childAspectRatio,
+                children: [
+                  for (var i = 0; i < superAdminModules.length; i++)
+                    _ModuleCard(
+                      module: superAdminModules[i],
+                      color: _moduleColors[i % _moduleColors.length],
+                      onTap: () => context.go(superAdminModules[i].route),
+                    ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+          const Text(
             'Academies',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -85,9 +105,9 @@ class SuperAdminDashboard extends ConsumerWidget {
     AsyncValue<List<Academy>> academies,
   ) {
     return academies.when(
-      loading: () => const [
-        Card(
-          child: Padding(
+      loading: () => [
+        _glassWrapper(
+          child: const Padding(
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
@@ -135,9 +155,9 @@ class SuperAdminDashboard extends ConsumerWidget {
         crossAxisCount: 2,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.5,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 1.35,
         children: [
           StatCard(
             title: 'Total Academies',
@@ -149,19 +169,19 @@ class SuperAdminDashboard extends ConsumerWidget {
             title: 'Active',
             value: '$active',
             icon: Icons.check_circle_outline,
-            color: Colors.green,
+            color: const Color(0xFF10B981),
           ),
           StatCard(
             title: 'Pending',
             value: '$pending',
             icon: Icons.pending_outlined,
-            color: Colors.orange,
+            color: const Color(0xFFF59E0B),
           ),
           StatCard(
             title: 'Suspended',
             value: '$suspended',
             icon: Icons.block,
-            color: Colors.red,
+            color: const Color(0xFFEF4444),
           ),
         ],
       ),
@@ -169,25 +189,86 @@ class SuperAdminDashboard extends ConsumerWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Recent academies', style: Theme.of(context).textTheme.titleMedium),
+          const Text(
+            'Recent additions',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           TextButton(
             onPressed: () => context.go(AppRoutes.academiesList),
-            child: const Text('View all'),
+            child: const Text(
+              'View all',
+              style: TextStyle(
+                color: Color(0xFF818CF8),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
       for (final academy in items.take(5))
-        Card(
-          child: ListTile(
-            leading: const AppLogo(size: 40, borderRadius: 12),
-            title: Text(
-              academy.name.isEmpty ? 'Unnamed academy' : academy.name,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: _glassWrapper(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () =>
+                  context.go(AppRoutes.academyDetails, extra: academy),
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
+                leading: AcademyAvatar(
+                  name: academy.name,
+                  logoUrl: academy.logoUrl,
+                  size: 42,
+                  borderRadius: 12,
+                ),
+                title: Text(
+                  academy.name.isEmpty ? 'Unnamed academy' : academy.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+                subtitle: Text(
+                  '${academy.code} · ${academy.city.isEmpty ? "Location not set" : academy.city}',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.65),
+                    fontSize: 13,
+                  ),
+                ),
+                trailing: _StatusChip(status: academy.status),
+              ),
             ),
-            subtitle: Text(academy.code),
-            trailing: _StatusChip(status: academy.status),
           ),
         ),
     ];
+  }
+
+  Widget _glassWrapper({required Widget child}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.16),
+              width: 1.2,
+            ),
+          ),
+          child: child,
+        ),
+      ),
+    );
   }
 }
 
@@ -204,40 +285,57 @@ class _ModuleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.16),
+              width: 1.2,
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(module.icon, color: color, size: 22),
+                    ),
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: Text(
+                        module.label,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: Icon(module.icon, color: color, size: 24),
               ),
-              const SizedBox(height: 12),
-              Text(
-                module.label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -252,25 +350,26 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final color = switch (status) {
-      'active' => Colors.green,
-      'pending' => Colors.orange,
-      'suspended' => Colors.red,
-      _ => scheme.outline,
+    final (color, label) = switch (status.toLowerCase()) {
+      'active' => (const Color(0xFF10B981), 'Active'),
+      'suspended' => (const Color(0xFFEF4444), 'Suspended'),
+      'pending' => (const Color(0xFFF59E0B), 'Pending'),
+      _ => (Colors.grey, status),
     };
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
+        color: color.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text(
-        status.toUpperCase(),
+        label,
         style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
           color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

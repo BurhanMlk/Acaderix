@@ -4,6 +4,63 @@ import 'package:flutter/material.dart';
 
 /// Glassmorphism building blocks for the authentication experience.
 ///
+/// Full-screen ambient glass background used across all role dashboards.
+class DashboardBackground extends StatelessWidget {
+  const DashboardBackground({
+    super.key,
+    required this.child,
+    this.useSafeArea = false,
+  });
+
+  final Widget child;
+  final bool useSafeArea;
+
+  static const List<Color> gradient = [
+    Color(0xFF0B1120), // deep navy
+    Color(0xFF1E1B4B), // indigo
+    Color(0xFF3B0764), // royal purple
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    Widget content = child;
+    if (useSafeArea) {
+      content = SafeArea(child: content);
+    }
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: gradient,
+        ),
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          const Positioned(
+            top: -120,
+            right: -80,
+            child: _GlowOrb(size: 320, color: Color(0xFF6366F1)),
+          ),
+          const Positioned(
+            bottom: -140,
+            left: -100,
+            child: _GlowOrb(size: 360, color: Color(0xFFA855F7)),
+          ),
+          const Positioned(
+            top: 200,
+            left: -70,
+            child: _GlowOrb(size: 240, color: Color(0xFF0EA5E9)),
+          ),
+          content,
+        ],
+      ),
+    );
+  }
+}
+
 /// A shared [AuthBackground] gradient plus frosted [GlassCard] and
 /// [GlassTextField] widgets produce the transparent, professional look used
 /// across the login and sign-up screens.

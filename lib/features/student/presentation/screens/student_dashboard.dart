@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/roles.dart';
+import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/stat_card.dart';
 import '../../../auth/application/auth_controller.dart';
 import '../../../auth/domain/auth_state.dart';
 
-/// Student (and parent) dashboard.
-///
-/// Module screens (attendance, timetable, homework, results, fees) are added
-/// in later phases; this shell shows the student's identity and module grid.
+/// Student (and parent) dashboard with transparent glass theme.
 class StudentDashboard extends ConsumerWidget {
   const StudentDashboard({super.key});
 
@@ -24,15 +22,49 @@ class StudentDashboard extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Card(
-          child: ListTile(
-            leading: const CircleAvatar(child: Icon(Icons.school_outlined)),
-            title: Text(user?.displayName ?? 'Student'),
-            subtitle: Text(
-              user?.rollNumber == null
-                  ? 'Roll number unavailable'
-                  : 'Roll #${user!.rollNumber}',
-            ),
+        GlassCard(
+          padding: const EdgeInsets.all(16),
+          borderRadius: 18,
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                child: const Icon(
+                  Icons.school_outlined,
+                  color: Colors.white,
+                  size: 26,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user?.displayName.isEmpty ?? true
+                          ? 'Student'
+                          : user!.displayName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      user?.rollNumber == null
+                          ? 'Roll number unavailable'
+                          : 'Roll #${user!.rollNumber}',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.75),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
@@ -42,29 +74,59 @@ class StudentDashboard extends ConsumerWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
-          childAspectRatio: 1.6,
+          childAspectRatio: 1.5,
           children: const [
-            StatCard(title: 'Attendance', value: '—', icon: Icons.event_note),
-            StatCard(title: 'Fees', value: '—', icon: Icons.payments_outlined),
-            StatCard(title: 'Results', value: '—', icon: Icons.assessment),
-            StatCard(title: 'Homework', value: '—', icon: Icons.book_outlined),
+            StatCard(
+              title: 'Attendance',
+              value: '—',
+              icon: Icons.event_note,
+              color: Color(0xFF6366F1),
+            ),
+            StatCard(
+              title: 'Fees',
+              value: '—',
+              icon: Icons.payments_outlined,
+              color: Color(0xFF10B981),
+            ),
+            StatCard(
+              title: 'Results',
+              value: '—',
+              icon: Icons.assessment,
+              color: Color(0xFFA855F7),
+            ),
+            StatCard(
+              title: 'Homework',
+              value: '—',
+              icon: Icons.book_outlined,
+              color: Color(0xFFF59E0B),
+            ),
           ],
         ),
         const SizedBox(height: 16),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Role',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+        GlassCard(
+          padding: const EdgeInsets.all(18),
+          borderRadius: 18,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Role & Access',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(height: 4),
-                Text('${AppRole.student.label} — parents use this same login.'),
-              ],
-            ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '${AppRole.student.label} — students and parents use this dashboard to track attendance, fees, and academic performance.',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.75),
+                  fontSize: 13,
+                  height: 1.4,
+                ),
+              ),
+            ],
           ),
         ),
       ],
