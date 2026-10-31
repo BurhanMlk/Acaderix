@@ -64,82 +64,105 @@ class ResultsScreen extends ConsumerWidget {
     WidgetRef ref,
     String academyId,
   ) async {
-    final studentIdController = TextEditingController();
-    final obtainedController = TextEditingController();
-    final totalController = TextEditingController(text: '100');
-    final formKey = GlobalKey<FormState>();
-
     final result = await showDialog<ExamResult>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Result'),
-        content: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: studentIdController,
-                decoration: const InputDecoration(
-                  labelText: 'Student roll no.',
-                ),
-                validator: (v) => Validators.required(v, 'Roll no.'),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: obtainedController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Obtained marks'),
-                validator: (v) => Validators.required(v, 'Obtained marks'),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: totalController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Total marks'),
-                validator: (v) => Validators.required(v, 'Total marks'),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              if (!formKey.currentState!.validate()) return;
-              final obtained = double.tryParse(obtainedController.text) ?? 0;
-              final total = double.tryParse(totalController.text) ?? 0;
-              final evaluation = ResultCalculator.evaluate(obtained, total);
-              Navigator.of(context).pop(
-                ExamResult(
-                  id: const Uuid().v4(),
-                  academyId: academyId,
-                  examId: '',
-                  studentId: studentIdController.text.trim(),
-                  obtainedMarks: obtained,
-                  totalMarks: total,
-                  grade: evaluation.label,
-                  passed: evaluation.passed,
-                  isPublished: false,
-                ),
-              );
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
+      builder: (context) => _AddResultDialog(academyId: academyId),
     );
-
-    studentIdController.dispose();
-    obtainedController.dispose();
-    totalController.dispose();
 
     if (result != null) {
       await ref.read(examRepositoryProvider).saveResult(result);
       ref.invalidate(resultsStreamProvider);
     }
+  }
+}
+
+class _AddResultDialog extends StatefulWidget {
+  const _AddResultDialog({required this.academyId});
+
+  final String academyId;
+
+  @override
+  State<_AddResultDialog> createState() => _AddResultDialogState();
+}
+
+class _AddResultDialogState extends State<_AddResultDialog> {
+  final _studentIdController = TextEditingController();
+  final _obtainedController = TextEditingController();
+  final _totalController = TextEditingController(text: '100');
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _studentIdController.dispose();
+    _obtainedController.dispose();
+    _totalController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+    final obtained = double.tryParse(_obtainedController.text) ?? 0;
+    final total = double.tryParse(_totalController.text) ?? 0;
+    final evaluation = ResultCalculator.evaluate(obtained, total);
+
+    Navigator.of(context).pop(
+      ExamResult(
+        id: const Uuid().v4(),
+        academyId: widget.academyId,
+        examId: '',
+        studentId: _studentIdController.text.trim(),
+        obtainedMarks: obtained,
+        totalMarks: total,
+        grade: evaluation.label,
+        passed: evaluation.passed,
+        isPublished: false,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add Result'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _studentIdController,
+              decoration: const InputDecoration(
+                labelText: 'Student roll no.',
+              ),
+              validator: (v) => Validators.required(v, 'Roll no.'),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _obtainedController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Obtained marks'),
+              validator: (v) => Validators.required(v, 'Obtained marks'),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _totalController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Total marks'),
+              validator: (v) => Validators.required(v, 'Total marks'),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _submit,
+          child: const Text('Save'),
+        ),
+      ],
+    );
   }
 }

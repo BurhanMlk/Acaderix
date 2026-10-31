@@ -75,64 +75,103 @@ class FeesScreen extends ConsumerWidget {
     FeeInvoice invoice,
     double outstanding,
   ) async {
-    final amountController = TextEditingController(
-      text: outstanding.toStringAsFixed(0),
-    );
-    final methodController = TextEditingController(text: 'Cash');
-
     final result = await showDialog<FeePayment>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Collect Payment'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: amountController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Amount (PKR)'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: methodController,
-              decoration: const InputDecoration(labelText: 'Method'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              final amount = double.tryParse(amountController.text) ?? 0;
-              if (amount <= 0) return;
-              Navigator.of(context).pop(
-                FeePayment(
-                  id: const Uuid().v4(),
-                  academyId: academyId,
-                  studentId: invoice.studentId,
-                  invoiceId: invoice.id,
-                  amount: amount,
-                  method: methodController.text.trim(),
-                  paidAt: DateTime.now(),
-                ),
-              );
-            },
-            child: const Text('Record'),
-          ),
-        ],
+      builder: (context) => _CollectPaymentDialog(
+        academyId: academyId,
+        invoice: invoice,
+        outstanding: outstanding,
       ),
     );
-
-    amountController.dispose();
-    methodController.dispose();
 
     if (result != null) {
       await ref.read(feeRepositoryProvider).recordPayment(result);
       ref.invalidate(invoicesStreamProvider);
       ref.invalidate(paymentsStreamProvider);
     }
+  }
+}
+
+class _CollectPaymentDialog extends StatefulWidget {
+  const _CollectPaymentDialog({
+    required this.academyId,
+    required this.invoice,
+    required this.outstanding,
+  });
+
+  final String academyId;
+  final FeeInvoice invoice;
+  final double outstanding;
+
+  @override
+  State<_CollectPaymentDialog> createState() => _CollectPaymentDialogState();
+}
+
+class _CollectPaymentDialogState extends State<_CollectPaymentDialog> {
+  late final TextEditingController _amountController;
+  late final TextEditingController _methodController;
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController = TextEditingController(
+      text: widget.outstanding.toStringAsFixed(0),
+    );
+    _methodController = TextEditingController(text: 'Cash');
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _methodController.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final amount = double.tryParse(_amountController.text) ?? 0;
+    if (amount <= 0) return;
+    Navigator.of(context).pop(
+      FeePayment(
+        id: const Uuid().v4(),
+        academyId: widget.academyId,
+        studentId: widget.invoice.studentId,
+        invoiceId: widget.invoice.id,
+        amount: amount,
+        method: _methodController.text.trim(),
+        paidAt: DateTime.now(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Collect Payment'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _amountController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(labelText: 'Amount (PKR)'),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _methodController,
+            decoration: const InputDecoration(labelText: 'Method'),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _submit,
+          child: const Text('Record'),
+        ),
+      ],
+    );
   }
 }

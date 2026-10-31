@@ -71,6 +71,7 @@
 ## Phase 5 — Admission & Student Management ✅ (client complete; secure path pending)
 
 - [x] Students list + admission form
+- [x] In-app Demo Data Seeder (`AcademyDataSeeder`) with on-demand seeding action in `StudentsListScreen` (seeds 5 students, sequential roll numbers 100001–100005, Main branch, faculty staff, daily attendance, fee invoices, fee payments, and exam results)
 - [x] Atomic roll-number allocation (Firestore transaction)
 - [x] Temporary PIN generation + one-time credential slip
 - [x] Student dashboard shell with unified transparent glass theme
@@ -102,13 +103,14 @@
 
 - [x] Secure-by-default Firestore/Storage rules with subscriptions security
 - [x] Privileged Cloud Functions with explicit authorization
-- [x] Comprehensive automated test suite (48 unit & widget tests)
+- [x] Comprehensive automated test suite (54 unit, widget, and end-to-end integration tests)
+  - Full Academy Admin E2E flow (`test/academy_admin_e2e_features_test.dart`): Admissions, Roll number transactions, Roster Search, Attendance Marking, Fee Invoices, Fee Collection, Exams, Grading, and Dashboard 360px mobile view
 - [ ] Granular role/tenant rules + Firebase Emulator tests (next iteration)
 
 ## Validation (latest)
 
 - `flutter analyze` → No issues found! (0 warnings/errors)
-- `flutter test` → 48/48 tests passed!
+- `flutter test` → 54/54 tests passed! (100% success)
 
 ## Notes
 
