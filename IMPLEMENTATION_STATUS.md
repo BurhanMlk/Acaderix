@@ -58,6 +58,15 @@
 ## Phase 4 — Academy Registration & Setup ⏳
 
 - [x] Academy Admin dashboard with transparent glass theme & module navigation
+- [x] Academy Admin Status & Subscription Access Gating (Real-Time):
+  - On login and ongoing session, continuously verify:
+    1. Academy approval status is `active` (not `pending` or `suspended`)
+    2. Subscription renewal date has not expired (`daysRemaining >= 0`)
+    3. Subscription payment status is `paid`
+  - When non-active or payment overdue, gate navigation and display dedicated `AcademyStatusNoticeScreen` (`/academy-status`)
+  - Dedicated Super Admin contact card with phone (`+92 300 1234567`), email, one-tap copy to clipboard, and manual status check button
+  - Real-time reactive stream: automatically routes into dashboard without re-login when Super Admin activates or extends the academy
+  - Auth repository fallback: automatically resolves `academyId` from `academies` by `ownerUid` or `ownerEmail` if unlinked in `users/{uid}`
 - [ ] Multi-step academy registration flow (next iteration)
 
 ## Phase 5 — Admission & Student Management ✅ (client complete; secure path pending)
@@ -94,13 +103,13 @@
 
 - [x] Secure-by-default Firestore/Storage rules with subscriptions security
 - [x] Privileged Cloud Functions with explicit authorization
-- [x] Comprehensive automated test suite (39 unit & widget tests)
+- [x] Comprehensive automated test suite (46 unit & widget tests)
 - [ ] Granular role/tenant rules + Firebase Emulator tests (next iteration)
 
 ## Validation (latest)
 
 - `flutter analyze` → No issues found! (0 warnings/errors)
-- `flutter test` → 39/39 tests passed!
+- `flutter test` → 46/46 tests passed!
 
 ## Notes
 

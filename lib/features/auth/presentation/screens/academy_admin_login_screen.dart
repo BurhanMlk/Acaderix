@@ -7,6 +7,7 @@ import '../../../../core/errors/app_exception.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
+import '../../../academy_admin/application/academy_access_provider.dart';
 import '../../application/auth_controller.dart';
 
 /// Email/password sign in for academy administrators.
@@ -40,7 +41,26 @@ class _AcademyAdminLoginScreenState
       _error = null;
     });
     try {
-      final user = await ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(email: _email.text, password: _password.text);
+      final user = await ref
+          .read(authControllerProvider.notifier)
+          .signInWithEmailAndPassword(
+            email: _email.text,
+            password: _password.text,
+          );
+      if (!mounted) return;
+
+      try {
+        final access = await ref.read(academyAccessProvider.future);
+        if (mounted) {
+          if (access.isActive) {
+            context.go(AppRoutes.academyAdmin);
+          } else {
+            context.go(AppRoutes.academyStatus);
+          }
+          return;
+        }
+      } catch (_) {}
+
       if (mounted) context.go(homeForRole(user.role));
     } on AppException catch (e) {
       setState(() => _error = e.message);

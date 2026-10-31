@@ -31,7 +31,10 @@ import '../features/super_admin/presentation/screens/super_admin_dashboard.dart'
 import '../features/super_admin/presentation/screens/super_admin_reset_password_screen.dart';
 import '../features/super_admin/presentation/screens/super_admin_shell.dart';
 import '../features/super_admin/presentation/screens/subscriptions_screen.dart';
+import '../features/academy_admin/application/academy_access_provider.dart';
+import '../features/academy_admin/domain/academy_access_models.dart';
 import '../features/academy_admin/presentation/screens/academy_admin_shell.dart';
+import '../features/academy_admin/presentation/screens/academy_status_notice_screen.dart';
 import '../features/admissions/presentation/screens/add_student_screen.dart';
 import '../features/admissions/presentation/screens/students_list_screen.dart';
 import '../features/fees/presentation/screens/fees_screen.dart';
@@ -74,6 +77,7 @@ abstract final class AppRoutes {
   static const String platformSettings = '/super-admin/platform-settings';
 
   static const String academyAdmin = '/academy-admin';
+  static const String academyStatus = '/academy-status';
   static const String studentsList = '/academy-admin/students';
   static const String addStudent = '/academy-admin/students/new';
   static const String fees = '/academy-admin/fees';
@@ -132,6 +136,7 @@ final Map<AppRole, Set<String>> _roleRoutes = {
   },
   AppRole.academyAdmin: {
     AppRoutes.academyAdmin,
+    AppRoutes.academyStatus,
     AppRoutes.studentsList,
     AppRoutes.addStudent,
     AppRoutes.fees,
@@ -154,7 +159,11 @@ String homeForRole(AppRole role) => switch (role) {
   AppRole.unauthenticated => AppRoutes.welcome,
 };
 
-String? _redirect(AuthState auth, String location) {
+String? _redirect(
+  AuthState auth,
+  String location, {
+  AcademyAccessInfo? access,
+}) {
   if (auth is AuthUnknown) {
     return location == AppRoutes.splash ? null : AppRoutes.splash;
   }
@@ -168,7 +177,26 @@ String? _redirect(AuthState auth, String location) {
     return _publicRoutes.contains(location) ? null : AppRoutes.welcome;
   }
 
-  final home = homeForRole(user.role);
+  // Gate Academy Admin by academy access status (active vs pending/suspended/expired)
+  if (user.role == AppRole.academyAdmin && access != null) {
+    if (!access.isActive) {
+      if (location != AppRoutes.academyStatus) {
+        return AppRoutes.academyStatus;
+      }
+      return null;
+    } else {
+      if (location == AppRoutes.academyStatus) {
+        return AppRoutes.academyAdmin;
+      }
+    }
+  }
+
+  final home = (user.role == AppRole.academyAdmin &&
+          access != null &&
+          !access.isActive)
+      ? AppRoutes.academyStatus
+      : homeForRole(user.role);
+
   if (_entryRoutes.contains(location)) return home;
 
   final allowed = _roleRoutes[user.role] ?? const <String>{};
@@ -179,13 +207,17 @@ String? _redirect(AuthState auth, String location) {
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
   ref.listen(authControllerProvider, (_, _) => refresh.value++);
+  ref.listen(academyAccessProvider, (_, _) => refresh.value++);
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
     initialLocation: AppRoutes.splash,
     refreshListenable: refresh,
-    redirect: (context, state) =>
-        _redirect(ref.read(authControllerProvider), state.matchedLocation),
+    redirect: (context, state) => _redirect(
+      ref.read(authControllerProvider),
+      state.matchedLocation,
+      access: ref.read(academyAccessProvider).value,
+    ),
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -309,6 +341,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.academyAdmin,
         builder: (context, state) => const AcademyAdminShell(),
+      ),
+      GoRoute(
+        path: AppRoutes.academyStatus,
+        builder: (context, state) {
+          final access = ref.watch(academyAccessProvider).value ??
+              const AcademyAccessInfo(
+                state: AcademyAccessState.pending,
+                academyId: '',
+              );
+          return AcademyStatusNoticeScreen(accessInfo: access);
+        },
       ),
       GoRoute(
         path: AppRoutes.studentsList,

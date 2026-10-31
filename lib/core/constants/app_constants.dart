@@ -18,4 +18,8 @@ abstract final class AppConstants {
 
   /// Length of the temporary student PIN.
   static const int temporaryPinLength = 4;
+
+  /// Default Super Admin / Platform Support contact details.
+  static const String superAdminSupportPhone = '+92 300 1234567';
+  static const String superAdminSupportEmail = 'support@acaderix.com';
 }

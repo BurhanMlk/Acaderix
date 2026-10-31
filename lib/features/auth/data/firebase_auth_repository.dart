@@ -200,6 +200,35 @@ final class FirebaseAuthRepository implements AuthRepository {
 
     final merged = Map<String, dynamic>.of(data);
     if (roleId != null) merged['role'] = roleId;
+
+    if (merged['academyId'] == null &&
+        (roleId == 'academy_admin' || roleId == 'staff')) {
+      try {
+        final query = await _firestore
+            .collection(FirestorePaths.academies)
+            .where('ownerUid', isEqualTo: user.uid)
+            .limit(1)
+            .get();
+        if (query.docs.isNotEmpty) {
+          merged['academyId'] = query.docs.first.id;
+        } else if (user.email != null && user.email!.isNotEmpty) {
+          final queryEmail = await _firestore
+              .collection(FirestorePaths.academies)
+              .where('ownerEmail', isEqualTo: user.email!.trim().toLowerCase())
+              .limit(1)
+              .get();
+          if (queryEmail.docs.isNotEmpty) {
+            merged['academyId'] = queryEmail.docs.first.id;
+          }
+        }
+        if (merged['academyId'] != null) {
+          await _firestore.collection(FirestorePaths.users).doc(user.uid).set({
+            'academyId': merged['academyId'],
+          }, SetOptions(merge: true));
+        }
+      } catch (_) {}
+    }
+
     return _appUserFromDoc(user, merged);
   }
 
