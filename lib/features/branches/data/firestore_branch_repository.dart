@@ -27,6 +27,23 @@ final class FirestoreBranchRepository implements BranchRepository {
         .set(data);
   }
 
+  @override
+  Future<void> update(Branch branch) {
+    final data = toFirestoreData(branch.toJson())..remove('id');
+    return _firestore
+        .collection(FirestorePaths.branches(branch.academyId))
+        .doc(branch.id)
+        .set(data, SetOptions(merge: true));
+  }
+
+  @override
+  Future<void> delete(String academyId, String branchId) {
+    return _firestore
+        .collection(FirestorePaths.branches(academyId))
+        .doc(branchId)
+        .delete();
+  }
+
   Branch _fromDoc(String id, Map<String, dynamic> data) =>
       Branch.fromJson({...data, 'id': id});
 }
