@@ -16,6 +16,7 @@ class AcademyAccessInfo {
     required this.academyId,
     this.academyName = '',
     this.academyCode = '',
+    this.logoUrl = '',
     this.ownerEmail = '',
     this.rawStatus = 'pending',
     this.renewalDate,
@@ -30,6 +31,7 @@ class AcademyAccessInfo {
   final String academyId;
   final String academyName;
   final String academyCode;
+  final String logoUrl;
   final String ownerEmail;
   final String rawStatus; // 'active', 'suspended', 'pending'
   final DateTime? renewalDate;
@@ -50,6 +52,7 @@ class AcademyAccessInfo {
     String? academyId,
     String? academyName,
     String? academyCode,
+    String? logoUrl,
     String? ownerEmail,
     String? rawStatus,
     DateTime? renewalDate,
@@ -64,6 +67,7 @@ class AcademyAccessInfo {
       academyId: academyId ?? this.academyId,
       academyName: academyName ?? this.academyName,
       academyCode: academyCode ?? this.academyCode,
+      logoUrl: logoUrl ?? this.logoUrl,
       ownerEmail: ownerEmail ?? this.ownerEmail,
       rawStatus: rawStatus ?? this.rawStatus,
       renewalDate: renewalDate ?? this.renewalDate,

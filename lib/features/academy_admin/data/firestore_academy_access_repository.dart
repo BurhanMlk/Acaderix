@@ -207,6 +207,12 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
   ) {
     final academyName = academyData['name'] as String? ?? 'Academy';
     final academyCode = academyData['code'] as String? ?? '';
+    final logoUrl = (academyData['logoUrl'] as String? ??
+            academyData['logo'] as String? ??
+            academyData['imageUrl'] as String? ??
+            subData?['logoUrl'] as String? ??
+            '')
+        .trim();
     final ownerEmail = (academyData['ownerEmail'] as String? ??
             academyData['email'] as String? ??
             '')
@@ -222,6 +228,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyId: academyId,
         academyName: academyName,
         academyCode: academyCode,
+        logoUrl: logoUrl,
         ownerEmail: ownerEmail,
         rawStatus: rawStatus,
         planName: planName,
@@ -236,6 +243,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyId: academyId,
         academyName: academyName,
         academyCode: academyCode,
+        logoUrl: logoUrl,
         ownerEmail: ownerEmail,
         rawStatus: rawStatus,
         planName: planName,
@@ -278,6 +286,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyId: academyId,
         academyName: academyName,
         academyCode: academyCode,
+        logoUrl: logoUrl,
         ownerEmail: ownerEmail,
         rawStatus: rawStatus,
         renewalDate: renewalDate,
@@ -295,6 +304,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         academyId: academyId,
         academyName: academyName,
         academyCode: academyCode,
+        logoUrl: logoUrl,
         ownerEmail: ownerEmail,
         rawStatus: rawStatus,
         renewalDate: renewalDate,
@@ -311,6 +321,7 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
       academyId: academyId,
       academyName: academyName,
       academyCode: academyCode,
+      logoUrl: logoUrl,
       ownerEmail: ownerEmail,
       rawStatus: rawStatus,
       renewalDate: renewalDate,

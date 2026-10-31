@@ -69,11 +69,18 @@ class AcademyAdminShell extends ConsumerWidget {
           return AcademyStatusNoticeScreen(accessInfo: access);
         }
 
+        final title = access.academyName.isNotEmpty
+            ? access.academyName
+            : 'Academy Admin';
+        final subtitle = access.academyCode.isNotEmpty
+            ? '${access.academyCode} · ${access.planName} Plan'
+            : 'Manage your academy';
+
         return child ??
-            const RoleShell(
-              title: 'Academy Admin',
-              subtitle: 'Manage your academy',
-              body: AcademyAdminDashboard(),
+            RoleShell(
+              title: title,
+              subtitle: subtitle,
+              body: const AcademyAdminDashboard(),
             );
       },
     );
