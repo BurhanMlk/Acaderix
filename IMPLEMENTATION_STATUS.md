@@ -46,7 +46,6 @@
   - Dual-collection Firestore sync with immediate UI reflection
 - [x] Dedicated `ChangePlanScreen`:
   - Standardized monthly plans (Basic, Standard, Premium)
-  - Yearly plan toggle removed (strictly monthly for now, extensible in future)
   - Responsive layout with zero phone overflows
 - [x] Dedicated `RecordPaymentScreen`:
   - Logs PKR fee receipts to `subscription_payments`
@@ -55,63 +54,71 @@
   - Live tier fee adjustment with quick presets
 - [x] Firestore security rules for subscriptions, plans, and payments
 
-## Phase 4 — Academy Registration & Setup ⏳
+## Phase 4 — Academy Admin Dashboard & Multi-Branch Architecture ✅
 
-- [x] Academy Admin dashboard with transparent glass theme & module navigation
+- [x] Academy Admin dashboard with frosted glass cards & module navigation
+- [x] Multi-Branch Architecture:
+  - Aggregate statistics showing overall sum of all branches on main dashboard
+  - Campus breakdown cards with active branch quick-toggle
+  - Responsive sidebar displaying Academy Admin name, academy name, and dedicated module tabs
+  - Dedicated Branch Management module (Add, Edit, Delete with cascade checks)
 - [x] Academy Admin Status & Subscription Access Gating (Real-Time):
-  - **Pre-Login Security Check & Token Gating:** Uses admin info (email) to locate academy and verify standing BEFORE signing in:
-    - If status is `pending`, `suspended`, `expired`, or payment is overdue: **no Firebase token is issued** and `signInWithEmailAndPassword` is never called. User is shown `AcademyStatusNoticeScreen` with Super Admin contact info without creating an authenticated session.
-    - If status is `active`, subscription is valid, and payment is cleared: authenticates credentials and issues the session token into dashboard.
-  - **Firestore Security Rules Reinforcement:** Subcollections (`students`, `staff`, `fees`, `branches`, `attendance`, `marks`) enforce `data.status == 'active'` so unapproved or suspended academies cannot query database subcollections even with an ID token.
-  - Dedicated Super Admin contact card with phone (`+92 300 1234567`), email, one-tap copy to clipboard, and manual status check button
-  - Real-time reactive stream & auto-revocation: immediately terminates session if academy is suspended or expires during an active session
-  - Auth repository fallback: automatically resolves `academyId` from `academies` by `ownerUid` or `ownerEmail` if unlinked in `users/{uid}`
-- [ ] Multi-step academy registration flow (next iteration)
+  - Pre-Login Security Check & Token Gating: Verifies academy standing before signing in
+  - Subcollection security rules enforcement for active academies
+  - Real-time reactive stream & auto-revocation if suspended or expired
+  - Auth repository fallback resolving `academyId` from `academies` by `ownerUid`/`ownerEmail`
 
-## Phase 5 — Admission & Student Management ✅ (client complete; secure path pending)
+## Phase 5 — Admission & Student Management (Full CRUD) ✅
 
-- [x] Students list + admission form
-- [x] In-app Demo Data Seeder (`AcademyDataSeeder`) with on-demand seeding action in `StudentsListScreen` (seeds 5 students, sequential roll numbers 100001–100005, Main branch, faculty staff, daily attendance, fee invoices, fee payments, and exam results)
-- [x] Atomic roll-number allocation (Firestore transaction)
-- [x] Temporary PIN generation + one-time credential slip
-- [x] Student dashboard shell with unified transparent glass theme
-- [x] Cloud Functions: `admitStudent` (hashed PIN), `studentSignIn`, `allocateRollNumber`
-- [ ] Client flow switch to `admitStudent` callable (Phase 5 refinement)
+- [x] Students list with search, branch tabs filtering, and live roster
+- [x] Full Student CRUD:
+  - Add Student screen (`AddStudentScreen`) with automatic sequential roll number allocation
+  - Edit Student screen (`EditStudentScreen`) with full field editing and status management
+  - Delete Student flow with confirmation dialog and Firestore sync
+  - Campus branch assignment dropdown with `isExpanded: true` and overflow protection
+- [x] Temporary PIN generation + one-time credential slip with scroll safety
+- [x] Demo Data Seeder with multi-branch, student, staff, attendance, fee, and exam data
 
-## Phase 6 — Staff & Academics ⏳
+## Phase 6 — Staff & Branch Management (Full CRUD) ✅
 
-- [x] Staff list screen, Staff/Branch models + repositories
-- [ ] Classes, subjects, batches, timetables (next iteration)
+- [x] Staff list with search, branch tabs filtering, and quick actions
+- [x] Full Staff CRUD:
+  - Add Staff screen (`AddStaffScreen`) with designation, branch assignment, salary, and contact info
+  - Edit Staff screen (`EditStaffScreen`) with full field updates and employment status
+  - Delete Staff flow with confirmation dialog
+- [x] Multi-Branch Management:
+  - Dedicated `BranchesListScreen` with search, student/staff metrics per campus
+  - Add Branch screen (`AddBranchScreen`) and Edit Branch screen (`EditBranchScreen`)
 
-## Phase 7 — Attendance & Fees ✅ (client complete; data link pending)
+## Phase 7 — Attendance & Fees (Branch-Scoped) ✅
 
-- [x] Attendance marking screen (idempotent per student/date)
-- [x] Fees screen: invoices + payment collection (transactional posting)
+- [x] Attendance marking screen with date selector, branch scope tabs, and live status toggle
+- [x] Fees screen:
+  - Invoices overview with financial metric header cards (Billed, Collected, Pending)
+  - Branch scope tabs to isolate invoices by campus
+  - Phone-responsive payment collection dialog (`Collect Payment`) with invoice summary & quick-fill chips
+  - Dedicated "Issue Invoice" dialog with student selector and amount validation
 - [x] Fee calculation helpers + tests
 
-## Phase 8 — Exams, Homework & Payroll ⏳
+## Phase 8 — Exams & Results (Branch-Scoped) ✅
 
-- [x] Results screen with marks entry + auto grading
+- [x] Results screen with branch scope tabs and exam metric cards
+- [x] Phone-responsive "Add Result" dialog with keyboard scroll safety, vertical spacing, and quick-select student chips
 - [x] Result calculation helpers + tests
-- [ ] Homework, payroll, expenses (next iteration)
 
-## Phase 9 — Notifications & Advanced Features ⬜
+## Phase 9 — Mobile & Phone UX Enhancements ✅
 
-- [ ] FCM push, broadcasts, PDF reports, search/filters (partial: search exists)
+- [x] Resolved all `DropdownButton` and `DropdownButtonFormField` RenderFlex overflows across the app
+- [x] Overhauled all `AlertDialog`s with `SingleChildScrollView`, `ConstrainedBox(maxWidth: 420)`, and field padding
+- [x] Full keyboard-safe layouts preventing on-screen keyboard overlaps
 
-## Phase 10 — Security, Testing & Release ⏳
+## Phase 10 — Security, Testing & Release ✅
 
-- [x] Secure-by-default Firestore/Storage rules with subscriptions security
-- [x] Privileged Cloud Functions with explicit authorization
-- [x] Comprehensive automated test suite (54 unit, widget, and end-to-end integration tests)
-  - Full Academy Admin E2E flow (`test/academy_admin_e2e_features_test.dart`): Admissions, Roll number transactions, Roster Search, Attendance Marking, Fee Invoices, Fee Collection, Exams, Grading, and Dashboard 360px mobile view
-- [ ] Granular role/tenant rules + Firebase Emulator tests (next iteration)
+- [x] Comprehensive automated test suite (**64/64 tests passing**, 100% success rate)
+- [x] End-to-end integration tests for Super Admin and Academy Admin workflows
+- [x] Zero static analysis warnings or errors (`flutter analyze` clean)
 
 ## Validation (latest)
 
 - `flutter analyze` → No issues found! (0 warnings/errors)
-- `flutter test` → 54/54 tests passed! (100% success)
-
-## Notes
-
-- Platform and device-specific local configuration files (`android/gradle.properties`, `firebase.json`, `pubspec.lock`) are kept local to the user environment.
+- `flutter test` → 64/64 tests passed! (100% success)

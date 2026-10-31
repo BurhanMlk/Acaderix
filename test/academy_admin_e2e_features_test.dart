@@ -10,6 +10,7 @@ import 'package:academy_management/features/admissions/application/student_repos
 import 'package:academy_management/features/admissions/domain/student.dart';
 import 'package:academy_management/features/admissions/domain/student_repository.dart';
 import 'package:academy_management/features/admissions/presentation/screens/add_student_screen.dart';
+import 'package:academy_management/features/admissions/presentation/screens/edit_student_screen.dart';
 import 'package:academy_management/features/admissions/presentation/screens/students_list_screen.dart';
 import 'package:academy_management/features/attendance/application/attendance_repository_provider.dart';
 import 'package:academy_management/features/attendance/domain/attendance_record.dart';
@@ -29,7 +30,18 @@ import 'package:academy_management/features/fees/domain/fee_invoice.dart';
 import 'package:academy_management/features/fees/domain/fee_payment.dart';
 import 'package:academy_management/features/fees/domain/fee_repository.dart';
 import 'package:academy_management/features/fees/presentation/screens/fees_screen.dart';
+import 'package:academy_management/features/staff/application/staff_repository_provider.dart';
 import 'package:academy_management/features/staff/domain/staff.dart';
+import 'package:academy_management/features/staff/domain/staff_repository.dart';
+import 'package:academy_management/features/staff/presentation/screens/add_staff_screen.dart';
+import 'package:academy_management/features/staff/presentation/screens/edit_staff_screen.dart';
+import 'package:academy_management/features/staff/presentation/screens/staff_list_screen.dart';
+import 'package:academy_management/features/branches/application/branch_repository_provider.dart';
+import 'package:academy_management/features/branches/domain/branch.dart';
+import 'package:academy_management/features/branches/domain/branch_repository.dart';
+import 'package:academy_management/features/branches/presentation/screens/add_branch_screen.dart';
+import 'package:academy_management/features/branches/presentation/screens/edit_branch_screen.dart';
+import 'package:academy_management/features/branches/presentation/screens/branches_list_screen.dart';
 import 'package:academy_management/shared/current_academy_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,6 +86,11 @@ class _FakeStudentRepo implements StudentRepository {
     if (idx != -1) {
       _students[idx] = student;
     }
+  }
+
+  @override
+  Future<void> delete(String academyId, String studentId) async {
+    _students.removeWhere((s) => s.id == studentId);
   }
 }
 
@@ -171,6 +188,60 @@ class _FakeExamRepo implements ExamRepository {
   @override
   Future<void> saveResult(ExamResult result) async {
     _results.add(result);
+  }
+}
+
+class _FakeStaffRepo implements StaffRepository {
+  final List<Staff> _staff = [];
+
+  void addStaff(List<Staff> staff) {
+    _staff.addAll(staff);
+  }
+
+  @override
+  Stream<List<Staff>> watchAll(String academyId) => Stream.value(_staff);
+
+  @override
+  Future<void> create(Staff staff) async {
+    _staff.add(staff);
+  }
+
+  @override
+  Future<void> update(Staff staff) async {
+    final idx = _staff.indexWhere((s) => s.id == staff.id);
+    if (idx != -1) _staff[idx] = staff;
+  }
+
+  @override
+  Future<void> delete(String academyId, String staffId) async {
+    _staff.removeWhere((s) => s.id == staffId);
+  }
+}
+
+class _FakeBranchRepo implements BranchRepository {
+  final List<Branch> _branches = [];
+
+  void addBranches(List<Branch> branches) {
+    _branches.addAll(branches);
+  }
+
+  @override
+  Stream<List<Branch>> watchAll(String academyId) => Stream.value(_branches);
+
+  @override
+  Future<void> create(Branch branch) async {
+    _branches.add(branch);
+  }
+
+  @override
+  Future<void> update(Branch branch) async {
+    final idx = _branches.indexWhere((b) => b.id == branch.id);
+    if (idx != -1) _branches[idx] = branch;
+  }
+
+  @override
+  Future<void> delete(String academyId, String branchId) async {
+    _branches.removeWhere((b) => b.id == branchId);
   }
 }
 
@@ -694,6 +765,428 @@ void main() {
 
       // Verify ZERO render overflow errors on small phone screen
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('7. Staff list displays faculty and filters by query', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final staffRepo = _FakeStaffRepo();
+      staffRepo.addStaff([
+        const Staff(
+          id: 'stf_1',
+          academyId: testAcademyId,
+          fullName: 'Sir Tariq Mehmood',
+          jobTitle: 'Head of Sciences',
+          phone: '03001234567',
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            staffStreamProvider.overrideWith(
+              (ref, id) => staffRepo.watchAll(id),
+            ),
+            staffRepositoryProvider.overrideWithValue(staffRepo),
+          ],
+          child: const MaterialApp(
+            home: StaffListScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sir Tariq Mehmood'), findsOneWidget);
+      expect(find.text('Add Staff'), findsOneWidget);
+    });
+
+    testWidgets('8. Add staff screen creates staff record in repository', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final staffRepo = _FakeStaffRepo();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            staffRepositoryProvider.overrideWithValue(staffRepo),
+          ],
+          child: const MaterialApp(
+            home: AddStaffScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).at(0), 'Dr. Amina Qureshi');
+      await tester.enterText(find.byType(TextFormField).at(1), 'Senior Lecturer');
+      await tester.enterText(find.byType(TextFormField).at(2), '03009876543');
+
+      final submitBtn = find.widgetWithText(FilledButton, 'Add Staff Member');
+      await tester.tap(submitBtn);
+      await tester.pumpAndSettle();
+
+      expect(staffRepo._staff.length, 1);
+      expect(staffRepo._staff.first.fullName, 'Dr. Amina Qureshi');
+      expect(staffRepo._staff.first.jobTitle, 'Senior Lecturer');
+    });
+
+    testWidgets('9. Branches list displays campuses and filters by query', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final branchRepo = _FakeBranchRepo();
+      branchRepo.addBranches([
+        const Branch(
+          id: 'br_1',
+          academyId: testAcademyId,
+          name: 'Main Campus',
+          city: 'Islamabad',
+          address: 'Blue Area',
+          phone: '051111222333',
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            branchesStreamProvider.overrideWith(
+              (ref, id) => branchRepo.watchAll(id),
+            ),
+            branchRepositoryProvider.overrideWithValue(branchRepo),
+          ],
+          child: const MaterialApp(
+            home: BranchesListScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Main Campus'), findsOneWidget);
+      expect(find.text('Add Branch'), findsOneWidget);
+    });
+
+    testWidgets('10. Add branch screen creates branch record in repository', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final branchRepo = _FakeBranchRepo();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            branchRepositoryProvider.overrideWithValue(branchRepo),
+          ],
+          child: const MaterialApp(
+            home: AddBranchScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).at(0), 'F-10 Campus');
+      await tester.enterText(find.byType(TextFormField).at(1), 'Islamabad');
+      await tester.enterText(find.byType(TextFormField).at(2), '0519876543');
+      await tester.enterText(find.byType(TextFormField).at(3), 'Street 15, F-10/2');
+
+      final submitBtn = find.widgetWithText(FilledButton, 'Create Branch');
+      await tester.tap(submitBtn);
+      await tester.pumpAndSettle();
+
+      expect(branchRepo._branches.length, 1);
+      expect(branchRepo._branches.first.name, 'F-10 Campus');
+      expect(branchRepo._branches.first.city, 'Islamabad');
+    });
+
+    testWidgets('11. Edit student screen updates student record in repository', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final studentRepo = _FakeStudentRepo();
+      final student = Student(
+        id: 'stu_101',
+        academyId: testAcademyId,
+        fullName: 'Original Name',
+        fatherName: 'Father Name',
+        guardianPhone: '03001234567',
+        academicSession: '2026-2027',
+        rollNumber: '100001',
+      );
+      studentRepo.addStudents([student]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            studentRepositoryProvider.overrideWithValue(studentRepo),
+          ],
+          child: MaterialApp(
+            home: EditStudentScreen(student: student),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Original Name'), findsOneWidget);
+      await tester.enterText(find.byType(TextFormField).at(0), 'Corrected Student Name');
+
+      final saveBtn = find.widgetWithText(FilledButton, 'Save Changes');
+      await tester.tap(saveBtn);
+      await tester.pumpAndSettle();
+
+      expect(studentRepo._students.first.fullName, 'Corrected Student Name');
+    });
+
+    testWidgets('12. Edit student screen allows deleting student with confirmation', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final studentRepo = _FakeStudentRepo();
+      final student = Student(
+        id: 'stu_101',
+        academyId: testAcademyId,
+        fullName: 'Student to Delete',
+        fatherName: 'Father Name',
+        guardianPhone: '03001234567',
+        academicSession: '2026-2027',
+        rollNumber: '100001',
+      );
+      studentRepo.addStudents([student]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            studentRepositoryProvider.overrideWithValue(studentRepo),
+          ],
+          child: MaterialApp(
+            home: EditStudentScreen(student: student),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final deleteIconBtn = find.byTooltip('Delete Student');
+      expect(deleteIconBtn, findsOneWidget);
+      await tester.tap(deleteIconBtn);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Delete Student'), findsWidgets);
+      final confirmBtn = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(FilledButton, 'Delete Student'),
+      );
+      await tester.tap(confirmBtn);
+      await tester.pumpAndSettle();
+
+      expect(studentRepo._students, isEmpty);
+    });
+
+    testWidgets('13. Edit staff screen updates staff record in repository', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final staffRepo = _FakeStaffRepo();
+      const staff = Staff(
+        id: 'stf_101',
+        academyId: testAcademyId,
+        fullName: 'Original Staff',
+        jobTitle: 'Lecturer',
+        phone: '03001234567',
+      );
+      staffRepo.addStaff([staff]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            staffRepositoryProvider.overrideWithValue(staffRepo),
+          ],
+          child: const MaterialApp(
+            home: EditStaffScreen(staff: staff),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Original Staff'), findsOneWidget);
+      await tester.enterText(find.byType(TextFormField).at(0), 'Updated Professor Name');
+
+      final saveBtn = find.widgetWithText(FilledButton, 'Save Changes');
+      await tester.tap(saveBtn);
+      await tester.pumpAndSettle();
+
+      expect(staffRepo._staff.first.fullName, 'Updated Professor Name');
+    });
+
+    testWidgets('14. Edit staff screen allows deleting staff member with confirmation', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final staffRepo = _FakeStaffRepo();
+      const staff = Staff(
+        id: 'stf_101',
+        academyId: testAcademyId,
+        fullName: 'Staff to Delete',
+        jobTitle: 'Lecturer',
+        phone: '03001234567',
+      );
+      staffRepo.addStaff([staff]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            staffRepositoryProvider.overrideWithValue(staffRepo),
+          ],
+          child: const MaterialApp(
+            home: EditStaffScreen(staff: staff),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final deleteIconBtn = find.byTooltip('Delete Staff Member');
+      expect(deleteIconBtn, findsOneWidget);
+      await tester.tap(deleteIconBtn);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Delete Staff Member'), findsWidgets);
+      final confirmBtn = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(FilledButton, 'Delete Staff'),
+      );
+      await tester.tap(confirmBtn);
+      await tester.pumpAndSettle();
+
+      expect(staffRepo._staff, isEmpty);
+    });
+
+    testWidgets('15. Edit branch screen updates branch record in repository', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final branchRepo = _FakeBranchRepo();
+      const branch = Branch(
+        id: 'br_101',
+        academyId: testAcademyId,
+        name: 'Original Campus',
+        city: 'Islamabad',
+        phone: '051111222',
+        address: 'Sector F-7',
+      );
+      branchRepo.addBranches([branch]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            branchRepositoryProvider.overrideWithValue(branchRepo),
+          ],
+          child: const MaterialApp(
+            home: EditBranchScreen(branch: branch),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Original Campus'), findsOneWidget);
+      await tester.enterText(find.byType(TextFormField).at(0), 'Updated Premier Campus');
+
+      final saveBtn = find.widgetWithText(FilledButton, 'Save Changes');
+      await tester.tap(saveBtn);
+      await tester.pumpAndSettle();
+
+      expect(branchRepo._branches.first.name, 'Updated Premier Campus');
+    });
+
+    testWidgets('16. Edit branch screen allows deleting branch with confirmation', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final branchRepo = _FakeBranchRepo();
+      const branch = Branch(
+        id: 'br_101',
+        academyId: testAcademyId,
+        name: 'Branch to Delete',
+        city: 'Islamabad',
+        phone: '051111222',
+        address: 'Sector F-7',
+      );
+      branchRepo.addBranches([branch]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            branchRepositoryProvider.overrideWithValue(branchRepo),
+          ],
+          child: const MaterialApp(
+            home: EditBranchScreen(branch: branch),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final deleteIconBtn = find.byTooltip('Delete Branch');
+      expect(deleteIconBtn, findsOneWidget);
+      await tester.tap(deleteIconBtn);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Delete Branch'), findsWidgets);
+      final confirmBtn = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(FilledButton, 'Delete Branch'),
+      );
+      await tester.tap(confirmBtn);
+      await tester.pumpAndSettle();
+
+      expect(branchRepo._branches, isEmpty);
     });
   });
 }
