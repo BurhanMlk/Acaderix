@@ -7,4 +7,6 @@ abstract interface class AcademyRepository {
   Future<Academy?> getById(String id);
   Future<void> create(Academy academy);
   Future<void> updateStatus(String id, String status);
+  Future<void> updateOwnerEmail(String id, String newEmail);
+  Future<void> delete(String id);
 }
