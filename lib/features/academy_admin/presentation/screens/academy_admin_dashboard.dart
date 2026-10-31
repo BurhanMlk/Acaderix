@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/widgets/stat_card.dart';
-import '../../../../shared/academy_logo.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../application/academy_access_provider.dart';
 import '../../application/academy_admin_providers.dart';
@@ -33,110 +32,18 @@ class AcademyAdminDashboard extends ConsumerWidget {
     final staff = ref.watch(staffStreamProvider(academyId));
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       children: [
-        // Academy Profile Header with Original Logo
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.15),
-                ),
-              ),
-              child: Row(
-                children: [
-                  AcademyLogo(
-                    size: 54,
-                    borderRadius: 14,
-                    logoUrl: access?.logoUrl,
-                    academyName: access?.academyName,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          access?.academyName.isNotEmpty == true
-                              ? access!.academyName
-                              : 'Academy Dashboard',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 6),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: [
-                            if (access?.academyCode.isNotEmpty == true)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF6366F1)
-                                      .withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: const Color(0xFF818CF8)
-                                        .withValues(alpha: 0.4),
-                                  ),
-                                ),
-                                child: Text(
-                                  access!.academyCode,
-                                  style: const TextStyle(
-                                    color: Color(0xFF818CF8),
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF10B981)
-                                    .withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: const Color(0xFF10B981)
-                                      .withValues(alpha: 0.4),
-                                ),
-                              ),
-                              child: Text(
-                                '${access?.planName ?? "Standard"} Plan',
-                                style: const TextStyle(
-                                  color: Color(0xFF34D399),
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+        const Text(
+          'Overview',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.3,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,

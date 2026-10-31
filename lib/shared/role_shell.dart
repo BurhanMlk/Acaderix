@@ -32,23 +32,31 @@ class RoleShell extends ConsumerWidget {
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
-                  fontSize: 18,
+                  fontSize: 17,
                 ),
               ),
-              if (subtitle != null)
+              if (subtitle != null) ...[
+                const SizedBox(height: 2),
                 Text(
                   subtitle!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
+              ],
             ],
           ),
           actions: [
