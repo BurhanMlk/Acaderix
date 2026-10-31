@@ -16,30 +16,61 @@ service cloud.firestore {
 
     function isSuperAdmin() {
       return isSignedIn()
-        && exists(userProfile())
-        && get(userProfile()).data.role == 'super_admin';
+        && (
+          request.auth.token.role == 'super_admin' ||
+          (exists(userProfile()) && get(userProfile()).data.role == 'super_admin')
+        );
     }
 
-    // Each signed-in user owns their profile document.
+    // Each signed-in user owns their profile document; Super Admin manages all.
     match /users/{uid} {
-      allow read, write: if isSignedIn() && request.auth.uid == uid;
+      allow read: if isSuperAdmin() || (isSignedIn() && request.auth.uid == uid);
+      allow write: if isSuperAdmin() || (isSignedIn() && request.auth.uid == uid);
+      allow delete: if isSuperAdmin();
     }
 
     // Academies: an owner creates/updates their own; Super Admin manages all.
     match /academies/{academyId} {
       allow create: if isSignedIn()
         && request.resource.data.ownerUid == request.auth.uid;
-      allow read: if isSignedIn()
-        && (resource.data.ownerUid == request.auth.uid || isSuperAdmin());
-      allow update: if isSignedIn()
-        && (resource.data.ownerUid == request.auth.uid || isSuperAdmin());
+      allow read: if isSuperAdmin()
+        || (isSignedIn() && resource.data.ownerUid == request.auth.uid);
+      allow update: if isSuperAdmin()
+        || (isSignedIn() && resource.data.ownerUid == request.auth.uid);
       allow delete: if isSuperAdmin();
+
+      // All subcollections under an academy (students, staff, branches, fees, attendance, etc.)
+      match /{subcollection}/{docId=**} {
+        allow read, write, delete: if isSuperAdmin()
+          || (isSignedIn() && get(/databases/$(database)/documents/academies/$(academyId)).data.ownerUid == request.auth.uid);
+      }
     }
 
     // Academy codes map a human-friendly code to an academy id.
     match /academy_codes/{code} {
       allow create: if isSignedIn();
       allow read: if isSignedIn();
+      allow delete: if isSuperAdmin();
+    }
+
+    // Subscriptions: Super Admin manages all; Academy Admin can read their own.
+    match /subscriptions/{subscriptionId} {
+      allow read, write, delete: if isSuperAdmin();
+      allow read: if isSignedIn()
+        && (exists(userProfile()) && resource.data.academyId == get(userProfile()).data.academyId);
+    }
+
+    // Subscription Plans: Anyone authenticated can read; Super Admin can manage.
+    match /subscription_plans/{planId} {
+      allow read: if isSignedIn();
+      allow write, delete: if isSuperAdmin();
+    }
+
+    // Subscription Payments: Super Admin manages all; Academy Admin can read their own.
+    match /subscription_payments/{paymentId} {
+      allow read, write, delete: if isSuperAdmin();
+      allow read: if isSignedIn()
+        && (exists(userProfile()) && resource.data.academyId == get(userProfile()).data.academyId);
     }
 
     // -------------------------------------------------------------------------

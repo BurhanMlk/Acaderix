@@ -7,6 +7,7 @@ import '../core/constants/roles.dart';
 import '../features/auth/application/auth_controller.dart';
 import '../features/auth/domain/auth_state.dart';
 import '../features/auth/presentation/screens/academy_admin_login_screen.dart';
+import '../features/auth/presentation/screens/super_admin_login_screen.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../features/auth/presentation/screens/login_selection_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
@@ -15,10 +16,21 @@ import '../features/auth/presentation/screens/student_login_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/onboarding/presentation/screens/splash_screen.dart';
 import '../features/onboarding/presentation/screens/welcome_screen.dart';
+import '../features/super_admin/domain/academy.dart';
+import '../features/super_admin/domain/subscription_models.dart';
 import '../features/super_admin/presentation/screens/academies_list_screen.dart';
+import '../features/super_admin/presentation/screens/academy_admin_reset_password_screen.dart';
+import '../features/super_admin/presentation/screens/academy_details_screen.dart';
+import '../features/super_admin/presentation/screens/change_plan_screen.dart';
+import '../features/super_admin/presentation/screens/edit_plan_price_screen.dart';
+import '../features/super_admin/presentation/screens/extend_subscription_screen.dart';
+import '../features/super_admin/presentation/screens/platform_settings_screen.dart';
 import '../features/super_admin/presentation/screens/coming_soon_screen.dart';
+import '../features/super_admin/presentation/screens/record_payment_screen.dart';
 import '../features/super_admin/presentation/screens/super_admin_dashboard.dart';
+import '../features/super_admin/presentation/screens/super_admin_reset_password_screen.dart';
 import '../features/super_admin/presentation/screens/super_admin_shell.dart';
+import '../features/super_admin/presentation/screens/subscriptions_screen.dart';
 import '../features/academy_admin/presentation/screens/academy_admin_shell.dart';
 import '../features/admissions/presentation/screens/add_student_screen.dart';
 import '../features/admissions/presentation/screens/students_list_screen.dart';
@@ -38,13 +50,25 @@ abstract final class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String academyAdminLogin = '/login/admin';
+  static const String superAdminLogin = '/login/super-admin';
   static const String staffLogin = '/login/staff';
   static const String studentLogin = '/login/student';
   static const String forgotPassword = '/forgot-password';
 
   static const String superAdmin = '/super-admin';
   static const String academiesList = '/super-admin/academies';
+  static const String academyDetails = '/super-admin/academies/details';
+  static const String academyAdminResetPassword =
+      '/super-admin/academies/reset-password';
+  static const String superAdminResetPassword = '/super-admin/reset-password';
   static const String subscriptions = '/super-admin/subscriptions';
+  static const String recordPayment =
+      '/super-admin/subscriptions/record-payment';
+  static const String changePlan = '/super-admin/subscriptions/change-plan';
+  static const String extendSubscription =
+      '/super-admin/subscriptions/extend';
+  static const String editPlanPrice =
+      '/super-admin/subscriptions/edit-plan-price';
   static const String broadcasts = '/super-admin/broadcasts';
   static const String supportTickets = '/super-admin/support-tickets';
   static const String platformSettings = '/super-admin/platform-settings';
@@ -69,6 +93,7 @@ const Set<String> _publicRoutes = {
   AppRoutes.login,
   AppRoutes.register,
   AppRoutes.academyAdminLogin,
+  AppRoutes.superAdminLogin,
   AppRoutes.staffLogin,
   AppRoutes.studentLogin,
   AppRoutes.forgotPassword,
@@ -81,6 +106,10 @@ const Set<String> _entryRoutes = {
   AppRoutes.onboarding,
   AppRoutes.login,
   AppRoutes.register,
+  AppRoutes.academyAdminLogin,
+  AppRoutes.superAdminLogin,
+  AppRoutes.staffLogin,
+  AppRoutes.studentLogin,
 };
 
 /// Routes each role is permitted to visit. This is a client-side convenience
@@ -89,7 +118,14 @@ final Map<AppRole, Set<String>> _roleRoutes = {
   AppRole.superAdmin: {
     AppRoutes.superAdmin,
     AppRoutes.academiesList,
+    AppRoutes.academyDetails,
+    AppRoutes.academyAdminResetPassword,
+    AppRoutes.superAdminResetPassword,
     AppRoutes.subscriptions,
+    AppRoutes.recordPayment,
+    AppRoutes.changePlan,
+    AppRoutes.extendSubscription,
+    AppRoutes.editPlanPrice,
     AppRoutes.broadcasts,
     AppRoutes.supportTickets,
     AppRoutes.platformSettings,
@@ -176,6 +212,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AcademyAdminLoginScreen(),
       ),
       GoRoute(
+        path: AppRoutes.superAdminLogin,
+        builder: (context, state) => const SuperAdminLoginScreen(),
+      ),
+      GoRoute(
         path: AppRoutes.staffLogin,
         builder: (context, state) => const StaffLoginScreen(),
       ),
@@ -202,8 +242,55 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const AcademiesListScreen(),
           ),
           GoRoute(
+            path: AppRoutes.academyDetails,
+            builder: (context, state) => AcademyDetailsScreen(
+              initialAcademy: state.extra as Academy?,
+              academyId: state.uri.queryParameters['id'],
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.academyAdminResetPassword,
+            builder: (context, state) => AcademyAdminResetPasswordScreen(
+              initialAcademy: state.extra as Academy?,
+              academyId: state.uri.queryParameters['id'],
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.superAdminResetPassword,
+            builder: (context, state) =>
+                const SuperAdminResetPasswordScreen(),
+          ),
+          GoRoute(
             path: AppRoutes.subscriptions,
-            builder: (context, state) => const ComingSoonScreen(),
+            builder: (context, state) => const SubscriptionsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.recordPayment,
+            builder: (context, state) => RecordPaymentScreen(
+              initialSubscription: state.extra as AcademySubscription?,
+              academyId: state.uri.queryParameters['academyId'],
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.changePlan,
+            builder: (context, state) => ChangePlanScreen(
+              subscription: state.extra as AcademySubscription?,
+              academyId: state.uri.queryParameters['academyId'],
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.extendSubscription,
+            builder: (context, state) => ExtendSubscriptionScreen(
+              subscription: state.extra as AcademySubscription?,
+              academyId: state.uri.queryParameters['academyId'],
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.editPlanPrice,
+            builder: (context, state) => EditPlanPriceScreen(
+              plan: state.extra as SubscriptionPlan?,
+              planId: state.uri.queryParameters['planId'],
+            ),
           ),
           GoRoute(
             path: AppRoutes.broadcasts,
@@ -215,7 +302,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: AppRoutes.platformSettings,
-            builder: (context, state) => const ComingSoonScreen(),
+            builder: (context, state) => const PlatformSettingsScreen(),
           ),
         ],
       ),

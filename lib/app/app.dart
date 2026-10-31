@@ -6,7 +6,7 @@ import '../core/constants/app_constants.dart';
 import '../core/theme/app_theme.dart';
 import 'router.dart';
 
-/// Root application widget.
+/// Root application widget with centralized Glassmorphism theme.
 class AcademyApp extends ConsumerWidget {
   const AcademyApp({super.key});
 
@@ -19,7 +19,7 @@ class AcademyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.dark,
       routerConfig: router,
       locale: const Locale('en'),
       supportedLocales: const [Locale('en')],
