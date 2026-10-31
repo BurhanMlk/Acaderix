@@ -40,12 +40,8 @@ class _AcademyAdminLoginScreenState
       _error = null;
     });
     try {
-      await ref
-          .read(authControllerProvider.notifier)
-          .signInWithEmailAndPassword(
-            email: _email.text,
-            password: _password.text,
-          );
+      final user = await ref.read(authControllerProvider.notifier).signInWithEmailAndPassword(email: _email.text, password: _password.text);
+      if (mounted) context.go(homeForRole(user.role));
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } catch (_) {

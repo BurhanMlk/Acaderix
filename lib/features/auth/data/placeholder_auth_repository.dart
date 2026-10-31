@@ -70,4 +70,10 @@ final class PlaceholderAuthRepository implements AuthRepository {
       code: 'firebase-not-configured',
     );
   }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {}
 }

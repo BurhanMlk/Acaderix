@@ -16,6 +16,11 @@ class _LoginOption {
 
 const List<_LoginOption> _options = [
   _LoginOption(
+    AppRole.superAdmin,
+    Icons.admin_panel_settings_outlined,
+    'Platform management & global controls',
+  ),
+  _LoginOption(
     AppRole.academyAdmin,
     Icons.apartment_outlined,
     'Manage your academy end to end',
@@ -111,7 +116,8 @@ class _RoleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final route = switch (option.role) {
-      AppRole.superAdmin || AppRole.academyAdmin => AppRoutes.academyAdminLogin,
+      AppRole.superAdmin => AppRoutes.superAdminLogin,
+      AppRole.academyAdmin => AppRoutes.academyAdminLogin,
       AppRole.staff => AppRoutes.staffLogin,
       AppRole.student => AppRoutes.studentLogin,
       AppRole.unauthenticated => AppRoutes.login,

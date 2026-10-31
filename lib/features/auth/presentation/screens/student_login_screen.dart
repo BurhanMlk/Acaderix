@@ -1,3 +1,4 @@
+import '../../../../app/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -39,13 +40,16 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
       _error = null;
     });
     try {
-      await ref
+      final user = await ref
           .read(authControllerProvider.notifier)
           .signInAsStudent(
             academyCode: _academyCode.text.trim().toUpperCase(),
             rollNumber: _rollNumber.text.trim(),
             pin: _pin.text.trim(),
           );
+      if (mounted) {
+        context.go(homeForRole(user.role));
+      }
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } catch (_) {

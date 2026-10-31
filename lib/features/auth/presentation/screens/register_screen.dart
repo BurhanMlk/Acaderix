@@ -144,82 +144,54 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: GlassTextField(
-                          controller: _academyName,
-                          label: 'Academy Name *',
-                          icon: Icons.business_outlined,
-                          textInputAction: TextInputAction.next,
-                          validator: (v) =>
-                              Validators.required(v, 'Academy name'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: GlassTextField(
-                          controller: _address,
-                          label: 'Address *',
-                          icon: Icons.location_on_outlined,
-                          textInputAction: TextInputAction.next,
-                          validator: (v) => Validators.required(v, 'Address'),
-                        ),
-                      ),
-                    ],
+                  GlassTextField(
+                    controller: _academyName,
+                    label: 'Academy Name *',
+                    icon: Icons.business_outlined,
+                    textInputAction: TextInputAction.next,
+                    validator: (v) => Validators.required(v, 'Academy name'),
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: GlassTextField(
-                          controller: _email,
-                          label: 'Email *',
-                          icon: Icons.mail_outline,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          validator: Validators.email,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: GlassTextField(
-                          controller: _ownerName,
-                          label: 'Academy Head',
-                          icon: Icons.person_outline,
-                          textInputAction: TextInputAction.next,
-                        ),
-                      ),
-                    ],
+                  GlassTextField(
+                    controller: _address,
+                    label: 'Address *',
+                    icon: Icons.location_on_outlined,
+                    textInputAction: TextInputAction.next,
+                    validator: (v) => Validators.required(v, 'Address'),
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: GlassTextField(
-                          controller: _cnic,
-                          label: 'CNIC',
-                          icon: Icons.badge_outlined,
-                          keyboardType: TextInputType.number,
-                          textInputAction: TextInputAction.next,
-                          validator: Validators.cnic,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: GlassTextField(
-                          controller: _contact,
-                          label: 'Contact Number',
-                          icon: Icons.phone_outlined,
-                          keyboardType: TextInputType.phone,
-                          textInputAction: TextInputAction.next,
-                          validator: Validators.phone,
-                        ),
-                      ),
-                    ],
+                  GlassTextField(
+                    controller: _email,
+                    label: 'Email *',
+                    icon: Icons.mail_outline,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: Validators.email,
+                  ),
+                  const SizedBox(height: 16),
+                  GlassTextField(
+                    controller: _ownerName,
+                    label: 'Academy Head',
+                    icon: Icons.person_outline,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  const SizedBox(height: 16),
+                  GlassTextField(
+                    controller: _cnic,
+                    label: 'CNIC',
+                    icon: Icons.badge_outlined,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    validator: Validators.cnic,
+                  ),
+                  const SizedBox(height: 16),
+                  GlassTextField(
+                    controller: _contact,
+                    label: 'Contact Number',
+                    icon: Icons.phone_outlined,
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                    validator: Validators.phone,
                   ),
                   const SizedBox(height: 16),
                   GlassTextField(

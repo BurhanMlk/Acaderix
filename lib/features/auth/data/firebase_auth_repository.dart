@@ -51,7 +51,7 @@ final class FirebaseAuthRepository implements AuthRepository {
       if (user == null) {
         throw const AuthException('Unable to complete sign in.');
       }
-      return _toAppUser(user);
+      return await _toAppUser(user);
     } on FirebaseAuthException catch (e) {
       throw _mapFirebaseAuthException(e);
     }
@@ -71,7 +71,7 @@ final class FirebaseAuthRepository implements AuthRepository {
       if (user == null) {
         throw const AuthException('Unable to create account.');
       }
-      return _toAppUser(user);
+      return await _toAppUser(user);
     } on FirebaseAuthException catch (e) {
       throw _mapFirebaseAuthException(e);
     }
@@ -83,7 +83,7 @@ final class FirebaseAuthRepository implements AuthRepository {
     if (user == null) {
       throw const AuthException('No signed-in user.');
     }
-    return _toAppUser(user);
+    return await _toAppUser(user);
   }
 
   @override
@@ -105,8 +105,41 @@ final class FirebaseAuthRepository implements AuthRepository {
       if (user == null) {
         throw const AuthException('Unable to complete student sign in.');
       }
-      return _toAppUser(user);
+      return await _toAppUser(user);
     } on FirebaseAuthException catch (e) {
+      throw _mapFirebaseAuthException(e);
+    }
+  }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null || user.email == null) {
+      throw const AuthException('No user is currently signed in.');
+    }
+    if (newPassword.length < 8) {
+      throw const AuthException(
+        'New password must be at least 8 characters.',
+        code: 'weak-password',
+      );
+    }
+    try {
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        throw const AuthException(
+          'Current password is incorrect.',
+          code: 'wrong-password',
+        );
+      }
       throw _mapFirebaseAuthException(e);
     }
   }
@@ -142,11 +175,32 @@ final class FirebaseAuthRepository implements AuthRepository {
   }
 
   Future<AppUser> _toAppUser(User user) async {
-    final snapshot = await _firestore
-        .collection(FirestorePaths.users)
-        .doc(user.uid)
-        .get();
-    return _appUserFromDoc(user, snapshot.data() ?? const {});
+    final tokenResult = await user.getIdTokenResult();
+    final claimRole = tokenResult.claims?['role'] as String?;
+
+    Map<String, dynamic> data = const {};
+    try {
+      final snapshot = await _firestore
+          .collection(FirestorePaths.users)
+          .doc(user.uid)
+          .get();
+      data = snapshot.data() ?? const {};
+    } catch (_) {}
+
+    final roleId = (data['role'] as String?) ?? claimRole;
+
+    if (data.isEmpty && roleId != null) {
+      try {
+        await _firestore.collection(FirestorePaths.users).doc(user.uid).set({
+          'email': user.email ?? '',
+          'role': roleId,
+        }, SetOptions(merge: true));
+      } catch (_) {}
+    }
+
+    final merged = Map<String, dynamic>.of(data);
+    if (roleId != null) merged['role'] = roleId;
+    return _appUserFromDoc(user, merged);
   }
 
   AppUser _appUserFromDoc(User user, Map<String, dynamic> data) {

@@ -46,4 +46,10 @@ abstract interface class AuthRepository {
 
   /// Sends a password reset email for the given address.
   Future<void> sendPasswordResetEmail(String email);
+
+  /// Changes the signed-in user's password after verifying the old password.
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
 }

@@ -67,6 +67,17 @@ class AuthController extends Notifier<AuthState> {
     return _repository.sendPasswordResetEmail(email);
   }
 
+  /// Changes the signed-in user's password with old password verification.
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) {
+    return _repository.changePassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    );
+  }
+
   /// Registers a new academy and provisions its Academy Admin.
   ///
   /// Creates the auth account, uploads the optional logo, writes the academy +
