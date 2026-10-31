@@ -7,28 +7,57 @@
 ## Phase 1 — Project Foundation ✅
 
 - [x] Flutter Android project, dependencies, feature-first structure
-- [x] Material 3 theme, Riverpod, GoRouter with role-aware redirects
+- [x] Material 3 unified dark glass theme with brand gradients across all screens
+- [x] Centralized transparent glass styling across all roles (Super Admin, Academy Admin, Staff, Student)
+- [x] Riverpod state management & GoRouter with role-aware redirects
 - [x] Firebase init (offline mode until configured)
 - [x] Reusable widgets, splash/welcome/onboarding/login-selection, role shells
 - [x] Freezed models, Cloud Functions skeleton, secure-by-default rules
 - [x] `flutter analyze` clean, `flutter test` passing
 
-## Phase 2 — Authentication ✅ (client complete; Firebase link pending)
+## Phase 2 — Authentication & Access Control ✅
 
 - [x] Firebase Auth repository (email/password + custom-token student sign-in)
+- [x] Super Admin login screen + credentials auth
 - [x] Academy admin / staff / student login screens + forgot password
+- [x] Academy Admin password reset via direct reset link (no Blaze plan requirement)
+- [x] Super Admin dedicated password change screen
 - [x] Role-aware routing with per-role route guards
-- [ ] End-to-end login requires `flutterfire configure` + deployed claims
 
-## Phase 3 — Super Admin ✅ (client complete; data link pending)
+## Phase 3 — Super Admin Operations ✅
 
-- [x] Super Admin dashboard with live academy statistics
-- [x] Academies list with search, filter, approve/suspend actions
-- [ ] Subscription plans, billing, broadcasts, audit logs (next iteration)
+- [x] Super Admin dashboard with live academy statistics & real-time streams
+- [x] Mobile navigation drawer with auto-close on selection
+- [x] Academies list with real-time search, filter, approve/suspend actions
+- [x] Dedicated Academy Details full screen (replacing mobile dialogs)
+- [x] Academy status toggle (Active / Suspended) with instant Firestore updates
+- [x] Dedicated Academy deletion flow with confirmation and cascade cleanup
+- [x] Dedicated Academy Admin password reset screen
+
+## Phase 3.1 — Platform Subscriptions & Billing ✅
+
+- [x] Dual-collection Firestore real-time synchronization (`academies` & `subscriptions`)
+- [x] Domain models: `SubscriptionPlan`, `AcademySubscription`, `SubscriptionPayment`
+- [x] Subscriptions overview screen with real-time metrics (Monthly Revenue, Active, Expiring, Expired)
+- [x] Non-overflowing responsive TabBar for mobile screens (`Academies`, `Plans`, `Payments`)
+- [x] Dedicated `ExtendSubscriptionScreen`:
+  - Quick duration presets (+1, +2, +3, +6 months)
+  - Custom dark theme date picker
+  - Dual-collection Firestore sync with immediate UI reflection
+- [x] Dedicated `ChangePlanScreen`:
+  - Standardized monthly plans (Basic, Standard, Premium)
+  - Yearly plan toggle removed (strictly monthly for now, extensible in future)
+  - Responsive layout with zero phone overflows
+- [x] Dedicated `RecordPaymentScreen`:
+  - Logs PKR fee receipts to `subscription_payments`
+  - Automatically extends subscription duration (+30d) and activates status
+- [x] Dedicated `EditPlanPriceScreen`:
+  - Live tier fee adjustment with quick presets
+- [x] Firestore security rules for subscriptions, plans, and payments
 
 ## Phase 4 — Academy Registration & Setup ⏳
 
-- [x] Academy Admin dashboard with module navigation
+- [x] Academy Admin dashboard with transparent glass theme & module navigation
 - [ ] Multi-step academy registration flow (next iteration)
 
 ## Phase 5 — Admission & Student Management ✅ (client complete; secure path pending)
@@ -36,9 +65,9 @@
 - [x] Students list + admission form
 - [x] Atomic roll-number allocation (Firestore transaction)
 - [x] Temporary PIN generation + one-time credential slip
-- [x] Student dashboard shell
+- [x] Student dashboard shell with unified transparent glass theme
 - [x] Cloud Functions: `admitStudent` (hashed PIN), `studentSignIn`, `allocateRollNumber`
-- [ ] Client flow must be switched to `admitStudent` callable (Phase 5 refinement)
+- [ ] Client flow switch to `admitStudent` callable (Phase 5 refinement)
 
 ## Phase 6 — Staff & Academics ⏳
 
@@ -63,18 +92,16 @@
 
 ## Phase 10 — Security, Testing & Release ⏳
 
-- [x] Secure-by-default Firestore/Storage rules
+- [x] Secure-by-default Firestore/Storage rules with subscriptions security
 - [x] Privileged Cloud Functions with explicit authorization
+- [x] Comprehensive automated test suite (39 unit & widget tests)
 - [ ] Granular role/tenant rules + Firebase Emulator tests (next iteration)
 
 ## Validation (latest)
 
-- `flutter analyze` → No issues found
-- `flutter test` → 17/17 passed
+- `flutter analyze` → No issues found! (0 warnings/errors)
+- `flutter test` → 39/39 tests passed!
 
-## Blocking configuration requirements
+## Notes
 
-- A Firebase project must be created and linked via `flutterfire configure`
-  before Firebase-backed features run end-to-end.
-- `functions/` requires `npm install` and `npm run build` before `firebase deploy`.
-- Android APK builds require a JDK 17+ (machine reports OpenJDK 11).
+- Platform and device-specific local configuration files (`android/gradle.properties`, `firebase.json`, `pubspec.lock`) are kept local to the user environment.
