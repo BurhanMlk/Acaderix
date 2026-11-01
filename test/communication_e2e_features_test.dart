@@ -241,21 +241,73 @@ class _FakeCommunicationRepo implements CommunicationRepository {
   @override
   Stream<List<StudentInquiry>> watchInquiriesForStudent(
     String academyId,
-    String studentId,
-  ) async* {
-    yield _inquiries.where((i) => i.studentId == studentId).toList();
-    yield* _inquiriesCtrl.stream
-        .map((list) => list.where((i) => i.studentId == studentId).toList());
+    String studentId, {
+    String? studentRollNumber,
+  }) async* {
+    yield _filterStudentInquiries(studentId, studentRollNumber);
+    yield* _inquiriesCtrl.stream.map(
+        (_) => _filterStudentInquiries(studentId, studentRollNumber));
+  }
+
+  List<StudentInquiry> _filterStudentInquiries(
+      String studentId, String? studentRollNumber) {
+    return _inquiries.where((i) {
+      if (i.studentId == studentId) return true;
+      if (studentRollNumber != null &&
+          studentRollNumber.isNotEmpty &&
+          i.studentRollNumber == studentRollNumber) {
+        return true;
+      }
+      return false;
+    }).toList();
   }
 
   @override
   Stream<List<StudentInquiry>> watchInquiriesForTeacher(
     String academyId,
-    String teacherId,
-  ) async* {
-    yield _inquiries.where((i) => i.teacherId == teacherId).toList();
-    yield* _inquiriesCtrl.stream
-        .map((list) => list.where((i) => i.teacherId == teacherId).toList());
+    String teacherId, {
+    String? teacherStaffId,
+    String? teacherName,
+    List<String>? teacherCourseIds,
+  }) async* {
+    yield _filterTeacherInquiries(
+      teacherId,
+      teacherStaffId: teacherStaffId,
+      teacherName: teacherName,
+      teacherCourseIds: teacherCourseIds,
+    );
+    yield* _inquiriesCtrl.stream.map((_) => _filterTeacherInquiries(
+          teacherId,
+          teacherStaffId: teacherStaffId,
+          teacherName: teacherName,
+          teacherCourseIds: teacherCourseIds,
+        ));
+  }
+
+  List<StudentInquiry> _filterTeacherInquiries(
+    String teacherId, {
+    String? teacherStaffId,
+    String? teacherName,
+    List<String>? teacherCourseIds,
+  }) {
+    return _inquiries.where((i) {
+      if (i.teacherId == teacherId) return true;
+      if (teacherStaffId != null &&
+          teacherStaffId.isNotEmpty &&
+          i.teacherId.toLowerCase() == teacherStaffId.toLowerCase()) {
+        return true;
+      }
+      if (teacherName != null &&
+          teacherName.isNotEmpty &&
+          i.teacherName.toLowerCase() == teacherName.toLowerCase()) {
+        return true;
+      }
+      if (teacherCourseIds != null &&
+          teacherCourseIds.contains(i.courseId)) {
+        return true;
+      }
+      return false;
+    }).toList();
   }
 
   @override
@@ -522,6 +574,27 @@ void main() {
       expect(answered.status, 'answered');
       expect(answered.reply, contains('power rule'));
       expect(answered.answeredAt, isNotNull);
+    });
+
+    test('StudentInquiry handles ISO strings, DateTimes, and raw data gracefully', () {
+      final jsonMap = {
+        'id': 'inq_dyn',
+        'academyId': testAcademyId,
+        'courseId': 'crs_1',
+        'courseName': 'Physics',
+        'studentId': 's_1',
+        'studentName': 'Ali',
+        'studentRollNumber': '101',
+        'teacherId': 't_1',
+        'teacherName': 'Dr. Tariq',
+        'subject': 'Quantum physics',
+        'question': 'Wave particle duality',
+        'createdAt': '2026-11-01T15:30:00.000Z',
+        'answeredAt': '2026-11-01T16:00:00.000Z',
+      };
+      final inquiry = StudentInquiry.fromJson(jsonMap);
+      expect(inquiry.createdAt.year, 2026);
+      expect(inquiry.answeredAt?.year, 2026);
     });
 
     test('AppNotification serialization and reading', () {
@@ -958,6 +1031,131 @@ void main() {
       // Verify updated status
       expect(find.text('Answered'), findsWidgets);
       expect(find.textContaining('Pythagorean trigonometric identity'),
+          findsOneWidget);
+
+      repo.dispose();
+    });
+
+    testWidgets(
+        'End-to-End Q&A thread lifecycle: Student asks question -> stored -> Teacher views & replies -> Student verifies guidance',
+        (tester) async {
+      final repo = _FakeCommunicationRepo();
+      final studentAuthRepo = _FakeAuthRepo(studentUser);
+      final teacherAuthRepo = _FakeAuthRepo(teacherUser);
+
+      // 1. Student opens AskTeacherModal and asks a question
+      await tester.pumpWidget(
+        ProviderScope(
+          key: const ValueKey('student_ask_scope'),
+          overrides: [
+            communicationRepositoryProvider.overrideWithValue(repo),
+            authRepositoryProvider.overrideWithValue(studentAuthRepo),
+            currentStudentProfileProvider.overrideWithValue(sampleStudent),
+            currentStudentCoursesProvider.overrideWithValue([sampleCourse]),
+          ],
+          child: MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => showAskTeacherModal(
+                    context,
+                    academyId: testAcademyId,
+                  ),
+                  child: const Text('Ask Doubts'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Ask Doubts'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+          find.byType(TextField).at(0), 'Quadratic Formula clarification');
+      await tester.pump();
+      await tester.enterText(find.byType(TextField).at(1),
+          'When the discriminant is negative, does the quadratic have complex conjugate roots?');
+      await tester.pump();
+
+      await tester.tap(find.text('Send Question to Teacher'));
+      await tester.pumpAndSettle();
+
+      // Verify question is stored in the repository
+      final studentInquiriesBefore =
+          await repo.watchInquiriesForStudent(testAcademyId, 'stu_1').first;
+      expect(studentInquiriesBefore.length, 1);
+      expect(studentInquiriesBefore.first.status, 'open');
+      expect(studentInquiriesBefore.first.subject,
+          'Quadratic Formula clarification');
+
+      // 2. Teacher opens StudentInquiriesScreen (Teacher Q&A Desk)
+      await tester.pumpWidget(
+        ProviderScope(
+          key: const ValueKey('teacher_qna_scope'),
+          overrides: [
+            communicationRepositoryProvider.overrideWithValue(repo),
+            authRepositoryProvider.overrideWithValue(teacherAuthRepo),
+            currentStaffMemberProvider.overrideWithValue(sampleTeacher),
+          ],
+          child: const MaterialApp(
+            home: StudentInquiriesScreen(
+              academyId: testAcademyId,
+              teacherId: 'staff_t1',
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Student Q&A Desk'), findsOneWidget);
+      expect(find.text('Quadratic Formula clarification'), findsOneWidget);
+      expect(find.text('Pending'), findsOneWidget);
+
+      // 3. Teacher replies to student
+      await tester.tap(find.text('Reply to Student'));
+      await tester.pumpAndSettle();
+
+      final replyInput = find.widgetWithText(
+          TextFormField, 'Type your explanation or guidance here...');
+      await tester.enterText(replyInput,
+          'Exactly correct! When b^2 - 4ac < 0, the roots are two complex conjugate numbers.');
+      await tester.pump();
+
+      await tester.tap(find.text('Send Reply & Notify Student'));
+      await tester.pumpAndSettle();
+
+      // Verify inquiry updated in repository
+      final studentInquiriesAfter =
+          await repo.watchInquiriesForStudent(testAcademyId, 'stu_1').first;
+      expect(studentInquiriesAfter.length, 1);
+      expect(studentInquiriesAfter.first.status, 'answered');
+      expect(studentInquiriesAfter.first.reply,
+          contains('Exactly correct! When b^2 - 4ac < 0'));
+
+      // 4. Student re-opens StudentInquiriesScreen and verifies answer appears
+      await tester.pumpWidget(
+        ProviderScope(
+          key: const ValueKey('student_verify_scope'),
+          overrides: [
+            communicationRepositoryProvider.overrideWithValue(repo),
+            authRepositoryProvider.overrideWithValue(studentAuthRepo),
+            currentStudentProfileProvider.overrideWithValue(sampleStudent),
+          ],
+          child: const MaterialApp(
+            home: StudentInquiriesScreen(
+              academyId: testAcademyId,
+              studentId: 'stu_1',
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Course Q&A & Inquiries'), findsOneWidget);
+      expect(find.text('Answered'), findsWidgets);
+      expect(find.textContaining('Exactly correct! When b^2 - 4ac < 0'),
           findsOneWidget);
 
       repo.dispose();

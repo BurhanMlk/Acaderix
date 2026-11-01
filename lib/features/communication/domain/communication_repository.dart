@@ -18,13 +18,17 @@ abstract interface class CommunicationRepository {
   // Student Inquiries (Q&A)
   Stream<List<StudentInquiry>> watchInquiriesForStudent(
     String academyId,
-    String studentId,
-  );
+    String studentId, {
+    String? studentRollNumber,
+  });
 
   Stream<List<StudentInquiry>> watchInquiriesForTeacher(
     String academyId,
-    String teacherId,
-  );
+    String teacherId, {
+    String? teacherStaffId,
+    String? teacherName,
+    List<String>? teacherCourseIds,
+  });
 
   Stream<List<StudentInquiry>> watchAllInquiries(String academyId);
 

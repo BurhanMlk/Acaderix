@@ -58,6 +58,7 @@ final currentStudentProfileProvider = Provider<Student?>((ref) {
   final auth = ref.watch(authControllerProvider);
   if (auth is! AuthAuthenticated) return null;
   final user = auth.user;
+  if (!user.isStudent) return null;
   final academyId = user.academyId ?? '';
   if (academyId.isEmpty) return null;
 

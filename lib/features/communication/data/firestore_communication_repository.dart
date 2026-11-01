@@ -101,39 +101,75 @@ final class FirestoreCommunicationRepository
   @override
   Stream<List<StudentInquiry>> watchInquiriesForStudent(
     String academyId,
-    String studentId,
-  ) {
-    return _inquiriesRef(academyId)
-        .where('studentId', isEqualTo: studentId)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) => mapQueryDocs(snapshot, (id, data) {
-              return StudentInquiry.fromJson({'id': id, ...data});
-            }));
+    String studentId, {
+    String? studentRollNumber,
+  }) {
+    return _inquiriesRef(academyId).snapshots().map((snapshot) {
+      final list = mapQueryDocs(snapshot, (id, data) {
+        return StudentInquiry.fromJson({'id': id, ...data});
+      });
+
+      final filtered = list.where((inq) {
+        if (inq.studentId == studentId) return true;
+        if (studentRollNumber != null &&
+            studentRollNumber.isNotEmpty &&
+            inq.studentRollNumber == studentRollNumber) {
+          return true;
+        }
+        return false;
+      }).toList();
+
+      filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return filtered;
+    });
   }
 
   @override
   Stream<List<StudentInquiry>> watchInquiriesForTeacher(
     String academyId,
-    String teacherId,
-  ) {
-    return _inquiriesRef(academyId)
-        .where('teacherId', isEqualTo: teacherId)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) => mapQueryDocs(snapshot, (id, data) {
-              return StudentInquiry.fromJson({'id': id, ...data});
-            }));
+    String teacherId, {
+    String? teacherStaffId,
+    String? teacherName,
+    List<String>? teacherCourseIds,
+  }) {
+    return _inquiriesRef(academyId).snapshots().map((snapshot) {
+      final list = mapQueryDocs(snapshot, (id, data) {
+        return StudentInquiry.fromJson({'id': id, ...data});
+      });
+
+      final filtered = list.where((inq) {
+        if (inq.teacherId == teacherId) return true;
+        if (teacherStaffId != null &&
+            teacherStaffId.isNotEmpty &&
+            inq.teacherId.toLowerCase() == teacherStaffId.toLowerCase()) {
+          return true;
+        }
+        if (teacherName != null &&
+            teacherName.isNotEmpty &&
+            inq.teacherName.toLowerCase() == teacherName.toLowerCase()) {
+          return true;
+        }
+        if (teacherCourseIds != null &&
+            teacherCourseIds.contains(inq.courseId)) {
+          return true;
+        }
+        return false;
+      }).toList();
+
+      filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return filtered;
+    });
   }
 
   @override
   Stream<List<StudentInquiry>> watchAllInquiries(String academyId) {
-    return _inquiriesRef(academyId)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) => mapQueryDocs(snapshot, (id, data) {
-              return StudentInquiry.fromJson({'id': id, ...data});
-            }));
+    return _inquiriesRef(academyId).snapshots().map((snapshot) {
+      final list = mapQueryDocs(snapshot, (id, data) {
+        return StudentInquiry.fromJson({'id': id, ...data});
+      });
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return list;
+    });
   }
 
   @override
@@ -173,8 +209,9 @@ final class FirestoreCommunicationRepository
     final doc = await docRef.get();
     if (!doc.exists || doc.data() == null) return;
 
-    final existing =
-        StudentInquiry.fromJson({'id': doc.id, ...doc.data()!});
+    final existing = StudentInquiry.fromJson(
+      {'id': doc.id, ...fromFirestoreData(doc.data()!)},
+    );
 
     final now = DateTime.now();
     await docRef.update({

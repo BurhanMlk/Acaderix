@@ -57,10 +57,13 @@ class _StudentInquiriesScreenState
         '';
 
     final effectiveTeacherId = widget.teacherId ?? currentStaff?.id;
-    final effectiveStudentId = widget.studentId ?? currentStudent?.id;
+    final effectiveStudentId =
+        widget.studentId ?? currentStudent?.id ?? user?.id;
 
-    final isTeacher = currentStaff != null || effectiveTeacherId != null;
-    final isStudent = currentStudent != null || effectiveStudentId != null;
+    final isTeacher = currentStaff != null || widget.teacherId != null;
+    final isStudent = currentStudent != null ||
+        widget.studentId != null ||
+        (user != null && user.isStudent);
 
     final repo = ref.watch(communicationRepositoryProvider);
     final Stream<List<StudentInquiry>> inquiriesStream;
@@ -68,11 +71,14 @@ class _StudentInquiriesScreenState
       inquiriesStream = repo.watchInquiriesForTeacher(
         effectiveAcademyId,
         effectiveTeacherId,
+        teacherStaffId: currentStaff?.staffId,
+        teacherName: currentStaff?.fullName ?? user?.displayName,
       );
     } else if (isStudent && effectiveStudentId != null) {
       inquiriesStream = repo.watchInquiriesForStudent(
         effectiveAcademyId,
         effectiveStudentId,
+        studentRollNumber: currentStudent?.rollNumber ?? user?.rollNumber,
       );
     } else {
       inquiriesStream = repo.watchAllInquiries(effectiveAcademyId);
@@ -163,6 +169,27 @@ class _StudentInquiriesScreenState
         body: StreamBuilder<List<StudentInquiry>>(
           stream: inquiriesStream,
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.error_outline,
+                          size: 40, color: Colors.redAccent),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Unable to load questions: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.white70),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
             if (snapshot.connectionState == ConnectionState.waiting &&
                 !snapshot.hasData) {
               return const Center(

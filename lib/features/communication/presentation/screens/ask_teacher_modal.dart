@@ -1,5 +1,7 @@
 import 'package:academy_management/features/academics/application/course_repository_provider.dart';
 import 'package:academy_management/features/academics/domain/course.dart';
+import 'package:academy_management/features/auth/application/auth_controller.dart';
+import 'package:academy_management/features/auth/domain/auth_state.dart';
 import 'package:academy_management/features/student/application/student_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -386,18 +388,37 @@ class _AskTeacherSheetState extends ConsumerState<_AskTeacherSheet> {
     setState(() => _isSubmitting = true);
 
     try {
-      final academyId = _selectedCourse!.academyId.isNotEmpty
-          ? _selectedCourse!.academyId
-          : (widget.academyId?.isNotEmpty == true
-              ? widget.academyId!
-              : (student?.academyId ?? ''));
-      final studentId = student?.id ?? 'std_current';
-      final studentName = student?.fullName.isNotEmpty == true
+      final auth = ref.read(authControllerProvider);
+      final user = switch (auth) {
+        AuthAuthenticated(:final user) => user,
+        _ => null,
+      };
+
+      final academyId = (widget.academyId?.isNotEmpty == true)
+          ? widget.academyId!
+          : (_selectedCourse!.academyId.isNotEmpty
+              ? _selectedCourse!.academyId
+              : (student?.academyId.isNotEmpty == true
+                  ? student!.academyId
+                  : (user?.academyId ?? '')));
+
+      final studentId = (student?.id.isNotEmpty == true)
+          ? student!.id
+          : (user?.id.isNotEmpty == true
+              ? user!.id
+              : 'std_current');
+      final studentName = (student?.fullName.isNotEmpty == true)
           ? student!.fullName
-          : 'Enrolled Student';
-      final rollNumber = student?.rollNumber.isNotEmpty == true
+          : (user?.displayName.isNotEmpty == true
+              ? user!.displayName
+              : 'Enrolled Student');
+      final rollNumber = (student?.rollNumber.isNotEmpty == true)
           ? student!.rollNumber
-          : '100001';
+          : (user?.rollNumber ?? '');
+
+      if (academyId.isEmpty) {
+        throw Exception('No active academy profile found to submit question.');
+      }
 
       final inquiry = StudentInquiry(
         id: '',

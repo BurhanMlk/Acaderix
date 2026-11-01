@@ -109,13 +109,21 @@ class StudentInquiry {
       question: json['question'] as String? ?? '',
       reply: json['reply'] as String? ?? '',
       status: json['status'] as String? ?? 'open',
-      createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now()
-          : DateTime.now(),
-      answeredAt: json['answeredAt'] != null
-          ? DateTime.tryParse(json['answeredAt'] as String)
-          : null,
+      createdAt: _parseDateTime(json['createdAt']) ?? DateTime.now(),
+      answeredAt: _parseDateTime(json['answeredAt']),
     );
+  }
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    // Support Cloud Firestore Timestamp dynamically without hard import
+    try {
+      final dynamic dyn = value;
+      if (dyn.toDate != null) return dyn.toDate() as DateTime;
+    } catch (_) {}
+    return null;
   }
 }
 
