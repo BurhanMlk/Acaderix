@@ -34,8 +34,24 @@ final class FirestoreAttendanceRepository implements AttendanceRepository {
     ).doc(key).set(data, SetOptions(merge: true));
   }
 
+  @override
+  Future<void> markBatchAttendance(List<AttendanceRecord> records) async {
+    if (records.isEmpty) return;
+    final batch = _firestore.batch();
+    for (final record in records) {
+      final key = _idempotencyKey(record);
+      final ref = _collection(record.academyId).doc(key);
+      final data = toFirestoreData(record.toJson())..remove('id');
+      batch.set(ref, data, SetOptions(merge: true));
+    }
+    await batch.commit();
+  }
+
   String _idempotencyKey(AttendanceRecord record) {
     final date = record.date.toIso8601String().substring(0, 10);
+    if (record.courseId.isNotEmpty) {
+      return '${record.studentId}_${record.courseId}_$date';
+    }
     return '${record.studentId}_$date';
   }
 

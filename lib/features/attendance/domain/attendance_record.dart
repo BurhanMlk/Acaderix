@@ -20,7 +20,7 @@ class AttendanceStatusConverter
   String toJson(AttendanceStatus status) => status.name;
 }
 
-/// A single student attendance record for a date.
+/// A single student attendance record for a course and date.
 @freezed
 abstract class AttendanceRecord with _$AttendanceRecord {
   const factory AttendanceRecord({
@@ -31,6 +31,7 @@ abstract class AttendanceRecord with _$AttendanceRecord {
     @AttendanceStatusConverter()
     @Default(AttendanceStatus.present)
     AttendanceStatus status,
+    @Default('') String courseId,
     @Default('') String batchId,
     @Default('') String markedById,
   }) = _AttendanceRecord;

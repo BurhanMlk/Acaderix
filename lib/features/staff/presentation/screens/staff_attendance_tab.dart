@@ -11,7 +11,7 @@ import '../../../attendance/application/attendance_repository_provider.dart';
 import '../../../attendance/domain/attendance_record.dart';
 import '../../application/staff_providers.dart';
 
-/// Staff view for taking and reviewing daily student attendance.
+/// Staff view for taking and reviewing course-based student attendance.
 class StaffAttendanceTab extends ConsumerStatefulWidget {
   const StaffAttendanceTab({super.key});
 
@@ -25,12 +25,16 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
   Future<void> _markStatus(
     String academyId,
     String studentId,
-    AttendanceStatus status,
-  ) async {
+    AttendanceStatus status, {
+    String courseId = '',
+    String staffId = '',
+  }) async {
     final record = AttendanceRecord(
       id: const Uuid().v4(),
       academyId: academyId,
+      courseId: courseId,
       studentId: studentId,
+      markedById: staffId,
       date: _date,
       status: status,
     );
@@ -40,23 +44,30 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
 
   Future<void> _markAllPresent(
     String academyId,
-    List<Student> students,
-  ) async {
-    for (final s in students) {
-      final record = AttendanceRecord(
-        id: const Uuid().v4(),
-        academyId: academyId,
-        studentId: s.id,
-        date: _date,
-        status: AttendanceStatus.present,
-      );
-      await ref.read(attendanceRepositoryProvider).markAttendance(record);
-    }
+    List<Student> students, {
+    String courseId = '',
+    String staffId = '',
+  }) async {
+    final records = students
+        .map(
+          (s) => AttendanceRecord(
+            id: const Uuid().v4(),
+            academyId: academyId,
+            courseId: courseId,
+            studentId: s.id,
+            markedById: staffId,
+            date: _date,
+            status: AttendanceStatus.present,
+          ),
+        )
+        .toList();
+
+    await ref.read(attendanceRepositoryProvider).markBatchAttendance(records);
     ref.invalidate(attendanceForDateProvider);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('All students marked Present for today!'),
+          content: Text('All enrolled students marked Present for today!'),
           backgroundColor: Color(0xFF10B981),
           behavior: SnackBarBehavior.floating,
         ),
@@ -68,6 +79,8 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
   Widget build(BuildContext context) {
     final staff = ref.watch(currentStaffMemberProvider);
     final branch = ref.watch(currentStaffBranchProvider);
+    final assignedCourses = ref.watch(staffAssignedCoursesProvider);
+    final activeCourse = ref.watch(activeStaffCourseProvider);
     final students = ref.watch(staffBranchStudentsProvider);
     final academyId = staff?.academyId ?? '';
 
@@ -78,428 +91,470 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Date Selector Header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.event, color: Color(0xFFF59E0B), size: 18),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                        ),
-                        if (branch != null)
-                          Text(
-                            branch.name,
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
-                              fontSize: 11,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.calendar_today, size: 14),
-                    label: const Text('Change Date'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      visualDensity: VisualDensity.compact,
-                      side: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    onPressed: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _date,
-                        firstDate: DateTime(2020),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null) {
-                        setState(() => _date = picked);
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
+      body: recordsAsync.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+        ),
+        error: (err, _) => ErrorState(
+          message: err.toString(),
+          onRetry: () => ref.invalidate(attendanceForDateProvider),
+        ),
+        data: (records) {
+          final currentCourseId = activeCourse?.id ?? '';
+          final studentIds = students.map((s) => s.id).toSet();
+          final relevant = records.where((r) {
+            final matchStudent = studentIds.contains(r.studentId);
+            final matchCourse =
+                currentCourseId.isEmpty ||
+                r.courseId.isEmpty ||
+                r.courseId == currentCourseId;
+            return matchStudent && matchCourse;
+          }).toList();
 
-          // Attendance Summary & Batch Action Bar
-          recordsAsync.when(
-            data: (records) {
-              final studentIds = students.map((s) => s.id).toSet();
-              final relevant =
-                  records.where((r) => studentIds.contains(r.studentId)).toList();
-              final recordMap = {for (final r in relevant) r.studentId: r};
+          final recordMap = {for (final r in relevant) r.studentId: r};
 
-              int present = 0;
-              int absent = 0;
-              int late = 0;
-              int unmarked = 0;
+          int present = 0;
+          int absent = 0;
+          int late = 0;
+          int unmarked = 0;
 
-              for (final s in students) {
-                final rec = recordMap[s.id];
-                if (rec == null) {
-                  unmarked++;
-                } else if (rec.status == AttendanceStatus.present) {
-                  present++;
-                } else if (rec.status == AttendanceStatus.absent) {
-                  absent++;
-                } else if (rec.status == AttendanceStatus.late) {
-                  late++;
-                }
-              }
+          for (final s in students) {
+            final rec = recordMap[s.id];
+            if (rec == null) {
+              unmarked++;
+            } else if (rec.status == AttendanceStatus.present) {
+              present++;
+            } else if (rec.status == AttendanceStatus.absent) {
+              absent++;
+            } else if (rec.status == AttendanceStatus.late) {
+              late++;
+            }
+          }
 
-              final rate = AttendanceCalculator.percentage(
-                presentDays: present + late,
-                totalDays: students.isEmpty ? 1 : students.length,
-              );
+          final rate = AttendanceCalculator.percentage(
+            presentDays: present + late,
+            totalDays: students.isEmpty ? 1 : students.length,
+          );
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: Column(
-                  children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _SummaryChip(
-                            label: 'Present: $present',
-                            color: const Color(0xFF10B981),
-                          ),
-                          const SizedBox(width: 8),
-                          _SummaryChip(
-                            label: 'Absent: $absent',
-                            color: const Color(0xFFEF4444),
-                          ),
-                          const SizedBox(width: 8),
-                          _SummaryChip(
-                            label: 'Late: $late',
-                            color: const Color(0xFFF59E0B),
-                          ),
-                          const SizedBox(width: 8),
-                          _SummaryChip(
-                            label: 'Unmarked: $unmarked',
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(width: 8),
-                          _SummaryChip(
-                            label: '${rate.toStringAsFixed(0)}% Rate',
-                            color: const Color(0xFF6366F1),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (students.isNotEmpty)
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton.icon(
-                          onPressed: () => _markAllPresent(academyId, students),
-                          icon: const Icon(Icons.done_all, size: 16, color: Color(0xFF10B981)),
-                          label: const Text(
-                            'Mark All Present',
-                            style: TextStyle(
-                              color: Color(0xFF10B981),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                            ),
-                          ),
-                          style: TextButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ),
-                      ),
-                  ],
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
+            children: [
+              // 1. Date Selector Header
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 ),
-              );
-            },
-            loading: () => const SizedBox.shrink(),
-            error: (_, _) => const SizedBox.shrink(),
-          ),
-
-          // Students Roster List
-          Expanded(
-            child: recordsAsync.when(
-              data: (records) {
-                final recordMap = {for (final r in records) r.studentId: r};
-
-                if (students.isEmpty) {
-                  return const EmptyState(
-                    title: 'No Students Found',
-                    message:
-                        'There are no students assigned to this campus branch yet.',
-                    icon: Icons.school_outlined,
-                  );
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                  itemCount: students.length,
-                  itemBuilder: (context, index) {
-                    final student = students[index];
-                    final record = recordMap[student.id];
-                    final currentStatus = record?.status;
-
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.1),
-                        ),
-                      ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.event, color: Color(0xFFF59E0B), size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 18,
-                                backgroundColor:
-                                    const Color(0xFF6366F1).withValues(alpha: 0.25),
-                                child: Text(
-                                  student.fullName.isNotEmpty
-                                      ? student.fullName[0].toUpperCase()
-                                      : 'S',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      student.fullName,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 6,
-                                            vertical: 2,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF38BDF8)
-                                                .withValues(alpha: 0.15),
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          child: Text(
-                                            'Roll #${student.rollNumber}',
-                                            style: const TextStyle(
-                                              color: Color(0xFF38BDF8),
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                        if (student.academicSession.isNotEmpty) ...[
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            '• ${student.academicSession}',
-                                            style: TextStyle(
-                                              color: Colors.white
-                                                  .withValues(alpha: 0.6),
-                                              fontSize: 11,
-                                            ),
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          Text(
+                            '${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
                           ),
-                          const SizedBox(height: 10),
-                          Divider(
-                            color: Colors.white.withValues(alpha: 0.08),
-                            height: 1,
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Present / Absent / Late action buttons
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _StatusButton(
-                                  label: 'Present',
-                                  icon: Icons.check,
-                                  isSelected:
-                                      currentStatus == AttendanceStatus.present,
-                                  color: const Color(0xFF10B981),
-                                  onPressed: () => _markStatus(
-                                    academyId,
-                                    student.id,
-                                    AttendanceStatus.present,
-                                  ),
-                                ),
+                          if (branch != null)
+                            Text(
+                              branch.name,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.6),
+                                fontSize: 11,
                               ),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: _StatusButton(
-                                  label: 'Absent',
-                                  icon: Icons.close,
-                                  isSelected:
-                                      currentStatus == AttendanceStatus.absent,
-                                  color: const Color(0xFFEF4444),
-                                  onPressed: () => _markStatus(
-                                    academyId,
-                                    student.id,
-                                    AttendanceStatus.absent,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: _StatusButton(
-                                  label: 'Late',
-                                  icon: Icons.schedule,
-                                  isSelected:
-                                      currentStatus == AttendanceStatus.late,
-                                  color: const Color(0xFFF59E0B),
-                                  onPressed: () => _markStatus(
-                                    academyId,
-                                    student.id,
-                                    AttendanceStatus.late,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
                         ],
                       ),
-                    );
-                  },
-                );
-              },
-              loading: () => const Center(
-                child: CircularProgressIndicator(color: Color(0xFF6366F1)),
+                    ),
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.calendar_today, size: 14),
+                      label: const Text('Change Date'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        visualDensity: VisualDensity.compact,
+                        side: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: _date,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          setState(() => _date = picked);
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
-              error: (err, _) => ErrorState(
-                message: err.toString(),
-                onRetry: () => ref.invalidate(attendanceForDateProvider),
+              const SizedBox(height: 8),
+
+              // 2. Course / Batch Selector Card
+              if (assignedCourses.isNotEmpty) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF38BDF8).withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFF38BDF8).withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.menu_book,
+                        color: Color(0xFF38BDF8),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Course:',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: activeCourse?.id,
+                            dropdownColor: const Color(0xFF1E293B),
+                            isExpanded: true,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            items: assignedCourses.map((c) {
+                              return DropdownMenuItem(
+                                value: c.id,
+                                child: Text(
+                                  '${c.name} (${c.enrolledStudentIds.length} students)',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (val) {
+                              if (val != null) {
+                                ref
+                                    .read(selectedStaffCourseIdProvider.notifier)
+                                    .state = val;
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+
+              // 3. Status Badges Row
+              Row(
+                children: [
+                  _StatChip(
+                    label: 'Present',
+                    count: present,
+                    color: const Color(0xFF10B981),
+                  ),
+                  const SizedBox(width: 6),
+                  _StatChip(
+                    label: 'Absent',
+                    count: absent,
+                    color: const Color(0xFFEF4444),
+                  ),
+                  const SizedBox(width: 6),
+                  _StatChip(
+                    label: 'Late',
+                    count: late,
+                    color: const Color(0xFFF59E0B),
+                  ),
+                  const SizedBox(width: 6),
+                  _StatChip(
+                    label: 'Total',
+                    count: students.length,
+                    color: const Color(0xFF38BDF8),
+                  ),
+                ],
               ),
-            ),
-          ),
-        ],
+              const SizedBox(height: 8),
+
+              // 4. Compliance status & Batch "Mark All Present" Action
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      unmarked == 0 && students.isNotEmpty
+                          ? 'Rate: ${rate.toStringAsFixed(0)}% (Submitted)'
+                          : '$unmarked of ${students.length} unmarked',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: unmarked == 0 && students.isNotEmpty
+                            ? const Color(0xFF34D399)
+                            : Colors.white70,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  FilledButton.icon(
+                    icon: const Icon(Icons.done_all, size: 14),
+                    label: const Text('Mark All Present'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF10B981),
+                      foregroundColor: Colors.white,
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                    ),
+                    onPressed: students.isEmpty
+                        ? null
+                        : () => _markAllPresent(
+                            academyId,
+                            students,
+                            courseId: currentCourseId,
+                            staffId: staff?.id ?? '',
+                          ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // 5. Students Attendance Roster
+              if (students.isEmpty)
+                EmptyState(
+                  title: activeCourse != null
+                      ? 'No Students Enrolled'
+                      : 'No Students Found',
+                  message: activeCourse != null
+                      ? 'No students are enrolled in "${activeCourse.name}". Ask admin to enroll students.'
+                      : 'No active students found in your assigned campus.',
+                  icon: Icons.people_outline,
+                )
+              else
+                ...students.map((student) {
+                  final rec = recordMap[student.id];
+                  final currentStatus = rec?.status;
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.08),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor:
+                              const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                          child: Text(
+                            student.fullName.isNotEmpty
+                                ? student.fullName.substring(0, 1).toUpperCase()
+                                : 'S',
+                            style: const TextStyle(
+                              color: Color(0xFF38BDF8),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                student.fullName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                'Roll #${student.rollNumber}',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        _AttendanceStatusSelector(
+                          currentStatus: currentStatus,
+                          onStatusSelected: (status) => _markStatus(
+                            academyId,
+                            student.id,
+                            status,
+                            courseId: currentCourseId,
+                            staffId: staff?.id ?? '',
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+            ],
+          );
+        },
       ),
     );
   }
 }
 
-class _SummaryChip extends StatelessWidget {
-  const _SummaryChip({required this.label, required this.color});
+class _StatChip extends StatelessWidget {
+  const _StatChip({
+    required this.label,
+    required this.count,
+    required this.color,
+  });
 
   final String label;
+  final int count;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          children: [
+            Text(
+              '$count',
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+              ),
+            ),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _StatusButton extends StatelessWidget {
-  const _StatusButton({
+class _AttendanceStatusSelector extends StatelessWidget {
+  const _AttendanceStatusSelector({
+    required this.currentStatus,
+    required this.onStatusSelected,
+  });
+
+  final AttendanceStatus? currentStatus;
+  final ValueChanged<AttendanceStatus> onStatusSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _StatusCircleBtn(
+          label: 'P',
+          color: const Color(0xFF10B981),
+          isSelected: currentStatus == AttendanceStatus.present,
+          onTap: () => onStatusSelected(AttendanceStatus.present),
+        ),
+        const SizedBox(width: 6),
+        _StatusCircleBtn(
+          label: 'L',
+          color: const Color(0xFFF59E0B),
+          isSelected: currentStatus == AttendanceStatus.late,
+          onTap: () => onStatusSelected(AttendanceStatus.late),
+        ),
+        const SizedBox(width: 6),
+        _StatusCircleBtn(
+          label: 'A',
+          color: const Color(0xFFEF4444),
+          isSelected: currentStatus == AttendanceStatus.absent,
+          onTap: () => onStatusSelected(AttendanceStatus.absent),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatusCircleBtn extends StatelessWidget {
+  const _StatusCircleBtn({
     required this.label,
-    required this.icon,
-    required this.isSelected,
     required this.color,
-    required this.onPressed,
+    required this.isSelected,
+    required this.onTap,
   });
 
   final String label;
-  final IconData icon;
-  final bool isSelected;
   final Color color;
-  final VoidCallback onPressed;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onPressed,
+      onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(vertical: 7),
+      child: Container(
+        width: 32,
+        height: 32,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? color : color.withValues(alpha: 0.1),
+          color: isSelected ? color : color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? color : color.withValues(alpha: 0.25),
+            color: isSelected ? color : color.withValues(alpha: 0.3),
+            width: isSelected ? 1.5 : 1.0,
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 14,
-              color: isSelected ? Colors.white : color,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.white : color,
-                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                fontSize: 12,
-              ),
-            ),
-          ],
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.black : color,
+            fontWeight: FontWeight.w800,
+            fontSize: 12,
+          ),
         ),
       ),
     );

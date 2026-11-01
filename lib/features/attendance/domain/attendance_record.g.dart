@@ -17,6 +17,7 @@ _AttendanceRecord _$AttendanceRecordFromJson(Map<String, dynamic> json) =>
           : const AttendanceStatusConverter().fromJson(
               json['status'] as String,
             ),
+      courseId: json['courseId'] as String? ?? '',
       batchId: json['batchId'] as String? ?? '',
       markedById: json['markedById'] as String? ?? '',
     );
@@ -28,6 +29,7 @@ Map<String, dynamic> _$AttendanceRecordToJson(_AttendanceRecord instance) =>
       'studentId': instance.studentId,
       'date': instance.date.toIso8601String(),
       'status': const AttendanceStatusConverter().toJson(instance.status),
+      'courseId': instance.courseId,
       'batchId': instance.batchId,
       'markedById': instance.markedById,
     };

@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/domain/attendance_calculator.dart';
+import '../../academics/application/course_repository_provider.dart';
+import '../../academics/domain/course.dart';
 import '../../academy_admin/application/academy_admin_providers.dart';
 import '../../admissions/domain/student.dart';
 import '../../attendance/domain/attendance_record.dart';
@@ -57,13 +59,77 @@ final currentStaffBranchProvider = Provider<Branch?>((ref) {
   return branches.where((b) => b.id == staff.branchId).firstOrNull;
 });
 
-/// Students scoped to the staff member's academy (and branch if assigned).
+/// Courses / Batches assigned to the current staff member.
+final staffAssignedCoursesProvider = Provider<List<Course>>((ref) {
+  final staff = ref.watch(currentStaffMemberProvider);
+  if (staff == null) return const <Course>[];
+  final allCourses =
+      ref.watch(coursesStreamProvider(staff.academyId)).value ??
+      const <Course>[];
+
+  final teacherMatches = allCourses.where((c) {
+    final matchesId = c.teacherId.isNotEmpty && c.teacherId == staff.id;
+    final matchesStaffCode =
+        c.teacherId.isNotEmpty &&
+        c.teacherId.toUpperCase() == staff.staffId.toUpperCase();
+    return matchesId || matchesStaffCode;
+  }).toList();
+
+  if (teacherMatches.isNotEmpty) return teacherMatches;
+
+  // Fallback: If no courses explicitly assigned to this teacher yet,
+  // scope to the teacher's campus branch so they can still manage courses.
+  if (staff.branchId.isNotEmpty) {
+    final branchCourses =
+        allCourses.where((c) => c.branchId == staff.branchId).toList();
+    if (branchCourses.isNotEmpty) return branchCourses;
+  }
+
+  return allCourses;
+});
+
+/// Notifier managing the staff member's actively selected course scope.
+class SelectedStaffCourseNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  @override
+  set state(String? value) => super.state = value;
+}
+
+/// Active course selected by staff on attendance or results screen.
+final selectedStaffCourseIdProvider =
+    NotifierProvider<SelectedStaffCourseNotifier, String?>(
+  SelectedStaffCourseNotifier.new,
+);
+
+/// Resolves the active course being viewed by the staff member.
+final activeStaffCourseProvider = Provider<Course?>((ref) {
+  final courses = ref.watch(staffAssignedCoursesProvider);
+  if (courses.isEmpty) return null;
+  final selectedId = ref.watch(selectedStaffCourseIdProvider);
+  if (selectedId != null) {
+    final found = courses.where((c) => c.id == selectedId).firstOrNull;
+    if (found != null) return found;
+  }
+  return courses.first;
+});
+
+/// Students scoped to the staff member's active course or branch.
 final staffBranchStudentsProvider = Provider<List<Student>>((ref) {
   final staff = ref.watch(currentStaffMemberProvider);
   if (staff == null) return const <Student>[];
   final allStudents =
       ref.watch(studentsStreamProvider(staff.academyId)).value ??
       const <Student>[];
+
+  final activeCourse = ref.watch(activeStaffCourseProvider);
+  if (activeCourse != null && activeCourse.enrolledStudentIds.isNotEmpty) {
+    final enrolledSet = activeCourse.enrolledStudentIds.toSet();
+    final enrolled = allStudents.where((s) => enrolledSet.contains(s.id)).toList();
+    if (enrolled.isNotEmpty) return enrolled;
+  }
+
   if (staff.branchId.isEmpty) return allStudents;
   final branchStudents =
       allStudents.where((s) => s.branchId == staff.branchId).toList();
@@ -98,11 +164,13 @@ final staffDashboardMetricsProvider = Provider<({
   int presentToday,
   int absentToday,
   int lateToday,
+  int totalCourses,
   int totalExams,
 })>((ref) {
   final students = ref.watch(staffBranchStudentsProvider);
   final attendance = ref.watch(staffTodayAttendanceRecordsProvider);
   final staff = ref.watch(currentStaffMemberProvider);
+  final courses = ref.watch(staffAssignedCoursesProvider);
   final allExams =
       staff != null
           ? (ref.watch(resultsStreamProvider(staff.academyId)).value ??
@@ -135,6 +203,7 @@ final staffDashboardMetricsProvider = Provider<({
     presentToday: present,
     absentToday: absent,
     lateToday: late,
+    totalCourses: courses.length,
     totalExams: allExams.length,
   );
 });

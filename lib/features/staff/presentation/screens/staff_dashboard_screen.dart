@@ -17,6 +17,8 @@ class StaffDashboardScreen extends ConsumerWidget {
     final staff = ref.watch(currentStaffMemberProvider);
     final branch = ref.watch(currentStaffBranchProvider);
     final metrics = ref.watch(staffDashboardMetricsProvider);
+    final assignedCourses = ref.watch(staffAssignedCoursesProvider);
+    final todayRecords = ref.watch(staffTodayAttendanceRecordsProvider);
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -83,12 +85,12 @@ class StaffDashboardScreen extends ConsumerWidget {
                   onTap: () => onNavigateToTab(1),
                 ),
                 _StaffMetricCard(
-                  title: 'Evaluations',
-                  value: '${metrics.totalExams}',
-                  subtitle: 'Recorded Marks',
-                  icon: Icons.grade_outlined,
+                  title: 'My Courses',
+                  value: '${metrics.totalCourses}',
+                  subtitle: '${assignedCourses.length} Assigned Batches',
+                  icon: Icons.menu_book_outlined,
                   color: const Color(0xFFF59E0B),
-                  onTap: () => onNavigateToTab(2),
+                  onTap: () => onNavigateToTab(1),
                 ),
                 _StaffMetricCard(
                   title: 'Leave Balance',
@@ -102,7 +104,136 @@ class StaffDashboardScreen extends ConsumerWidget {
             );
           },
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
+
+        // Assigned Courses Section (if staff has courses)
+        if (assignedCourses.isNotEmpty) ...[
+          Row(
+            children: [
+              const Icon(
+                Icons.menu_book_outlined,
+                size: 18,
+                color: Color(0xFF38BDF8),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'My Assigned Courses & Batches',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ...assignedCourses.map((course) {
+            final courseRecords =
+                todayRecords.where((r) => r.courseId == course.id).toList();
+            final isSubmitted = courseRecords.isNotEmpty;
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSubmitted
+                      ? const Color(0xFF10B981).withValues(alpha: 0.25)
+                      : const Color(0xFFF59E0B).withValues(alpha: 0.25),
+                ),
+              ),
+              child: InkWell(
+                onTap: () {
+                  ref.read(selectedStaffCourseIdProvider.notifier).state =
+                      course.id;
+                  onNavigateToTab(1);
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            course.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 2,
+                            children: [
+                              Text(
+                                '${course.enrolledStudentIds.length} Enrolled',
+                                style: const TextStyle(
+                                  color: Color(0xFF38BDF8),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              if (course.schedule.isNotEmpty)
+                                Text(
+                                  '• ${course.schedule}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color:
+                                        Colors.white.withValues(alpha: 0.6),
+                                    fontSize: 11,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: (isSubmitted
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFFF59E0B))
+                            .withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: isSubmitted
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFFF59E0B),
+                        ),
+                      ),
+                      child: Text(
+                        isSubmitted ? 'SUBMITTED' : 'TAKE ATTENDANCE',
+                        style: TextStyle(
+                          color: isSubmitted
+                              ? const Color(0xFF34D399)
+                              : const Color(0xFFFBBF24),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+          const SizedBox(height: 16),
+        ],
 
         // Quick Actions Section
         Row(
