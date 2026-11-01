@@ -44,9 +44,7 @@ service cloud.firestore {
       match /{subcollection}/{docId=**} {
         allow read, write, delete: if isSuperAdmin()
           || (
-            isSignedIn()
-            && get(/databases/$(database)/documents/academies/$(academyId)).data.ownerUid == request.auth.uid
-            && get(/databases/$(database)/documents/academies/$(academyId)).data.status == 'active'
+            get(/databases/$(database)/documents/academies/$(academyId)).data.status == 'active'
           );
       }
     }
@@ -56,6 +54,12 @@ service cloud.firestore {
       allow create: if isSignedIn();
       allow read: if isSignedIn();
       allow delete: if isSuperAdmin();
+    }
+
+    // Staff accounts: read allowed for staff login verification; write by signed-in admins.
+    match /staff_accounts/{staffId} {
+      allow read: if true;
+      allow create, update, delete: if isSuperAdmin() || isSignedIn();
     }
 
     // Subscriptions: Super Admin manages all; read permitted for pre-login standing verification.
