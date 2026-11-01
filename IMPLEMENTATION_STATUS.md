@@ -84,11 +84,52 @@
 - [x] Staff list with search, branch tabs filtering, and quick actions
 - [x] Full Staff CRUD:
   - Add Staff screen (`AddStaffScreen`) with designation, branch assignment, salary, and contact info
+  - Automatic sequential Staff ID generation (`STF-1001`, `STF-1002`, etc.) via atomic counters
+  - Automatic initial temporary password generation (`Staff@XXXX`)
+  - One-time **Staff Credentials Slip** dialog upon creation with 1-tap "Copy Credentials"
+  - Academy Admin **Reset Password** flow for any staff member (available from `StaffListScreen` popup menu and `EditStaffScreen`)
+  - Staff ID lookup sync in top-level `staff_accounts` collection for instant cross-academy sign-in
+  - Staff Member login using **Staff ID** (e.g. `STF-1001`) or Email and password on `StaffLoginScreen`
   - Edit Staff screen (`EditStaffScreen`) with full field updates and employment status
   - Delete Staff flow with confirmation dialog
 - [x] Multi-Branch Management:
   - Dedicated `BranchesListScreen` with search, student/staff metrics per campus
   - Add Branch screen (`AddBranchScreen`) and Edit Branch screen (`EditBranchScreen`)
+
+## Phase 6.1 — Staff Portal & Experience (Completed & Live) ✅
+
+- [x] **Responsive Staff Shell (`StaffShell`)**:
+  - Seamless dark glass theme with brand ambient glows (`DashboardBackground`)
+  - Responsive layout: Mobile `BottomNavigationBar` (<640px) and Desktop `NavigationRail` (>=640px)
+  - Glass AppBar showing staff member name, assigned campus branch, and Staff ID badge chip
+  - Confirmation sign-out dialog routing cleanly to the Welcome portal
+- [x] **Tab 0: Staff Dashboard (`StaffDashboardScreen`)**:
+  - Hero profile card with greeting, designation, campus, email, and phone
+  - Live metric summary grid: Total Students, Today's Attendance %, Pending Evaluations, Remaining Leave Days
+  - Quick action shortcut cards routing directly to relevant staff modules
+- [x] **Tab 1: Campus Attendance (`StaffAttendanceTab`)**:
+  - Branch-scoped daily student attendance roster
+  - Interactive date picker with formatted date display
+  - Real-time summary chips (Total, Present, Absent, Late)
+  - 1-tap "Mark All Present" batch action
+  - Per-student status selector buttons (Present, Absent, Late) with instant feedback
+- [x] **Tab 2: Examinations & Results (`StaffResultsTab`)**:
+  - Search filter by student name, roll number, or exam title
+  - Result cards displaying student name, roll number, pass/fail status badge, marks, and grade pill
+  - "Add Result" modal dialog with responsive form, student selector, exam dropdown, and live percentage & grade calculation preview
+- [x] **Tab 3: Campus Students Directory (`StaffStudentsTab`)**:
+  - Campus-scoped student directory with real-time search
+  - Compact student cards with roll number badge, session, and parent contact
+  - Interactive student detail modal bottom sheet displaying complete student record
+- [x] **Tab 4: Staff Profile & Self-Service (`StaffProfileTab`)**:
+  - Profile hero card with employment status badge and Staff ID pill
+  - Professional employment details (Designation, Joining Date, Assigned Branch)
+  - Personal contact info (Email, Phone)
+  - Compensation & Benefits (Monthly Salary, Annual Leave Balance)
+  - Self-service "Change Password" dialog with current/new password validation
+- [x] **Comprehensive End-to-End Staff Test Suite (`test/staff_e2e_features_test.dart`)**:
+  - 8 automated tests covering all 5 tabs and interactive workflows
+  - Dedicated viewport stress test verifying **zero RenderFlex overflows on narrow phone screens (320px)**
 
 ## Phase 7 — Attendance & Fees (Branch-Scoped) ✅
 
@@ -114,11 +155,14 @@
 
 ## Phase 10 — Security, Testing & Release ✅
 
-- [x] Comprehensive automated test suite (**64/64 tests passing**, 100% success rate)
+- [x] Comprehensive automated test suite (**75/75 tests passing**, 100% success rate across 5 test suites)
 - [x] End-to-end integration tests for Super Admin and Academy Admin workflows
+- [x] Dedicated automated tests for Staff ID allocation, admin password reset, and Staff ID portal authentication
+- [x] Complete end-to-end automated test suite for the Staff experience (8/8 tests passing)
+- [x] Zero RenderFlex overflows across narrow mobile viewports (320px–360px) in all dialogs, modals, and tabs
 - [x] Zero static analysis warnings or errors (`flutter analyze` clean)
 
 ## Validation (latest)
 
 - `flutter analyze` → No issues found! (0 warnings/errors)
-- `flutter test` → 64/64 tests passed! (100% success)
+- `flutter test` → 75/75 tests passed! (100% success)
