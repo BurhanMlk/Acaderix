@@ -131,6 +131,28 @@
   - 8 automated tests covering all 5 tabs and interactive workflows
   - Dedicated viewport stress test verifying **zero RenderFlex overflows on narrow phone screens (320px)**
 
+## Phase 6.2 — Course-Based Attendance Redesign & Admin Compliance Monitoring ✅
+
+- [x] **Course & Batch Architecture**:
+  - Domain model `Course` with branch assignment, teacher assignment (`teacherId`, `teacherName`), `enrolledStudentIds`, `schedule`, `room`, `fee`, and `courseCode`
+  - `CourseRepository` & `FirestoreCourseRepository` implementing real-time streaming, batch enrollment, and CRUD operations
+  - Multi-course idempotency key for attendance records: `${studentId}_${courseId}_${date}`
+- [x] **Academy Admin Course Management**:
+  - Dedicated `CoursesListScreen` (`/academy-admin/courses`) with branch filtering, search, and enrolled student counts
+  - `AddCourseScreen` and `EditCourseScreen` with teacher assignment dropdowns, branch selectors, and schedules
+  - Student Enrollment dialog allowing bulk selection/unselection of campus students into courses
+- [x] **Staff Portal Course-Scoped Attendance**:
+  - `StaffAttendanceTab` redesigned to let teachers select only their assigned courses
+  - Roster filters automatically to enrolled students for the active course
+  - Fast batch action (`Mark All Present`) and per-student status buttons (P, L, A)
+  - Unified scrollable view eliminating all bottom overflows on 320px mobile screens
+- [x] **Academy Admin Attendance Monitoring Center**:
+  - `AttendanceScreen` overhauled into an administrative compliance monitoring center
+  - Live course compliance overview showing **SUBMITTED** vs **PENDING** roll calls for the selected date
+  - Course-level attendance rate badges and teacher audit info
+  - Course roster bottom sheet with full ledger review and emergency admin override capabilities
+  - Segmented toggle to switch between **Course Monitoring** overview and **General Roster** fallback
+
 ## Phase 7 — Attendance & Fees (Branch-Scoped) ✅
 
 - [x] Attendance marking screen with date selector, branch scope tabs, and live status toggle
@@ -155,8 +177,8 @@
 
 ## Phase 10 — Security, Testing & Release ✅
 
-- [x] Comprehensive automated test suite (**75/75 tests passing**, 100% success rate across 5 test suites)
-- [x] End-to-end integration tests for Super Admin and Academy Admin workflows
+- [x] Comprehensive automated test suite (**77/77 tests passing**, 100% success rate across 5 test suites)
+- [x] End-to-end integration tests for Super Admin and Academy Admin workflows (including 21 Academy Admin e2e tests)
 - [x] Dedicated automated tests for Staff ID allocation, admin password reset, and Staff ID portal authentication
 - [x] Complete end-to-end automated test suite for the Staff experience (8/8 tests passing)
 - [x] Zero RenderFlex overflows across narrow mobile viewports (320px–360px) in all dialogs, modals, and tabs
@@ -165,4 +187,4 @@
 ## Validation (latest)
 
 - `flutter analyze` → No issues found! (0 warnings/errors)
-- `flutter test` → 75/75 tests passed! (100% success)
+- `flutter test` → 77/77 tests passed! (100% success)
