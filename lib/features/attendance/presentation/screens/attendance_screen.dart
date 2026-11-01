@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../../../app/router.dart';
 
 import '../../../../core/domain/attendance_calculator.dart';
 import '../../../../core/widgets/async_list_state.dart';
@@ -482,7 +485,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     ),
                     icon: const Icon(Icons.add, size: 16),
                     label: const Text('Add Course'),
-                    onPressed: () => Navigator.of(context).pushNamed('/academy-admin/courses/new'),
+                    onPressed: () => context.push(AppRoutes.addCourse),
                   ),
                 ],
               ),

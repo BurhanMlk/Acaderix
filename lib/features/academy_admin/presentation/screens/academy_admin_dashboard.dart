@@ -408,6 +408,12 @@ class AcademyAdminDashboard extends ConsumerWidget {
               onTap: () => context.push(AppRoutes.staffList),
             ),
             _ModuleTile(
+              icon: Icons.menu_book_outlined,
+              label: 'Courses',
+              color: const Color(0xFFF97316),
+              onTap: () => context.push(AppRoutes.coursesList),
+            ),
+            _ModuleTile(
               icon: Icons.account_balance_outlined,
               label: 'Branches',
               color: const Color(0xFF38BDF8),

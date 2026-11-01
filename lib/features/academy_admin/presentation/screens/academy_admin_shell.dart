@@ -187,6 +187,7 @@ class AcademyAdminShell extends ConsumerWidget {
 /// and live plan badge.
 class AcademyAdminContentHeader extends ConsumerWidget {
   const AcademyAdminContentHeader({
+    super.key,
     required this.title,
     required this.access,
   });

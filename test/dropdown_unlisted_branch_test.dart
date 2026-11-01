@@ -1,14 +1,11 @@
+import 'package:academy_management/app/router.dart';
 import 'package:academy_management/features/academics/application/course_repository_provider.dart';
 import 'package:academy_management/features/academics/domain/course.dart';
 import 'package:academy_management/features/academics/domain/course_repository.dart';
-import 'package:academy_management/features/academics/presentation/screens/add_course_screen.dart';
 import 'package:academy_management/features/academics/presentation/screens/edit_course_screen.dart';
-import 'package:academy_management/features/academy_admin/application/academy_access_provider.dart';
 import 'package:academy_management/features/academy_admin/presentation/screens/academy_admin_shell.dart';
 import 'package:academy_management/features/academy_admin/domain/academy_access_models.dart';
-import 'package:academy_management/features/admissions/application/student_repository_provider.dart';
 import 'package:academy_management/features/admissions/domain/student.dart';
-import 'package:academy_management/features/admissions/domain/student_repository.dart';
 import 'package:academy_management/features/admissions/presentation/screens/add_student_screen.dart';
 import 'package:academy_management/features/admissions/presentation/screens/edit_student_screen.dart';
 import 'package:academy_management/features/branches/application/branch_repository_provider.dart';
@@ -108,30 +105,6 @@ class _MockCourseRepo implements CourseRepository {
     String courseId,
     String studentId,
   ) async {}
-}
-
-class _MockStudentRepo implements StudentRepository {
-  _MockStudentRepo(this.students);
-  final List<Student> students;
-
-  @override
-  Stream<List<Student>> watchAll(String academyId) => Stream.value(students);
-
-  @override
-  Future<Student?> getById(String academyId, String studentId) async =>
-      students.where((s) => s.id == studentId).firstOrNull;
-
-  @override
-  Future<String> allocateRollNumber(String academyId) async => 'ROL-2001';
-
-  @override
-  Future<void> create(Student student) async {}
-
-  @override
-  Future<void> update(Student student) async {}
-
-  @override
-  Future<void> delete(String academyId, String studentId) async {}
 }
 
 class _TestLegacyBranchNotifier extends SelectedBranchNotifier {
@@ -356,5 +329,11 @@ void main() {
 
     expect(find.byType(AcademyAdminContentHeader), findsOneWidget);
     expect(find.text('All Branches'), findsWidgets);
+  });
+
+  test('Courses routes are valid routes in router configuration', () {
+    expect(AppRoutes.coursesList, '/academy-admin/courses');
+    expect(AppRoutes.addCourse, '/academy-admin/courses/new');
+    expect(AppRoutes.editCourse, '/academy-admin/courses/edit');
   });
 }
