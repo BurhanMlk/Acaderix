@@ -4,6 +4,7 @@ import 'package:academy_management/core/constants/roles.dart';
 import 'package:academy_management/core/domain/attendance_calculator.dart';
 import 'package:academy_management/features/academy_admin/application/academy_access_provider.dart';
 import 'package:academy_management/features/academy_admin/application/academy_admin_providers.dart';
+import 'package:academy_management/features/academy_admin/data/academy_data_seeder.dart';
 import 'package:academy_management/features/academy_admin/domain/academy_access_models.dart';
 import 'package:academy_management/features/academy_admin/domain/academy_access_repository.dart';
 import 'package:academy_management/features/academy_admin/presentation/screens/academy_admin_dashboard.dart';
@@ -345,6 +346,24 @@ class _FakeCourseRepo implements CourseRepository {
       );
     }
   }
+}
+
+class _FakeAcademyDataSeeder implements AcademyDataSeeder {
+  bool didResetAndSeed = false;
+
+  @override
+  Future<void> clearAcademyData(String academyId) async {}
+
+  @override
+  Future<void> resetAndSeedAcademyData(String academyId) async {
+    didResetAndSeed = true;
+  }
+
+  @override
+  Future<void> seedAcademyData(String academyId, {bool force = false}) async {}
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class _FakeAccessRepo implements AcademyAccessRepository {
@@ -1884,6 +1903,68 @@ void main() {
       final mathCourse = courseRepo._courses.firstWhere((c) => c.id == 'c2');
       expect(mathCourse.teacherId, 'stf_01');
       expect(mathCourse.teacherName, 'Sir Tariq Mehmood');
+    });
+
+    testWidgets('24. Academy Admin Dashboard provides Reset & Re-seed Demo Data action with confirmation', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final fakeSeeder = _FakeAcademyDataSeeder();
+      final authRepo = _FakeAuthRepo();
+      final accessRepo = _FakeAccessRepo(accessInfo);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            authRepositoryProvider.overrideWithValue(authRepo),
+            academyAccessRepositoryProvider.overrideWithValue(accessRepo),
+            academyAccessProvider.overrideWith((ref) => Stream.value(accessInfo)),
+            academyDataSeederProvider.overrideWithValue(fakeSeeder),
+            studentsStreamProvider.overrideWith((ref, id) => Stream.value([])),
+            staffStreamProvider.overrideWith((ref, id) => Stream.value([])),
+            branchesStreamProvider.overrideWith((ref, id) => Stream.value([])),
+            coursesStreamProvider.overrideWith((ref, id) => Stream.value([])),
+            paymentsStreamProvider.overrideWith((ref, id) => Stream.value([])),
+            attendanceForDateProvider.overrideWith((ref, args) => Stream.value([])),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: AcademyAdminDashboard(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify empty state quick setup banner is shown
+      expect(find.text('Demo Academy Quick Setup'), findsOneWidget);
+      expect(find.text('Seed Demo Academy Data'), findsOneWidget);
+
+      // Tap Seed Demo Academy Data
+      await tester.tap(find.widgetWithText(FilledButton, 'Seed Demo Academy Data'));
+      await tester.pumpAndSettle();
+
+      expect(fakeSeeder.didResetAndSeed, isTrue);
+
+      // Verify header action button opens confirmation dialog
+      final resetBtn = find.byTooltip('Reset & Re-seed Demo Data');
+      expect(resetBtn, findsOneWidget);
+      await tester.tap(resetBtn);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Reset & Re-seed Demo Data'), findsOneWidget);
+      expect(find.text('Reset & Seed'), findsOneWidget);
+
+      // Tap Reset & Seed
+      await tester.tap(find.widgetWithText(FilledButton, 'Reset & Seed'));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
     });
   });
 }
