@@ -84,13 +84,14 @@
 - [x] Staff list with search, branch tabs filtering, and quick actions
 - [x] Full Staff CRUD:
   - Add Staff screen (`AddStaffScreen`) with designation, branch assignment, salary, and contact info
+  - **Course & Batch Assignment during staff creation** (`CourseAssignmentSelector`) allowing Academy Admin to assign one or multiple courses/batches to the new faculty member
   - Automatic sequential Staff ID generation (`STF-1001`, `STF-1002`, etc.) via atomic counters
   - Automatic initial temporary password generation (`Staff@XXXX`)
-  - One-time **Staff Credentials Slip** dialog upon creation with 1-tap "Copy Credentials"
+  - One-time **Staff Credentials Slip** dialog upon creation displaying Staff ID, password, and assigned courses, with 1-tap "Copy Credentials"
   - Academy Admin **Reset Password** flow for any staff member (available from `StaffListScreen` popup menu and `EditStaffScreen`)
   - Staff ID lookup sync in top-level `staff_accounts` collection for instant cross-academy sign-in
   - Staff Member login using **Staff ID** (e.g. `STF-1001`) or Email and password on `StaffLoginScreen`
-  - Edit Staff screen (`EditStaffScreen`) with full field updates and employment status
+  - Edit Staff screen (`EditStaffScreen`) with full field updates, employment status, and **live course assignment management** (add, remove, or reassign courses with automatic course sync)
   - Delete Staff flow with confirmation dialog
 - [x] Multi-Branch Management:
   - Dedicated `BranchesListScreen` with search, student/staff metrics per campus
@@ -177,9 +178,10 @@
 
 ## Phase 10 — Security, Testing & Release ✅
 
-- [x] Comprehensive automated test suite (**77/77 tests passing**, 100% success rate across 5 test suites)
-- [x] End-to-end integration tests for Super Admin and Academy Admin workflows (including 21 Academy Admin e2e tests)
+- [x] Comprehensive automated test suite (**79/79 tests passing**, 100% success rate across 5 test suites)
+- [x] End-to-end integration tests for Super Admin and Academy Admin workflows (including 23 Academy Admin e2e tests)
 - [x] Dedicated automated tests for Staff ID allocation, admin password reset, and Staff ID portal authentication
+- [x] Dedicated automated tests for course assignment during staff creation and staff editing
 - [x] Complete end-to-end automated test suite for the Staff experience (8/8 tests passing)
 - [x] Zero RenderFlex overflows across narrow mobile viewports (320px–360px) in all dialogs, modals, and tabs
 - [x] Zero static analysis warnings or errors (`flutter analyze` clean)
@@ -187,4 +189,4 @@
 ## Validation (latest)
 
 - `flutter analyze` → No issues found! (0 warnings/errors)
-- `flutter test` → 77/77 tests passed! (100% success)
+- `flutter test` → 79/79 tests passed! (100% success)
