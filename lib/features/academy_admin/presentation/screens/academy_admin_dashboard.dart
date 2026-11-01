@@ -5,14 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/attendance_calculator.dart';
+import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/stat_card.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../../../shared/selected_branch_provider.dart';
+import '../../../academics/application/course_repository_provider.dart';
 import '../../../admissions/domain/student.dart';
 import '../../../branches/domain/branch.dart';
 import '../../../staff/domain/staff.dart';
 import '../../application/academy_access_provider.dart';
 import '../../application/academy_admin_providers.dart';
+import '../../data/academy_data_seeder.dart';
 
 /// Academy Admin dashboard with frosted glass cards, multi-branch aggregation,
 /// overall sum across all branches, branch breakdown, and module navigation.
@@ -131,9 +134,71 @@ class AcademyAdminDashboard extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 ),
               ),
+            IconButton(
+              icon: const Icon(
+                Icons.auto_fix_high,
+                size: 20,
+                color: Color(0xFF38BDF8),
+              ),
+              tooltip: 'Reset & Re-seed Demo Data',
+              onPressed: () => _handleResetSeed(context, ref, academyId),
+            ),
           ],
         ),
         const SizedBox(height: 14),
+
+        if (allStudents.isEmpty && allStaff.isEmpty)
+          Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFF6366F1).withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Color(0xFFA5B4FC), size: 18),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Demo Academy Quick Setup',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Seed multi-branch campuses, teacher accounts with Staff IDs & passwords, assigned courses, and live course attendance records.',
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF6366F1),
+                  ),
+                  icon: const Icon(Icons.auto_fix_high, size: 16),
+                  label: const Text('Seed Demo Academy Data'),
+                  onPressed: () => _handleResetSeed(
+                    context,
+                    ref,
+                    academyId,
+                    isFirstSeed: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
         // Overall Sum Stat Cards Grid
         GridView.count(
@@ -564,3 +629,84 @@ class _ModuleTile extends StatelessWidget {
     );
   }
 }
+
+Future<void> _handleResetSeed(
+  BuildContext context,
+  WidgetRef ref,
+  String academyId, {
+  bool isFirstSeed = false,
+}) async {
+  if (!isFirstSeed) {
+    final confirmed = await showConfirmationDialog(
+      context,
+      title: 'Reset & Re-seed Demo Data',
+      message:
+          'This will purge all existing demo data and seed fresh records matching the latest course & teacher attendance architecture.',
+      confirmLabel: 'Reset & Seed',
+      destructive: true,
+    );
+    if (!confirmed || !context.mounted) return;
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Row(
+        children: [
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(width: 12),
+          Text('Resetting and seeding demo data...'),
+        ],
+      ),
+      duration: Duration(seconds: 4),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
+
+  try {
+    await ref
+        .read(academyDataSeederProvider)
+        .resetAndSeedAcademyData(academyId);
+
+    // Invalidate all streams to trigger real-time UI refresh
+    ref.invalidate(studentsStreamProvider(academyId));
+    ref.invalidate(staffStreamProvider(academyId));
+    ref.invalidate(branchesStreamProvider(academyId));
+    ref.invalidate(coursesStreamProvider(academyId));
+    ref.invalidate(attendanceForDateProvider);
+    ref.invalidate(invoicesStreamProvider(academyId));
+    ref.invalidate(paymentsStreamProvider(academyId));
+    ref.invalidate(examsStreamProvider(academyId));
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Demo data reset & seeded according to the new architecture!',
+          ),
+          backgroundColor: Color(0xFF10B981),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to seed demo data: $e'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+}
+

@@ -20,14 +20,64 @@ final academyDataSeederProvider = Provider<AcademyDataSeeder>(
   (ref) => AcademyDataSeeder(ref.watch(firestoreProvider)),
 );
 
-/// Seeds realistic demo students and associated academic records into Firestore.
+/// Seeds realistic demo students, courses, staff, and associated academic records into Firestore
+/// matching the multi-branch, teacher-led course attendance architecture.
 class AcademyDataSeeder {
   AcademyDataSeeder(this._firestore);
 
   final FirebaseFirestore _firestore;
 
-  /// Populates 5 diverse students, staff, attendance, fee invoices, payments,
-  /// exams, and branch records for [academyId].
+  /// Deletes all existing subcollections and demo records for [academyId] to ensure a clean slate.
+  Future<void> clearAcademyData(String academyId) async {
+    if (academyId.isEmpty) return;
+
+    // Clean up staff_accounts linked to this academy
+    try {
+      final staffSnap =
+          await _firestore.collection(FirestorePaths.staff(academyId)).get();
+      for (final doc in staffSnap.docs) {
+        final staffId = doc.data()['staffId'] as String?;
+        if (staffId != null && staffId.isNotEmpty) {
+          await _firestore.collection('staff_accounts').doc(staffId).delete();
+        }
+      }
+    } catch (_) {}
+
+    // Clean up all core subcollections
+    final collections = [
+      FirestorePaths.students(academyId),
+      FirestorePaths.staff(academyId),
+      FirestorePaths.branches(academyId),
+      FirestorePaths.courses(academyId),
+      FirestorePaths.attendance(academyId),
+      FirestorePaths.feeInvoices(academyId),
+      FirestorePaths.feePayments(academyId),
+      FirestorePaths.exams(academyId),
+      FirestorePaths.results(academyId),
+    ];
+
+    for (final path in collections) {
+      try {
+        final snap = await _firestore.collection(path).get();
+        if (snap.docs.isNotEmpty) {
+          final deleteBatch = _firestore.batch();
+          for (final doc in snap.docs) {
+            deleteBatch.delete(doc.reference);
+          }
+          await deleteBatch.commit();
+        }
+      } catch (_) {}
+    }
+  }
+
+  /// Wipes existing academy data and seeds fresh records matching the latest course architecture.
+  Future<void> resetAndSeedAcademyData(String academyId) async {
+    await clearAcademyData(academyId);
+    await seedAcademyData(academyId, force: true);
+  }
+
+  /// Populates realistic campuses, students, assigned staff, courses, and course-scoped
+  /// attendance records for [academyId].
   Future<void> seedAcademyData(String academyId, {bool force = false}) async {
     if (academyId.isEmpty) return;
 
@@ -43,121 +93,37 @@ class AcademyDataSeeder {
 
     final batch = _firestore.batch();
 
-    // 1. Five diverse students across classes
-    final students = [
-      Student(
-        id: 'stu_100001',
+    // 1. Multi-Branch Campuses
+    final branchesRef =
+        _firestore.collection(FirestorePaths.branches(academyId));
+    final branches = [
+      Branch(
+        id: 'br_main',
         academyId: academyId,
-        fullName: 'Muhammad Ali',
-        fatherName: 'Tariq Ali',
-        guardianPhone: '+92 301 2345678',
-        guardianRelation: 'Father',
-        academicSession: '2026-2027',
-        rollNumber: '100001',
-        gender: 'Male',
-        dateOfBirth: DateTime(2009, 3, 15),
-        admissionDate: DateTime.now().subtract(const Duration(days: 60)),
-        address: 'Sector F-8/2, Islamabad',
-        status: 'active',
-        notes: 'Pre-Medical Group · Class 10th',
+        name: 'Main Campus',
+        address: 'Plot 14-A, Blue Area',
+        city: 'Islamabad',
+        phone: '+92 51 111 222 333',
+        isActive: true,
       ),
-      Student(
-        id: 'stu_100002',
+      Branch(
+        id: 'br_city',
         academyId: academyId,
-        fullName: 'Fatima Zahra',
-        fatherName: 'Syed Qasim',
-        guardianPhone: '+92 302 3456789',
-        guardianRelation: 'Father',
-        academicSession: '2026-2027',
-        rollNumber: '100002',
-        gender: 'Female',
-        dateOfBirth: DateTime(2009, 7, 22),
-        admissionDate: DateTime.now().subtract(const Duration(days: 55)),
-        address: 'Street 4, Gulberg, Lahore',
-        status: 'active',
-        notes: 'Pre-Engineering Group · Class 10th',
-      ),
-      Student(
-        id: 'stu_100003',
-        academyId: academyId,
-        fullName: 'Hamza Ahmed',
-        fatherName: 'Naveed Ahmed',
-        guardianPhone: '+92 303 4567890',
-        guardianRelation: 'Father',
-        academicSession: '2026-2027',
-        rollNumber: '100003',
-        gender: 'Male',
-        dateOfBirth: DateTime(2010, 11, 5),
-        admissionDate: DateTime.now().subtract(const Duration(days: 40)),
-        address: 'DHA Phase 5, Karachi',
-        status: 'active',
-        notes: 'Computer Science Group · Class 9th',
-      ),
-      Student(
-        id: 'stu_100004',
-        academyId: academyId,
-        fullName: 'Ayesha Khan',
-        fatherName: 'Imran Khan',
-        guardianPhone: '+92 304 5678901',
-        guardianRelation: 'Father',
-        academicSession: '2026-2027',
-        rollNumber: '100004',
-        gender: 'Female',
-        dateOfBirth: DateTime(2010, 1, 18),
-        admissionDate: DateTime.now().subtract(const Duration(days: 30)),
-        address: 'Satellite Town, Rawalpindi',
-        status: 'active',
-        notes: 'Science Group · Class 9th',
-      ),
-      Student(
-        id: 'stu_100005',
-        academyId: academyId,
-        fullName: 'Zayd Bilal',
-        fatherName: 'Bilal Farooq',
-        guardianPhone: '+92 305 6789012',
-        guardianRelation: 'Father',
-        academicSession: '2026-2027',
-        rollNumber: '100005',
-        gender: 'Male',
-        dateOfBirth: DateTime(2011, 9, 9),
-        admissionDate: DateTime.now().subtract(const Duration(days: 15)),
-        address: 'Model Town, Faisalabad',
-        status: 'active',
-        notes: 'Junior Section · Class 8th',
+        name: 'City Campus',
+        address: 'Main Murree Road, Saddar',
+        city: 'Rawalpindi',
+        phone: '+92 51 444 555 666',
+        isActive: true,
       ),
     ];
-
-    for (final s in students) {
+    for (final b in branches) {
       batch.set(
-        studentsRef.doc(s.id),
-        toFirestoreData(s.toJson())..remove('id'),
+        branchesRef.doc(b.id),
+        toFirestoreData(b.toJson())..remove('id'),
       );
     }
 
-    // 2. Roll number counter update
-    final counterRef = _firestore.doc(
-      '${FirestorePaths.counters(academyId)}/roll_number',
-    );
-    batch.set(counterRef, {'value': 100005}, SetOptions(merge: true));
-
-    // 3. Main campus branch
-    final branchesRef =
-        _firestore.collection(FirestorePaths.branches(academyId));
-    final branch = Branch(
-      id: 'br_main',
-      academyId: academyId,
-      name: 'Main Campus',
-      address: 'Plot 14-A, Blue Area',
-      city: 'Islamabad',
-      phone: '+92 51 111 222 333',
-      isActive: true,
-    );
-    batch.set(
-      branchesRef.doc(branch.id),
-      toFirestoreData(branch.toJson())..remove('id'),
-    );
-
-    // 4. Staff faculty records
+    // 2. Staff Faculty (with Staff IDs & Login credentials)
     final staffRef = _firestore.collection(FirestorePaths.staff(academyId));
     final staffList = [
       Staff(
@@ -171,7 +137,7 @@ class AcademyDataSeeder {
         jobTitle: 'Senior Mathematics Faculty',
         salary: 65000,
         joiningDate: DateTime(2025, 8, 1),
-        branchId: branch.id,
+        branchId: branches[0].id,
         status: 'active',
       ),
       Staff(
@@ -185,7 +151,21 @@ class AcademyDataSeeder {
         jobTitle: 'Head of Science Department',
         salary: 75000,
         joiningDate: DateTime(2025, 6, 15),
-        branchId: branch.id,
+        branchId: branches[0].id,
+        status: 'active',
+      ),
+      Staff(
+        id: 'stf_03',
+        academyId: academyId,
+        staffId: 'STF-1003',
+        password: 'Staff@1003',
+        fullName: 'Sir Usman Ali',
+        phone: '+92 314 7654321',
+        email: 'usman.cs@acaderix.com',
+        jobTitle: 'Computer Science Specialist',
+        salary: 60000,
+        joiningDate: DateTime(2025, 9, 1),
+        branchId: branches[1].id,
         status: 'active',
       ),
     ];
@@ -209,31 +189,137 @@ class AcademyDataSeeder {
       );
     }
 
-    // 5. Courses & Batches
+    // 3. Students assigned to respective branches
+    final students = [
+      Student(
+        id: 'stu_100001',
+        academyId: academyId,
+        branchId: branches[0].id,
+        fullName: 'Muhammad Ali',
+        fatherName: 'Tariq Ali',
+        guardianPhone: '+92 301 2345678',
+        guardianRelation: 'Father',
+        academicSession: '2026-2027',
+        rollNumber: '100001',
+        gender: 'Male',
+        dateOfBirth: DateTime(2009, 3, 15),
+        admissionDate: DateTime.now().subtract(const Duration(days: 60)),
+        address: 'Sector F-8/2, Islamabad',
+        status: 'active',
+        notes: 'Pre-Medical Group · Class 10th',
+      ),
+      Student(
+        id: 'stu_100002',
+        academyId: academyId,
+        branchId: branches[0].id,
+        fullName: 'Fatima Zahra',
+        fatherName: 'Syed Qasim',
+        guardianPhone: '+92 302 3456789',
+        guardianRelation: 'Father',
+        academicSession: '2026-2027',
+        rollNumber: '100002',
+        gender: 'Female',
+        dateOfBirth: DateTime(2009, 7, 22),
+        admissionDate: DateTime.now().subtract(const Duration(days: 55)),
+        address: 'Street 4, Gulberg, Islamabad',
+        status: 'active',
+        notes: 'Pre-Engineering Group · Class 10th',
+      ),
+      Student(
+        id: 'stu_100003',
+        academyId: academyId,
+        branchId: branches[0].id,
+        fullName: 'Hamza Ahmed',
+        fatherName: 'Naveed Ahmed',
+        guardianPhone: '+92 303 4567890',
+        guardianRelation: 'Father',
+        academicSession: '2026-2027',
+        rollNumber: '100003',
+        gender: 'Male',
+        dateOfBirth: DateTime(2010, 11, 5),
+        admissionDate: DateTime.now().subtract(const Duration(days: 40)),
+        address: 'Sector G-10, Islamabad',
+        status: 'active',
+        notes: 'Science Group · Class 10th',
+      ),
+      Student(
+        id: 'stu_100004',
+        academyId: academyId,
+        branchId: branches[1].id,
+        fullName: 'Ayesha Khan',
+        fatherName: 'Imran Khan',
+        guardianPhone: '+92 304 5678901',
+        guardianRelation: 'Father',
+        academicSession: '2026-2027',
+        rollNumber: '100004',
+        gender: 'Female',
+        dateOfBirth: DateTime(2010, 1, 18),
+        admissionDate: DateTime.now().subtract(const Duration(days: 30)),
+        address: 'Satellite Town, Rawalpindi',
+        status: 'active',
+        notes: 'Science Group · Class 9th',
+      ),
+      Student(
+        id: 'stu_100005',
+        academyId: academyId,
+        branchId: branches[1].id,
+        fullName: 'Zayd Bilal',
+        fatherName: 'Bilal Farooq',
+        guardianPhone: '+92 305 6789012',
+        guardianRelation: 'Father',
+        academicSession: '2026-2027',
+        rollNumber: '100005',
+        gender: 'Male',
+        dateOfBirth: DateTime(2011, 9, 9),
+        admissionDate: DateTime.now().subtract(const Duration(days: 15)),
+        address: 'Westridge, Rawalpindi',
+        status: 'active',
+        notes: 'Computer Science · Class 9th',
+      ),
+    ];
+    for (final s in students) {
+      batch.set(
+        studentsRef.doc(s.id),
+        toFirestoreData(s.toJson())..remove('id'),
+      );
+    }
+
+    // 4. Update Counters
+    final rollCounterRef = _firestore.doc(
+      '${FirestorePaths.counters(academyId)}/roll_number',
+    );
+    batch.set(rollCounterRef, {'value': 100005}, SetOptions(merge: true));
+
+    final staffCounterRef = _firestore.doc(
+      '${FirestorePaths.counters(academyId)}/staff_id',
+    );
+    batch.set(staffCounterRef, {'value': 1003}, SetOptions(merge: true));
+
+    // 5. Courses & Batches (Teacher-Assigned & Branch-Scoped)
     final coursesRef = _firestore.collection(FirestorePaths.courses(academyId));
     final courses = [
       Course(
         id: 'crs_101',
         academyId: academyId,
-        branchId: branch.id,
+        branchId: branches[0].id,
         name: 'Physics 10th - Batch A',
         courseCode: 'PHY-101',
-        teacherId: staffList[0].id,
-        teacherName: staffList[0].fullName,
+        teacherId: staffList[1].id, // Dr. Amina Qureshi
+        teacherName: staffList[1].fullName,
         enrolledStudentIds: [students[0].id, students[1].id, students[2].id],
         schedule: 'Mon, Wed, Fri • 4:00 PM - 5:30 PM',
-        room: 'Room 1',
+        room: 'Lab 1',
         fee: 6500,
       ),
       Course(
         id: 'crs_102',
         academyId: academyId,
-        branchId: branch.id,
+        branchId: branches[0].id,
         name: 'Mathematics 10th - Batch B',
         courseCode: 'MTH-102',
-        teacherId: staffList[1].id,
-        teacherName: staffList[1].fullName,
-        enrolledStudentIds: [students[2].id, students[3].id, students[4].id],
+        teacherId: staffList[0].id, // Sir Tariq Mehmood
+        teacherName: staffList[0].fullName,
+        enrolledStudentIds: [students[0].id, students[1].id, students[2].id],
         schedule: 'Tue, Thu, Sat • 5:30 PM - 7:00 PM',
         room: 'Room 2',
         fee: 7000,
@@ -241,14 +327,14 @@ class AcademyDataSeeder {
       Course(
         id: 'crs_103',
         academyId: academyId,
-        branchId: branch.id,
+        branchId: branches[1].id,
         name: 'Computer Science 9th',
         courseCode: 'CS-901',
-        teacherId: staffList[0].id,
-        teacherName: staffList[0].fullName,
-        enrolledStudentIds: [students[0].id, students[2].id, students[4].id],
+        teacherId: staffList[2].id, // Sir Usman Ali
+        teacherName: staffList[2].fullName,
+        enrolledStudentIds: [students[3].id, students[4].id],
         schedule: 'Mon, Wed • 2:30 PM - 4:00 PM',
-        room: 'Lab 1',
+        room: 'IT Lab',
         fee: 8000,
       ),
     ];
@@ -259,32 +345,77 @@ class AcademyDataSeeder {
       );
     }
 
-    // 6. Daily Attendance for students (course-scoped)
+    // 6. Course-Scoped Attendance Records
+    // crs_101 (Dr. Amina Qureshi) has been submitted today by the teacher.
+    // crs_102 (Sir Tariq Mehmood) is PENDING today to demonstrate compliance audit.
+    // crs_103 (Sir Usman Ali) has also been submitted today.
     final attRef = _firestore.collection(FirestorePaths.attendance(academyId));
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final dateKey = today.toIso8601String().substring(0, 10);
-    final attStatuses = [
-      AttendanceStatus.present,
-      AttendanceStatus.present,
-      AttendanceStatus.late,
-      AttendanceStatus.present,
-      AttendanceStatus.absent,
-    ];
-    for (var i = 0; i < students.length; i++) {
-      final s = students[i];
-      final record = AttendanceRecord(
-        id: '${s.id}_crs_101_$dateKey',
+
+    // crs_101 attendance records:
+    final crs101Records = [
+      AttendanceRecord(
+        id: '${students[0].id}_crs_101_$dateKey',
         academyId: academyId,
         courseId: 'crs_101',
-        markedById: staffList[0].id,
-        studentId: s.id,
+        markedById: staffList[1].id,
+        studentId: students[0].id,
         date: today,
-        status: attStatuses[i],
-      );
+        status: AttendanceStatus.present,
+      ),
+      AttendanceRecord(
+        id: '${students[1].id}_crs_101_$dateKey',
+        academyId: academyId,
+        courseId: 'crs_101',
+        markedById: staffList[1].id,
+        studentId: students[1].id,
+        date: today,
+        status: AttendanceStatus.present,
+      ),
+      AttendanceRecord(
+        id: '${students[2].id}_crs_101_$dateKey',
+        academyId: academyId,
+        courseId: 'crs_101',
+        markedById: staffList[1].id,
+        studentId: students[2].id,
+        date: today,
+        status: AttendanceStatus.late,
+      ),
+    ];
+    for (final rec in crs101Records) {
       batch.set(
-        attRef.doc('${s.id}_crs_101_$dateKey'),
-        toFirestoreData(record.toJson())..remove('id'),
+        attRef.doc(rec.id),
+        toFirestoreData(rec.toJson())..remove('id'),
+      );
+    }
+
+    // crs_103 attendance records:
+    final crs103Records = [
+      AttendanceRecord(
+        id: '${students[3].id}_crs_103_$dateKey',
+        academyId: academyId,
+        courseId: 'crs_103',
+        markedById: staffList[2].id,
+        studentId: students[3].id,
+        date: today,
+        status: AttendanceStatus.present,
+      ),
+      AttendanceRecord(
+        id: '${students[4].id}_crs_103_$dateKey',
+        academyId: academyId,
+        courseId: 'crs_103',
+        markedById: staffList[2].id,
+        studentId: students[4].id,
+        date: today,
+        status: AttendanceStatus.absent,
+      ),
+    ];
+    for (final rec in crs103Records) {
+      batch.set(
+        attRef.doc(rec.id),
+        toFirestoreData(rec.toJson())..remove('id'),
       );
     }
 
@@ -363,7 +494,7 @@ class AcademyDataSeeder {
       toFirestoreData(payment1.toJson())..remove('id'),
     );
 
-    // 7. Exam and Results
+    // 8. Exams and Results
     final examsRef = _firestore.collection(FirestorePaths.exams(academyId));
     final resultsRef = _firestore.collection(FirestorePaths.results(academyId));
     final exam1 = Exam(
