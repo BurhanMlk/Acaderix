@@ -14,6 +14,7 @@ import '../../../admissions/domain/student.dart';
 import '../../../branches/domain/branch.dart';
 import '../../../staff/domain/staff.dart';
 import '../../../communication/application/communication_providers.dart';
+import '../../../onboarding/presentation/screens/splash_screen.dart';
 import '../../application/academy_access_provider.dart';
 import '../../application/academy_admin_providers.dart';
 import '../../data/academy_data_seeder.dart';
@@ -672,41 +673,26 @@ Future<void> _handleResetSeed(
     if (!confirmed || !context.mounted) return;
   }
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Row(
-        children: [
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(width: 12),
-          Text('Resetting and seeding demo data...'),
-        ],
-      ),
-      duration: Duration(seconds: 4),
-      behavior: SnackBarBehavior.floating,
-    ),
-  );
-
   try {
-    await ref
-        .read(academyDataSeederProvider)
-        .resetAndSeedAcademyData(academyId);
+    await showSplashLoadingDialog(
+      context,
+      message: 'Resetting and seeding demo records for Acaderix...',
+      action: () async {
+        await ref
+            .read(academyDataSeederProvider)
+            .resetAndSeedAcademyData(academyId);
 
-    // Invalidate all streams to trigger real-time UI refresh
-    ref.invalidate(studentsStreamProvider(academyId));
-    ref.invalidate(staffStreamProvider(academyId));
-    ref.invalidate(branchesStreamProvider(academyId));
-    ref.invalidate(coursesStreamProvider(academyId));
-    ref.invalidate(attendanceForDateProvider);
-    ref.invalidate(invoicesStreamProvider(academyId));
-    ref.invalidate(paymentsStreamProvider(academyId));
-    ref.invalidate(examsStreamProvider(academyId));
+        // Invalidate all streams to trigger real-time UI refresh
+        ref.invalidate(studentsStreamProvider(academyId));
+        ref.invalidate(staffStreamProvider(academyId));
+        ref.invalidate(branchesStreamProvider(academyId));
+        ref.invalidate(coursesStreamProvider(academyId));
+        ref.invalidate(attendanceForDateProvider);
+        ref.invalidate(invoicesStreamProvider(academyId));
+        ref.invalidate(paymentsStreamProvider(academyId));
+        ref.invalidate(examsStreamProvider(academyId));
+      },
+    );
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();

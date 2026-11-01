@@ -87,7 +87,12 @@ class _BrandHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const AppLogo(size: 92, borderRadius: 26),
+        const AppLogo(
+          size: 92,
+          borderRadius: 26,
+          withGlow: true,
+          heroTag: 'app_brand_logo',
+        ),
         const SizedBox(height: 16),
         Text(
           AppConstants.appName,

@@ -1,0 +1,15 @@
+flutter_native_splash:
+  color: "#0B0F19"
+  image: assets/images/acadrix_logo.png
+  color_dark: "#0B0F19"
+  image_dark: assets/images/acadrix_logo.png
+
+  android_12:
+    image: assets/images/acadrix_logo.png
+    color: "#0B0F19"
+    icon_background_color: "#0B0F19"
+    image_dark: assets/images/acadrix_logo.png
+    color_dark: "#0B0F19"
+    icon_background_color_dark: "#0B0F19"
+
+  web: false

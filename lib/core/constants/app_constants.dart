@@ -1,7 +1,10 @@
 /// Application-wide constants shared across the codebase.
 abstract final class AppConstants {
   /// Display name of the product.
-  static const String appName = 'Academy Management System';
+  static const String appName = 'Acaderix';
+
+  /// Tagline / subtitle of the product.
+  static const String appTagline = 'Academy Management System';
 
   /// Default currency for the platform (PKR).
   static const String currencyCode = 'PKR';

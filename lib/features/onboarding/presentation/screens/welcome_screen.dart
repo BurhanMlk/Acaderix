@@ -24,7 +24,14 @@ class WelcomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Spacer(),
-                    const Center(child: AppLogo(size: 112, borderRadius: 28)),
+                    const Center(
+                      child: AppLogo(
+                        size: 112,
+                        borderRadius: 28,
+                        withGlow: true,
+                        heroTag: 'app_brand_logo',
+                      ),
+                    ),
                     const SizedBox(height: 28),
                     Text(
                       'Welcome to Acadrix',
