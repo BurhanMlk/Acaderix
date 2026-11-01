@@ -1699,5 +1699,191 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('22. Add staff screen allows assigning courses, updates course repository, and reflects in credentials slip', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final staffRepo = _FakeStaffRepo();
+      final courseRepo = _FakeCourseRepo();
+      courseRepo.addCourses([
+        const Course(
+          id: 'c1',
+          academyId: testAcademyId,
+          name: 'Physics 10th - Batch A',
+          courseCode: 'PHY-101',
+          schedule: 'Mon, Wed • 4:00 PM',
+        ),
+        const Course(
+          id: 'c2',
+          academyId: testAcademyId,
+          name: 'Chemistry 9th',
+          courseCode: 'CHM-901',
+          schedule: 'Tue, Thu • 5:00 PM',
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            staffRepositoryProvider.overrideWithValue(staffRepo),
+            courseRepositoryProvider.overrideWithValue(courseRepo),
+            coursesStreamProvider.overrideWith(
+              (ref, id) => courseRepo.watchAll(id),
+            ),
+          ],
+          child: const MaterialApp(
+            home: AddStaffScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify course assignment section renders
+      expect(find.text('Assign Courses & Batches'), findsOneWidget);
+      expect(find.text('Physics 10th - Batch A'), findsOneWidget);
+      expect(find.text('Chemistry 9th'), findsOneWidget);
+
+      // Select Physics course
+      await tester.tap(find.text('Physics 10th - Batch A'));
+      await tester.pumpAndSettle();
+
+      // 1 Selected badge appears
+      expect(find.text('1 Selected'), findsOneWidget);
+
+      // Enter staff details
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'Sir Usman Ali',
+      );
+      await tester.enterText(
+        find.byType(TextFormField).at(1),
+        'Physics Specialist',
+      );
+      await tester.enterText(
+        find.byType(TextFormField).at(2),
+        '03001234567',
+      );
+
+      // Submit
+      final submitBtn = find.widgetWithText(FilledButton, 'Add Staff Member');
+      await tester.ensureVisible(submitBtn);
+      await tester.tap(submitBtn);
+      await tester.pumpAndSettle();
+
+      // Credential slip dialog is shown with assigned course
+      expect(find.text('Staff Credentials'), findsOneWidget);
+      expect(find.text('STF-1001'), findsOneWidget);
+      expect(find.text('Assigned Courses'), findsOneWidget);
+      expect(find.text('Physics 10th - Batch A'), findsWidgets);
+
+      // Dismiss dialog
+      await tester.tap(find.widgetWithText(FilledButton, 'Done'));
+      await tester.pumpAndSettle();
+
+      // Verify staff record created
+      expect(staffRepo._staff.length, 1);
+      final createdStaff = staffRepo._staff.first;
+      expect(createdStaff.fullName, 'Sir Usman Ali');
+
+      // Verify course repository was updated with assigned teacher
+      final updatedCourse = courseRepo._courses.firstWhere((c) => c.id == 'c1');
+      expect(updatedCourse.teacherId, createdStaff.id);
+      expect(updatedCourse.teacherName, 'Sir Usman Ali');
+
+      // Chemistry course remains unassigned
+      final unassignedCourse =
+          courseRepo._courses.firstWhere((c) => c.id == 'c2');
+      expect(unassignedCourse.teacherId, isEmpty);
+    });
+
+    testWidgets('23. Edit staff screen allows modifying assigned courses and synchronizes course repository', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final staffRepo = _FakeStaffRepo();
+      const staff = Staff(
+        id: 'stf_01',
+        academyId: testAcademyId,
+        staffId: 'STF-1001',
+        fullName: 'Sir Tariq Mehmood',
+        jobTitle: 'Senior Math Faculty',
+        phone: '03001234567',
+        status: 'active',
+      );
+      staffRepo.addStaff([staff]);
+
+      final courseRepo = _FakeCourseRepo();
+      courseRepo.addCourses([
+        const Course(
+          id: 'c1',
+          academyId: testAcademyId,
+          name: 'Physics 10th - Batch A',
+          teacherId: 'stf_01',
+          teacherName: 'Sir Tariq Mehmood',
+        ),
+        const Course(
+          id: 'c2',
+          academyId: testAcademyId,
+          name: 'Mathematics 10th - Batch B',
+          teacherId: '',
+          teacherName: '',
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            staffRepositoryProvider.overrideWithValue(staffRepo),
+            courseRepositoryProvider.overrideWithValue(courseRepo),
+            coursesStreamProvider.overrideWith(
+              (ref, id) => courseRepo.watchAll(id),
+            ),
+          ],
+          child: const MaterialApp(
+            home: EditStaffScreen(staff: staff),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Physics course is pre-selected
+      expect(find.text('1 Selected'), findsOneWidget);
+
+      // Select Mathematics as well
+      await tester.tap(find.text('Mathematics 10th - Batch B'));
+      await tester.pumpAndSettle();
+      expect(find.text('2 Selected'), findsOneWidget);
+
+      // Unselect Physics
+      await tester.tap(find.text('Physics 10th - Batch A'));
+      await tester.pumpAndSettle();
+      expect(find.text('1 Selected'), findsOneWidget);
+
+      // Submit changes
+      final saveBtn = find.widgetWithText(FilledButton, 'Save Changes');
+      await tester.ensureVisible(saveBtn);
+      await tester.tap(saveBtn);
+      await tester.pumpAndSettle();
+
+      // Physics course should now be unassigned
+      final physicsCourse = courseRepo._courses.firstWhere((c) => c.id == 'c1');
+      expect(physicsCourse.teacherId, isEmpty);
+
+      // Mathematics course should now be assigned to Sir Tariq
+      final mathCourse = courseRepo._courses.firstWhere((c) => c.id == 'c2');
+      expect(mathCourse.teacherId, 'stf_01');
+      expect(mathCourse.teacherName, 'Sir Tariq Mehmood');
+    });
   });
 }
