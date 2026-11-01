@@ -1,4 +1,7 @@
 import 'package:academy_management/core/constants/roles.dart';
+import 'package:academy_management/features/academics/application/course_repository_provider.dart';
+import 'package:academy_management/features/academics/domain/course.dart';
+import 'package:academy_management/features/academics/domain/course_repository.dart';
 import 'package:academy_management/features/admissions/application/student_repository_provider.dart';
 import 'package:academy_management/features/admissions/domain/student.dart';
 import 'package:academy_management/features/admissions/domain/student_repository.dart';
@@ -204,6 +207,82 @@ class _FakeAttendanceRepo implements AttendanceRepository {
     );
     _records.add(record);
   }
+
+  @override
+  Future<void> markBatchAttendance(List<AttendanceRecord> records) async {
+    for (final r in records) {
+      await markAttendance(r);
+    }
+  }
+}
+
+class _FakeCourseRepo implements CourseRepository {
+  final List<Course> _courses = [];
+
+  void addCourses(List<Course> courses) => _courses.addAll(courses);
+
+  @override
+  Stream<List<Course>> watchAll(String academyId) => Stream.value(_courses);
+
+  @override
+  Stream<List<Course>> watchByBranch(String academyId, String branchId) =>
+      Stream.value(_courses.where((c) => c.branchId == branchId).toList());
+
+  @override
+  Stream<List<Course>> watchByTeacher(String academyId, String teacherId) =>
+      Stream.value(_courses.where((c) => c.teacherId == teacherId).toList());
+
+  @override
+  Future<Course?> getById(String academyId, String courseId) async =>
+      _courses.where((c) => c.id == courseId).firstOrNull;
+
+  @override
+  Future<void> saveCourse(Course course) async {
+    final idx = _courses.indexWhere((c) => c.id == course.id);
+    if (idx != -1) {
+      _courses[idx] = course;
+    } else {
+      _courses.add(course);
+    }
+  }
+
+  @override
+  Future<void> deleteCourse(String academyId, String courseId) async =>
+      _courses.removeWhere((c) => c.id == courseId);
+
+  @override
+  Future<void> enrollStudents(
+    String academyId,
+    String courseId,
+    List<String> studentIds,
+  ) async {
+    final idx = _courses.indexWhere((c) => c.id == courseId);
+    if (idx != -1) {
+      _courses[idx] = _courses[idx].copyWith(
+        enrolledStudentIds: {
+          ..._courses[idx].enrolledStudentIds,
+          ...studentIds,
+        }.toList(),
+      );
+    }
+  }
+
+  @override
+  Future<void> unenrollStudent(
+    String academyId,
+    String courseId,
+    String studentId,
+  ) async {
+    final idx = _courses.indexWhere((c) => c.id == courseId);
+    if (idx != -1) {
+      _courses[idx] = _courses[idx].copyWith(
+        enrolledStudentIds: _courses[idx]
+            .enrolledStudentIds
+            .where((id) => id != studentId)
+            .toList(),
+      );
+    }
+  }
 }
 
 class _FakeExamRepo implements ExamRepository {
@@ -317,6 +396,20 @@ void main() {
     ),
   ];
 
+  final testCourses = [
+    const Course(
+      id: 'crs_01',
+      academyId: academyId,
+      branchId: branchId,
+      name: 'Physics 10th - Batch A',
+      courseCode: 'PHY-101',
+      teacherId: 'stf_doc_1001',
+      teacherName: 'Prof. Tariq Mehmood',
+      enrolledStudentIds: ['stu_101', 'stu_102'],
+      schedule: 'Mon, Wed, Fri • 4:00 PM',
+    ),
+  ];
+
   Widget buildStaffTestApp({
     Size screenSize = const Size(390, 1100),
     _FakeStudentRepo? studentRepo,
@@ -324,6 +417,7 @@ void main() {
     _FakeBranchRepo? branchRepo,
     _FakeAttendanceRepo? attendanceRepo,
     _FakeExamRepo? examRepo,
+    _FakeCourseRepo? courseRepo,
   }) {
     final sRepo =
         studentRepo ?? (_FakeStudentRepo()..addStudents(testStudents));
@@ -334,6 +428,7 @@ void main() {
         (_FakeExamRepo()
           ..addExams(testExams)
           ..addResults(testResults));
+    final cRepo = courseRepo ?? (_FakeCourseRepo()..addCourses(testCourses));
 
     return ProviderScope(
       overrides: [
@@ -343,6 +438,7 @@ void main() {
         branchRepositoryProvider.overrideWithValue(bRepo),
         attendanceRepositoryProvider.overrideWithValue(aRepo),
         examRepositoryProvider.overrideWithValue(eRepo),
+        courseRepositoryProvider.overrideWithValue(cRepo),
       ],
       child: MaterialApp(
         home: Center(
@@ -379,8 +475,14 @@ void main() {
       expect(find.text('My Campus Overview'), findsOneWidget);
       expect(find.text('Students'), findsWidgets);
       expect(find.text("Today's Attendance"), findsOneWidget);
-      expect(find.text('Evaluations'), findsOneWidget);
+      expect(find.text('My Courses'), findsOneWidget);
       expect(find.text('Leave Balance'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Physics 10th - Batch A'),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('Physics 10th - Batch A'), findsWidgets);
 
       await tester.scrollUntilVisible(
         find.text('My Profile & Security'),
@@ -445,14 +547,17 @@ void main() {
       expect(find.text('Ayesha Malik'), findsOneWidget);
 
       // Mark Ali Hassan Present
-      await tester.tap(find.text('Present').first);
+      await tester.tap(find.text('P').first);
       await tester.pumpAndSettle();
 
       // Tap "Mark All Present"
       await tester.tap(find.text('Mark All Present'));
       await tester.pumpAndSettle();
 
-      expect(find.text('All students marked Present for today!'), findsOneWidget);
+      expect(
+        find.text('All enrolled students marked Present for today!'),
+        findsOneWidget,
+      );
     });
 
     testWidgets(

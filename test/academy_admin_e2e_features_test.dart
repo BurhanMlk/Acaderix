@@ -37,6 +37,10 @@ import 'package:academy_management/features/staff/domain/staff_repository.dart';
 import 'package:academy_management/features/staff/presentation/screens/add_staff_screen.dart';
 import 'package:academy_management/features/staff/presentation/screens/edit_staff_screen.dart';
 import 'package:academy_management/features/staff/presentation/screens/staff_list_screen.dart';
+import 'package:academy_management/features/academics/application/course_repository_provider.dart';
+import 'package:academy_management/features/academics/domain/course.dart';
+import 'package:academy_management/features/academics/domain/course_repository.dart';
+import 'package:academy_management/features/academics/presentation/screens/courses_list_screen.dart';
 import 'package:academy_management/features/auth/presentation/screens/staff_login_screen.dart';
 import 'package:academy_management/features/branches/application/branch_repository_provider.dart';
 import 'package:academy_management/features/branches/domain/branch.dart';
@@ -123,6 +127,13 @@ class _FakeAttendanceRepo implements AttendanceRepository {
           r.date.toIso8601String().substring(0, 10) == dateStr,
     );
     _records.add(record);
+  }
+
+  @override
+  Future<void> markBatchAttendance(List<AttendanceRecord> records) async {
+    for (final r in records) {
+      await markAttendance(r);
+    }
   }
 }
 
@@ -267,6 +278,75 @@ class _FakeBranchRepo implements BranchRepository {
   }
 }
 
+class _FakeCourseRepo implements CourseRepository {
+  final List<Course> _courses = [];
+
+  void addCourses(List<Course> courses) => _courses.addAll(courses);
+
+  @override
+  Stream<List<Course>> watchAll(String academyId) => Stream.value(_courses);
+
+  @override
+  Stream<List<Course>> watchByBranch(String academyId, String branchId) =>
+      Stream.value(_courses.where((c) => c.branchId == branchId).toList());
+
+  @override
+  Stream<List<Course>> watchByTeacher(String academyId, String teacherId) =>
+      Stream.value(_courses.where((c) => c.teacherId == teacherId).toList());
+
+  @override
+  Future<Course?> getById(String academyId, String courseId) async =>
+      _courses.where((c) => c.id == courseId).firstOrNull;
+
+  @override
+  Future<void> saveCourse(Course course) async {
+    final idx = _courses.indexWhere((c) => c.id == course.id);
+    if (idx != -1) {
+      _courses[idx] = course;
+    } else {
+      _courses.add(course);
+    }
+  }
+
+  @override
+  Future<void> deleteCourse(String academyId, String courseId) async =>
+      _courses.removeWhere((c) => c.id == courseId);
+
+  @override
+  Future<void> enrollStudents(
+    String academyId,
+    String courseId,
+    List<String> studentIds,
+  ) async {
+    final idx = _courses.indexWhere((c) => c.id == courseId);
+    if (idx != -1) {
+      _courses[idx] = _courses[idx].copyWith(
+        enrolledStudentIds: {
+          ..._courses[idx].enrolledStudentIds,
+          ...studentIds,
+        }.toList(),
+      );
+    }
+  }
+
+  @override
+  Future<void> unenrollStudent(
+    String academyId,
+    String courseId,
+    String studentId,
+  ) async {
+    final idx = _courses.indexWhere((c) => c.id == courseId);
+    if (idx != -1) {
+      _courses[idx] = _courses[idx].copyWith(
+        enrolledStudentIds: _courses[idx]
+            .enrolledStudentIds
+            .where((id) => id != studentId)
+            .toList(),
+      );
+    }
+  }
+}
+
 class _FakeAccessRepo implements AcademyAccessRepository {
   _FakeAccessRepo(this._info);
   final AcademyAccessInfo _info;
@@ -398,6 +478,18 @@ List<Student> _createSeededStudents(String academyId) {
       rollNumber: '100005',
       notes: 'Class 8th · Middle Section',
       status: 'active',
+    ),
+  ];
+}
+
+List<Branch> _createSeededBranches(String academyId) {
+  return [
+    Branch(
+      id: 'br_1',
+      academyId: academyId,
+      name: 'Main Campus',
+      address: 'Blue Area, Islamabad',
+      phone: '+92 51 1234567',
     ),
   ];
 }
@@ -556,16 +648,20 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // Switch to General Roster mode
+      await tester.tap(find.text('General Roster'));
+      await tester.pumpAndSettle();
+
       // Verify students appear
       expect(find.text('Muhammad Ali'), findsOneWidget);
       expect(find.text('Fatima Zahra'), findsOneWidget);
 
-      // Find PRESENT choice chips
-      final presentChips = find.widgetWithText(ChoiceChip, 'PRESENT');
-      expect(presentChips, findsWidgets);
+      // Find Present button on the first student
+      final presentButtons = find.widgetWithText(FilledButton, 'Present');
+      expect(presentButtons, findsWidgets);
 
       // Tap Present on the first student
-      await tester.tap(presentChips.first);
+      await tester.tap(presentButtons.first);
       await tester.pumpAndSettle();
 
       // Verify record is saved in fake repo
@@ -1415,6 +1511,190 @@ void main() {
       expect(find.text('Copy Credentials'), findsOneWidget);
 
       await tester.tap(find.widgetWithText(FilledButton, 'Done'));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('20. Courses list displays courses and filters by search', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final courseRepo = _FakeCourseRepo();
+      final branchRepo = _FakeBranchRepo();
+      branchRepo.addBranches(_createSeededBranches(testAcademyId));
+      final testCourses = [
+        const Course(
+          id: 'c1',
+          academyId: testAcademyId,
+          branchId: 'br_1',
+          name: 'Physics 10th - Batch A',
+          courseCode: 'PHY-101',
+          teacherId: 'staff_1',
+          teacherName: 'Sir Tariq Mehmood',
+          enrolledStudentIds: ['stu_1', 'stu_2'],
+          schedule: 'Mon, Wed • 4:00 PM',
+          fee: 6500,
+        ),
+        const Course(
+          id: 'c2',
+          academyId: testAcademyId,
+          branchId: 'br_1',
+          name: 'Mathematics 10th - Batch B',
+          courseCode: 'MTH-102',
+          teacherId: 'staff_2',
+          teacherName: 'Dr. Amina Qureshi',
+          enrolledStudentIds: ['stu_3'],
+          schedule: 'Tue, Thu • 5:30 PM',
+          fee: 7000,
+        ),
+      ];
+      courseRepo.addCourses(testCourses);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            coursesStreamProvider.overrideWith(
+              (ref, id) => courseRepo.watchAll(id),
+            ),
+            courseRepositoryProvider.overrideWithValue(courseRepo),
+            branchRepositoryProvider.overrideWithValue(branchRepo),
+            branchesStreamProvider.overrideWith(
+              (ref, id) => branchRepo.watchAll(id),
+            ),
+          ],
+          child: const MaterialApp(
+            home: CoursesListScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Physics 10th - Batch A'), findsOneWidget);
+      expect(find.text('Mathematics 10th - Batch B'), findsOneWidget);
+      expect(find.text('Sir Tariq Mehmood'), findsOneWidget);
+      expect(find.text('Dr. Amina Qureshi'), findsOneWidget);
+      expect(find.text('2 Enrolled'), findsOneWidget);
+
+      // Search filter
+      await tester.enterText(find.byType(TextField).first, 'Physics');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Physics 10th - Batch A'), findsOneWidget);
+      expect(find.text('Mathematics 10th - Batch B'), findsNothing);
+    });
+
+    testWidgets('21. Attendance Monitoring view displays course submission compliance and audit ledger', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final studentRepo = _FakeStudentRepo();
+      studentRepo.addStudents(_createSeededStudents(testAcademyId));
+      final branchRepo = _FakeBranchRepo();
+      branchRepo.addBranches(_createSeededBranches(testAcademyId));
+      final courseRepo = _FakeCourseRepo();
+      final attRepo = _FakeAttendanceRepo();
+
+      final today = DateTime.now();
+      final normalizedToday = DateTime(today.year, today.month, today.day);
+
+      final testCourses = [
+        const Course(
+          id: 'c1',
+          academyId: testAcademyId,
+          branchId: 'br_1',
+          name: 'Physics 10th - Batch A',
+          courseCode: 'PHY-101',
+          teacherId: 'staff_1',
+          teacherName: 'Sir Tariq Mehmood',
+          enrolledStudentIds: ['stu_1', 'stu_2'],
+          schedule: 'Mon, Wed • 4:00 PM',
+        ),
+        const Course(
+          id: 'c2',
+          academyId: testAcademyId,
+          branchId: 'br_1',
+          name: 'Mathematics 10th - Batch B',
+          courseCode: 'MTH-102',
+          teacherId: 'staff_2',
+          teacherName: 'Dr. Amina Qureshi',
+          enrolledStudentIds: ['stu_3'],
+          schedule: 'Tue, Thu • 5:30 PM',
+        ),
+      ];
+      courseRepo.addCourses(testCourses);
+
+      // Add attendance record for c1 only (submitted), c2 remains pending
+      attRepo.addRecords([
+        AttendanceRecord(
+          id: 'rec_1',
+          academyId: testAcademyId,
+          courseId: 'c1',
+          markedById: 'staff_1',
+          studentId: 'stu_1',
+          date: normalizedToday,
+          status: AttendanceStatus.present,
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            studentsStreamProvider.overrideWith(
+              (ref, id) => studentRepo.watchAll(id),
+            ),
+            branchRepositoryProvider.overrideWithValue(branchRepo),
+            branchesStreamProvider.overrideWith(
+              (ref, id) => branchRepo.watchAll(id),
+            ),
+            coursesStreamProvider.overrideWith(
+              (ref, id) => courseRepo.watchAll(id),
+            ),
+            courseRepositoryProvider.overrideWithValue(courseRepo),
+            attendanceForDateProvider.overrideWith(
+              (ref, args) => attRepo.watchForDate(args.academyId, args.date),
+            ),
+            attendanceRepositoryProvider.overrideWithValue(attRepo),
+          ],
+          child: const MaterialApp(
+            home: AttendanceScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Attendance Screen defaults to Course Monitoring mode
+      expect(find.text('Course Monitoring'), findsOneWidget);
+      expect(find.text('Physics 10th - Batch A'), findsOneWidget);
+      expect(find.text('Mathematics 10th - Batch B'), findsOneWidget);
+
+      // Verify Submitted and Pending badges
+      expect(find.textContaining('SUBMITTED'), findsOneWidget);
+      expect(find.text('PENDING'), findsOneWidget);
+
+      // Open View Roster modal
+      final rosterBtn = find.widgetWithText(OutlinedButton, 'View Roster').first;
+      expect(rosterBtn, findsOneWidget);
+      await tester.tap(rosterBtn);
+      await tester.pumpAndSettle();
+
+      // Verify modal opened
+      expect(find.text('Teacher: Sir Tariq Mehmood'), findsOneWidget);
+
+      // Close modal
+      final closeBtn = find.byIcon(Icons.close);
+      expect(closeBtn, findsOneWidget);
+      await tester.tap(closeBtn);
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
