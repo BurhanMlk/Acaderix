@@ -36,6 +36,10 @@ import '../features/academy_admin/domain/academy_access_models.dart';
 import '../features/academy_admin/presentation/screens/academy_admin_dashboard.dart';
 import '../features/academy_admin/presentation/screens/academy_admin_shell.dart';
 import '../features/academy_admin/presentation/screens/academy_status_notice_screen.dart';
+import '../features/academics/domain/course.dart';
+import '../features/academics/presentation/screens/add_course_screen.dart';
+import '../features/academics/presentation/screens/courses_list_screen.dart';
+import '../features/academics/presentation/screens/edit_course_screen.dart';
 import '../features/admissions/domain/student.dart';
 import '../features/admissions/presentation/screens/add_student_screen.dart';
 import '../features/admissions/presentation/screens/edit_student_screen.dart';
@@ -99,6 +103,9 @@ abstract final class AppRoutes {
   static const String branchesList = '/academy-admin/branches';
   static const String addBranch = '/academy-admin/branches/new';
   static const String editBranch = '/academy-admin/branches/edit';
+  static const String coursesList = '/academy-admin/courses';
+  static const String addCourse = '/academy-admin/courses/new';
+  static const String editCourse = '/academy-admin/courses/edit';
 
   static const String staff = '/staff';
   static const String student = '/student';
@@ -406,6 +413,19 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.editStaff,
             builder: (context, state) =>
                 EditStaffScreen(staff: state.extra as Staff),
+          ),
+          GoRoute(
+            path: AppRoutes.coursesList,
+            builder: (context, state) => const CoursesListScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.addCourse,
+            builder: (context, state) => const AddCourseScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.editCourse,
+            builder: (context, state) =>
+                EditCourseScreen(course: state.extra as Course),
           ),
           GoRoute(
             path: AppRoutes.fees,

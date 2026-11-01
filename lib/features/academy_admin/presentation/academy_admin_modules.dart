@@ -34,6 +34,11 @@ const List<AcademyAdminModule> academyAdminModules = [
     AppRoutes.staffList,
   ),
   AcademyAdminModule(
+    'Courses',
+    Icons.menu_book_outlined,
+    AppRoutes.coursesList,
+  ),
+  AcademyAdminModule(
     'Attendance',
     Icons.event_note_outlined,
     AppRoutes.attendance,

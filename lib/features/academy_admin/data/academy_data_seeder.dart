@@ -5,6 +5,7 @@ import '../../../core/constants/firestore_paths.dart';
 import '../../../core/domain/attendance_calculator.dart';
 import '../../../core/network/firebase_services.dart';
 import '../../../core/network/firestore_ext.dart';
+import '../../academics/domain/course.dart';
 import '../../admissions/domain/student.dart';
 import '../../attendance/domain/attendance_record.dart';
 import '../../branches/domain/branch.dart';
@@ -208,7 +209,57 @@ class AcademyDataSeeder {
       );
     }
 
-    // 5. Daily Attendance for students
+    // 5. Courses & Batches
+    final coursesRef = _firestore.collection(FirestorePaths.courses(academyId));
+    final courses = [
+      Course(
+        id: 'crs_101',
+        academyId: academyId,
+        branchId: branch.id,
+        name: 'Physics 10th - Batch A',
+        courseCode: 'PHY-101',
+        teacherId: staffList[0].id,
+        teacherName: staffList[0].fullName,
+        enrolledStudentIds: [students[0].id, students[1].id, students[2].id],
+        schedule: 'Mon, Wed, Fri • 4:00 PM - 5:30 PM',
+        room: 'Room 1',
+        fee: 6500,
+      ),
+      Course(
+        id: 'crs_102',
+        academyId: academyId,
+        branchId: branch.id,
+        name: 'Mathematics 10th - Batch B',
+        courseCode: 'MTH-102',
+        teacherId: staffList[1].id,
+        teacherName: staffList[1].fullName,
+        enrolledStudentIds: [students[2].id, students[3].id, students[4].id],
+        schedule: 'Tue, Thu, Sat • 5:30 PM - 7:00 PM',
+        room: 'Room 2',
+        fee: 7000,
+      ),
+      Course(
+        id: 'crs_103',
+        academyId: academyId,
+        branchId: branch.id,
+        name: 'Computer Science 9th',
+        courseCode: 'CS-901',
+        teacherId: staffList[0].id,
+        teacherName: staffList[0].fullName,
+        enrolledStudentIds: [students[0].id, students[2].id, students[4].id],
+        schedule: 'Mon, Wed • 2:30 PM - 4:00 PM',
+        room: 'Lab 1',
+        fee: 8000,
+      ),
+    ];
+    for (final crs in courses) {
+      batch.set(
+        coursesRef.doc(crs.id),
+        toFirestoreData(crs.toJson())..remove('id'),
+      );
+    }
+
+    // 6. Daily Attendance for students (course-scoped)
     final attRef = _firestore.collection(FirestorePaths.attendance(academyId));
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -223,19 +274,21 @@ class AcademyDataSeeder {
     for (var i = 0; i < students.length; i++) {
       final s = students[i];
       final record = AttendanceRecord(
-        id: '${s.id}_$dateKey',
+        id: '${s.id}_crs_101_$dateKey',
         academyId: academyId,
+        courseId: 'crs_101',
+        markedById: staffList[0].id,
         studentId: s.id,
         date: today,
         status: attStatuses[i],
       );
       batch.set(
-        attRef.doc('${s.id}_$dateKey'),
+        attRef.doc('${s.id}_crs_101_$dateKey'),
         toFirestoreData(record.toJson())..remove('id'),
       );
     }
 
-    // 6. Fee Invoices and Payments
+    // 7. Fee Invoices and Payments
     final invRef = _firestore.collection(FirestorePaths.feeInvoices(academyId));
     final payRef = _firestore.collection(FirestorePaths.feePayments(academyId));
     final invoices = [

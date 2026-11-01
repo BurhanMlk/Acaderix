@@ -40,7 +40,10 @@ class AcademyAdminShell extends ConsumerWidget {
     if (location == AppRoutes.staffList) return 'Staff Members';
     if (location == AppRoutes.addStaff) return 'Add Staff Member';
     if (location == AppRoutes.editStaff) return 'Edit Staff Member';
-    if (location == AppRoutes.attendance) return 'Daily Attendance';
+    if (location == AppRoutes.coursesList) return 'Courses & Batches';
+    if (location == AppRoutes.addCourse) return 'Add Course';
+    if (location == AppRoutes.editCourse) return 'Edit Course';
+    if (location == AppRoutes.attendance) return 'Attendance Monitoring';
     if (location == AppRoutes.fees) return 'Fee Management';
     if (location == AppRoutes.results) return 'Exams & Results';
     for (final module in academyAdminModules) {
