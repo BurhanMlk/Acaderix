@@ -10,9 +10,9 @@ import 'firebase_options.dart';
 
 /// Initializes platform services before [runApp].
 Future<void> bootstrap() async {
-  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   try {
-    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+    FlutterNativeSplash.remove();
   } catch (_) {
     // Graceful fallback in non-native or headless test environments
   }

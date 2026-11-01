@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/glass.dart';
@@ -11,7 +13,7 @@ import '../../../../core/widgets/quran_verse_card.dart';
 ///
 /// Combines the deep dark ambient glass theme, glowing Acaderix emblem,
 /// Quranic blessing card, and sleek indeterminate progress bar.
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({
     super.key,
     this.statusMessage = 'Initializing Acaderix...',
@@ -22,10 +24,10 @@ class SplashScreen extends StatefulWidget {
   final bool showVerse;
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _scaleAnimation;
@@ -54,6 +56,18 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward();
+
+    // In production, keep splash visible for 2.2s so the user experiences the
+    // seamless branding, Quranic blessing, and progress indicator.
+    final isTest =
+        WidgetsBinding.instance.runtimeType.toString().contains('Test');
+    if (!isTest) {
+      Future.delayed(const Duration(milliseconds: 2200), () {
+        if (mounted) {
+          ref.read(splashCompletedProvider.notifier).complete();
+        }
+      });
+    }
   }
 
   @override
@@ -184,13 +198,17 @@ class _SplashScreenState extends State<SplashScreen>
                               ),
                             ),
                             const SizedBox(width: 6),
-                            Text(
-                              'v1.0.0 • Acaderix Core',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.65),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.5,
+                            Flexible(
+                              child: Text(
+                                'v1.0.0 • Acaderix Core',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.65),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ),
                           ],

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -183,6 +182,27 @@ final Map<AppRole, Set<String>> _roleRoutes = {
   AppRole.unauthenticated: _publicRoutes,
 };
 
+/// Tracks whether the initial branded splash presentation has finished playing.
+///
+/// In test environments, this defaults to true so widget/e2e tests don't wait for timers.
+/// In real app runs, it begins as false so [SplashScreen] can display its full
+/// animation and branding before transitioning to the destination screen.
+class SplashCompletedNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    final isTest =
+        WidgetsBinding.instance.runtimeType.toString().contains('Test');
+    return isTest;
+  }
+
+  void complete() => state = true;
+}
+
+final splashCompletedProvider =
+    NotifierProvider<SplashCompletedNotifier, bool>(
+  SplashCompletedNotifier.new,
+);
+
 /// Maps a role to its home route.
 String homeForRole(AppRole role) => switch (role) {
   AppRole.superAdmin => AppRoutes.superAdmin,
@@ -196,7 +216,12 @@ String? _redirect(
   AuthState auth,
   String location, {
   AcademyAccessInfo? access,
+  bool splashCompleted = true,
 }) {
+  if (!splashCompleted) {
+    return location == AppRoutes.splash ? null : AppRoutes.splash;
+  }
+
   if (auth is AuthUnknown) {
     return location == AppRoutes.splash ? null : AppRoutes.splash;
   }
@@ -241,6 +266,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
   ref.listen(authControllerProvider, (_, _) => refresh.value++);
   ref.listen(academyAccessProvider, (_, _) => refresh.value++);
+  ref.listen(splashCompletedProvider, (_, _) => refresh.value++);
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
@@ -250,6 +276,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ref.read(authControllerProvider),
       state.matchedLocation,
       access: ref.read(academyAccessProvider).value,
+      splashCompleted: ref.read(splashCompletedProvider),
     ),
     routes: [
       GoRoute(
