@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/network/firebase_services.dart';
 import '../../../../core/utils/id_generators.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
@@ -97,6 +98,31 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
 
       await repository.create(student);
       ref.invalidate(studentsStreamProvider(academyId));
+
+      try {
+        final firestore = ref.read(firestoreProvider);
+        final acadSnap = await firestore
+            .collection('academies')
+            .doc(academyId)
+            .get();
+        final acadCode =
+            (acadSnap.data()?['code'] as String? ?? '').toUpperCase();
+        if (acadCode.isNotEmpty) {
+          await firestore
+              .collection('student_accounts')
+              .doc('${acadCode}_$rollNumber')
+              .set({
+            'academyCode': acadCode,
+            'academyId': academyId,
+            'studentDocId': student.id,
+            'rollNumber': rollNumber,
+            'fullName': student.fullName,
+            'branchId': student.branchId,
+            'pin': pin,
+            'status': 'active',
+          });
+        }
+      } catch (_) {}
 
       if (!mounted) return;
       await _showCredentialSlip(rollNumber: rollNumber, pin: pin);

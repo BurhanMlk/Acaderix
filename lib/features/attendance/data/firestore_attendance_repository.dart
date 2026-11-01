@@ -26,6 +26,17 @@ final class FirestoreAttendanceRepository implements AttendanceRepository {
   }
 
   @override
+  Stream<List<AttendanceRecord>> watchForStudent(
+    String academyId,
+    String studentId,
+  ) {
+    return _collection(academyId)
+        .where('studentId', isEqualTo: studentId)
+        .snapshots()
+        .map((snapshot) => mapQueryDocs(snapshot, _fromDoc));
+  }
+
+  @override
   Future<void> markAttendance(AttendanceRecord record) {
     final key = _idempotencyKey(record);
     final data = toFirestoreData(record.toJson())..remove('id');

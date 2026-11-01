@@ -1,8 +1,8 @@
-import '../../../../app/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/router.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/glass.dart';
@@ -85,17 +85,47 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Parents can sign in with their child\u2019s credentials.',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Students and parents sign in here.',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.7),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFF38BDF8),
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        icon: const Icon(Icons.flash_on, size: 14),
+                        label: const Text(
+                          'Demo Fill',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _academyCode.text = 'ACD-900';
+                            _rollNumber.text = '100001';
+                            _pin.text = '1234';
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   GlassTextField(
                     controller: _academyCode,
                     label: 'Academy Code',
-                    hint: 'e.g. ACD-12345',
+                    hint: 'e.g. ACD-900',
                     icon: Icons.apartment,
                     textInputAction: TextInputAction.next,
                     validator: (v) => Validators.required(v, 'Academy code'),
@@ -104,6 +134,7 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                   GlassTextField(
                     controller: _rollNumber,
                     label: 'Roll Number (6 digits)',
+                    hint: 'e.g. 100001',
                     icon: Icons.pin,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.next,
@@ -113,6 +144,7 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                   GlassTextField(
                     controller: _pin,
                     label: 'PIN / Password',
+                    hint: 'e.g. 1234',
                     icon: Icons.lock_outline,
                     obscureText: true,
                     keyboardType: TextInputType.number,

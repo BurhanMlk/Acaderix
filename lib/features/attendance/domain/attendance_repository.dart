@@ -4,6 +4,9 @@ import '../domain/attendance_record.dart';
 abstract interface class AttendanceRepository {
   Stream<List<AttendanceRecord>> watchForDate(String academyId, DateTime date);
 
+  /// Streams all attendance records for a specific student across courses and dates.
+  Stream<List<AttendanceRecord>> watchForStudent(String academyId, String studentId);
+
   /// Marks attendance for a student, course, and date combination.
   ///
   /// The implementation uses an idempotent document key derived from the

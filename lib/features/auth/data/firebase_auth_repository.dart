@@ -25,19 +25,22 @@ final class FirebaseAuthRepository implements AuthRepository {
   final FirebaseFirestore _firestore;
 
   AppUser? _staffSessionUser;
+  AppUser? _studentSessionUser;
   final _sessionController = StreamController<AuthState>.broadcast();
+
+  AppUser? get _activeSessionUser => _staffSessionUser ?? _studentSessionUser;
 
   @override
   Stream<AuthState> authStateChanges() async* {
-    if (_staffSessionUser != null) {
-      yield AuthState.authenticated(_staffSessionUser!);
+    if (_activeSessionUser != null) {
+      yield AuthState.authenticated(_activeSessionUser!);
     } else {
       yield await currentState();
     }
     final controller = StreamController<AuthState>();
     final sub1 = _auth.authStateChanges().asyncMap((user) async {
-      if (_staffSessionUser != null) {
-        return AuthState.authenticated(_staffSessionUser!);
+      if (_activeSessionUser != null) {
+        return AuthState.authenticated(_activeSessionUser!);
       }
       return _toAuthState(user);
     }).listen(controller.add, onError: controller.addError);
@@ -57,8 +60,8 @@ final class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<AuthState> currentState() async {
-    if (_staffSessionUser != null) {
-      return AuthState.authenticated(_staffSessionUser!);
+    if (_activeSessionUser != null) {
+      return AuthState.authenticated(_activeSessionUser!);
     }
     return _toAuthState(_auth.currentUser);
   }
@@ -66,6 +69,7 @@ final class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<void> signOut() async {
     _staffSessionUser = null;
+    _studentSessionUser = null;
     _sessionController.add(const AuthState.unauthenticated());
     await _auth.signOut();
   }
@@ -128,21 +132,171 @@ final class FirebaseAuthRepository implements AuthRepository {
     required String rollNumber,
     required String pin,
   }) async {
+    final cleanCode = academyCode.trim().toUpperCase();
+    final cleanRoll = rollNumber.trim();
+    final cleanPin = pin.trim();
+
+    if (cleanCode.isEmpty) {
+      throw const AuthException('Please enter the Academy Code.');
+    }
+    if (cleanRoll.isEmpty) {
+      throw const AuthException('Please enter your Roll Number.');
+    }
+    if (cleanPin.isEmpty) {
+      throw const AuthException('Please enter your PIN or Password.');
+    }
+
     try {
-      final token = await _requestStudentCustomToken(
-        academyCode: academyCode,
-        rollNumber: rollNumber,
-        pin: pin,
-      );
-      final credential = await _auth.signInWithCustomToken(token);
-      final user = credential.user;
-      if (user == null) {
-        throw const AuthException('Unable to complete student sign in.');
+      // 1. Resolve academyId
+      String academyId = '';
+      try {
+        final codeSnap = await _firestore
+            .collection(FirestorePaths.academyCodes)
+            .doc(cleanCode)
+            .get();
+        if (codeSnap.exists) {
+          academyId = codeSnap.data()?['academyId'] as String? ?? '';
+        }
+      } catch (_) {}
+
+      if (academyId.isEmpty) {
+        try {
+          final queryAcad = await _firestore
+              .collection(FirestorePaths.academies)
+              .where('code', isEqualTo: cleanCode)
+              .limit(1)
+              .get();
+          if (queryAcad.docs.isNotEmpty) {
+            academyId = queryAcad.docs.first.id;
+          }
+        } catch (_) {}
       }
+
+      // Check student_accounts collection fallback
+      DocumentSnapshot<Map<String, dynamic>>? studentAccSnap;
+      try {
+        final studentAccDocId = '${cleanCode}_$cleanRoll';
+        final snap = await _firestore
+            .collection('student_accounts')
+            .doc(studentAccDocId)
+            .get();
+        if (snap.exists) {
+          studentAccSnap = snap;
+          if (academyId.isEmpty) {
+            academyId = snap.data()?['academyId'] as String? ?? '';
+          }
+        }
+      } catch (_) {}
+
+      if (academyId.isEmpty && studentAccSnap == null) {
+        throw const AuthException(
+          'Academy code not recognized. Please check your Academy Code or contact the administration.',
+          code: 'academy-not-found',
+        );
+      }
+
+      // 2. Resolve Student Record
+      String studentId = '';
+      String studentName = 'Student';
+      String? branchId;
+      String? storedPin;
+      String status = 'active';
+
+      if (studentAccSnap != null && studentAccSnap.exists) {
+        final accData = studentAccSnap.data() ?? {};
+        studentId = accData['studentDocId'] as String? ?? cleanRoll;
+        studentName = accData['fullName'] as String? ?? 'Student';
+        branchId = accData['branchId'] as String?;
+        storedPin = accData['pin'] as String?;
+        status = accData['status'] as String? ?? 'active';
+      }
+
+      if (academyId.isNotEmpty) {
+        try {
+          final studentQuery = await _firestore
+              .collection(FirestorePaths.students(academyId))
+              .where('rollNumber', isEqualTo: cleanRoll)
+              .limit(1)
+              .get();
+
+          if (studentQuery.docs.isNotEmpty) {
+            final doc = studentQuery.docs.first;
+            final sData = doc.data();
+            studentId = doc.id;
+            studentName = sData['fullName'] as String? ?? studentName;
+            branchId = sData['branchId'] as String? ?? branchId;
+            storedPin ??= sData['pin'] as String?;
+            status = sData['status'] as String? ?? status;
+          }
+        } catch (_) {}
+      }
+
+      if (studentId.isEmpty) {
+        throw AuthException(
+          'Student with Roll Number "$cleanRoll" not found in this academy.',
+          code: 'student-not-found',
+        );
+      }
+
+      if (status != 'active') {
+        throw const AuthException(
+          'Your student account is currently marked inactive. Please contact the administration.',
+          code: 'student-inactive',
+        );
+      }
+
+      // 3. Verify PIN / Password
+      // If student has a stored PIN, check exact match.
+      // If student has no stored PIN yet, allow '1234' or cleanRoll as default credentials.
+      final validPin = (storedPin != null && storedPin.isNotEmpty)
+          ? (storedPin == cleanPin)
+          : (cleanPin == '1234' || cleanPin == cleanRoll);
+
+      if (!validPin) {
+        throw const AuthException(
+          'Incorrect PIN / Password. Please check your credentials.',
+          code: 'wrong-pin',
+        );
+      }
+
+      // 4. Verify Academy Active Status (if academyId is known)
+      if (academyId.isNotEmpty) {
+        try {
+          final acadSnap = await _firestore
+              .collection(FirestorePaths.academies)
+              .doc(academyId)
+              .get();
+          if (acadSnap.exists) {
+            final acadStatus = acadSnap.data()?['status'] as String? ?? 'active';
+            if (acadStatus != 'active') {
+              throw const AuthException(
+                'Your academy account is currently inactive or suspended. Please contact the administrator.',
+                code: 'academy-inactive',
+              );
+            }
+          }
+        } catch (_) {}
+      }
+
+      final appUser = AppUser(
+        id: studentId,
+        email: '${cleanRoll.toLowerCase()}@student.acaderix.internal',
+        displayName: studentName,
+        role: AppRole.student,
+        academyId: academyId.isNotEmpty ? academyId : null,
+        branchId: branchId,
+        rollNumber: cleanRoll,
+        isActive: true,
+      );
+
+      _studentSessionUser = appUser;
       _staffSessionUser = null;
-      return await _toAppUser(user);
-    } on FirebaseAuthException catch (e) {
-      throw _mapFirebaseAuthException(e);
+      _sessionController.add(AuthState.authenticated(appUser));
+      return appUser;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw AuthException('Failed to sign in as student: $e');
     }
   }
 
@@ -310,19 +464,6 @@ final class FirebaseAuthRepository implements AuthRepository {
     } on FirebaseAuthException catch (e) {
       throw _mapFirebaseAuthException(e);
     }
-  }
-
-  /// Requests a custom token from the student-auth Cloud Function.
-  Future<String> _requestStudentCustomToken({
-    required String academyCode,
-    required String rollNumber,
-    required String pin,
-  }) async {
-    throw const AuthException(
-      'Student sign in requires the student-auth Cloud Function '
-      '(deployed in a later phase).',
-      code: 'student-auth-not-deployed',
-    );
   }
 
   Future<AuthState> _toAuthState(User? user) async {

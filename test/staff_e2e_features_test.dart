@@ -198,6 +198,16 @@ class _FakeAttendanceRepo implements AttendanceRepository {
   }
 
   @override
+  Stream<List<AttendanceRecord>> watchForStudent(
+    String academyId,
+    String studentId,
+  ) {
+    return Stream.value(
+      _records.where((r) => r.studentId == studentId).toList(),
+    );
+  }
+
+  @override
   Future<void> markAttendance(AttendanceRecord record) async {
     final dateStr = record.date.toIso8601String().substring(0, 10);
     _records.removeWhere(

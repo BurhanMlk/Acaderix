@@ -43,6 +43,21 @@ class AcademyDataSeeder {
       }
     } catch (_) {}
 
+    // Clean up student_accounts linked to this academy
+    try {
+      final studentSnap =
+          await _firestore.collection(FirestorePaths.students(academyId)).get();
+      for (final doc in studentSnap.docs) {
+        final q = await _firestore
+            .collection('student_accounts')
+            .where('studentDocId', isEqualTo: doc.id)
+            .get();
+        for (final d in q.docs) {
+          await d.reference.delete();
+        }
+      }
+    } catch (_) {}
+
     // Clean up all core subcollections
     final collections = [
       FirestorePaths.students(academyId),
@@ -92,6 +107,25 @@ class AcademyDataSeeder {
     }
 
     final batch = _firestore.batch();
+
+    // 0. Resolve & Register Academy Code mapping
+    String academyCode = 'ACD-900';
+    try {
+      final acadSnap = await _firestore
+          .collection(FirestorePaths.academies)
+          .doc(academyId)
+          .get();
+      if (acadSnap.exists) {
+        academyCode =
+            (acadSnap.data()?['code'] as String? ?? 'ACD-900').toUpperCase();
+      }
+    } catch (_) {}
+
+    batch.set(
+      _firestore.collection(FirestorePaths.academyCodes).doc(academyCode),
+      {'academyId': academyId},
+      SetOptions(merge: true),
+    );
 
     // 1. Multi-Branch Campuses
     final branchesRef =
@@ -280,7 +314,22 @@ class AcademyDataSeeder {
     for (final s in students) {
       batch.set(
         studentsRef.doc(s.id),
-        toFirestoreData(s.toJson())..remove('id'),
+        toFirestoreData(s.toJson())..remove('id')..['pin'] = '1234',
+      );
+      batch.set(
+        _firestore
+            .collection('student_accounts')
+            .doc('${academyCode}_${s.rollNumber}'),
+        {
+          'academyCode': academyCode,
+          'academyId': academyId,
+          'studentDocId': s.id,
+          'rollNumber': s.rollNumber,
+          'fullName': s.fullName,
+          'branchId': s.branchId,
+          'pin': '1234',
+          'status': s.status,
+        },
       );
     }
 
