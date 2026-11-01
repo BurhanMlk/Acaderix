@@ -161,7 +161,7 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
               const SizedBox(height: 14),
 
               // Branch Selector
-              DropdownButtonFormField<String>(
+              DropdownButtonFormField<String?>(
                 initialValue: _selectedBranchId,
                 isExpanded: true,
                 dropdownColor: const Color(0xFF1E293B),
@@ -176,12 +176,19 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
                   ),
                 ),
                 items: [
-                  const DropdownMenuItem(
+                  const DropdownMenuItem<String?>(
                     value: null,
                     child: Text('All Branches / Main'),
                   ),
+                  if (_selectedBranchId != null &&
+                      _selectedBranchId!.isNotEmpty &&
+                      !branches.any((b) => b.id == _selectedBranchId))
+                    DropdownMenuItem<String?>(
+                      value: _selectedBranchId,
+                      child: Text('Previous Branch ($_selectedBranchId)'),
+                    ),
                   ...branches.map(
-                    (b) => DropdownMenuItem(
+                    (b) => DropdownMenuItem<String?>(
                       value: b.id,
                       child: Text(b.name, overflow: TextOverflow.ellipsis),
                     ),
@@ -192,7 +199,7 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
               const SizedBox(height: 14),
 
               // Assigned Teacher Selector
-              DropdownButtonFormField<String>(
+              DropdownButtonFormField<String?>(
                 initialValue: _selectedTeacherId,
                 isExpanded: true,
                 dropdownColor: const Color(0xFF1E293B),
@@ -206,15 +213,30 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                items: staffMembers.map((s) {
-                  return DropdownMenuItem(
-                    value: s.id,
-                    child: Text(
-                      '${s.fullName} (${s.staffId})',
-                      overflow: TextOverflow.ellipsis,
+                items: [
+                  if (_selectedTeacherId != null &&
+                      _selectedTeacherId!.isNotEmpty &&
+                      !staffMembers.any((s) => s.id == _selectedTeacherId))
+                    DropdownMenuItem<String?>(
+                      value: _selectedTeacherId,
+                      child: Text(
+                        (_selectedTeacherName != null &&
+                                _selectedTeacherName!.isNotEmpty)
+                            ? '$_selectedTeacherName (Legacy)'
+                            : 'Previous Teacher ($_selectedTeacherId)',
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  );
-                }).toList(),
+                  ...staffMembers.map((s) {
+                    return DropdownMenuItem<String?>(
+                      value: s.id,
+                      child: Text(
+                        '${s.fullName} (${s.staffId})',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+                  }),
+                ],
                 onChanged: (val) {
                   if (val != null) {
                     final staff =

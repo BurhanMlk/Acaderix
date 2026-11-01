@@ -134,7 +134,7 @@ class AcademyAdminShell extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            _AcademyAdminContentHeader(
+                            AcademyAdminContentHeader(
                               title: _title,
                               access: access,
                             ),
@@ -185,8 +185,8 @@ class AcademyAdminShell extends ConsumerWidget {
 
 /// Content header for desktop view with current section title, global branch selector,
 /// and live plan badge.
-class _AcademyAdminContentHeader extends ConsumerWidget {
-  const _AcademyAdminContentHeader({
+class AcademyAdminContentHeader extends ConsumerWidget {
+  const AcademyAdminContentHeader({
     required this.title,
     required this.access,
   });
@@ -228,6 +228,14 @@ class _AcademyAdminContentHeader extends ConsumerWidget {
           branchesAsync.maybeWhen(
             data: (branches) {
               if (branches.isEmpty) return const SizedBox.shrink();
+              final isBranchValid = selectedBranchId == null ||
+                  branches.any((b) => b.id == selectedBranchId);
+              final effectiveBranchId = isBranchValid ? selectedBranchId : null;
+              if (!isBranchValid) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ref.read(selectedBranchIdProvider.notifier).state = null;
+                });
+              }
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -247,7 +255,7 @@ class _AcademyAdminContentHeader extends ConsumerWidget {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String?>(
-                          value: selectedBranchId,
+                          value: effectiveBranchId,
                           isExpanded: true,
                           dropdownColor: const Color(0xFF1E293B),
                           borderRadius: BorderRadius.circular(10),

@@ -325,10 +325,13 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
               branchesAsync.when(
                 data: (branches) {
                   if (branches.isEmpty) return const SizedBox.shrink();
+                  final isBranchValid = _branchId != null &&
+                      branches.any((b) => b.id == _branchId);
+                  final effectiveBranchId = isBranchValid ? _branchId : null;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: DropdownButtonFormField<String?>(
-                      initialValue: _branchId,
+                      initialValue: effectiveBranchId,
                       isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: 'Assigned Campus / Branch',

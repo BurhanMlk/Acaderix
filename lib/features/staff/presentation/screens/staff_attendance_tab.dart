@@ -234,7 +234,13 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                       Expanded(
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            value: activeCourse?.id,
+                            value: (activeCourse != null &&
+                                    assignedCourses.any(
+                                        (c) => c.id == activeCourse.id))
+                                ? activeCourse.id
+                                : (assignedCourses.isNotEmpty
+                                    ? assignedCourses.first.id
+                                    : null),
                             dropdownColor: const Color(0xFF1E293B),
                             isExpanded: true,
                             style: const TextStyle(

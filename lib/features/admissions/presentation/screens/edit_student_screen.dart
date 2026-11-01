@@ -256,6 +256,9 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
               branchesAsync.when(
                 data: (branches) {
                   if (branches.isEmpty) return const SizedBox.shrink();
+                  final hasLegacyBranch = _branchId != null &&
+                      _branchId!.isNotEmpty &&
+                      !branches.any((b) => b.id == _branchId);
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: DropdownButtonFormField<String?>(
@@ -276,6 +279,15 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                               maxLines: 1,
                             ),
                           ),
+                          if (hasLegacyBranch)
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Previous Campus ($_branchId)',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
                           ...branches.map(
                             (b) => Align(
                               alignment: Alignment.centerLeft,
@@ -297,6 +309,15 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                             maxLines: 1,
                           ),
                         ),
+                        if (hasLegacyBranch)
+                          DropdownMenuItem<String?>(
+                            value: _branchId,
+                            child: Text(
+                              'Previous Campus ($_branchId)',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
                         ...branches.map(
                           (b) => DropdownMenuItem<String?>(
                             value: b.id,

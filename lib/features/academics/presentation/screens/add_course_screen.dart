@@ -153,8 +153,11 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
               const SizedBox(height: 14),
 
               // Branch Selector
-              DropdownButtonFormField<String>(
-                initialValue: _selectedBranchId,
+              DropdownButtonFormField<String?>(
+                initialValue: (_selectedBranchId != null &&
+                        branches.any((b) => b.id == _selectedBranchId))
+                    ? _selectedBranchId
+                    : null,
                 isExpanded: true,
                 dropdownColor: const Color(0xFF1E293B),
                 style: const TextStyle(color: Colors.white, fontSize: 14),
@@ -168,12 +171,12 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                   ),
                 ),
                 items: [
-                  const DropdownMenuItem(
+                  const DropdownMenuItem<String?>(
                     value: null,
                     child: Text('All Branches / Main'),
                   ),
                   ...branches.map(
-                    (b) => DropdownMenuItem(
+                    (b) => DropdownMenuItem<String?>(
                       value: b.id,
                       child: Text(b.name, overflow: TextOverflow.ellipsis),
                     ),
@@ -184,8 +187,11 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
               const SizedBox(height: 14),
 
               // Assigned Teacher Selector
-              DropdownButtonFormField<String>(
-                initialValue: _selectedTeacherId,
+              DropdownButtonFormField<String?>(
+                initialValue: (_selectedTeacherId != null &&
+                        staffMembers.any((s) => s.id == _selectedTeacherId))
+                    ? _selectedTeacherId
+                    : null,
                 isExpanded: true,
                 dropdownColor: const Color(0xFF1E293B),
                 style: const TextStyle(color: Colors.white, fontSize: 14),
@@ -199,7 +205,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                   ),
                 ),
                 items: staffMembers.map((s) {
-                  return DropdownMenuItem(
+                  return DropdownMenuItem<String?>(
                     value: s.id,
                     child: Text(
                       '${s.fullName} (${s.staffId})',

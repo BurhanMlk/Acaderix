@@ -271,7 +271,14 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 DropdownButtonFormField<String>(
-                                  initialValue: _selectedSub?.academyId,
+                                  initialValue: (_selectedSub != null &&
+                                          _availableSubs.any((s) =>
+                                              s.academyId ==
+                                              _selectedSub?.academyId))
+                                      ? _selectedSub!.academyId
+                                      : (_availableSubs.isNotEmpty
+                                          ? _availableSubs.first.academyId
+                                          : null),
                                   dropdownColor: const Color(0xFF1E1B4B),
                                   isExpanded: true,
                                   decoration: const InputDecoration(
