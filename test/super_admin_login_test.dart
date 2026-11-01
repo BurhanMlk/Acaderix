@@ -74,6 +74,14 @@ class _MockSuperAdminAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<AppUser> signInAsStaff({
+    required String identifier,
+    required String password,
+  }) async {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<void> sendPasswordResetEmail(String email) async {}
 
   @override

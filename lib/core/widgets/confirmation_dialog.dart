@@ -13,6 +13,8 @@ Future<bool> showConfirmationDialog(
   final result = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      actionsOverflowButtonSpacing: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
         title,

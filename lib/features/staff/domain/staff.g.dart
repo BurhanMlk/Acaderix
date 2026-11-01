@@ -9,6 +9,7 @@ part of 'staff.dart';
 _Staff _$StaffFromJson(Map<String, dynamic> json) => _Staff(
   id: json['id'] as String,
   academyId: json['academyId'] as String,
+  staffId: json['staffId'] as String? ?? '',
   fullName: json['fullName'] as String? ?? '',
   phone: json['phone'] as String? ?? '',
   email: json['email'] as String? ?? '',
@@ -27,11 +28,13 @@ _Staff _$StaffFromJson(Map<String, dynamic> json) => _Staff(
           .toList() ??
       const <String>[],
   leaveBalance: (json['leaveBalance'] as num?)?.toInt() ?? 0,
+  password: json['password'] as String? ?? '',
 );
 
 Map<String, dynamic> _$StaffToJson(_Staff instance) => <String, dynamic>{
   'id': instance.id,
   'academyId': instance.academyId,
+  'staffId': instance.staffId,
   'fullName': instance.fullName,
   'phone': instance.phone,
   'email': instance.email,
@@ -44,4 +47,5 @@ Map<String, dynamic> _$StaffToJson(_Staff instance) => <String, dynamic>{
   'status': instance.status,
   'permissions': instance.permissions,
   'leaveBalance': instance.leaveBalance,
+  'password': instance.password,
 };

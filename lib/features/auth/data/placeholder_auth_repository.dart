@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import '../../../core/errors/app_exception.dart';
 import '../domain/app_user.dart';
 import '../domain/auth_repository.dart';
@@ -59,6 +57,17 @@ final class PlaceholderAuthRepository implements AuthRepository {
   }) {
     throw const AuthException(
       'Student sign in is unavailable until Firebase is configured.',
+      code: 'firebase-not-configured',
+    );
+  }
+
+  @override
+  Future<AppUser> signInAsStaff({
+    required String identifier,
+    required String password,
+  }) {
+    throw const AuthException(
+      'Staff sign in is unavailable until Firebase is configured.',
       code: 'firebase-not-configured',
     );
   }

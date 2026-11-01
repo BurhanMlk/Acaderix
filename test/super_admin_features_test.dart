@@ -160,6 +160,13 @@ class _FakeAuthRepo implements AuthRepository {
       throw UnimplementedError();
 
   @override
+  Future<AppUser> signInAsStaff({
+    required String identifier,
+    required String password,
+  }) =>
+      throw UnimplementedError();
+
+  @override
   Future<AppUser> signInWithEmailAndPassword({
     required String email,
     required String password,

@@ -44,6 +44,12 @@ abstract interface class AuthRepository {
     required String pin,
   });
 
+  /// Signs in a staff member using Staff ID (or email) and password.
+  Future<AppUser> signInAsStaff({
+    required String identifier,
+    required String password,
+  });
+
   /// Sends a password reset email for the given address.
   Future<void> sendPasswordResetEmail(String email);
 

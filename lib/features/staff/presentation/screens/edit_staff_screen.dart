@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/id_generators.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
@@ -9,7 +11,7 @@ import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../application/staff_repository_provider.dart';
 import '../../domain/staff.dart';
 
-/// Screen for Academy Admin to edit or delete a staff member with branch assignment.
+/// Screen for Academy Admin to edit existing staff member details, reassign branch, or reset login password.
 class EditStaffScreen extends ConsumerStatefulWidget {
   const EditStaffScreen({super.key, required this.staff});
 
@@ -27,9 +29,9 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
   late final TextEditingController _email;
   late final TextEditingController _salary;
   late final TextEditingController _address;
-  late String _status;
-  late String? _branchId;
 
+  late String? _branchId;
+  late String _status;
   bool _submitting = false;
   bool _deleting = false;
   String? _error;
@@ -37,17 +39,20 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
   @override
   void initState() {
     super.initState();
-    final s = widget.staff;
-    _fullName = TextEditingController(text: s.fullName);
-    _jobTitle = TextEditingController(text: s.jobTitle);
-    _phone = TextEditingController(text: s.phone);
-    _email = TextEditingController(text: s.email);
+    _fullName = TextEditingController(text: widget.staff.fullName);
+    _jobTitle = TextEditingController(text: widget.staff.jobTitle);
+    _phone = TextEditingController(text: widget.staff.phone);
+    _email = TextEditingController(text: widget.staff.email);
     _salary = TextEditingController(
-      text: s.salary > 0 ? s.salary.toStringAsFixed(0) : '',
+      text: widget.staff.salary > 0
+          ? widget.staff.salary.toStringAsFixed(0)
+          : '',
     );
-    _address = TextEditingController(text: s.address);
-    _status = s.status.isNotEmpty ? s.status : 'active';
-    _branchId = s.branchId.isNotEmpty ? s.branchId : null;
+    _address = TextEditingController(text: widget.staff.address);
+    _branchId = widget.staff.branchId.isNotEmpty
+        ? widget.staff.branchId
+        : null;
+    _status = widget.staff.status.isNotEmpty ? widget.staff.status : 'active';
   }
 
   @override
@@ -61,7 +66,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
     super.dispose();
   }
 
-  Future<void> _save() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() {
       _submitting = true;
@@ -136,6 +141,307 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
     }
   }
 
+  Future<void> _showResetPasswordDialog() async {
+    final formKey = GlobalKey<FormState>();
+    final passwordController = TextEditingController(
+      text: IdGenerators.generateStaffPassword(),
+    );
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0284C7).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.lock_reset,
+                  color: Color(0xFF38BDF8),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Text(
+                  'Reset Staff Password',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.staff.fullName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Staff ID: ${widget.staff.staffId.isNotEmpty ? widget.staff.staffId : widget.staff.id}',
+                              style: const TextStyle(
+                                color: Color(0xFF38BDF8),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: passwordController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
+                          labelText: 'New Password',
+                          prefixIcon: Icon(Icons.lock_outline),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'Password is required';
+                          }
+                          if (v.trim().length < 6) {
+                            return 'Must be at least 6 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ActionChip(
+                          visualDensity: VisualDensity.compact,
+                          backgroundColor:
+                              Colors.white.withValues(alpha: 0.08),
+                          side: BorderSide(
+                            color: Colors.white.withValues(alpha: 0.16),
+                          ),
+                          label: const Text(
+                            'Generate Random Password',
+                            style: TextStyle(
+                              color: Color(0xFF38BDF8),
+                              fontSize: 11,
+                            ),
+                          ),
+                          onPressed: () {
+                            setDialogState(() {
+                              passwordController.text =
+                                  IdGenerators.generateStaffPassword();
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          actionsOverflowButtonSpacing: 8,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                if (!formKey.currentState!.validate()) return;
+                final newPass = passwordController.text.trim();
+                await ref
+                    .read(staffRepositoryProvider)
+                    .resetPassword(
+                      widget.staff.academyId,
+                      widget.staff.id,
+                      newPass,
+                    );
+                ref.invalidate(staffStreamProvider(widget.staff.academyId));
+                if (ctx.mounted) Navigator.of(ctx).pop();
+
+                if (context.mounted) {
+                  await _showStaffCredentialSlip(newPassword: newPass);
+                }
+              },
+              child: const Text('Save & View Slip'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showStaffCredentialSlip({required String newPassword}) async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.badge_outlined,
+                color: Color(0xFFA5B4FC),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                'Staff Credentials',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                const Text(
+                  'Password updated successfully! Share these updated credentials with the staff member so they can sign in.',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.12),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      _CredentialRow(
+                        label: 'Full Name',
+                        value: widget.staff.fullName,
+                      ),
+                      const Divider(color: Colors.white12, height: 16),
+                      _CredentialRow(
+                        label: 'Staff ID',
+                        value:
+                            widget.staff.staffId.isNotEmpty
+                                ? widget.staff.staffId
+                                : widget.staff.id,
+                        isHighlight: true,
+                      ),
+                      const Divider(color: Colors.white12, height: 16),
+                      _CredentialRow(
+                        label: 'New Password',
+                        value: newPassword,
+                        isHighlight: true,
+                      ),
+                      if (widget.staff.jobTitle.isNotEmpty) ...[
+                        const Divider(color: Colors.white12, height: 16),
+                        _CredentialRow(
+                          label: 'Designation',
+                          value: widget.staff.jobTitle,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.copy, size: 16),
+                  label: const Text('Copy Credentials'),
+                  style: OutlinedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    foregroundColor: const Color(0xFF38BDF8),
+                    side: const BorderSide(color: Color(0xFF38BDF8)),
+                  ),
+                  onPressed: () {
+                    final sId =
+                        widget.staff.staffId.isNotEmpty
+                            ? widget.staff.staffId
+                            : widget.staff.id;
+                    Clipboard.setData(
+                      ClipboardData(
+                        text:
+                            'Staff Name: ${widget.staff.fullName}\nStaff ID: $sId\nPassword: $newPassword',
+                      ),
+                    );
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      const SnackBar(
+                        content: Text('Staff credentials copied to clipboard!'),
+                        duration: Duration(seconds: 2),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final branchesAsync = ref.watch(
@@ -160,55 +466,131 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                     color: Colors.white.withValues(alpha: 0.16),
                   ),
                 ),
-                child: Row(
+                child: Column(
                   children: [
-                    CircleAvatar(
-                      backgroundColor: const Color(
-                        0xFF14B8A6,
-                      ).withValues(alpha: 0.3),
-                      child: const Icon(Icons.badge, color: Colors.white),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Staff Member Profile',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            widget.staff.jobTitle.isNotEmpty
-                                ? widget.staff.jobTitle
-                                : 'Faculty Staff',
-                            style: const TextStyle(
-                              color: Colors.white60,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Delete Staff Member',
-                      icon: _deleting
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.redAccent,
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: const Color(
+                            0xFF14B8A6,
+                          ).withValues(alpha: 0.3),
+                          child: const Icon(Icons.badge, color: Colors.white),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 6,
+                                runSpacing: 4,
+                                children: [
+                                  Text(
+                                    widget.staff.fullName,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  if (widget.staff.staffId.isNotEmpty)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 7,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(
+                                          0xFF6366F1,
+                                        ).withValues(alpha: 0.2),
+                                        borderRadius:
+                                            BorderRadius.circular(6),
+                                        border: Border.all(
+                                          color: const Color(
+                                            0xFF6366F1,
+                                          ).withValues(alpha: 0.4),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        widget.staff.staffId,
+                                        style: const TextStyle(
+                                          color: Color(0xFFA5B4FC),
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
-                            )
-                          : const Icon(
-                              Icons.delete_outline,
-                              color: Colors.redAccent,
+                              const SizedBox(height: 3),
+                              Text(
+                                widget.staff.jobTitle.isNotEmpty
+                                    ? widget.staff.jobTitle
+                                    : 'Faculty Staff',
+                                style: const TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Delete Staff Member',
+                          icon:
+                              _deleting
+                                  ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.redAccent,
+                                    ),
+                                  )
+                                  : const Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.redAccent,
+                                  ),
+                          onPressed: _deleting ? null : _delete,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(color: Colors.white12, height: 1),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        const Text(
+                          'Staff Login Credentials',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        OutlinedButton.icon(
+                          icon: const Icon(Icons.lock_reset, size: 15),
+                          label: const Text('Reset Password'),
+                          style: OutlinedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            foregroundColor: const Color(0xFF38BDF8),
+                            side: const BorderSide(
+                              color: Color(0xFF38BDF8),
+                              width: 1,
                             ),
-                      onPressed: _deleting ? null : _delete,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                          ),
+                          onPressed: _showResetPasswordDialog,
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -241,7 +623,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
               const SizedBox(height: 12),
               AppTextField(
                 controller: _email,
-                label: 'Email Address',
+                label: 'Email Address (Optional)',
                 icon: Icons.email_outlined,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
@@ -275,7 +657,9 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                             (b) => Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                b.city.isNotEmpty ? '${b.name} (${b.city})' : b.name,
+                                b.city.isNotEmpty
+                                    ? '${b.name} (${b.city})'
+                                    : b.name,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
@@ -296,7 +680,9 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                           (b) => DropdownMenuItem<String?>(
                             value: b.id,
                             child: Text(
-                              b.city.isNotEmpty ? '${b.name} (${b.city})' : b.name,
+                              b.city.isNotEmpty
+                                  ? '${b.name} (${b.city})'
+                                  : b.name,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
@@ -335,8 +721,14 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                 dropdownColor: const Color(0xFF1E293B),
                 items: const [
                   DropdownMenuItem(value: 'active', child: Text('Active')),
-                  DropdownMenuItem(value: 'inactive', child: Text('Inactive')),
-                  DropdownMenuItem(value: 'on_leave', child: Text('On Leave')),
+                  DropdownMenuItem(
+                    value: 'inactive',
+                    child: Text('Inactive'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'on_leave',
+                    child: Text('On Leave'),
+                  ),
                   DropdownMenuItem(
                     value: 'terminated',
                     child: Text('Terminated'),
@@ -356,13 +748,56 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
               const SizedBox(height: 24),
               LoadingButton(
                 label: 'Save Changes',
-                icon: Icons.save_outlined,
+                icon: Icons.save,
                 loading: _submitting,
-                onPressed: _save,
+                onPressed: _submit,
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _CredentialRow extends StatelessWidget {
+  const _CredentialRow({
+    required this.label,
+    required this.value,
+    this.isHighlight = false,
+  });
+
+  final String label;
+  final String value;
+  final bool isHighlight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 105,
+            child: Text(
+              label,
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: SelectableText(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color: isHighlight ? const Color(0xFF38BDF8) : Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: isHighlight ? 14 : 13,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

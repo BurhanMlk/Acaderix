@@ -1,13 +1,16 @@
 import 'dart:math';
 
-/// Generators for academy codes, student roll numbers and temporary PINs.
+/// Generators for academy codes, student roll numbers, staff IDs, and temporary credentials.
 ///
 /// These are pure functions: callers are responsible for enforcing uniqueness
-/// through a Firestore transaction or a trusted Cloud Function (e.g. the
-/// roll-number counter under `academies/{academyId}/counters`).
+/// through a Firestore transaction or a counter document under
+/// `academies/{academyId}/counters`.
 abstract final class IdGenerators {
   static const int rollNumberMin = 100001;
   static const int rollNumberMax = 999999;
+
+  static const int staffIdMin = 1001;
+  static const int staffIdMax = 9999;
 
   static const String _academyCodeAlphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
@@ -25,6 +28,23 @@ abstract final class IdGenerators {
     if (!RegExp(r'^\d{6}$').hasMatch(value)) return false;
     final parsed = int.parse(value);
     return parsed >= rollNumberMin && parsed <= rollNumberMax;
+  }
+
+  /// Returns the next staff ID number after [current], starting from [staffIdMin] (1001).
+  static int nextStaffId(int current) {
+    if (current < staffIdMin) return staffIdMin;
+    if (current >= staffIdMax) return staffIdMax;
+    return current + 1;
+  }
+
+  /// Formats an integer as a standard staff ID (e.g. 1001 -> 'STF-1001').
+  static String formatStaffId(int number) => 'STF-$number';
+
+  /// Generates a human-friendly temporary staff password (e.g. 'Staff@7392').
+  static String generateStaffPassword([Random? random]) {
+    final rng = random ?? Random.secure();
+    final pin = rng.nextInt(9000) + 1000;
+    return 'Staff@$pin';
   }
 
   /// Generates a random four-digit temporary PIN (0000-9999).

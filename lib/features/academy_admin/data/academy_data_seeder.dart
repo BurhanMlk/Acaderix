@@ -162,6 +162,8 @@ class AcademyDataSeeder {
       Staff(
         id: 'stf_01',
         academyId: academyId,
+        staffId: 'STF-1001',
+        password: 'Staff@1001',
         fullName: 'Sir Tariq Mehmood',
         phone: '+92 312 9876543',
         email: 'tariq.math@acaderix.com',
@@ -174,6 +176,8 @@ class AcademyDataSeeder {
       Staff(
         id: 'stf_02',
         academyId: academyId,
+        staffId: 'STF-1002',
+        password: 'Staff@1002',
         fullName: 'Dr. Amina Qureshi',
         phone: '+92 313 8765432',
         email: 'amina.physics@acaderix.com',
@@ -188,6 +192,19 @@ class AcademyDataSeeder {
       batch.set(
         staffRef.doc(stf.id),
         toFirestoreData(stf.toJson())..remove('id'),
+      );
+      batch.set(
+        _firestore.collection('staff_accounts').doc(stf.staffId),
+        {
+          'staffId': stf.staffId,
+          'staffDocId': stf.id,
+          'academyId': stf.academyId,
+          'branchId': stf.branchId,
+          'fullName': stf.fullName,
+          'email': stf.email,
+          'password': stf.password,
+          'status': stf.status,
+        },
       );
     }
 

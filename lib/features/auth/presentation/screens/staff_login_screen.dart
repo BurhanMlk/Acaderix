@@ -9,7 +9,7 @@ import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
 import '../../application/auth_controller.dart';
 
-/// Email/password sign in for staff members.
+/// Staff member sign in using Staff ID (e.g. STF-1001) or Email and Password.
 class StaffLoginScreen extends ConsumerStatefulWidget {
   const StaffLoginScreen({super.key});
 
@@ -19,14 +19,14 @@ class StaffLoginScreen extends ConsumerStatefulWidget {
 
 class _StaffLoginScreenState extends ConsumerState<StaffLoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _email = TextEditingController();
+  final _identifier = TextEditingController();
   final _password = TextEditingController();
   bool _loading = false;
   String? _error;
 
   @override
   void dispose() {
-    _email.dispose();
+    _identifier.dispose();
     _password.dispose();
     super.dispose();
   }
@@ -40,17 +40,19 @@ class _StaffLoginScreenState extends ConsumerState<StaffLoginScreen> {
     try {
       final user = await ref
           .read(authControllerProvider.notifier)
-          .signInWithEmailAndPassword(
-            email: _email.text,
-            password: _password.text,
+          .signInAsStaff(
+            identifier: _identifier.text.trim(),
+            password: _password.text.trim(),
           );
       if (mounted) {
         context.go(homeForRole(user.role));
       }
     } on AppException catch (e) {
+      debugPrint('Staff login error: ${e.message}');
       setState(() => _error = e.message);
-    } catch (_) {
-      setState(() => _error = 'Something went wrong. Please try again.');
+    } catch (e, st) {
+      debugPrint('Staff login unexpected error: $e\n$st');
+      setState(() => _error = 'Invalid credentials. Please verify and try again.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -73,7 +75,7 @@ class _StaffLoginScreenState extends ConsumerState<StaffLoginScreen> {
           const GlassLoginHeader(
             icon: Icons.badge_outlined,
             title: 'Staff Login',
-            subtitle: 'Sign in to your staff account',
+            subtitle: 'Sign in with your Staff ID and password',
           ),
           const SizedBox(height: 24),
           GlassCard(
@@ -82,18 +84,28 @@ class _StaffLoginScreenState extends ConsumerState<StaffLoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Text(
+                    'Use the Staff ID and password provided by your Academy Administrator.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
                   GlassTextField(
-                    controller: _email,
-                    label: 'Email',
-                    icon: Icons.mail_outline,
-                    keyboardType: TextInputType.emailAddress,
+                    controller: _identifier,
+                    label: 'Staff ID or Email',
+                    hint: 'e.g. STF-1001 or name@example.com',
+                    icon: Icons.badge_outlined,
+                    keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.next,
-                    validator: Validators.email,
+                    validator: (v) => Validators.required(v, 'Staff ID or Email'),
                   ),
                   const SizedBox(height: 16),
                   GlassTextField(
                     controller: _password,
                     label: 'Password',
+                    hint: 'Enter your password',
                     icon: Icons.lock_outline,
                     obscureText: true,
                     textInputAction: TextInputAction.done,

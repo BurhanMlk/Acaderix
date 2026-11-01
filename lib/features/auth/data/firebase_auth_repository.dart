@@ -24,18 +24,51 @@ final class FirebaseAuthRepository implements AuthRepository {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
 
+  AppUser? _staffSessionUser;
+  final _sessionController = StreamController<AuthState>.broadcast();
+
   @override
-  Stream<AuthState> authStateChanges() {
-    return _auth.authStateChanges().asyncMap(_toAuthState);
+  Stream<AuthState> authStateChanges() async* {
+    if (_staffSessionUser != null) {
+      yield AuthState.authenticated(_staffSessionUser!);
+    } else {
+      yield await currentState();
+    }
+    final controller = StreamController<AuthState>();
+    final sub1 = _auth.authStateChanges().asyncMap((user) async {
+      if (_staffSessionUser != null) {
+        return AuthState.authenticated(_staffSessionUser!);
+      }
+      return _toAuthState(user);
+    }).listen(controller.add, onError: controller.addError);
+    final sub2 = _sessionController.stream.listen(
+      controller.add,
+      onError: controller.addError,
+    );
+
+    try {
+      yield* controller.stream;
+    } finally {
+      await sub1.cancel();
+      await sub2.cancel();
+      await controller.close();
+    }
   }
 
   @override
   Future<AuthState> currentState() async {
+    if (_staffSessionUser != null) {
+      return AuthState.authenticated(_staffSessionUser!);
+    }
     return _toAuthState(_auth.currentUser);
   }
 
   @override
-  Future<void> signOut() => _auth.signOut();
+  Future<void> signOut() async {
+    _staffSessionUser = null;
+    _sessionController.add(const AuthState.unauthenticated());
+    await _auth.signOut();
+  }
 
   @override
   Future<AppUser> signInWithEmailAndPassword({
@@ -51,6 +84,7 @@ final class FirebaseAuthRepository implements AuthRepository {
       if (user == null) {
         throw const AuthException('Unable to complete sign in.');
       }
+      _staffSessionUser = null;
       return await _toAppUser(user);
     } on FirebaseAuthException catch (e) {
       throw _mapFirebaseAuthException(e);
@@ -71,6 +105,7 @@ final class FirebaseAuthRepository implements AuthRepository {
       if (user == null) {
         throw const AuthException('Unable to create account.');
       }
+      _staffSessionUser = null;
       return await _toAppUser(user);
     } on FirebaseAuthException catch (e) {
       throw _mapFirebaseAuthException(e);
@@ -79,6 +114,7 @@ final class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<AppUser> refreshCurrentUser() async {
+    if (_staffSessionUser != null) return _staffSessionUser!;
     final user = _auth.currentUser;
     if (user == null) {
       throw const AuthException('No signed-in user.');
@@ -93,8 +129,6 @@ final class FirebaseAuthRepository implements AuthRepository {
     required String pin,
   }) async {
     try {
-      // The caller must be a trusted Cloud Function:
-      //   functions/src/studentAuth.ts (added in a later phase).
       final token = await _requestStudentCustomToken(
         academyCode: academyCode,
         rollNumber: rollNumber,
@@ -105,9 +139,134 @@ final class FirebaseAuthRepository implements AuthRepository {
       if (user == null) {
         throw const AuthException('Unable to complete student sign in.');
       }
+      _staffSessionUser = null;
       return await _toAppUser(user);
     } on FirebaseAuthException catch (e) {
       throw _mapFirebaseAuthException(e);
+    }
+  }
+
+  @override
+  Future<AppUser> signInAsStaff({
+    required String identifier,
+    required String password,
+  }) async {
+    final cleanId = identifier.trim();
+    if (cleanId.isEmpty) {
+      throw const AuthException('Please enter your Staff ID or Email.');
+    }
+    if (password.isEmpty) {
+      throw const AuthException('Please enter your password.');
+    }
+
+    // 1. If identifier is an email and user exists in Firebase Auth, attempt standard auth
+    if (cleanId.contains('@')) {
+      try {
+        final credential = await _auth.signInWithEmailAndPassword(
+          email: cleanId,
+          password: password,
+        );
+        final user = credential.user;
+        if (user != null) {
+          final appUser = await _toAppUser(user);
+          if (appUser.role == AppRole.staff) {
+            _staffSessionUser = null;
+            return appUser;
+          }
+        }
+      } catch (_) {
+        // Fallback to checking staff_accounts collection below
+      }
+    }
+
+    // 2. Query staff_accounts by Staff ID (case-insensitive) or by email
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snap;
+      if (!cleanId.contains('@')) {
+        snap = await _firestore
+            .collection('staff_accounts')
+            .doc(cleanId.toUpperCase())
+            .get();
+      } else {
+        final query = await _firestore
+            .collection('staff_accounts')
+            .where('email', isEqualTo: cleanId.toLowerCase())
+            .limit(1)
+            .get();
+        if (query.docs.isEmpty) {
+          throw const AuthException(
+            'Staff account not found. Please contact your Academy Administrator.',
+            code: 'staff-not-found',
+          );
+        }
+        snap = query.docs.first;
+      }
+
+      if (!snap.exists) {
+        throw const AuthException(
+          'Staff ID not found. Please verify your Staff ID or contact your Academy Administrator.',
+          code: 'staff-not-found',
+        );
+      }
+
+      final data = snap.data() ?? {};
+      final storedPassword = data['password'] as String? ?? '';
+      final status = data['status'] as String? ?? 'active';
+
+      if (status != 'active') {
+        throw const AuthException(
+          'Your staff account is currently inactive. Please contact your Academy Administrator.',
+          code: 'staff-inactive',
+        );
+      }
+
+      if (storedPassword.isEmpty || storedPassword != password) {
+        throw const AuthException(
+          'Incorrect password. Please verify your credentials and try again.',
+          code: 'wrong-password',
+        );
+      }
+
+      final academyId = data['academyId'] as String? ?? '';
+
+      // Check academy active standing
+      if (academyId.isNotEmpty) {
+        final acadSnap = await _firestore
+            .collection(FirestorePaths.academies)
+            .doc(academyId)
+            .get();
+        if (acadSnap.exists) {
+          final acadStatus = acadSnap.data()?['status'] as String? ?? 'active';
+          if (acadStatus != 'active') {
+            throw const AuthException(
+              'Your academy account is currently inactive or suspended. Please contact the administrator.',
+              code: 'academy-inactive',
+            );
+          }
+        }
+      }
+
+      final staffCode = data['staffId'] as String? ?? cleanId.toUpperCase();
+      final appUser = AppUser(
+        id: data['staffDocId'] as String? ?? staffCode,
+        email:
+            data['email'] as String? ??
+            '${staffCode.toLowerCase()}@staff.acaderix.internal',
+        displayName: data['fullName'] as String? ?? 'Staff Member',
+        role: AppRole.staff,
+        academyId: academyId.isNotEmpty ? academyId : null,
+        branchId: data['branchId'] as String?,
+        rollNumber: staffCode,
+        isActive: true,
+      );
+
+      _staffSessionUser = appUser;
+      _sessionController.add(AuthState.authenticated(appUser));
+      return appUser;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw AuthException('Failed to sign in as staff: $e');
     }
   }
 
@@ -154,9 +313,6 @@ final class FirebaseAuthRepository implements AuthRepository {
   }
 
   /// Requests a custom token from the student-auth Cloud Function.
-  ///
-  /// Implemented in Phase 5 alongside the Cloud Function. Until then the
-  /// callable name and payload are fixed so the client contract is stable.
   Future<String> _requestStudentCustomToken({
     required String academyCode,
     required String rollNumber,

@@ -34,13 +34,26 @@ class AuthController extends Notifier<AuthState> {
     return const AuthState.unknown();
   }
 
-  /// Signs in an academy admin or staff member.
+  /// Signs in an academy admin or staff member with email/password.
   Future<AppUser> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     final user = await _repository.signInWithEmailAndPassword(
       email: email,
+      password: password,
+    );
+    state = AuthState.authenticated(user);
+    return user;
+  }
+
+  /// Signs in a staff member using Staff ID (or email) and password.
+  Future<AppUser> signInAsStaff({
+    required String identifier,
+    required String password,
+  }) async {
+    final user = await _repository.signInAsStaff(
+      identifier: identifier,
       password: password,
     );
     state = AuthState.authenticated(user);

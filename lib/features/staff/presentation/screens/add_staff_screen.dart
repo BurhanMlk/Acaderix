@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/utils/id_generators.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -64,9 +66,14 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
 
     try {
       final repository = ref.read(staffRepositoryProvider);
+      final staffId = await repository.allocateStaffId(academyId);
+      final initialPassword = IdGenerators.generateStaffPassword();
+
       final staff = Staff(
         id: const Uuid().v4(),
         academyId: academyId,
+        staffId: staffId,
+        password: initialPassword,
         branchId: _branchId ?? '',
         fullName: _fullName.text.trim(),
         jobTitle: _jobTitle.text.trim(),
@@ -82,19 +89,140 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
       ref.invalidate(staffStreamProvider(academyId));
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Staff member "${staff.fullName}" added successfully!'),
-          backgroundColor: const Color(0xFF10B981),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      Navigator.of(context).pop();
+      setState(() => _submitting = false);
+      await _showStaffCredentialSlip(staff: staff);
+      if (mounted) Navigator.of(context).pop();
     } catch (e) {
       setState(() => _error = 'Failed to create staff member: $e');
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  Future<void> _showStaffCredentialSlip({required Staff staff}) async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.badge_outlined,
+                color: Color(0xFFA5B4FC),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                'Staff Credentials',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'A staff account has been created. Please share these login credentials with the staff member.',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 13,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.12),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        _CredentialRow(label: 'Full Name', value: staff.fullName),
+                        const Divider(color: Colors.white12, height: 16),
+                        _CredentialRow(
+                          label: 'Staff ID',
+                          value: staff.staffId,
+                          isHighlight: true,
+                        ),
+                        const Divider(color: Colors.white12, height: 16),
+                        _CredentialRow(
+                          label: 'Initial Password',
+                          value: staff.password,
+                          isHighlight: true,
+                        ),
+                        if (staff.jobTitle.isNotEmpty) ...[
+                          const Divider(color: Colors.white12, height: 16),
+                          _CredentialRow(
+                            label: 'Designation',
+                            value: staff.jobTitle,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.copy, size: 16),
+                    label: const Text('Copy Credentials'),
+                    style: OutlinedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      foregroundColor: const Color(0xFF38BDF8),
+                      side: const BorderSide(color: Color(0xFF38BDF8)),
+                    ),
+                    onPressed: () {
+                      Clipboard.setData(
+                        ClipboardData(
+                          text:
+                              'Staff Name: ${staff.fullName}\nStaff ID: ${staff.staffId}\nPassword: ${staff.password}',
+                        ),
+                      );
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        const SnackBar(
+                          content: Text('Staff credentials copied to clipboard!'),
+                          duration: Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -172,7 +300,9 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                             (b) => Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                b.city.isNotEmpty ? '${b.name} (${b.city})' : b.name,
+                                b.city.isNotEmpty
+                                    ? '${b.name} (${b.city})'
+                                    : b.name,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
@@ -193,7 +323,9 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                           (b) => DropdownMenuItem<String?>(
                             value: b.id,
                             child: Text(
-                              b.city.isNotEmpty ? '${b.name} (${b.city})' : b.name,
+                              b.city.isNotEmpty
+                                  ? '${b.name} (${b.city})'
+                                  : b.name,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
@@ -238,6 +370,49 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _CredentialRow extends StatelessWidget {
+  const _CredentialRow({
+    required this.label,
+    required this.value,
+    this.isHighlight = false,
+  });
+
+  final String label;
+  final String value;
+  final bool isHighlight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 105,
+            child: Text(
+              label,
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: SelectableText(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color: isHighlight ? const Color(0xFF38BDF8) : Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: isHighlight ? 14 : 13,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:go_router/go_router.dart';
 import 'package:academy_management/core/constants/roles.dart';
 import 'package:academy_management/core/domain/attendance_calculator.dart';
 import 'package:academy_management/features/academy_admin/application/academy_access_provider.dart';
@@ -36,6 +37,7 @@ import 'package:academy_management/features/staff/domain/staff_repository.dart';
 import 'package:academy_management/features/staff/presentation/screens/add_staff_screen.dart';
 import 'package:academy_management/features/staff/presentation/screens/edit_staff_screen.dart';
 import 'package:academy_management/features/staff/presentation/screens/staff_list_screen.dart';
+import 'package:academy_management/features/auth/presentation/screens/staff_login_screen.dart';
 import 'package:academy_management/features/branches/application/branch_repository_provider.dart';
 import 'package:academy_management/features/branches/domain/branch.dart';
 import 'package:academy_management/features/branches/domain/branch_repository.dart';
@@ -193,6 +195,7 @@ class _FakeExamRepo implements ExamRepository {
 
 class _FakeStaffRepo implements StaffRepository {
   final List<Staff> _staff = [];
+  int _counter = 1001;
 
   void addStaff(List<Staff> staff) {
     _staff.addAll(staff);
@@ -200,6 +203,13 @@ class _FakeStaffRepo implements StaffRepository {
 
   @override
   Stream<List<Staff>> watchAll(String academyId) => Stream.value(_staff);
+
+  @override
+  Future<String> allocateStaffId(String academyId) async {
+    final staffId = 'STF-$_counter';
+    _counter++;
+    return staffId;
+  }
 
   @override
   Future<void> create(Staff staff) async {
@@ -210,6 +220,18 @@ class _FakeStaffRepo implements StaffRepository {
   Future<void> update(Staff staff) async {
     final idx = _staff.indexWhere((s) => s.id == staff.id);
     if (idx != -1) _staff[idx] = staff;
+  }
+
+  @override
+  Future<void> resetPassword(
+    String academyId,
+    String staffId,
+    String newPassword,
+  ) async {
+    final idx = _staff.indexWhere((s) => s.staffId == staffId || s.id == staffId);
+    if (idx != -1) {
+      _staff[idx] = _staff[idx].copyWith(password: newPassword);
+    }
   }
 
   @override
@@ -262,6 +284,9 @@ class _FakeAccessRepo implements AcademyAccessRepository {
 }
 
 class _FakeAuthRepo implements AuthRepository {
+  String? lastStaffIdentifier;
+  String? lastStaffPassword;
+
   @override
   Stream<AuthState> authStateChanges() async* {
     yield const AuthState.authenticated(
@@ -283,6 +308,21 @@ class _FakeAuthRepo implements AuthRepository {
         role: AppRole.academyAdmin,
         academyId: 'acad_123',
       ),
+    );
+  }
+
+  @override
+  Future<AppUser> signInAsStaff({
+    required String identifier,
+    required String password,
+  }) async {
+    lastStaffIdentifier = identifier;
+    lastStaffPassword = password;
+    return const AppUser(
+      id: 'staff_1',
+      email: 'staff@test.com',
+      role: AppRole.staff,
+      academyId: 'acad_123',
     );
   }
 
@@ -803,10 +843,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Sir Tariq Mehmood'), findsOneWidget);
-      expect(find.text('Add Staff'), findsOneWidget);
+      expect(find.text('Add Staff Member'), findsOneWidget);
     });
 
-    testWidgets('8. Add staff screen creates staff record in repository', (
+    testWidgets('8. Add staff screen creates staff record in repository and shows credential slip', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(1000, 1800);
@@ -837,9 +877,20 @@ void main() {
       await tester.tap(submitBtn);
       await tester.pumpAndSettle();
 
+      // Credential slip dialog is shown with allocated Staff ID
+      expect(find.text('Staff Credentials'), findsOneWidget);
+      expect(find.text('STF-1001'), findsOneWidget);
+      expect(find.text('Copy Credentials'), findsOneWidget);
+
+      // Dismiss dialog
+      await tester.tap(find.widgetWithText(FilledButton, 'Done'));
+      await tester.pumpAndSettle();
+
       expect(staffRepo._staff.length, 1);
       expect(staffRepo._staff.first.fullName, 'Dr. Amina Qureshi');
       expect(staffRepo._staff.first.jobTitle, 'Senior Lecturer');
+      expect(staffRepo._staff.first.staffId, 'STF-1001');
+      expect(staffRepo._staff.first.password.isNotEmpty, isTrue);
     });
 
     testWidgets('9. Branches list displays campuses and filters by query', (
@@ -1042,7 +1093,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Original Staff'), findsOneWidget);
+      expect(find.text('Original Staff'), findsWidgets);
       await tester.enterText(find.byType(TextFormField).at(0), 'Updated Professor Name');
 
       final saveBtn = find.widgetWithText(FilledButton, 'Save Changes');
@@ -1187,6 +1238,186 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(branchRepo._branches, isEmpty);
+    });
+
+    testWidgets('17. Academy Admin can reset staff password and preview updated credentials slip', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final staffRepo = _FakeStaffRepo();
+      const staff = Staff(
+        id: 'stf_1',
+        staffId: 'STF-1001',
+        academyId: testAcademyId,
+        fullName: 'Professor Tariq',
+        jobTitle: 'HOD Math',
+        password: 'OldPassword123',
+      );
+      staffRepo.addStaff([staff]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            staffStreamProvider.overrideWith(
+              (ref, id) => staffRepo.watchAll(id),
+            ),
+            staffRepositoryProvider.overrideWithValue(staffRepo),
+          ],
+          child: const MaterialApp(
+            home: EditStaffScreen(staff: staff),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final resetBtn = find.widgetWithText(OutlinedButton, 'Reset Password');
+      expect(resetBtn, findsOneWidget);
+      await tester.tap(resetBtn);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Reset Staff Password'), findsOneWidget);
+      expect(find.text('Save & View Slip'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Save & View Slip'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Staff Credentials'), findsOneWidget);
+      expect(find.text('STF-1001'), findsWidgets);
+      expect(find.text('Copy Credentials'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Done'));
+      await tester.pumpAndSettle();
+
+      expect(staffRepo._staff.first.password, isNot('OldPassword123'));
+    });
+
+    testWidgets('18. Staff login screen accepts Staff ID and password and authenticates staff member', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1000, 1800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final authRepo = _FakeAuthRepo();
+
+      final router = GoRouter(
+        initialLocation: '/staff-login',
+        routes: [
+          GoRoute(
+            path: '/staff-login',
+            builder: (context, state) => const StaffLoginScreen(),
+          ),
+          GoRoute(
+            path: '/staff',
+            builder: (context, state) => const Scaffold(
+              body: Text('Staff Home Dashboard'),
+            ),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authRepositoryProvider.overrideWithValue(authRepo),
+          ],
+          child: MaterialApp.router(
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Staff Login'), findsOneWidget);
+      expect(find.widgetWithText(TextFormField, 'Staff ID or Email'), findsOneWidget);
+      expect(find.widgetWithText(TextFormField, 'Password'), findsOneWidget);
+
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Staff ID or Email'),
+        'STF-1001',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Password'),
+        'Staff@7890',
+      );
+
+      final signInBtn = find.widgetWithText(FilledButton, 'Sign In');
+      expect(signInBtn, findsOneWidget);
+      await tester.tap(signInBtn);
+      await tester.pumpAndSettle();
+
+      expect(authRepo.lastStaffIdentifier, 'STF-1001');
+      expect(authRepo.lastStaffPassword, 'Staff@7890');
+      expect(find.text('Staff Home Dashboard'), findsOneWidget);
+    });
+
+    testWidgets('19. Staff credentials modal and reset password modal render cleanly on narrow phone (320px) without overflow', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final staffRepo = _FakeStaffRepo();
+      const staff = Staff(
+        id: 'stf_long',
+        staffId: 'STF-8899',
+        academyId: testAcademyId,
+        fullName: 'Prof. Dr. Muhammad Tariq Mehmood Qureshi Senior Faculty',
+        jobTitle: 'Head of Sciences, Physics & Mathematics Department Lead',
+        password: 'TemporaryComplexPassword@12345',
+      );
+      staffRepo.addStaff([staff]);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            currentAcademyIdProvider.overrideWithValue(testAcademyId),
+            staffStreamProvider.overrideWith(
+              (ref, id) => staffRepo.watchAll(id),
+            ),
+            staffRepositoryProvider.overrideWithValue(staffRepo),
+          ],
+          child: const MaterialApp(
+            home: EditStaffScreen(staff: staff),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify zero overflow on EditStaffScreen header
+      expect(tester.takeException(), isNull);
+
+      // Open Reset Password dialog
+      final resetBtn = find.widgetWithText(OutlinedButton, 'Reset Password');
+      expect(resetBtn, findsOneWidget);
+      await tester.tap(resetBtn);
+      await tester.pumpAndSettle();
+
+      // Verify zero overflow in Reset Password dialog on 320px screen
+      expect(tester.takeException(), isNull);
+      expect(find.text('Reset Staff Password'), findsOneWidget);
+
+      // Save and open credential slip modal
+      await tester.tap(find.widgetWithText(FilledButton, 'Save & View Slip'));
+      await tester.pumpAndSettle();
+
+      // Verify zero overflow in Staff Credentials Slip on 320px screen
+      expect(tester.takeException(), isNull);
+      expect(find.text('Staff Credentials'), findsOneWidget);
+      expect(find.text('Copy Credentials'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Done'));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
     });
   });
 }

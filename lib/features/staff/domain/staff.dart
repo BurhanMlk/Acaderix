@@ -9,6 +9,7 @@ abstract class Staff with _$Staff {
   const factory Staff({
     required String id,
     required String academyId,
+    @Default('') String staffId,
     @Default('') String fullName,
     @Default('') String phone,
     @Default('') String email,
@@ -21,6 +22,7 @@ abstract class Staff with _$Staff {
     @Default('active') String status,
     @Default(<String>[]) List<String> permissions,
     @Default(0) int leaveBalance,
+    @Default('') String password,
   }) = _Staff;
 
   factory Staff.fromJson(Map<String, dynamic> json) => _$StaffFromJson(json);
