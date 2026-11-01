@@ -35,16 +35,14 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
         ? widget.academyId!
         : (user?.academyId ?? '');
 
-    final announcements = widget.academyId != null
-        ? ref
-                .watch(announcementsStreamProvider((
-                  academyId: widget.academyId!,
-                  audience: null,
-                  branchId: null,
-                )))
-                .value ??
-            const []
-        : ref.watch(academyAdminAnnouncementsProvider);
+    final announcementsAsync = ref.watch(
+      announcementsStreamProvider((
+        academyId: effectiveAcademyId,
+        audience: null,
+        branchId: null,
+      )),
+    );
+    final announcements = announcementsAsync.value ?? const [];
     final theme = Theme.of(context);
 
     final filtered = announcements.where((a) {

@@ -176,6 +176,7 @@ final Map<AppRole, Set<String>> _roleRoutes = {
     AppRoutes.coursesList,
     AppRoutes.addCourse,
     AppRoutes.editCourse,
+    AppRoutes.academyAnnouncements,
   },
   AppRole.staff: {AppRoutes.staff},
   AppRole.student: {AppRoutes.student},

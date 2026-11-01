@@ -49,6 +49,14 @@ import 'package:academy_management/features/branches/domain/branch_repository.da
 import 'package:academy_management/features/branches/presentation/screens/add_branch_screen.dart';
 import 'package:academy_management/features/branches/presentation/screens/edit_branch_screen.dart';
 import 'package:academy_management/features/branches/presentation/screens/branches_list_screen.dart';
+import 'package:academy_management/features/communication/application/communication_providers.dart';
+import 'package:academy_management/features/communication/domain/announcement.dart';
+import 'package:academy_management/features/communication/domain/app_notification.dart';
+import 'package:academy_management/features/communication/domain/communication_repository.dart';
+import 'package:academy_management/features/communication/domain/inquiry.dart';
+import 'package:academy_management/features/communication/presentation/screens/announcements_screen.dart';
+import 'package:academy_management/features/academy_admin/presentation/screens/academy_admin_shell.dart';
+import 'package:academy_management/app/router.dart';
 import 'package:academy_management/shared/current_academy_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -374,6 +382,97 @@ class _FakeAcademyDataSeeder implements AcademyDataSeeder {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _FakeAdminCommunicationRepo implements CommunicationRepository {
+  final List<Announcement> _announcements = [];
+  final _announcementsCtrl = StreamController<List<Announcement>>.broadcast();
+
+  void addAnnouncements(List<Announcement> list) {
+    _announcements.addAll(list);
+    _emit();
+  }
+
+  void _emit() => _announcementsCtrl.add(List.from(_announcements));
+
+  void dispose() => _announcementsCtrl.close();
+
+  @override
+  Stream<List<Announcement>> watchAnnouncements(
+    String academyId, {
+    String? audience,
+    String? branchId,
+  }) async* {
+    yield List.from(_announcements);
+    yield* _announcementsCtrl.stream;
+  }
+
+  @override
+  Future<void> sendAnnouncement(Announcement announcement) async {
+    final docId = announcement.id.isEmpty
+        ? 'ann_${DateTime.now().millisecondsSinceEpoch}'
+        : announcement.id;
+    _announcements.insert(0, announcement.copyWith(id: docId));
+    _emit();
+  }
+
+  @override
+  Future<void> deleteAnnouncement(
+      String academyId, String announcementId) async {
+    _announcements.removeWhere((a) => a.id == announcementId);
+  }
+
+  @override
+  Stream<List<StudentInquiry>> watchInquiriesForStudent(
+    String academyId,
+    String studentId, {
+    String? studentRollNumber,
+  }) =>
+      Stream.value([]);
+
+  @override
+  Stream<List<StudentInquiry>> watchInquiriesForTeacher(
+    String academyId,
+    String teacherId, {
+    String? teacherStaffId,
+    String? teacherName,
+    List<String>? teacherCourseIds,
+  }) =>
+      Stream.value([]);
+
+  @override
+  Stream<List<StudentInquiry>> watchAllInquiries(String academyId) =>
+      Stream.value([]);
+
+  @override
+  Future<void> submitInquiry(StudentInquiry inquiry) async {}
+
+  @override
+  Future<void> answerInquiry({
+    required String academyId,
+    required String inquiryId,
+    required String reply,
+    String status = 'answered',
+  }) async {}
+
+  @override
+  Stream<List<AppNotification>> watchNotifications(
+    String academyId, {
+    required String recipientId,
+    required String recipientRole,
+  }) =>
+      Stream.value([]);
+
+  @override
+  Future<void> sendNotification(AppNotification notification) async {}
+
+  @override
+  Future<void> markNotificationAsRead(
+      String academyId, String notificationId) async {}
+
+  @override
+  Future<void> markAllNotificationsAsRead(
+      String academyId, String recipientId) async {}
 }
 
 class _FakeAccessRepo implements AcademyAccessRepository {
@@ -1976,5 +2075,97 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets(
+      '25. Academy Admin Router navigates to Broadcasts tab and displays Noticeboard & Broadcasts screen',
+      (tester) async {
+        tester.view.physicalSize = const Size(1200, 1800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final commRepo = _FakeAdminCommunicationRepo();
+        commRepo.addAnnouncements([
+          Announcement(
+            id: 'ann_test_demo',
+            academyId: testAcademyId,
+            title: 'Welcome Back Students & Faculty',
+            content: 'The campus will open promptly at 8:00 AM on Monday.',
+            audience: 'all',
+            priority: 'urgent',
+            category: 'academic',
+            authorName: 'Academy Admin',
+            createdAt: DateTime.now(),
+          ),
+        ]);
+
+        final authRepo = _FakeAuthRepo();
+        final accessRepo = _FakeAccessRepo(accessInfo);
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              currentAcademyIdProvider.overrideWithValue(testAcademyId),
+              authRepositoryProvider.overrideWithValue(authRepo),
+              academyAccessRepositoryProvider.overrideWithValue(accessRepo),
+              academyAccessProvider
+                  .overrideWith((ref) => Stream.value(accessInfo)),
+              communicationRepositoryProvider.overrideWithValue(commRepo),
+              branchesStreamProvider
+                  .overrideWith((ref, id) => Stream.value([])),
+              coursesStreamProvider
+                  .overrideWith((ref, id) => Stream.value([])),
+            ],
+            child: const MaterialApp(
+              home: AcademyAdminShell(
+                location: AppRoutes.academyAnnouncements,
+                child: AnnouncementsScreen(academyId: testAcademyId),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Verify shell title and screen content
+        expect(find.text('Broadcasts & Noticeboard'), findsOneWidget);
+        expect(find.text('Noticeboard & Broadcasts'), findsOneWidget);
+        expect(find.text('Welcome Back Students & Faculty'), findsOneWidget);
+        expect(find.text('Broadcast Announcement'), findsOneWidget);
+
+        // Open create broadcast dialog
+        await tester.tap(find.text('Broadcast Announcement'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Broadcast New Message'), findsOneWidget);
+
+        // Enter title and content
+        await tester.enterText(
+          find.byType(TextField).first,
+          'Annual Science Fair Schedule',
+        );
+        await tester.pump();
+
+        // Scroll to content field and enter text
+        await tester.drag(find.byType(ListView).last, const Offset(0, -350));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.byType(TextField).last,
+          'Registration for robotics and biology projects is now live.',
+        );
+        await tester.pump();
+
+        // Submit broadcast
+        await tester.tap(find.text('Broadcast & Send Push Alert'));
+        await tester.pumpAndSettle();
+
+        // Verify newly broadcast announcement is stored
+        expect(commRepo._announcements.length, 2);
+        expect(commRepo._announcements.first.title,
+            'Annual Science Fair Schedule');
+        expect(find.text('Annual Science Fair Schedule'), findsOneWidget);
+        commRepo.dispose();
+      },
+    );
   });
 }
