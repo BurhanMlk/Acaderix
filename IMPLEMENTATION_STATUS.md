@@ -178,10 +178,11 @@
 
 ## Phase 10 — Security, Testing & Release ✅
 
-- [x] Comprehensive automated test suite (**79/79 tests passing**, 100% success rate across 5 test suites)
-- [x] End-to-end integration tests for Super Admin and Academy Admin workflows (including 23 Academy Admin e2e tests)
+- [x] Comprehensive automated test suite (**80/80 tests passing**, 100% success rate across 5 test suites)
+- [x] End-to-end integration tests for Super Admin and Academy Admin workflows (including 24 Academy Admin e2e tests)
 - [x] Dedicated automated tests for Staff ID allocation, admin password reset, and Staff ID portal authentication
 - [x] Dedicated automated tests for course assignment during staff creation and staff editing
+- [x] Dedicated automated test for Academy Admin "Reset & Re-seed Demo Data" action and seeder execution
 - [x] Complete end-to-end automated test suite for the Staff experience (8/8 tests passing)
 - [x] Zero RenderFlex overflows across narrow mobile viewports (320px–360px) in all dialogs, modals, and tabs
 - [x] Zero static analysis warnings or errors (`flutter analyze` clean)
@@ -189,4 +190,4 @@
 ## Validation (latest)
 
 - `flutter analyze` → No issues found! (0 warnings/errors)
-- `flutter test` → 79/79 tests passed! (100% success)
+- `flutter test` → 80/80 tests passed! (100% success)
