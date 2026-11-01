@@ -5,6 +5,8 @@ import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../auth/application/auth_controller.dart';
+import '../../../communication/presentation/screens/student_inquiries_screen.dart';
+import '../../../communication/presentation/widgets/notification_bell_button.dart';
 import '../../application/staff_providers.dart';
 import 'staff_attendance_tab.dart';
 import 'staff_dashboard_screen.dart';
@@ -105,6 +107,25 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                 ],
               ),
               actions: [
+                IconButton(
+                  tooltip: 'Student Q&A Desk',
+                  icon: const Icon(
+                    Icons.question_answer_outlined,
+                    color: Color(0xFF38BDF8),
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const StudentInquiriesScreen(),
+                      ),
+                    );
+                  },
+                ),
+                NotificationBellButton(
+                  academyId: staff?.academyId ?? '',
+                  userId: staff?.id,
+                ),
                 // Staff ID Chip
                 Container(
                   margin: const EdgeInsets.only(right: 8),

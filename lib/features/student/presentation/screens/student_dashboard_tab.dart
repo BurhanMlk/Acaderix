@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:academy_management/core/widgets/glass.dart';
+import 'package:academy_management/features/communication/application/communication_providers.dart';
+import 'package:academy_management/features/communication/presentation/screens/ask_teacher_modal.dart';
+import 'package:academy_management/features/communication/presentation/widgets/announcement_card.dart';
 import 'package:academy_management/features/student/application/student_providers.dart';
 import 'student_profile_modal.dart';
 
@@ -167,6 +170,77 @@ class StudentDashboardTab extends ConsumerWidget {
           ),
         ),
 
+        const SizedBox(height: 12),
+
+        // Quick Q&A Bar
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: const Color(0xFF38BDF8).withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: const Color(0xFF38BDF8).withValues(alpha: 0.3),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF38BDF8).withValues(alpha: 0.2),
+                ),
+                child: const Icon(
+                  Icons.help_outline,
+                  color: Color(0xFF38BDF8),
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Have an academic doubt?',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                    Text(
+                      'Ask questions directly to your teachers',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF38BDF8),
+                  foregroundColor: const Color(0xFF0F172A),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  visualDensity: VisualDensity.compact,
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                  ),
+                ),
+                onPressed: () => showAskTeacherModal(
+                  context,
+                  academyId: student?.academyId ?? '',
+                ),
+                child: const Text('Ask Now'),
+              ),
+            ],
+          ),
+        ),
+
         const SizedBox(height: 14),
 
         // 2. KPI Metrics Grid (2x2)
@@ -252,7 +326,7 @@ class StudentDashboardTab extends ConsumerWidget {
                   TextButton(
                     onPressed: () => onNavigateToTab(1),
                     child: const Text(
-                      'All Courses',
+                      'Full Timetable',
                       style: TextStyle(
                         color: Color(0xFF38BDF8),
                         fontSize: 12,
@@ -262,14 +336,16 @@ class StudentDashboardTab extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 10),
               if (courses.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Center(
-                    child: Text(
-                      'No active course schedules assigned yet.',
-                      style: TextStyle(color: Colors.white60, fontSize: 12),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'No enrolled classes found for current session.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      fontSize: 12,
                     ),
                   ),
                 )
@@ -277,10 +353,10 @@ class StudentDashboardTab extends ConsumerWidget {
                 ...courses.take(3).map((course) {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.04),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.08),
                       ),
@@ -288,19 +364,14 @@ class StudentDashboardTab extends ConsumerWidget {
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          width: 4,
+                          height: 38,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF38BDF8)
-                                .withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.class_outlined,
-                            color: Color(0xFF38BDF8),
-                            size: 18,
+                            color: const Color(0xFF38BDF8),
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,36 +381,37 @@ class StudentDashboardTab extends ConsumerWidget {
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 2),
-                              Text(
-                                course.teacherName.isNotEmpty
-                                    ? 'Teacher: ${course.teacherName}'
-                                    : 'Room: ${course.room.isNotEmpty ? course.room : "General Hall"}',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.6),
-                                  fontSize: 11,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 2,
+                                children: [
+                                  if (course.schedule.isNotEmpty)
+                                    Text(
+                                      course.schedule,
+                                      style: TextStyle(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.6),
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  if (course.teacherName.isNotEmpty)
+                                    Text(
+                                      '• ${course.teacherName}',
+                                      style: const TextStyle(
+                                        color: Color(0xFFA5B4FC),
+                                        fontSize: 11,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                ],
                               ),
-                              if (course.schedule.isNotEmpty) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  course.schedule,
-                                  style: const TextStyle(
-                                    color: Color(0xFF38BDF8),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
                             ],
                           ),
                         ),
@@ -478,6 +550,31 @@ class StudentDashboardTab extends ConsumerWidget {
             ],
           ),
         ),
+
+        const SizedBox(height: 14),
+
+        // 5. Campus Noticeboard & Broadcasts
+        Row(
+          children: [
+            const Icon(Icons.campaign_outlined,
+                size: 18, color: Color(0xFFEC4899)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Campus Noticeboard',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        _StudentNoticeboardPreview(academyId: student?.academyId ?? ''),
       ],
     );
   }
@@ -588,6 +685,74 @@ class _StudentStatCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _StudentNoticeboardPreview extends ConsumerWidget {
+  const _StudentNoticeboardPreview({required this.academyId});
+
+  final String academyId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (academyId.isEmpty) return const SizedBox.shrink();
+
+    final announcementsAsync =
+        ref.watch(studentAnnouncementsProvider(academyId));
+
+    return announcementsAsync.when(
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+        ),
+      ),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (list) {
+        if (list.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.campaign_outlined,
+                  size: 20,
+                  color: Colors.white.withValues(alpha: 0.4),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'No recent broadcast announcements',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.6),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final topNotices = list.take(3).toList();
+        return Column(
+          children: topNotices
+              .map(
+                (a) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: AnnouncementCard(
+                    announcement: a,
+                    canDelete: false,
+                  ),
+                ),
+              )
+              .toList(),
+        );
+      },
     );
   }
 }

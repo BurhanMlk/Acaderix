@@ -53,4 +53,9 @@ const List<AcademyAdminModule> academyAdminModules = [
     Icons.assessment_outlined,
     AppRoutes.results,
   ),
+  AcademyAdminModule(
+    'Broadcasts',
+    Icons.campaign_outlined,
+    AppRoutes.academyAnnouncements,
+  ),
 ];

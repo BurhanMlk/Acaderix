@@ -14,6 +14,8 @@ import '../../exams/domain/exam_result.dart';
 import '../../fees/domain/fee_invoice.dart';
 import '../../fees/domain/fee_payment.dart';
 import '../../staff/domain/staff.dart';
+import '../../communication/domain/announcement.dart';
+import '../../communication/domain/inquiry.dart';
 
 /// Riverpod provider for [AcademyDataSeeder].
 final academyDataSeederProvider = Provider<AcademyDataSeeder>(
@@ -69,6 +71,9 @@ class AcademyDataSeeder {
       FirestorePaths.feePayments(academyId),
       FirestorePaths.exams(academyId),
       FirestorePaths.results(academyId),
+      FirestorePaths.announcements(academyId),
+      FirestorePaths.inquiries(academyId),
+      FirestorePaths.notifications(academyId),
     ];
 
     for (final path in collections) {
@@ -621,6 +626,70 @@ class AcademyDataSeeder {
         toFirestoreData(res.toJson())..remove('id'),
       );
     }
+
+    // Seed realistic announcements
+    final announcementsRef =
+        _firestore.collection(FirestorePaths.announcements(academyId));
+    final demoAnnouncements = [
+      Announcement(
+        id: 'ann_5001',
+        academyId: academyId,
+        title: 'Midterm Examination Schedule Released',
+        content:
+            'The date sheet and syllabus guidelines for the upcoming Midterm examinations are now published. All students are advised to review the timetable.',
+        audience: 'all',
+        priority: 'urgent',
+        category: 'academic',
+        authorName: 'Academy Administration',
+        createdAt: DateTime.now().subtract(const Duration(hours: 3)),
+        isPinned: true,
+      ),
+      Announcement(
+        id: 'ann_5002',
+        academyId: academyId,
+        title: 'Science & Robotics Exhibition Next Friday',
+        content:
+            'Calling all young innovators! Submit your team project briefs for next Friday\'s Science & Innovation showcase.',
+        audience: 'students',
+        priority: 'normal',
+        category: 'event',
+        authorName: 'Head of Academics',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+      ),
+    ];
+    for (final ann in demoAnnouncements) {
+      batch.set(
+        announcementsRef.doc(ann.id),
+        toFirestoreData(ann.toJson())..remove('id'),
+      );
+    }
+
+    // Seed sample student inquiry and teacher answer
+    final inquiriesRef =
+        _firestore.collection(FirestorePaths.inquiries(academyId));
+    final demoInquiry = StudentInquiry(
+      id: 'inq_6001',
+      academyId: academyId,
+      studentId: students[0].id,
+      studentName: students[0].fullName,
+      studentRollNumber: students[0].rollNumber,
+      teacherId: staffList[0].id,
+      teacherName: staffList[0].fullName,
+      courseId: 'crs_2001',
+      courseName: 'Advanced Mathematics - Grade 10',
+      subject: 'Clarification regarding Chapter 4 Exercise 4.2',
+      question:
+          'Respected Sir, could you please clarify how question 5 should be derived? Do we need to apply the quadratic theorem or factoring?',
+      reply:
+          'Hello Muhammad! Factoring is acceptable, but applying the quadratic formula provides full working marks in the board exam rubric.',
+      status: 'answered',
+      createdAt: DateTime.now().subtract(const Duration(hours: 6)),
+      answeredAt: DateTime.now().subtract(const Duration(hours: 2)),
+    );
+    batch.set(
+      inquiriesRef.doc(demoInquiry.id),
+      toFirestoreData(demoInquiry.toJson())..remove('id'),
+    );
 
     await batch.commit();
   }

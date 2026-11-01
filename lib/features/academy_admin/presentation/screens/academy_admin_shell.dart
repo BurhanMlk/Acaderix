@@ -13,6 +13,7 @@ import '../../application/academy_access_provider.dart';
 import '../../application/academy_admin_providers.dart';
 import '../../domain/academy_access_models.dart';
 import '../academy_admin_modules.dart';
+import '../../../communication/presentation/widgets/notification_bell_button.dart';
 import 'academy_admin_dashboard.dart';
 import 'academy_status_notice_screen.dart';
 
@@ -46,6 +47,9 @@ class AcademyAdminShell extends ConsumerWidget {
     if (location == AppRoutes.attendance) return 'Attendance Monitoring';
     if (location == AppRoutes.fees) return 'Fee Management';
     if (location == AppRoutes.results) return 'Exams & Results';
+    if (location == AppRoutes.academyAnnouncements) {
+      return 'Broadcasts & Noticeboard';
+    }
     for (final module in academyAdminModules) {
       if (module.route == location) return module.label;
     }
@@ -162,6 +166,7 @@ class AcademyAdminShell extends ConsumerWidget {
                     ),
                   ),
                   actions: [
+                    NotificationBellButton(academyId: access.academyId),
                     _MobileBranchSelectorButton(academyId: access.academyId),
                   ],
                 ),
@@ -355,6 +360,8 @@ class AcademyAdminContentHeader extends ConsumerWidget {
               ),
             ),
           ),
+          const SizedBox(width: 8),
+          NotificationBellButton(academyId: access.academyId),
         ],
       ),
     );

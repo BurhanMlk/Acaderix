@@ -13,6 +13,7 @@ import '../../../academics/application/course_repository_provider.dart';
 import '../../../admissions/domain/student.dart';
 import '../../../branches/domain/branch.dart';
 import '../../../staff/domain/staff.dart';
+import '../../../communication/application/communication_providers.dart';
 import '../../application/academy_access_provider.dart';
 import '../../application/academy_admin_providers.dart';
 import '../../data/academy_data_seeder.dart';
@@ -35,16 +36,23 @@ class AcademyAdminDashboard extends ConsumerWidget {
       );
     }
 
+    final selectedBranchId = ref.watch(selectedBranchIdProvider);
     final studentsAsync = ref.watch(studentsStreamProvider(academyId));
     final staffAsync = ref.watch(staffStreamProvider(academyId));
     final branchesAsync = ref.watch(branchesStreamProvider(academyId));
+    final announcementsAsync = ref.watch(
+      announcementsStreamProvider((
+        academyId: academyId,
+        audience: null,
+        branchId: selectedBranchId,
+      )),
+    );
     final paymentsAsync = ref.watch(paymentsStreamProvider(academyId));
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final attendanceAsync = ref.watch(
       attendanceForDateProvider((academyId: academyId, date: today)),
     );
-    final selectedBranchId = ref.watch(selectedBranchIdProvider);
 
     // Calculate aggregated or filtered counts
     final allStudents = studentsAsync.value ?? const <Student>[];
@@ -247,6 +255,16 @@ class AcademyAdminDashboard extends ConsumerWidget {
               value: revenueDisplay,
               icon: Icons.payments_outlined,
               color: const Color(0xFF10B981),
+            ),
+            StatCard(
+              title: 'Noticeboard',
+              value: announcementsAsync.maybeWhen(
+                data: (list) => '${list.length}',
+                orElse: () => 'Active',
+              ),
+              icon: Icons.campaign_outlined,
+              color: const Color(0xFFEC4899),
+              onTap: () => context.push(AppRoutes.academyAnnouncements),
             ),
           ],
         ),

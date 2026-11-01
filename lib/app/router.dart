@@ -56,6 +56,7 @@ import '../features/branches/domain/branch.dart';
 import '../features/branches/presentation/screens/add_branch_screen.dart';
 import '../features/branches/presentation/screens/edit_branch_screen.dart';
 import '../features/branches/presentation/screens/branches_list_screen.dart';
+import '../features/communication/presentation/screens/announcements_screen.dart';
 import '../features/student/presentation/screens/student_shell.dart';
 
 /// Top-level route paths.
@@ -106,6 +107,7 @@ abstract final class AppRoutes {
   static const String coursesList = '/academy-admin/courses';
   static const String addCourse = '/academy-admin/courses/new';
   static const String editCourse = '/academy-admin/courses/edit';
+  static const String academyAnnouncements = '/academy-admin/announcements';
 
   static const String staff = '/staff';
   static const String student = '/student';
@@ -441,6 +443,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.results,
             builder: (context, state) => const ResultsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.academyAnnouncements,
+            builder: (context, state) => const AnnouncementsScreen(),
           ),
         ],
       ),

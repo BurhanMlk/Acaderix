@@ -5,6 +5,8 @@ import 'package:academy_management/core/widgets/app_logo.dart';
 import 'package:academy_management/core/widgets/confirmation_dialog.dart';
 import 'package:academy_management/core/widgets/glass.dart';
 import 'package:academy_management/features/auth/application/auth_controller.dart';
+import 'package:academy_management/features/communication/presentation/screens/student_inquiries_screen.dart';
+import 'package:academy_management/features/communication/presentation/widgets/notification_bell_button.dart';
 import 'package:academy_management/features/student/application/student_providers.dart';
 import 'student_attendance_tab.dart';
 import 'student_courses_tab.dart';
@@ -109,6 +111,28 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                 ],
               ),
               actions: [
+                IconButton(
+                  tooltip: 'Course Q&A & Doubts',
+                  icon: const Icon(
+                    Icons.question_answer_outlined,
+                    color: Color(0xFF38BDF8),
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => StudentInquiriesScreen(
+                          academyId: student?.academyId,
+                          studentId: student?.id,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                NotificationBellButton(
+                  academyId: student?.academyId ?? '',
+                  userId: student?.id,
+                ),
                 IconButton(
                   tooltip: 'Digital ID Pass',
                   icon: const Icon(Icons.badge_outlined, color: Color(0xFF38BDF8)),

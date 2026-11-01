@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../communication/application/communication_providers.dart';
+import '../../../communication/presentation/screens/student_inquiries_screen.dart';
+import '../../../communication/presentation/widgets/announcement_card.dart';
 import '../../application/staff_providers.dart';
 
 /// Staff Dashboard home view displaying staff profile, quick metrics, and direct action shortcuts.
@@ -281,12 +284,50 @@ class StaffDashboardScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 10),
         _StaffActionTile(
+          icon: Icons.question_answer_outlined,
+          color: const Color(0xFF38BDF8),
+          title: 'Student Q&A Desk',
+          subtitle: 'Answer academic doubts and questions from enrolled students',
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const StudentInquiriesScreen(),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 10),
+        _StaffActionTile(
           icon: Icons.badge_outlined,
           color: const Color(0xFFA855F7),
           title: 'My Profile & Security',
           subtitle: 'View employment details, salary info, or change password',
           onTap: () => onNavigateToTab(4),
         ),
+        const SizedBox(height: 20),
+
+        // Campus Noticeboard Section
+        Row(
+          children: [
+            const Icon(Icons.campaign_outlined,
+                size: 18, color: Color(0xFFEC4899)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Campus Noticeboard',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        _StaffNoticeboardPreview(academyId: staff?.academyId ?? ''),
         const SizedBox(height: 24),
       ],
     );
@@ -659,3 +700,72 @@ class _StaffActionTile extends StatelessWidget {
     );
   }
 }
+
+class _StaffNoticeboardPreview extends ConsumerWidget {
+  const _StaffNoticeboardPreview({required this.academyId});
+
+  final String academyId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (academyId.isEmpty) return const SizedBox.shrink();
+
+    final announcementsAsync =
+        ref.watch(staffAnnouncementsProvider(academyId));
+
+    return announcementsAsync.when(
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+        ),
+      ),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (list) {
+        if (list.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.campaign_outlined,
+                  size: 20,
+                  color: Colors.white.withValues(alpha: 0.4),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'No recent broadcast announcements',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.6),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final topNotices = list.take(3).toList();
+        return Column(
+          children: topNotices
+              .map(
+                (a) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: AnnouncementCard(
+                    announcement: a,
+                    canDelete: false,
+                  ),
+                ),
+              )
+              .toList(),
+        );
+      },
+    );
+  }
+}
+

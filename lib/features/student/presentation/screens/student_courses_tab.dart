@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:academy_management/core/widgets/glass.dart';
 import 'package:academy_management/features/academics/domain/course.dart';
+import 'package:academy_management/features/communication/presentation/screens/ask_teacher_modal.dart';
 import 'package:academy_management/features/student/application/student_providers.dart';
 
 /// Tab displaying the student's enrolled courses and weekly timetable.
@@ -316,6 +317,37 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                 ],
               ),
             ],
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF38BDF8),
+                  side: BorderSide(
+                    color: const Color(0xFF38BDF8).withValues(alpha: 0.5),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  visualDensity: VisualDensity.compact,
+                ),
+                icon: const Icon(Icons.help_outline, size: 14),
+                label: const Text(
+                  'Ask Teacher',
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                ),
+                onPressed: () {
+                  final student = ref.read(currentStudentProfileProvider);
+                  showAskTeacherModal(
+                    context,
+                    academyId: course.academyId.isNotEmpty
+                        ? course.academyId
+                        : (student?.academyId ?? ''),
+                    preselectedCourseId: course.id,
+                    preselectedCourseName: course.name,
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),

@@ -45,6 +45,10 @@ abstract final class FirestorePaths {
   static String expenses(String academyId) => '${academy(academyId)}/expenses';
   static String announcements(String academyId) =>
       '${academy(academyId)}/announcements';
+  static String inquiries(String academyId) =>
+      '${academy(academyId)}/inquiries';
+  static String notifications(String academyId) =>
+      '${academy(academyId)}/notifications';
   static String auditLogs(String academyId) =>
       '${academy(academyId)}/audit_logs';
   static String counters(String academyId) => '${academy(academyId)}/counters';
