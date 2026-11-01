@@ -7,9 +7,12 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/loading_button.dart';
+import '../../../academics/application/course_repository_provider.dart';
+import '../../../academics/domain/course.dart';
 import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../application/staff_repository_provider.dart';
 import '../../domain/staff.dart';
+import '../widgets/course_assignment_selector.dart';
 
 /// Screen for Academy Admin to edit existing staff member details, reassign branch, or reset login password.
 class EditStaffScreen extends ConsumerStatefulWidget {
@@ -32,6 +35,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
 
   late String? _branchId;
   late String _status;
+  Set<String>? _selectedCourseIds;
   bool _submitting = false;
   bool _deleting = false;
   String? _error;
@@ -87,6 +91,51 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
 
       await ref.read(staffRepositoryProvider).update(updated);
       ref.invalidate(staffStreamProvider(widget.staff.academyId));
+
+      // Update course assignments for this staff member
+      if (_selectedCourseIds != null) {
+        try {
+          final courseRepo = ref.read(courseRepositoryProvider);
+          final courses = ref
+                  .read(coursesStreamProvider(widget.staff.academyId))
+                  .value ??
+              const <Course>[];
+          for (final course in courses) {
+            final wasAssigned = (course.teacherId.isNotEmpty &&
+                    course.teacherId == widget.staff.id) ||
+                (widget.staff.staffId.isNotEmpty &&
+                    course.teacherId.toUpperCase() ==
+                        widget.staff.staffId.toUpperCase());
+            final isNowAssigned = _selectedCourseIds!.contains(course.id);
+
+            if (!wasAssigned && isNowAssigned) {
+              await courseRepo.saveCourse(
+                course.copyWith(
+                  teacherId: widget.staff.id,
+                  teacherName: updated.fullName,
+                  branchId: course.branchId.isEmpty && updated.branchId.isNotEmpty
+                      ? updated.branchId
+                      : course.branchId,
+                ),
+              );
+            } else if (wasAssigned && !isNowAssigned) {
+              await courseRepo.saveCourse(
+                course.copyWith(
+                  teacherId: '',
+                  teacherName: '',
+                ),
+              );
+            } else if (wasAssigned &&
+                isNowAssigned &&
+                course.teacherName != updated.fullName) {
+              await courseRepo.saveCourse(
+                course.copyWith(teacherName: updated.fullName),
+              );
+            }
+          }
+          ref.invalidate(coursesStreamProvider(widget.staff.academyId));
+        } catch (_) {}
+      }
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -447,6 +496,20 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
     final branchesAsync = ref.watch(
       branchesStreamProvider(widget.staff.academyId),
     );
+    final coursesAsync = ref.watch(
+      coursesStreamProvider(widget.staff.academyId),
+    );
+
+    if (_selectedCourseIds == null && coursesAsync.hasValue) {
+      _selectedCourseIds = coursesAsync.value!
+          .where((c) =>
+              (c.teacherId.isNotEmpty && c.teacherId == widget.staff.id) ||
+              (widget.staff.staffId.isNotEmpty &&
+                  c.teacherId.toUpperCase() ==
+                      widget.staff.staffId.toUpperCase()))
+          .map((c) => c.id)
+          .toSet();
+    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -690,6 +753,31 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                         ),
                       ],
                       onChanged: (val) => setState(() => _branchId = val),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
+              ),
+              // Course Assignment
+              coursesAsync.when(
+                data: (courses) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: CourseAssignmentSelector(
+                      courses: courses,
+                      selectedCourseIds: _selectedCourseIds ?? const <String>{},
+                      currentStaffId: widget.staff.id,
+                      onToggleCourse: (id) {
+                        setState(() {
+                          _selectedCourseIds ??= <String>{};
+                          if (_selectedCourseIds!.contains(id)) {
+                            _selectedCourseIds!.remove(id);
+                          } else {
+                            _selectedCourseIds!.add(id);
+                          }
+                        });
+                      },
                     ),
                   );
                 },

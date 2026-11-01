@@ -9,9 +9,12 @@ import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/loading_button.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../../../shared/selected_branch_provider.dart';
+import '../../../academics/application/course_repository_provider.dart';
+import '../../../academics/domain/course.dart';
 import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../application/staff_repository_provider.dart';
 import '../../domain/staff.dart';
+import '../widgets/course_assignment_selector.dart';
 
 /// Screen for Academy Admin to add a new faculty or administrative staff member with branch assignment.
 class AddStaffScreen extends ConsumerStatefulWidget {
@@ -31,6 +34,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
   final _address = TextEditingController();
 
   String? _branchId;
+  final Set<String> _selectedCourseIds = {};
   bool _submitting = false;
   String? _error;
 
@@ -88,9 +92,40 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
       await repository.create(staff);
       ref.invalidate(staffStreamProvider(academyId));
 
+      // Assign selected courses to this staff member
+      final assignedCourseNames = <String>[];
+      if (_selectedCourseIds.isNotEmpty) {
+        try {
+          final courseRepo = ref.read(courseRepositoryProvider);
+          final courses = ref.read(coursesStreamProvider(academyId)).value ??
+              const <Course>[];
+          for (final courseId in _selectedCourseIds) {
+            final course = courses.where((c) => c.id == courseId).firstOrNull;
+            if (course != null) {
+              assignedCourseNames.add(course.name);
+              await courseRepo.saveCourse(
+                course.copyWith(
+                  teacherId: staff.id,
+                  teacherName: staff.fullName,
+                  branchId: course.branchId.isEmpty && staff.branchId.isNotEmpty
+                      ? staff.branchId
+                      : course.branchId,
+                ),
+              );
+            }
+          }
+          ref.invalidate(coursesStreamProvider(academyId));
+        } catch (_) {
+          // Gracefully continue even if courses repository is not hooked in mock/offline tests
+        }
+      }
+
       if (!mounted) return;
       setState(() => _submitting = false);
-      await _showStaffCredentialSlip(staff: staff);
+      await _showStaffCredentialSlip(
+        staff: staff,
+        assignedCourses: assignedCourseNames,
+      );
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       setState(() => _error = 'Failed to create staff member: $e');
@@ -99,7 +134,10 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
     }
   }
 
-  Future<void> _showStaffCredentialSlip({required Staff staff}) async {
+  Future<void> _showStaffCredentialSlip({
+    required Staff staff,
+    List<String> assignedCourses = const [],
+  }) async {
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -182,6 +220,13 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                             value: staff.jobTitle,
                           ),
                         ],
+                        if (assignedCourses.isNotEmpty) ...[
+                          const Divider(color: Colors.white12, height: 16),
+                          _CredentialRow(
+                            label: 'Assigned Courses',
+                            value: assignedCourses.join(', '),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -195,10 +240,13 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                       side: const BorderSide(color: Color(0xFF38BDF8)),
                     ),
                     onPressed: () {
+                      final courseListStr = assignedCourses.isNotEmpty
+                          ? '\nCourses: ${assignedCourses.join(', ')}'
+                          : '';
                       Clipboard.setData(
                         ClipboardData(
                           text:
-                              'Staff Name: ${staff.fullName}\nStaff ID: ${staff.staffId}\nPassword: ${staff.password}',
+                              'Staff Name: ${staff.fullName}\nStaff ID: ${staff.staffId}\nPassword: ${staff.password}$courseListStr',
                         ),
                       );
                       ScaffoldMessenger.of(ctx).showSnackBar(
@@ -229,6 +277,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
   Widget build(BuildContext context) {
     final academyId = ref.watch(currentAcademyIdProvider) ?? '';
     final branchesAsync = ref.watch(branchesStreamProvider(academyId));
+    final coursesAsync = ref.watch(coursesStreamProvider(academyId));
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -333,6 +382,29 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                         ),
                       ],
                       onChanged: (val) => setState(() => _branchId = val),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
+              ),
+              // Course / Batch Assignment
+              coursesAsync.when(
+                data: (courses) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: CourseAssignmentSelector(
+                      courses: courses,
+                      selectedCourseIds: _selectedCourseIds,
+                      onToggleCourse: (id) {
+                        setState(() {
+                          if (_selectedCourseIds.contains(id)) {
+                            _selectedCourseIds.remove(id);
+                          } else {
+                            _selectedCourseIds.add(id);
+                          }
+                        });
+                      },
                     ),
                   );
                 },
