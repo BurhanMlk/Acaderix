@@ -5,21 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/domain/attendance_calculator.dart';
-import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/stat_card.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../../../shared/selected_branch_provider.dart';
-import '../../../academics/application/course_repository_provider.dart';
 import '../../../admissions/domain/student.dart';
 import '../../../branches/domain/branch.dart';
 import '../../../staff/domain/staff.dart';
 import '../../../communication/application/communication_providers.dart';
-import '../../../onboarding/presentation/screens/splash_screen.dart';
 import '../../../super_admin/application/platform_broadcast_providers.dart';
 import '../../../super_admin/domain/platform_broadcast.dart';
 import '../../application/academy_access_provider.dart';
 import '../../application/academy_admin_providers.dart';
-import '../../data/academy_data_seeder.dart';
 
 /// Academy Admin dashboard with frosted glass cards, multi-branch aggregation,
 /// overall sum across all branches, branch breakdown, and module navigation.
@@ -150,15 +146,6 @@ class AcademyAdminDashboard extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 ),
               ),
-            IconButton(
-              icon: const Icon(
-                Icons.auto_fix_high,
-                size: 20,
-                color: Color(0xFF38BDF8),
-              ),
-              tooltip: 'Reset & Re-seed Demo Data',
-              onPressed: () => _handleResetSeed(context, ref, academyId),
-            ),
           ],
         ),
         const SizedBox(height: 14),
@@ -258,10 +245,10 @@ class AcademyAdminDashboard extends ConsumerWidget {
         if (allStudents.isEmpty && allStaff.isEmpty)
           Container(
             margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF6366F1).withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(14),
+              color: const Color(0xFF6366F1).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: const Color(0xFF6366F1).withValues(alpha: 0.3),
               ),
@@ -271,38 +258,58 @@ class AcademyAdminDashboard extends ConsumerWidget {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.info_outline, color: Color(0xFFA5B4FC), size: 18),
-                    SizedBox(width: 8),
+                    Icon(
+                      Icons.rocket_launch_rounded,
+                      color: Color(0xFF818CF8),
+                      size: 20,
+                    ),
+                    SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Demo Academy Quick Setup',
+                        'Welcome to Acaderix Workspace',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: 15,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Seed multi-branch campuses, teacher accounts with Staff IDs & passwords, assigned courses, and live course attendance records.',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                const SizedBox(height: 8),
+                Text(
+                  'Your academy is active and ready. Start setting up your institution by admitting students, creating campus branches, or registering staff members.',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    fontSize: 12.5,
+                    height: 1.4,
+                  ),
                 ),
-                const SizedBox(height: 12),
-                FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF6366F1),
-                  ),
-                  icon: const Icon(Icons.auto_fix_high, size: 16),
-                  label: const Text('Seed Demo Academy Data'),
-                  onPressed: () => _handleResetSeed(
-                    context,
-                    ref,
-                    academyId,
-                    isFirstSeed: true,
-                  ),
+                const SizedBox(height: 14),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 8,
+                  children: [
+                    FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFF6366F1),
+                      ),
+                      icon: const Icon(Icons.person_add_alt_1_rounded, size: 16),
+                      label: const Text('Admit Student'),
+                      onPressed: () => context.push(AppRoutes.addStudent),
+                    ),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.25),
+                        ),
+                      ),
+                      icon: const Icon(Icons.badge_outlined, size: 16),
+                      label: const Text('Add Staff Member'),
+                      onPressed: () => context.push(AppRoutes.addStaff),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -763,71 +770,6 @@ class _ModuleTile extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-Future<void> _handleResetSeed(
-  BuildContext context,
-  WidgetRef ref,
-  String academyId, {
-  bool isFirstSeed = false,
-}) async {
-  if (!isFirstSeed) {
-    final confirmed = await showConfirmationDialog(
-      context,
-      title: 'Reset & Re-seed Demo Data',
-      message:
-          'This will purge all existing demo data and seed fresh records matching the latest course & teacher attendance architecture.',
-      confirmLabel: 'Reset & Seed',
-      destructive: true,
-    );
-    if (!confirmed || !context.mounted) return;
-  }
-
-  try {
-    await showSplashLoadingDialog(
-      context,
-      message: 'Resetting and seeding demo records for Acaderix...',
-      action: () async {
-        await ref
-            .read(academyDataSeederProvider)
-            .resetAndSeedAcademyData(academyId);
-
-        // Invalidate all streams to trigger real-time UI refresh
-        ref.invalidate(studentsStreamProvider(academyId));
-        ref.invalidate(staffStreamProvider(academyId));
-        ref.invalidate(branchesStreamProvider(academyId));
-        ref.invalidate(coursesStreamProvider(academyId));
-        ref.invalidate(attendanceForDateProvider);
-        ref.invalidate(invoicesStreamProvider(academyId));
-        ref.invalidate(paymentsStreamProvider(academyId));
-        ref.invalidate(examsStreamProvider(academyId));
-      },
-    );
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Demo data reset & seeded according to the new architecture!',
-          ),
-          backgroundColor: Color(0xFF10B981),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  } catch (e) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to seed demo data: $e'),
-          backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
   }
 }
 

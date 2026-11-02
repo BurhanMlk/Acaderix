@@ -11,4 +11,13 @@ abstract class AcademyAccessRepository {
   /// Locates an academy by owner or admin email and verifies its standing
   /// BEFORE issuing any authentication token or session.
   Future<AcademyAccessInfo> findAndCheckAcademyByEmail(String email);
+
+  /// Watches the real-time access and subscription status of an academy,
+  /// seamlessly resolving the academy by email or uid if [academyId] is not yet cached.
+  Stream<AcademyAccessInfo> watchAcademyAccessForUser({
+    required String? academyId,
+    required String uid,
+    required String email,
+  }) =>
+      watchAcademyAccess(academyId ?? '');
 }

@@ -4,7 +4,6 @@ import 'package:academy_management/core/constants/roles.dart';
 import 'package:academy_management/core/domain/attendance_calculator.dart';
 import 'package:academy_management/features/academy_admin/application/academy_access_provider.dart';
 import 'package:academy_management/features/academy_admin/application/academy_admin_providers.dart';
-import 'package:academy_management/features/academy_admin/data/academy_data_seeder.dart';
 import 'package:academy_management/features/academy_admin/domain/academy_access_models.dart';
 import 'package:academy_management/features/academy_admin/domain/academy_access_repository.dart';
 import 'package:academy_management/features/academy_admin/presentation/screens/academy_admin_dashboard.dart';
@@ -366,23 +365,6 @@ class _FakeCourseRepo implements CourseRepository {
   }
 }
 
-class _FakeAcademyDataSeeder implements AcademyDataSeeder {
-  bool didResetAndSeed = false;
-
-  @override
-  Future<void> clearAcademyData(String academyId) async {}
-
-  @override
-  Future<void> resetAndSeedAcademyData(String academyId) async {
-    didResetAndSeed = true;
-  }
-
-  @override
-  Future<void> seedAcademyData(String academyId, {bool force = false}) async {}
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
 
 class _FakeAdminCommunicationRepo implements CommunicationRepository {
   final List<Announcement> _announcements = [];
@@ -489,6 +471,14 @@ class _FakeAccessRepo implements AcademyAccessRepository {
   @override
   Future<AcademyAccessInfo> findAndCheckAcademyByEmail(String email) async =>
       _info;
+
+  @override
+  Stream<AcademyAccessInfo> watchAcademyAccessForUser({
+    required String? academyId,
+    required String uid,
+    required String email,
+  }) =>
+      Stream.value(_info);
 }
 
 class _FakeAuthRepo implements AuthRepository {
@@ -2014,7 +2004,7 @@ void main() {
       expect(mathCourse.teacherName, 'Sir Tariq Mehmood');
     });
 
-    testWidgets('24. Academy Admin Dashboard provides Reset & Re-seed Demo Data action with confirmation', (
+    testWidgets('24. Academy Admin Dashboard provides Welcome Workspace onboarding action buttons when empty', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(1000, 1800);
@@ -2022,7 +2012,6 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final fakeSeeder = _FakeAcademyDataSeeder();
       final authRepo = _FakeAuthRepo();
       final accessRepo = _FakeAccessRepo(accessInfo);
 
@@ -2033,7 +2022,6 @@ void main() {
             authRepositoryProvider.overrideWithValue(authRepo),
             academyAccessRepositoryProvider.overrideWithValue(accessRepo),
             academyAccessProvider.overrideWith((ref) => Stream.value(accessInfo)),
-            academyDataSeederProvider.overrideWithValue(fakeSeeder),
             studentsStreamProvider.overrideWith((ref, id) => Stream.value([])),
             staffStreamProvider.overrideWith((ref, id) => Stream.value([])),
             branchesStreamProvider.overrideWith((ref, id) => Stream.value([])),
@@ -2050,28 +2038,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Verify empty state quick setup banner is shown
-      expect(find.text('Demo Academy Quick Setup'), findsOneWidget);
-      expect(find.text('Seed Demo Academy Data'), findsOneWidget);
-
-      // Tap Seed Demo Academy Data
-      await tester.tap(find.widgetWithText(FilledButton, 'Seed Demo Academy Data'));
-      await tester.pumpAndSettle();
-
-      expect(fakeSeeder.didResetAndSeed, isTrue);
-
-      // Verify header action button opens confirmation dialog
-      final resetBtn = find.byTooltip('Reset & Re-seed Demo Data');
-      expect(resetBtn, findsOneWidget);
-      await tester.tap(resetBtn);
-      await tester.pumpAndSettle();
-
-      expect(find.text('Reset & Re-seed Demo Data'), findsOneWidget);
-      expect(find.text('Reset & Seed'), findsOneWidget);
-
-      // Tap Reset & Seed
-      await tester.tap(find.widgetWithText(FilledButton, 'Reset & Seed'));
-      await tester.pumpAndSettle();
+      // Verify empty state workspace onboarding banner is shown
+      expect(find.text('Welcome to Acaderix Workspace'), findsOneWidget);
+      expect(find.text('Admit Student'), findsOneWidget);
+      expect(find.text('Add Staff Member'), findsOneWidget);
 
       expect(tester.takeException(), isNull);
     });

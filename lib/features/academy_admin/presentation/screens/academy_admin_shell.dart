@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/widgets/app_loading_screen.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/glass.dart';
@@ -64,23 +65,9 @@ class AcademyAdminShell extends ConsumerWidget {
     final accessAsync = ref.watch(academyAccessProvider);
 
     return accessAsync.when(
-      loading: () => const DashboardBackground(
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(color: Color(0xFF6366F1)),
-                SizedBox(height: 16),
-                Text(
-                  'Checking academy status...',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-              ],
-            ),
-          ),
-        ),
+      loading: () => const AppLoadingScreen(
+        title: 'Acaderix Workspace',
+        message: 'Synchronizing academy records and status...',
       ),
       error: (err, _) => DashboardBackground(
         child: Scaffold(
@@ -111,9 +98,6 @@ class AcademyAdminShell extends ConsumerWidget {
       ),
       data: (access) {
         if (!access.isActive) {
-          Future.microtask(() {
-            ref.read(authControllerProvider.notifier).signOut();
-          });
           return AcademyStatusNoticeScreen(accessInfo: access);
         }
 

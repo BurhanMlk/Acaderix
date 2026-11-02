@@ -240,7 +240,13 @@ String? _redirect(
   }
 
   // Gate Academy Admin by academy access status (active vs pending/suspended/expired)
-  if (user.role == AppRole.academyAdmin && access != null) {
+  // Only redirect to academyStatus once access is resolved and confirmed inactive
+  final isAccessResolved = access != null &&
+      (access.isActive ||
+          access.isPending ||
+          access.isSuspended ||
+          access.isExpired);
+  if (user.role == AppRole.academyAdmin && isAccessResolved) {
     if (!access.isActive) {
       if (location != AppRoutes.academyStatus) {
         return AppRoutes.academyStatus;
@@ -254,7 +260,7 @@ String? _redirect(
   }
 
   final home = (user.role == AppRole.academyAdmin &&
-          access != null &&
+          isAccessResolved &&
           !access.isActive)
       ? AppRoutes.academyStatus
       : homeForRole(user.role);

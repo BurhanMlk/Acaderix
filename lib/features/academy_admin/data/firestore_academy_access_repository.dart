@@ -89,6 +89,98 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
   }
 
   @override
+  Stream<AcademyAccessInfo> watchAcademyAccessForUser({
+    required String? academyId,
+    required String uid,
+    required String email,
+  }) async* {
+    String resolvedId =
+        (academyId != null && academyId.isNotEmpty) ? academyId : '';
+
+    if (resolvedId.isEmpty) {
+      // 1. Check users collection
+      if (uid.isNotEmpty) {
+        try {
+          final userSnap = await _firestore
+              .collection(FirestorePaths.users)
+              .doc(uid)
+              .get();
+          final userAcadId = userSnap.data()?['academyId'] as String?;
+          if (userAcadId != null && userAcadId.isNotEmpty) {
+            resolvedId = userAcadId;
+          }
+        } catch (_) {}
+      }
+
+      // 2. Query academies by ownerUid
+      if (resolvedId.isEmpty && uid.isNotEmpty) {
+        try {
+          final snapUid = await _firestore
+              .collection(FirestorePaths.academies)
+              .where('ownerUid', isEqualTo: uid)
+              .limit(1)
+              .get();
+          if (snapUid.docs.isNotEmpty) {
+            resolvedId = snapUid.docs.first.id;
+          }
+        } catch (_) {}
+      }
+
+      // 3. Query academies by email (exact, lower, and alternate fields)
+      if (resolvedId.isEmpty && email.isNotEmpty) {
+        try {
+          final cleanEmail = email.trim();
+          final lowerEmail = cleanEmail.toLowerCase();
+          var snapEmail = await _firestore
+              .collection(FirestorePaths.academies)
+              .where('ownerEmail', isEqualTo: cleanEmail)
+              .limit(1)
+              .get();
+          if (snapEmail.docs.isEmpty && cleanEmail != lowerEmail) {
+            snapEmail = await _firestore
+                .collection(FirestorePaths.academies)
+                .where('ownerEmail', isEqualTo: lowerEmail)
+                .limit(1)
+                .get();
+          }
+          if (snapEmail.docs.isEmpty) {
+            snapEmail = await _firestore
+                .collection(FirestorePaths.academies)
+                .where('email', isEqualTo: cleanEmail)
+                .limit(1)
+                .get();
+          }
+          if (snapEmail.docs.isNotEmpty) {
+            resolvedId = snapEmail.docs.first.id;
+          }
+        } catch (_) {}
+      }
+
+      // If resolved, cache academyId to the user document
+      if (resolvedId.isNotEmpty && uid.isNotEmpty) {
+        try {
+          await _firestore.collection(FirestorePaths.users).doc(uid).set({
+            'academyId': resolvedId,
+            'role': 'academy_admin',
+          }, SetOptions(merge: true));
+        } catch (_) {}
+      }
+    }
+
+    if (resolvedId.isEmpty) {
+      yield AcademyAccessInfo(
+        state: AcademyAccessState.notFound,
+        academyId: '',
+        ownerEmail: email,
+        statusReason: 'No academy linked to this account.',
+      );
+      return;
+    }
+
+    yield* watchAcademyAccess(resolvedId);
+  }
+
+  @override
   Future<AcademyAccessInfo> getAcademyAccess(String academyId) async {
     if (academyId.isEmpty) {
       return const AcademyAccessInfo(

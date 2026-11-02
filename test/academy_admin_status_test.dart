@@ -49,6 +49,15 @@ class _FakeAcademyAccessRepository implements AcademyAccessRepository {
   Future<AcademyAccessInfo> findAndCheckAcademyByEmail(String email) async {
     return _currentInfo;
   }
+
+  @override
+  Stream<AcademyAccessInfo> watchAcademyAccessForUser({
+    required String? academyId,
+    required String uid,
+    required String email,
+  }) {
+    return Stream.value(_currentInfo);
+  }
 }
 
 class _FakeAuthRepo implements AuthRepository {

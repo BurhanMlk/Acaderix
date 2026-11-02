@@ -34,5 +34,9 @@ final academyAccessProvider = StreamProvider<AcademyAccessInfo>((ref) {
   final academyId = ref.watch(currentAcademyIdProvider) ?? user.academyId ?? '';
   final repo = ref.watch(academyAccessRepositoryProvider);
 
-  return repo.watchAcademyAccess(academyId);
+  return repo.watchAcademyAccessForUser(
+    academyId: academyId,
+    uid: user.id,
+    email: user.email,
+  );
 });
