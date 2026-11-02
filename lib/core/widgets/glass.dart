@@ -28,6 +28,9 @@ class DashboardBackground extends StatelessWidget {
       content = SafeArea(child: content);
     }
 
+    final topPadding = MediaQuery.paddingOf(context).top;
+    final statusBarHeight = topPadding > 0 ? topPadding + 14.0 : 0.0;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -55,6 +58,30 @@ class DashboardBackground extends StatelessWidget {
             child: _GlowOrb(size: 240, color: Color(0xFF0EA5E9)),
           ),
           content,
+          // Ambient status bar scrim protecting battery, time, and notch icons
+          // from background orbs and scrolling list content without losing glass feel.
+          if (statusBarHeight > 0)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: statusBarHeight,
+              child: const IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xB3050811), // 70% deep navy scrim directly under status bar
+                        Color(0x4D050811), // 30% soft transition
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -77,6 +104,9 @@ class AuthBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.paddingOf(context).top;
+    final statusBarHeight = topPadding > 0 ? topPadding + 14.0 : 0.0;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -104,6 +134,28 @@ class AuthBackground extends StatelessWidget {
               child: _GlowOrb(size: 200, color: Color(0xFF0EA5E9)),
             ),
             SafeArea(child: child),
+            if (statusBarHeight > 0)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: statusBarHeight,
+                child: const IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xB3050811),
+                          Color(0x4D050811),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

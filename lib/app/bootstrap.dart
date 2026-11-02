@@ -18,6 +18,19 @@ Future<void> bootstrap() async {
   }
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
+  // Ensure high-contrast white system status bar icons (battery, clock, wifi)
+  // across edge-to-edge transparent ambient dark background.
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Color(0x00000000),
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Color(0xFF0B1120),
+      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarDividerColor: Color(0x00000000),
+    ),
+  );
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
