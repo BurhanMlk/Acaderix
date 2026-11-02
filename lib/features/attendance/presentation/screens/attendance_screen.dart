@@ -17,6 +17,7 @@ import '../../../admissions/domain/student.dart';
 import '../../../branches/domain/branch.dart';
 import '../../application/attendance_repository_provider.dart';
 import '../../domain/attendance_record.dart';
+import '../utils/attendance_pdf_generator.dart';
 
 /// Screen allowing Academy Admin to monitor course-based attendance compliance across teachers,
 /// review student ledgers, and provide administrative override when teachers are on leave.
@@ -129,6 +130,21 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         ),
                       ),
                       IconButton(
+                        icon: const Icon(Icons.picture_as_pdf_outlined, color: Color(0xFF38BDF8)),
+                        tooltip: 'Export Course Register PDF',
+                        onPressed: () async {
+                          await AttendancePdfGenerator.printOrShareAttendanceRegister(
+                            academyName: 'Course Attendance Register',
+                            branch: null,
+                            course: course,
+                            teacherName: course.teacherName,
+                            date: _date,
+                            students: candidateStudents,
+                            recordMap: recordMap,
+                          );
+                        },
+                      ),
+                      IconButton(
                         icon: const Icon(Icons.close, color: Colors.white70),
                         onPressed: () => Navigator.of(modalCtx).pop(),
                       ),
@@ -239,6 +255,24 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         );
                                       },
                                     ),
+                                    const SizedBox(width: 6),
+                                    _StatusToggleButton(
+                                      status: AttendanceStatus.leave,
+                                      isSelected: currentStatus == AttendanceStatus.leave,
+                                      label: 'LV',
+                                      color: const Color(0xFF8B5CF6),
+                                      onTap: () async {
+                                        setModalState(() {
+                                          modalOverrides[student.id] = AttendanceStatus.leave;
+                                        });
+                                        await _mark(
+                                          academyId,
+                                          student.id,
+                                          AttendanceStatus.leave,
+                                          courseId: course.id,
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ),
                               );
@@ -298,6 +332,34 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     ),
                   ),
                   const Spacer(),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.picture_as_pdf_outlined,
+                      color: Color(0xFF38BDF8),
+                      size: 20,
+                    ),
+                    tooltip: 'Export Campus Attendance Register',
+                    onPressed: () async {
+                      final currentStudents = students.value ?? [];
+                      final currentBranch = branches.where((b) => b.id == selectedBranchId).firstOrNull;
+                      final relevantStudents = selectedBranchId != null && selectedBranchId.isNotEmpty
+                          ? currentStudents.where((s) => s.branchId == selectedBranchId).toList()
+                          : currentStudents;
+                      final currentRecords = records.value ?? [];
+                      final recordMap = {for (final r in currentRecords) r.studentId: r};
+
+                      await AttendancePdfGenerator.printOrShareAttendanceRegister(
+                        academyName: currentBranch?.name ?? 'Campus Attendance',
+                        branch: currentBranch,
+                        course: null,
+                        teacherName: 'Administrative Roster',
+                        date: _date,
+                        students: relevantStudents,
+                        recordMap: recordMap,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 4),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.calendar_today, size: 13),
                     label: const Text('Change Date'),
