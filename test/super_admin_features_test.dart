@@ -1159,7 +1159,39 @@ void main() {
     });
 
     testWidgets(
-        'Super admin remaining screens render cleanly on narrow 320px phone viewport',
+        'PlatformSettingsScreen renders cleanly on narrow 320px phone viewport without RenderFlex overflow',
+        (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authRepositoryProvider.overrideWithValue(_FakeAuthRepo()),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: PlatformSettingsScreen(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Platform Settings'), findsOneWidget);
+      expect(find.text('Platform Controls & Maintenance'), findsOneWidget);
+
+      // Scroll down to reveal diagnostics card
+      await tester.drag(find.byType(ListView), const Offset(0, -600));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Platform Information & Diagnostics'), findsOneWidget);
+    });
+
+    testWidgets(
+        'PlatformBroadcastsScreen and SupportTicketsScreen render cleanly on narrow 320px phone viewport',
         (tester) async {
       tester.view.physicalSize = const Size(320, 640);
       tester.view.devicePixelRatio = 1.0;
@@ -1206,6 +1238,37 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.text('Total Tickets'), findsOneWidget);
+    });
+
+    testWidgets(
+        'PlatformSettingsScreen renders cleanly on 360px mobile viewport without overflow',
+        (tester) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authRepositoryProvider.overrideWithValue(_FakeAuthRepo()),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: PlatformSettingsScreen(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Platform Controls & Maintenance'), findsOneWidget);
+
+      // Scroll to bottom card
+      await tester.drag(find.byType(ListView), const Offset(0, -600));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Flush Local Cache & Re-sync State'), findsOneWidget);
     });
   });
 }

@@ -164,11 +164,14 @@ class _AcademiesListScreenState extends ConsumerState<AcademiesListScreen> {
                                 academy.name.isEmpty
                                     ? 'Unnamed Academy'
                                     : academy.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
+                            const SizedBox(width: 8),
                             _statusBadge(academy.status),
                           ],
                         ),

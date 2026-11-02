@@ -232,7 +232,7 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 900),
           child: ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             children: [
             // Navigation Header
             Row(

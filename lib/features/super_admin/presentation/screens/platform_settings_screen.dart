@@ -31,7 +31,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: ListView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             children: [
               // Header
               Column(
@@ -52,7 +52,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Account & Security Card
               Card(
@@ -64,7 +64,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -83,10 +83,12 @@ class PlatformSettingsScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Text(
-                            'Account & Security',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                          Expanded(
+                            child: Text(
+                              'Account & Security',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -119,6 +121,8 @@ class PlatformSettingsScreen extends ConsumerWidget {
                                   const SizedBox(height: 2),
                                   Text(
                                     email,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
@@ -127,6 +131,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -242,7 +247,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -261,10 +266,12 @@ class PlatformSettingsScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Text(
-                            'Platform Controls & Maintenance',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                          Expanded(
+                            child: Text(
+                              'Platform Controls & Maintenance',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -355,7 +362,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -374,10 +381,12 @@ class PlatformSettingsScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Text(
-                            'Platform Information & Diagnostics',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                          Expanded(
+                            child: Text(
+                              'Platform Information & Diagnostics',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -420,21 +429,27 @@ class PlatformSettingsScreen extends ConsumerWidget {
                         value: 'Firebase Auth + Custom Claims',
                       ),
                       const SizedBox(height: 16),
-                      OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: scheme.primary,
-                          side: BorderSide(color: scheme.primary.withValues(alpha: 0.5)),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: scheme.primary,
+                            side: BorderSide(color: scheme.primary.withValues(alpha: 0.5)),
+                          ),
+                          icon: const Icon(Icons.cleaning_services_rounded, size: 16),
+                          label: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text('Flush Local Cache & Re-sync State'),
+                          ),
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Local cache purged. Platform state in sync.'),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          },
                         ),
-                        icon: const Icon(Icons.cleaning_services_rounded, size: 16),
-                        label: const Text('Flush Local Cache & Re-sync State'),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Local cache purged. Platform state in sync.'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        },
                       ),
                     ],
                   ),
@@ -474,6 +489,8 @@ class PlatformSettingsScreen extends ConsumerWidget {
             child: Text(
               value,
               textAlign: TextAlign.end,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 13,

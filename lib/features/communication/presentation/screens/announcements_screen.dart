@@ -132,25 +132,31 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                             ? Border.all(color: const Color(0xFF6366F1))
                             : null,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.campaign_outlined,
-                              size: 16, color: Colors.white),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Campus (${announcements.length})',
-                            style: TextStyle(
-                              color: _selectedTab == 0
-                                  ? Colors.white
-                                  : Colors.white70,
-                              fontWeight: _selectedTab == 0
-                                  ? FontWeight.w700
-                                  : FontWeight.normal,
-                              fontSize: 12,
-                            ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.campaign_outlined,
+                                  size: 16, color: Colors.white),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Campus (${announcements.length})',
+                                style: TextStyle(
+                                  color: _selectedTab == 0
+                                      ? Colors.white
+                                      : Colors.white70,
+                                  fontWeight: _selectedTab == 0
+                                      ? FontWeight.w700
+                                      : FontWeight.normal,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -171,25 +177,31 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                             ? Border.all(color: const Color(0xFF6366F1))
                             : null,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.shield_outlined,
-                              size: 16, color: Color(0xFF818CF8)),
-                          const SizedBox(width: 6),
-                          Text(
-                            'From Super Admin (${platformBroadcasts.length})',
-                            style: TextStyle(
-                              color: _selectedTab == 1
-                                  ? Colors.white
-                                  : Colors.white70,
-                              fontWeight: _selectedTab == 1
-                                  ? FontWeight.w700
-                                  : FontWeight.normal,
-                              fontSize: 12,
-                            ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.shield_outlined,
+                                  size: 16, color: Color(0xFF818CF8)),
+                              const SizedBox(width: 6),
+                              Text(
+                                'From Super Admin (${platformBroadcasts.length})',
+                                style: TextStyle(
+                                  color: _selectedTab == 1
+                                      ? Colors.white
+                                      : Colors.white70,
+                                  fontWeight: _selectedTab == 1
+                                      ? FontWeight.w700
+                                      : FontWeight.normal,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

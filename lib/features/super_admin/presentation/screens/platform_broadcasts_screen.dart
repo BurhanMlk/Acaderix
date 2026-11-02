@@ -409,12 +409,20 @@ class _PlatformBroadcastsScreenState
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  _priorityBadge(broadcast.priority),
-                  const SizedBox(width: 8),
-                  _categoryChip(broadcast.category),
-                  const Spacer(),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _priorityBadge(broadcast.priority),
+                      const SizedBox(width: 8),
+                      _categoryChip(broadcast.category),
+                    ],
+                  ),
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

@@ -230,6 +230,8 @@ class SuperAdminDashboard extends ConsumerWidget {
                 ),
                 title: Text(
                   academy.name.isEmpty ? 'Unnamed academy' : academy.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -238,6 +240,8 @@ class SuperAdminDashboard extends ConsumerWidget {
                 ),
                 subtitle: Text(
                   '${academy.code} · ${academy.city.isEmpty ? "Location not set" : academy.city}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.65),
                     fontSize: 13,
