@@ -177,10 +177,16 @@ final class FirebaseAuthRepository implements AuthRepository {
       DocumentSnapshot<Map<String, dynamic>>? studentAccSnap;
       try {
         final studentAccDocId = '${cleanCode}_$cleanRoll';
-        final snap = await _firestore
+        var snap = await _firestore
             .collection('student_accounts')
             .doc(studentAccDocId)
             .get();
+        if (!snap.exists && academyId.isNotEmpty) {
+          snap = await _firestore
+              .collection('student_accounts')
+              .doc('${academyId}_$cleanRoll')
+              .get();
+        }
         if (snap.exists) {
           studentAccSnap = snap;
           if (academyId.isEmpty) {
@@ -208,7 +214,7 @@ final class FirebaseAuthRepository implements AuthRepository {
         studentId = accData['studentDocId'] as String? ?? cleanRoll;
         studentName = accData['fullName'] as String? ?? 'Student';
         branchId = accData['branchId'] as String?;
-        storedPin = accData['pin'] as String?;
+        storedPin = (accData['pin'] ?? accData['pinHash']) as String?;
         status = accData['status'] as String? ?? 'active';
       }
 
@@ -226,7 +232,7 @@ final class FirebaseAuthRepository implements AuthRepository {
             studentId = doc.id;
             studentName = sData['fullName'] as String? ?? studentName;
             branchId = sData['branchId'] as String? ?? branchId;
-            storedPin ??= sData['pin'] as String?;
+            storedPin ??= (sData['pin'] ?? sData['pinHash']) as String?;
             status = sData['status'] as String? ?? status;
           }
         } catch (_) {}
@@ -365,7 +371,8 @@ final class FirebaseAuthRepository implements AuthRepository {
       }
 
       final data = snap.data() ?? {};
-      final storedPassword = data['password'] as String? ?? '';
+      final storedPassword =
+          (data['password'] ?? data['passwordHash']) as String? ?? '';
       final status = data['status'] as String? ?? 'active';
 
       if (status != 'active') {

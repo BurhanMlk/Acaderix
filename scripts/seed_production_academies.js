@@ -78,7 +78,9 @@ async function main() {
 
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
   const client = new OAuth2Client();
-  client.setCredentials(config.tokens);
+  client.setCredentials({
+    access_token: config.tokens.access_token,
+  });
 
   async function request(endpoint, options = {}) {
     const url = endpoint.startsWith('http') ? endpoint : `${BASE_URL}/${endpoint}`;
@@ -249,14 +251,14 @@ async function main() {
         { id: 'stf_apex_4', staffId: 'STF-104', name: 'Ms. Zainab Fatima', email: 'zainab.apex@gmail.com', phone: '+92 304 5554444', jobTitle: 'English Faculty', branchId: 'br_apex_2', salary: 75000 },
       ],
       students: [
-        { id: 'stu_apex_1', name: 'Muhammad Hamza', roll: '10001', phone: '+92 321 0001111', branchId: 'br_apex_1' },
-        { id: 'stu_apex_2', name: 'Fatima Zahra', roll: '10002', phone: '+92 321 0002222', branchId: 'br_apex_1' },
-        { id: 'stu_apex_3', name: 'Zaid Tariq', roll: '10003', phone: '+92 321 0003333', branchId: 'br_apex_1' },
-        { id: 'stu_apex_4', name: 'Aiman Noor', roll: '10004', phone: '+92 321 0004444', branchId: 'br_apex_1' },
-        { id: 'stu_apex_5', name: 'Abdullah Qasim', roll: '10005', phone: '+92 321 0005555', branchId: 'br_apex_2' },
-        { id: 'stu_apex_6', name: 'Maryam Bilal', roll: '10006', phone: '+92 321 0006666', branchId: 'br_apex_2' },
-        { id: 'stu_apex_7', name: 'Usman Farooq', roll: '10007', phone: '+92 321 0007777', branchId: 'br_apex_2' },
-        { id: 'stu_apex_8', name: 'Hiba Rehman', roll: '10008', phone: '+92 321 0008888', branchId: 'br_apex_2' },
+        { id: 'stu_apex_1', name: 'Muhammad Hamza', roll: '100001', phone: '+92 321 0001111', branchId: 'br_apex_1' },
+        { id: 'stu_apex_2', name: 'Fatima Zahra', roll: '100002', phone: '+92 321 0002222', branchId: 'br_apex_1' },
+        { id: 'stu_apex_3', name: 'Zaid Tariq', roll: '100003', phone: '+92 321 0003333', branchId: 'br_apex_1' },
+        { id: 'stu_apex_4', name: 'Aiman Noor', roll: '100004', phone: '+92 321 0004444', branchId: 'br_apex_1' },
+        { id: 'stu_apex_5', name: 'Abdullah Qasim', roll: '100005', phone: '+92 321 0005555', branchId: 'br_apex_2' },
+        { id: 'stu_apex_6', name: 'Maryam Bilal', roll: '100006', phone: '+92 321 0006666', branchId: 'br_apex_2' },
+        { id: 'stu_apex_7', name: 'Usman Farooq', roll: '100007', phone: '+92 321 0007777', branchId: 'br_apex_2' },
+        { id: 'stu_apex_8', name: 'Hiba Rehman', roll: '100008', phone: '+92 321 0008888', branchId: 'br_apex_2' },
       ],
       courses: [
         { id: 'crs_apex_1', name: 'Physics 10th - Batch A', code: 'PHY-101', teacherId: 'stf_apex_1', teacherName: 'Prof. Tariq Mehmood', branchId: 'br_apex_1', enrolled: ['stu_apex_1', 'stu_apex_2', 'stu_apex_3', 'stu_apex_4'], schedule: 'Mon, Wed, Fri • 4:00 PM' },
@@ -291,12 +293,12 @@ async function main() {
         { id: 'stf_bha_3', staffId: 'STF-203', name: 'Sir Kamran Gill', email: 'kamran.beacon@gmail.com', phone: '+92 300 3336666', jobTitle: 'English & Verbal Skills', branchId: 'br_bha_2', salary: 80000 },
       ],
       students: [
-        { id: 'stu_bha_1', name: 'Saad Rafique', roll: '20001', phone: '+92 333 1110001', branchId: 'br_bha_1' },
-        { id: 'stu_bha_2', name: 'Anum Khurram', roll: '20002', phone: '+92 333 1110002', branchId: 'br_bha_1' },
-        { id: 'stu_bha_3', name: 'Bilal Javed', roll: '20003', phone: '+92 333 1110003', branchId: 'br_bha_1' },
-        { id: 'stu_bha_4', name: 'Khadija Imran', roll: '20004', phone: '+92 333 1110004', branchId: 'br_bha_2' },
-        { id: 'stu_bha_5', name: 'Danyal Asif', roll: '20005', phone: '+92 333 1110005', branchId: 'br_bha_2' },
-        { id: 'stu_bha_6', name: 'Laiba Naveed', roll: '20006', phone: '+92 333 1110006', branchId: 'br_bha_2' },
+        { id: 'stu_bha_1', name: 'Saad Rafique', roll: '200001', phone: '+92 333 1110001', branchId: 'br_bha_1' },
+        { id: 'stu_bha_2', name: 'Anum Khurram', roll: '200002', phone: '+92 333 1110002', branchId: 'br_bha_1' },
+        { id: 'stu_bha_3', name: 'Bilal Javed', roll: '200003', phone: '+92 333 1110003', branchId: 'br_bha_1' },
+        { id: 'stu_bha_4', name: 'Khadija Imran', roll: '200004', phone: '+92 333 1110004', branchId: 'br_bha_2' },
+        { id: 'stu_bha_5', name: 'Danyal Asif', roll: '200005', phone: '+92 333 1110005', branchId: 'br_bha_2' },
+        { id: 'stu_bha_6', name: 'Laiba Naveed', roll: '200006', phone: '+92 333 1110006', branchId: 'br_bha_2' },
       ],
       courses: [
         { id: 'crs_bha_1', name: 'MDCAT Biology Intensive', code: 'BIO-501', teacherId: 'stf_bha_1', teacherName: 'Dr. Khalid Mehmood', branchId: 'br_bha_1', enrolled: ['stu_bha_1', 'stu_bha_2', 'stu_bha_3'], schedule: 'Mon, Wed, Fri • 5:00 PM' },
@@ -330,12 +332,12 @@ async function main() {
         { id: 'stf_csa_3', staffId: 'STF-303', name: 'Prof. Noman Qureshi', email: 'noman.csa@gmail.com', phone: '+92 311 4443333', jobTitle: 'Applied Mathematics Lead', branchId: 'br_csa_2', salary: 90000 },
       ],
       students: [
-        { id: 'stu_csa_1', name: 'Ahmed Raza', roll: '30001', phone: '+92 345 1110001', branchId: 'br_csa_1' },
-        { id: 'stu_csa_2', name: 'Iqra Pervez', roll: '30002', phone: '+92 345 1110002', branchId: 'br_csa_1' },
-        { id: 'stu_csa_3', name: 'Fahad Mustafa', roll: '30003', phone: '+92 345 1110003', branchId: 'br_csa_1' },
-        { id: 'stu_csa_4', name: 'Nimra Sheikh', roll: '30004', phone: '+92 345 1110004', branchId: 'br_csa_2' },
-        { id: 'stu_csa_5', name: 'Zubair Akram', roll: '30005', phone: '+92 345 1110005', branchId: 'br_csa_2' },
-        { id: 'stu_csa_6', name: 'Sana Malik', roll: '30006', phone: '+92 345 1110006', branchId: 'br_csa_2' },
+        { id: 'stu_csa_1', name: 'Ahmed Raza', roll: '300001', phone: '+92 345 1110001', branchId: 'br_csa_1' },
+        { id: 'stu_csa_2', name: 'Iqra Pervez', roll: '300002', phone: '+92 345 1110002', branchId: 'br_csa_1' },
+        { id: 'stu_csa_3', name: 'Fahad Mustafa', roll: '300003', phone: '+92 345 1110003', branchId: 'br_csa_1' },
+        { id: 'stu_csa_4', name: 'Nimra Sheikh', roll: '300004', phone: '+92 345 1110004', branchId: 'br_csa_2' },
+        { id: 'stu_csa_5', name: 'Zubair Akram', roll: '300005', phone: '+92 345 1110005', branchId: 'br_csa_2' },
+        { id: 'stu_csa_6', name: 'Sana Malik', roll: '300006', phone: '+92 345 1110006', branchId: 'br_csa_2' },
       ],
       courses: [
         { id: 'crs_csa_1', name: 'ECAT Physics Foundation', code: 'PHY-601', teacherId: 'stf_csa_1', teacherName: 'Engr. Haris Mumtaz', branchId: 'br_csa_1', enrolled: ['stu_csa_1', 'stu_csa_2', 'stu_csa_3'], schedule: 'Mon, Wed • 6:00 PM' },
@@ -367,11 +369,11 @@ async function main() {
         { id: 'stf_aqg_2', staffId: 'STF-402', name: 'Sir Owais Qazi', email: 'owais.aqg@gmail.com', phone: '+92 322 3334444', jobTitle: 'General Science & Math', branchId: 'br_aqg_1', salary: 72000 },
       ],
       students: [
-        { id: 'stu_aqg_1', name: 'Hassan Ali', roll: '40001', phone: '+92 331 2220001', branchId: 'br_aqg_1' },
-        { id: 'stu_aqg_2', name: 'Zainab Bano', roll: '40002', phone: '+92 331 2220002', branchId: 'br_aqg_1' },
-        { id: 'stu_aqg_3', name: 'Bilal Hussain', roll: '40003', phone: '+92 331 2220003', branchId: 'br_aqg_1' },
-        { id: 'stu_aqg_4', name: 'Kalsoom Bibi', roll: '40004', phone: '+92 331 2220004', branchId: 'br_aqg_1' },
-        { id: 'stu_aqg_5', name: 'Yousuf Khan', roll: '40005', phone: '+92 331 2220005', branchId: 'br_aqg_1' },
+        { id: 'stu_aqg_1', name: 'Hassan Ali', roll: '400001', phone: '+92 331 2220001', branchId: 'br_aqg_1' },
+        { id: 'stu_aqg_2', name: 'Zainab Bano', roll: '400002', phone: '+92 331 2220002', branchId: 'br_aqg_1' },
+        { id: 'stu_aqg_3', name: 'Bilal Hussain', roll: '400003', phone: '+92 331 2220003', branchId: 'br_aqg_1' },
+        { id: 'stu_aqg_4', name: 'Kalsoom Bibi', roll: '400004', phone: '+92 331 2220004', branchId: 'br_aqg_1' },
+        { id: 'stu_aqg_5', name: 'Yousuf Khan', roll: '400005', phone: '+92 331 2220005', branchId: 'br_aqg_1' },
       ],
       courses: [
         { id: 'crs_aqg_1', name: 'Islamic Theology & Arabic', code: 'ARB-101', teacherId: 'stf_aqg_1', teacherName: 'Maulana Asif Raza', branchId: 'br_aqg_1', enrolled: ['stu_aqg_1', 'stu_aqg_2', 'stu_aqg_3'], schedule: 'Mon, Tue, Wed • 8:30 AM' },
@@ -406,14 +408,14 @@ async function main() {
         { id: 'stf_iec_4', staffId: 'STF-504', name: 'Ms. Mehwish Bukhari', email: 'mehwish.iec@gmail.com', phone: '+92 300 8884444', jobTitle: 'Statistics & Math', branchId: 'br_iec_3', salary: 85000 },
       ],
       students: [
-        { id: 'stu_iec_1', name: 'Taimoor Shah', roll: '50001', phone: '+92 300 9990001', branchId: 'br_iec_1' },
-        { id: 'stu_iec_2', name: 'Zara Noor', roll: '50002', phone: '+92 300 9990002', branchId: 'br_iec_1' },
-        { id: 'stu_iec_3', name: 'Hamza Daniyal', roll: '50003', phone: '+92 300 9990003', branchId: 'br_iec_1' },
-        { id: 'stu_iec_4', name: 'Hania Amir', roll: '50004', phone: '+92 300 9990004', branchId: 'br_iec_2' },
-        { id: 'stu_iec_5', name: 'Shahmeer Khan', roll: '50005', phone: '+92 300 9990005', branchId: 'br_iec_2' },
-        { id: 'stu_iec_6', name: 'Areeba Siddiqui', roll: '50006', phone: '+92 300 9990006', branchId: 'br_iec_3' },
-        { id: 'stu_iec_7', name: 'Mahnoor Baloch', roll: '50007', phone: '+92 300 9990007', branchId: 'br_iec_3' },
-        { id: 'stu_iec_8', name: 'Kashif Mehmood', roll: '50008', phone: '+92 300 9990008', branchId: 'br_iec_3' },
+        { id: 'stu_iec_1', name: 'Taimoor Shah', roll: '500001', phone: '+92 300 9990001', branchId: 'br_iec_1' },
+        { id: 'stu_iec_2', name: 'Zara Noor', roll: '500002', phone: '+92 300 9990002', branchId: 'br_iec_1' },
+        { id: 'stu_iec_3', name: 'Hamza Daniyal', roll: '500003', phone: '+92 300 9990003', branchId: 'br_iec_1' },
+        { id: 'stu_iec_4', name: 'Hania Amir', roll: '500004', phone: '+92 300 9990004', branchId: 'br_iec_2' },
+        { id: 'stu_iec_5', name: 'Shahmeer Khan', roll: '500005', phone: '+92 300 9990005', branchId: 'br_iec_2' },
+        { id: 'stu_iec_6', name: 'Areeba Siddiqui', roll: '500006', phone: '+92 300 9990006', branchId: 'br_iec_3' },
+        { id: 'stu_iec_7', name: 'Mahnoor Baloch', roll: '500007', phone: '+92 300 9990007', branchId: 'br_iec_3' },
+        { id: 'stu_iec_8', name: 'Kashif Mehmood', roll: '500008', phone: '+92 300 9990008', branchId: 'br_iec_3' },
       ],
       courses: [
         { id: 'crs_iec_1', name: 'A-Level Computer Science', code: 'CS-901', teacherId: 'stf_iec_2', teacherName: 'Sir Junaid Farooqui', branchId: 'br_iec_1', enrolled: ['stu_iec_1', 'stu_iec_2', 'stu_iec_3'], schedule: 'Mon, Wed, Fri • 3:30 PM' },
@@ -447,10 +449,10 @@ async function main() {
         { id: 'stf_pes_2', staffId: 'STF-602', name: 'Sir Imran Cheema', email: 'imran.pes@gmail.com', phone: '+92 300 7772222', jobTitle: 'Physics Instructor', branchId: 'br_pes_2', salary: 80000 },
       ],
       students: [
-        { id: 'stu_pes_1', name: 'Moiz Shahzad', roll: '60001', phone: '+92 341 5550001', branchId: 'br_pes_1' },
-        { id: 'stu_pes_2', name: 'Khadija Tul Kubra', roll: '60002', phone: '+92 341 5550002', branchId: 'br_pes_1' },
-        { id: 'stu_pes_3', name: 'Ali Haider', roll: '60003', phone: '+92 341 5550003', branchId: 'br_pes_2' },
-        { id: 'stu_pes_4', name: 'Ayesha Bibi', roll: '60004', phone: '+92 341 5550004', branchId: 'br_pes_2' },
+        { id: 'stu_pes_1', name: 'Moiz Shahzad', roll: '600001', phone: '+92 341 5550001', branchId: 'br_pes_1' },
+        { id: 'stu_pes_2', name: 'Khadija Tul Kubra', roll: '600002', phone: '+92 341 5550002', branchId: 'br_pes_1' },
+        { id: 'stu_pes_3', name: 'Ali Haider', roll: '600003', phone: '+92 341 5550003', branchId: 'br_pes_2' },
+        { id: 'stu_pes_4', name: 'Ayesha Bibi', roll: '600004', phone: '+92 341 5550004', branchId: 'br_pes_2' },
       ],
       courses: [
         { id: 'crs_pes_1', name: 'FSc Pre-Medical Chemistry', code: 'CHM-401', teacherId: 'stf_pes_1', teacherName: 'Prof. Zahid Bashir', branchId: 'br_pes_1', enrolled: ['stu_pes_1', 'stu_pes_2'], schedule: 'Mon, Wed • 4:00 PM' },
@@ -481,10 +483,10 @@ async function main() {
         { id: 'stf_fms_2', staffId: 'STF-702', name: 'Ms. Palwasha Durrani', email: 'palwasha.fms@gmail.com', phone: '+92 333 9992222', jobTitle: 'Biology Faculty', branchId: 'br_fms_1', salary: 72000 },
       ],
       students: [
-        { id: 'stu_fms_1', name: 'Asfandyar Khan', roll: '70001', phone: '+92 313 8880001', branchId: 'br_fms_1' },
-        { id: 'stu_fms_2', name: 'Gulalai Noor', roll: '70002', phone: '+92 313 8880002', branchId: 'br_fms_1' },
-        { id: 'stu_fms_3', name: 'Zarak Khan', roll: '70003', phone: '+92 313 8880003', branchId: 'br_fms_1' },
-        { id: 'stu_fms_4', name: 'Bibi Zainab', roll: '70004', phone: '+92 313 8880004', branchId: 'br_fms_1' },
+        { id: 'stu_fms_1', name: 'Asfandyar Khan', roll: '700001', phone: '+92 313 8880001', branchId: 'br_fms_1' },
+        { id: 'stu_fms_2', name: 'Gulalai Noor', roll: '700002', phone: '+92 313 8880002', branchId: 'br_fms_1' },
+        { id: 'stu_fms_3', name: 'Zarak Khan', roll: '700003', phone: '+92 313 8880003', branchId: 'br_fms_1' },
+        { id: 'stu_fms_4', name: 'Bibi Zainab', roll: '700004', phone: '+92 313 8880004', branchId: 'br_fms_1' },
       ],
       courses: [
         { id: 'crs_fms_1', name: 'Board Exam Mathematics Prep', code: 'MTH-105', teacherId: 'stf_fms_1', teacherName: 'Sir Sher Afghan', branchId: 'br_fms_1', enrolled: ['stu_fms_1', 'stu_fms_2'], schedule: 'Mon, Wed, Fri • 3:00 PM' },
@@ -515,10 +517,10 @@ async function main() {
         { id: 'stf_zpa_2', staffId: 'STF-802', name: 'Ms. Amber Qureshi', email: 'amber.zpa@gmail.com', phone: '+92 300 4442222', jobTitle: 'English Language Tutor', branchId: 'br_zpa_1', salary: 70000 },
       ],
       students: [
-        { id: 'stu_zpa_1', name: 'Danish Ali', roll: '80001', phone: '+92 315 4440001', branchId: 'br_zpa_1' },
-        { id: 'stu_zpa_2', name: 'Mehak Fatima', roll: '80002', phone: '+92 315 4440002', branchId: 'br_zpa_1' },
-        { id: 'stu_zpa_3', name: 'Farhan Zaidi', roll: '80003', phone: '+92 315 4440003', branchId: 'br_zpa_1' },
-        { id: 'stu_zpa_4', name: 'Natasha Khan', roll: '80004', phone: '+92 315 4440004', branchId: 'br_zpa_1' },
+        { id: 'stu_zpa_1', name: 'Danish Ali', roll: '800001', phone: '+92 315 4440001', branchId: 'br_zpa_1' },
+        { id: 'stu_zpa_2', name: 'Mehak Fatima', roll: '800002', phone: '+92 315 4440002', branchId: 'br_zpa_1' },
+        { id: 'stu_zpa_3', name: 'Farhan Zaidi', roll: '800003', phone: '+92 315 4440003', branchId: 'br_zpa_1' },
+        { id: 'stu_zpa_4', name: 'Natasha Khan', roll: '800004', phone: '+92 315 4440004', branchId: 'br_zpa_1' },
       ],
       courses: [
         { id: 'crs_zpa_1', name: 'Crash Course Physics', code: 'PHY-301', teacherId: 'stf_zpa_1', teacherName: 'Sir Naeem Akhtar', branchId: 'br_zpa_1', enrolled: ['stu_zpa_1', 'stu_zpa_2'], schedule: 'Mon, Wed • 5:00 PM' },
@@ -610,31 +612,34 @@ async function main() {
     for (const stf of acad.staff) {
       await writeDoc(`academies/${acad.id}/staff/${stf.id}`, {
         academyId: acad.id,
-        staffId: stf.staffId,
+        staffId: stf.staffId.toUpperCase(),
         fullName: stf.name,
-        email: stf.email,
+        email: stf.email.toLowerCase(),
         phone: stf.phone,
         jobTitle: stf.jobTitle,
         branchId: stf.branchId,
         salary: stf.salary,
         status: 'active',
         password: staffPasswordHashed,
+        passwordHash: staffPasswordHashed,
         joiningDate: new Date('2026-08-01T08:00:00Z'),
         permissions: ['attendance', 'results', 'students_view'],
         leaveBalance: 12,
       });
 
       // Map into staff_accounts collection for login
-      await writeDoc(`staff_accounts/${stf.staffId}`, {
+      const staffAccount = {
         staffDocId: stf.id,
         academyId: acad.id,
-        staffId: stf.staffId,
+        staffId: stf.staffId.toUpperCase(),
         fullName: stf.name,
-        email: stf.email,
+        email: stf.email.toLowerCase(),
+        password: staffPasswordHashed,
         passwordHash: staffPasswordHashed,
         branchId: stf.branchId,
         status: 'active',
-      });
+      };
+      await writeDoc(`staff_accounts/${stf.staffId.toUpperCase()}`, staffAccount);
     }
 
     // 7. Seed Students (with salted SHA-256 hashed 4-digit PIN)
@@ -650,21 +655,36 @@ async function main() {
         branchId: stu.branchId,
         academicSession: '2026-2027',
         status: 'active',
+        pin: studentPinHashed,
+        pinHash: studentPinHashed,
         admissionDate: new Date('2026-09-01T09:00:00Z'),
       });
 
-      // Map into student_accounts collection for student portal login
-      await writeDoc(`student_accounts/${acad.id}_${stu.roll}`, {
+      const studentAccData = {
         studentDocId: stu.id,
         academyId: acad.id,
         academyCode: acad.code.toUpperCase(),
         rollNumber: stu.roll,
         fullName: stu.name,
+        pin: studentPinHashed,
         pinHash: studentPinHashed,
         branchId: stu.branchId,
         status: 'active',
         updatedAt: new Date('2026-09-01T09:00:00Z'),
-      });
+      };
+
+      // Map into student_accounts collection with multiple lookup keys for guaranteed resolution
+      await writeDoc(`student_accounts/${acad.code.toUpperCase()}_${stu.roll}`, studentAccData);
+      await writeDoc(`student_accounts/${acad.id}_${stu.roll}`, studentAccData);
+
+      // Also support 5-digit alias (e.g. 10001 -> 100001) if applicable
+      if (stu.roll.length === 6 && stu.roll.startsWith('1000')) {
+        const shortRoll = stu.roll.replace('10000', '1000');
+        await writeDoc(`student_accounts/${acad.code.toUpperCase()}_${shortRoll}`, {
+          ...studentAccData,
+          rollNumber: shortRoll,
+        });
+      }
     }
 
     // 8. Seed Courses
