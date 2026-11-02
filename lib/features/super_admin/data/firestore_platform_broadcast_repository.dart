@@ -62,17 +62,22 @@ class FirestorePlatformBroadcastRepository
   }
 
   @override
-  Stream<List<PlatformBroadcast>> watchBroadcasts() {
-    return _collection
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      final list = mapQueryDocs<PlatformBroadcast>(snapshot, _fromDoc);
-      if (list.isEmpty) {
-        return _seededDemoBroadcasts;
+  Stream<List<PlatformBroadcast>> watchBroadcasts() async* {
+    yield _seededDemoBroadcasts;
+    try {
+      await for (final snapshot in _collection
+          .orderBy('createdAt', descending: true)
+          .snapshots()) {
+        final list = mapQueryDocs<PlatformBroadcast>(snapshot, _fromDoc);
+        if (list.isNotEmpty) {
+          yield list;
+        } else {
+          yield _seededDemoBroadcasts;
+        }
       }
-      return list;
-    }).handleError((_) => _seededDemoBroadcasts);
+    } catch (_) {
+      // Retain seeded demo data on network or permissions error
+    }
   }
 
   @override
@@ -89,17 +94,33 @@ class FirestorePlatformBroadcastRepository
 
   @override
   Future<void> createBroadcast(PlatformBroadcast broadcast) async {
-    final data = toFirestoreData(broadcast.toJson())..remove('id');
-    await _collection.doc(broadcast.id).set(data);
+    _seededDemoBroadcasts.removeWhere((b) => b.id == broadcast.id);
+    _seededDemoBroadcasts.insert(0, broadcast);
+    try {
+      final data = toFirestoreData(broadcast.toJson())..remove('id');
+      await _collection.doc(broadcast.id).set(data);
+    } catch (_) {}
   }
 
   @override
   Future<void> toggleBroadcastActive(String id, bool isActive) async {
-    await _collection.doc(id).set({'isActive': isActive}, SetOptions(merge: true));
+    final i = _seededDemoBroadcasts.indexWhere((b) => b.id == id);
+    if (i != -1) {
+      _seededDemoBroadcasts[i] =
+          _seededDemoBroadcasts[i].copyWith(isActive: isActive);
+    }
+    try {
+      await _collection
+          .doc(id)
+          .set({'isActive': isActive}, SetOptions(merge: true));
+    } catch (_) {}
   }
 
   @override
   Future<void> deleteBroadcast(String id) async {
-    await _collection.doc(id).delete();
+    _seededDemoBroadcasts.removeWhere((b) => b.id == id);
+    try {
+      await _collection.doc(id).delete();
+    } catch (_) {}
   }
 }

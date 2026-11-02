@@ -81,6 +81,24 @@ service cloud.firestore {
         && (exists(userProfile()) && resource.data.academyId == get(userProfile()).data.academyId);
     }
 
+    // Platform Broadcasts: Super Admin manages; all authenticated users can read notices.
+    match /broadcasts/{broadcastId} {
+      allow read, write, delete: if isSuperAdmin();
+      allow read: if isSignedIn();
+    }
+
+    // Support Tickets: Super Admin manages all; Academy admins can submit and view.
+    match /support_tickets/{ticketId} {
+      allow read, write, delete: if isSuperAdmin();
+      allow read, create, update: if isSignedIn();
+    }
+
+    // Platform Settings: Super Admin manages; read permitted to verify maintenance status.
+    match /platform_settings/{settingId} {
+      allow read, write: if isSuperAdmin();
+      allow read: if true;
+    }
+
     // -------------------------------------------------------------------------
     // SECURE BY DEFAULT
     // -------------------------------------------------------------------------

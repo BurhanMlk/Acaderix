@@ -130,14 +130,22 @@ class FirestoreSupportTicketRepository implements SupportTicketRepository {
   }
 
   @override
-  Stream<List<SupportTicket>> watchTickets() {
-    return _collection
-        .orderBy('updatedAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      final list = mapQueryDocs<SupportTicket>(snapshot, _fromDoc);
-      return list.isNotEmpty ? list : _seededDemoTickets;
-    }).handleError((_) => _seededDemoTickets);
+  Stream<List<SupportTicket>> watchTickets() async* {
+    yield _seededDemoTickets;
+    try {
+      await for (final snapshot in _collection
+          .orderBy('updatedAt', descending: true)
+          .snapshots()) {
+        final list = mapQueryDocs<SupportTicket>(snapshot, _fromDoc);
+        if (list.isNotEmpty) {
+          yield list;
+        } else {
+          yield _seededDemoTickets;
+        }
+      }
+    } catch (_) {
+      // Retain seeded demo data on network or permissions error
+    }
   }
 
   @override
@@ -165,8 +173,12 @@ class FirestoreSupportTicketRepository implements SupportTicketRepository {
 
   @override
   Future<void> createTicket(SupportTicket ticket) async {
-    final data = toFirestoreData(ticket.toJson())..remove('id');
-    await _collection.doc(ticket.id).set(data);
+    _seededDemoTickets.removeWhere((t) => t.id == ticket.id);
+    _seededDemoTickets.insert(0, ticket);
+    try {
+      final data = toFirestoreData(ticket.toJson())..remove('id');
+      await _collection.doc(ticket.id).set(data);
+    } catch (_) {}
   }
 
   @override
@@ -175,26 +187,51 @@ class FirestoreSupportTicketRepository implements SupportTicketRepository {
     String status, {
     String? resolutionNote,
   }) async {
-    final updates = <String, dynamic>{
-      'status': status,
-      'updatedAt': FieldValue.serverTimestamp(),
-    };
-    if (resolutionNote != null) {
-      updates['resolutionNote'] = resolutionNote;
+    final i = _seededDemoTickets.indexWhere((t) => t.id == id);
+    if (i != -1) {
+      _seededDemoTickets[i] = _seededDemoTickets[i].copyWith(
+        status: status,
+        updatedAt: DateTime.now(),
+        resolutionNote: resolutionNote ?? _seededDemoTickets[i].resolutionNote,
+      );
     }
-    await _collection.doc(id).set(updates, SetOptions(merge: true));
+    try {
+      final updates = <String, dynamic>{
+        'status': status,
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+      if (resolutionNote != null) {
+        updates['resolutionNote'] = resolutionNote;
+      }
+      await _collection.doc(id).set(updates, SetOptions(merge: true));
+    } catch (_) {}
   }
 
   @override
   Future<void> addTicketMessage(String id, SupportTicketMessage message) async {
-    await _collection.doc(id).set({
-      'updatedAt': FieldValue.serverTimestamp(),
-      'messages': FieldValue.arrayUnion([message.toJson()]),
-    }, SetOptions(merge: true));
+    final i = _seededDemoTickets.indexWhere((t) => t.id == id);
+    if (i != -1) {
+      final updatedMessages =
+          List<SupportTicketMessage>.from(_seededDemoTickets[i].messages)
+            ..add(message);
+      _seededDemoTickets[i] = _seededDemoTickets[i].copyWith(
+        messages: updatedMessages,
+        updatedAt: DateTime.now(),
+      );
+    }
+    try {
+      await _collection.doc(id).set({
+        'updatedAt': FieldValue.serverTimestamp(),
+        'messages': FieldValue.arrayUnion([message.toJson()]),
+      }, SetOptions(merge: true));
+    } catch (_) {}
   }
 
   @override
   Future<void> deleteTicket(String id) async {
-    await _collection.doc(id).delete();
+    _seededDemoTickets.removeWhere((t) => t.id == id);
+    try {
+      await _collection.doc(id).delete();
+    } catch (_) {}
   }
 }
