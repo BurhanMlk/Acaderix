@@ -1155,6 +1155,7 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       initialValue: _category,
+                      isExpanded: true,
                       dropdownColor: const Color(0xFF1E293B),
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
@@ -1186,6 +1187,7 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                   Expanded(
                     child: DropdownButtonFormField<String>(
                       initialValue: _priority,
+                      isExpanded: true,
                       dropdownColor: const Color(0xFF1E293B),
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(

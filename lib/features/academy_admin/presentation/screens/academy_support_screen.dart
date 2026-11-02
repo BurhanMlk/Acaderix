@@ -810,19 +810,22 @@ class _TicketConversationViewState
                                   ),
                                   const SizedBox(width: 4),
                                 ],
-                                Text(
-                                  isSuperAdmin
-                                      ? 'Super Admin (Platform Support)'
-                                      : msg.senderName,
-                                  style: TextStyle(
-                                    color: isSuperAdmin
-                                        ? const Color(0xFF818CF8)
-                                        : Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
+                                Expanded(
+                                  child: Text(
+                                    isSuperAdmin
+                                        ? 'Super Admin (Platform Support)'
+                                        : msg.senderName,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: isSuperAdmin
+                                          ? const Color(0xFF818CF8)
+                                          : Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
-                                const Spacer(),
+                                const SizedBox(width: 8),
                                 Text(
                                   DateFormat('MMM dd • hh:mm a')
                                       .format(msg.createdAt),
@@ -1050,81 +1053,83 @@ class _NewTicketModalState extends State<_NewTicketModal> {
               ),
               const SizedBox(height: 16),
 
-              // Category & Priority Row
-              Row(
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _category,
-                      dropdownColor: const Color(0xFF1E293B),
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'Category',
-                        labelStyle: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'technical',
-                          child: Text('Technical Issue'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'billing',
-                          child: Text('Billing & Plans'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'account',
-                          child: Text('Account / Quotas'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'feature_request',
-                          child: Text('Feature Request'),
-                        ),
-                      ],
-                      onChanged: (v) =>
-                          setState(() => _category = v ?? 'technical'),
-                    ),
+              // Category Field
+              DropdownButtonFormField<String>(
+                initialValue: _category,
+                isExpanded: true,
+                dropdownColor: const Color(0xFF1E293B),
+                style: const TextStyle(color: Colors.white, fontSize: 13.5),
+                decoration: InputDecoration(
+                  labelText: 'Inquiry Category',
+                  labelStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _priority,
-                      dropdownColor: const Color(0xFF1E293B),
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'Priority',
-                        labelStyle: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'low', child: Text('Low')),
-                        DropdownMenuItem(
-                          value: 'medium',
-                          child: Text('Medium'),
-                        ),
-                        DropdownMenuItem(value: 'high', child: Text('High')),
-                        DropdownMenuItem(
-                          value: 'urgent',
-                          child: Text('Urgent'),
-                        ),
-                      ],
-                      onChanged: (v) =>
-                          setState(() => _priority = v ?? 'medium'),
-                    ),
+                  filled: true,
+                  fillColor: Colors.white.withValues(alpha: 0.06),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                items: const [
+                  DropdownMenuItem(
+                    value: 'technical',
+                    child: Text('Technical Issue / Bug'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'billing',
+                    child: Text('Billing & Subscriptions'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'account',
+                    child: Text('Account / Quotas'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'feature_request',
+                    child: Text('Feature Request'),
                   ),
                 ],
+                onChanged: (v) =>
+                    setState(() => _category = v ?? 'technical'),
+              ),
+              const SizedBox(height: 14),
+
+              // Priority Field
+              DropdownButtonFormField<String>(
+                initialValue: _priority,
+                isExpanded: true,
+                dropdownColor: const Color(0xFF1E293B),
+                style: const TextStyle(color: Colors.white, fontSize: 13.5),
+                decoration: InputDecoration(
+                  labelText: 'Priority Level',
+                  labelStyle: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white.withValues(alpha: 0.06),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                items: const [
+                  DropdownMenuItem(
+                    value: 'low',
+                    child: Text('Low (General Question)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'medium',
+                    child: Text('Medium (Normal Request)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'high',
+                    child: Text('High (Important Need)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'urgent',
+                    child: Text('Urgent (System Blocker)'),
+                  ),
+                ],
+                onChanged: (v) =>
+                    setState(() => _priority = v ?? 'medium'),
               ),
               const SizedBox(height: 14),
 
