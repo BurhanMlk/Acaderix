@@ -43,8 +43,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           .sendPasswordResetEmail(_email.text);
       setState(() {
         _message =
-            'If an account exists for this email, a reset link has been '
-            'sent. Please check your inbox.';
+            'If an account exists for this email, a password reset link has been '
+            'sent. Please check your inbox. If you do not see it within a few minutes, '
+            'be sure to check your Spam or Junk folder.';
       });
     } on AppException catch (e) {
       setState(() => _error = e.message);
@@ -91,9 +92,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     GlassError(message: _error!),
                   ],
                   if (_message != null) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: const Color(0xFF064E3B).withValues(alpha: 0.6),
                         borderRadius: BorderRadius.circular(12),
@@ -101,9 +102,40 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                           color: const Color(0xFF6EE7B7).withValues(alpha: 0.4),
                         ),
                       ),
-                      child: Text(
-                        _message!,
-                        style: const TextStyle(color: Color(0xFFA7F3D0)),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.mark_email_read_outlined,
+                            color: Color(0xFF6EE7B7),
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Password Reset Link Sent',
+                                  style: TextStyle(
+                                    color: Color(0xFF6EE7B7),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _message!,
+                                  style: const TextStyle(
+                                    color: Color(0xFFA7F3D0),
+                                    fontSize: 12.5,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
