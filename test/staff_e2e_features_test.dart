@@ -1,4 +1,5 @@
 import 'package:academy_management/core/constants/roles.dart';
+import 'package:academy_management/core/domain/attendance_calculator.dart';
 import 'package:academy_management/features/academics/application/course_repository_provider.dart';
 import 'package:academy_management/features/academics/domain/course.dart';
 import 'package:academy_management/features/academics/domain/course_repository.dart';
@@ -568,6 +569,72 @@ void main() {
         find.text('All enrolled students marked Present for today!'),
         findsOneWidget,
       );
+    });
+
+    testWidgets(
+        '4.1 Attendance Tab allows toggling between P, L, and A with instant updates and normalized dates',
+        (tester) async {
+      final aRepo = _FakeAttendanceRepo();
+      await tester.pumpWidget(buildStaffTestApp(attendanceRepo: aRepo));
+      await tester.pumpAndSettle();
+
+      Finder navItem(IconData icon) => find.descendant(
+            of: find.byType(BottomNavigationBar),
+            matching: find.byIcon(icon),
+          );
+
+      // Go to Attendance
+      await tester.tap(navItem(Icons.fact_check_outlined));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ali Hassan'), findsOneWidget);
+
+      // 1. Mark Ali Hassan Present ('P')
+      await tester.tap(find.byTooltip('Present').first);
+      await tester.pumpAndSettle();
+
+      expect(
+        aRepo._records.any(
+          (r) =>
+              r.studentId == testStudents[0].id &&
+              r.status == AttendanceStatus.present,
+        ),
+        isTrue,
+      );
+
+      // 2. Mark Ali Hassan Late ('L')
+      await tester.tap(find.byTooltip('Late').first);
+      await tester.pumpAndSettle();
+
+      expect(
+        aRepo._records.any(
+          (r) =>
+              r.studentId == testStudents[0].id &&
+              r.status == AttendanceStatus.late,
+        ),
+        isTrue,
+      );
+
+      // 3. Mark Ali Hassan Absent ('A')
+      await tester.tap(find.byTooltip('Absent').first);
+      await tester.pumpAndSettle();
+
+      expect(
+        aRepo._records.any(
+          (r) =>
+              r.studentId == testStudents[0].id &&
+              r.status == AttendanceStatus.absent,
+        ),
+        isTrue,
+      );
+
+      // Verify date is normalized to midnight
+      final lastRec = aRepo._records.firstWhere(
+        (r) => r.studentId == testStudents[0].id,
+      );
+      expect(lastRec.date.hour, 0);
+      expect(lastRec.date.minute, 0);
+      expect(lastRec.date.second, 0);
     });
 
     testWidgets(

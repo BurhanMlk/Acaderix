@@ -37,12 +37,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     AttendanceStatus status, {
     String courseId = '',
   }) async {
+    final normalizedDate = DateTime(_date.year, _date.month, _date.day);
     final record = AttendanceRecord(
       id: const Uuid().v4(),
       academyId: academyId,
       courseId: courseId,
       studentId: studentId,
-      date: _date,
+      date: normalizedDate,
       status: status,
     );
     await ref.read(attendanceRepositoryProvider).markAttendance(record);
@@ -61,6 +62,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     final candidateStudents = enrolledStudents.isNotEmpty
         ? enrolledStudents
         : allStudents.where((s) => s.branchId == course.branchId).toList();
+    final modalOverrides = <String, AttendanceStatus>{};
 
     showModalBottomSheet<void>(
       context: context,
@@ -71,10 +73,15 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       ),
       builder: (modalCtx) => StatefulBuilder(
         builder: (ctx, setModalState) {
-          final recordMap = {
-            for (final r in records.where((r) => r.courseId == course.id || r.courseId.isEmpty))
-              r.studentId: r,
-          };
+          final relevant = records
+              .where((r) => r.courseId == course.id || r.courseId.isEmpty)
+              .toList();
+          relevant.sort((a, b) {
+            final aMatch = a.courseId == course.id ? 1 : 0;
+            final bMatch = b.courseId == course.id ? 1 : 0;
+            return aMatch.compareTo(bMatch);
+          });
+          final recordMap = {for (final r in relevant) r.studentId: r};
 
           return DraggableScrollableSheet(
             initialChildSize: 0.75,
@@ -146,7 +153,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             itemBuilder: (context, index) {
                               final student = candidateStudents[index];
                               final rec = recordMap[student.id];
-                              final currentStatus = rec?.status ?? AttendanceStatus.present;
+                              final currentStatus = modalOverrides[student.id] ?? rec?.status ?? AttendanceStatus.present;
 
                               return Container(
                                 padding: const EdgeInsets.all(12),
@@ -185,13 +192,15 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                       label: 'P',
                                       color: const Color(0xFF10B981),
                                       onTap: () async {
+                                        setModalState(() {
+                                          modalOverrides[student.id] = AttendanceStatus.present;
+                                        });
                                         await _mark(
                                           academyId,
                                           student.id,
                                           AttendanceStatus.present,
                                           courseId: course.id,
                                         );
-                                        setModalState(() {});
                                       },
                                     ),
                                     const SizedBox(width: 6),
@@ -201,13 +210,15 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                       label: 'L',
                                       color: const Color(0xFFF59E0B),
                                       onTap: () async {
+                                        setModalState(() {
+                                          modalOverrides[student.id] = AttendanceStatus.late;
+                                        });
                                         await _mark(
                                           academyId,
                                           student.id,
                                           AttendanceStatus.late,
                                           courseId: course.id,
                                         );
-                                        setModalState(() {});
                                       },
                                     ),
                                     const SizedBox(width: 6),
@@ -217,13 +228,15 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                       label: 'A',
                                       color: const Color(0xFFEF4444),
                                       onTap: () async {
+                                        setModalState(() {
+                                          modalOverrides[student.id] = AttendanceStatus.absent;
+                                        });
                                         await _mark(
                                           academyId,
                                           student.id,
                                           AttendanceStatus.absent,
                                           courseId: course.id,
                                         );
-                                        setModalState(() {});
                                       },
                                     ),
                                   ],
@@ -937,26 +950,31 @@ class _StatusToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: 34,
-        height: 34,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: isSelected ? color : color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? color : color.withValues(alpha: 0.4),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        splashColor: color.withValues(alpha: 0.3),
+        child: Container(
+          width: 36,
+          height: 36,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected ? color : color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? color : color.withValues(alpha: 0.4),
+              width: isSelected ? 2.0 : 1.0,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.black : color,
-            fontWeight: FontWeight.w800,
-            fontSize: 13,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : color,
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+            ),
           ),
         ),
       ),

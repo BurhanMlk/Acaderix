@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/constants/firestore_paths.dart';
@@ -18,11 +20,57 @@ final class FirestoreAttendanceRepository implements AttendanceRepository {
   Stream<List<AttendanceRecord>> watchForDate(String academyId, DateTime date) {
     final start = DateTime(date.year, date.month, date.day);
     final end = start.add(const Duration(days: 1));
-    return _collection(academyId)
-        .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
-        .where('date', isLessThan: Timestamp.fromDate(end))
-        .snapshots()
-        .map((snapshot) => mapQueryDocs(snapshot, _fromDoc));
+
+    late StreamController<List<AttendanceRecord>> controller;
+    StreamSubscription? tsSub;
+    StreamSubscription? strSub;
+    List<AttendanceRecord> tsRecords = [];
+    List<AttendanceRecord> strRecords = [];
+
+    void emit() {
+      final map = <String, AttendanceRecord>{};
+      for (final r in strRecords) {
+        map[r.id] = r;
+      }
+      for (final r in tsRecords) {
+        map[r.id] = r;
+      }
+      if (!controller.isClosed) {
+        controller.add(map.values.toList());
+      }
+    }
+
+    controller = StreamController<List<AttendanceRecord>>.broadcast(
+      onListen: () {
+        tsSub = _collection(academyId)
+            .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+            .where('date', isLessThan: Timestamp.fromDate(end))
+            .snapshots()
+            .listen((snapshot) {
+          tsRecords = mapQueryDocs(snapshot, _fromDoc);
+          emit();
+        }, onError: (e) {
+          if (!controller.isClosed) controller.addError(e);
+        });
+
+        strSub = _collection(academyId)
+            .where('date', isGreaterThanOrEqualTo: start.toIso8601String())
+            .where('date', isLessThan: end.toIso8601String())
+            .snapshots()
+            .listen((snapshot) {
+          strRecords = mapQueryDocs(snapshot, _fromDoc);
+          emit();
+        }, onError: (_) {
+          // Fallback silently if string index doesn't exist
+        });
+      },
+      onCancel: () {
+        tsSub?.cancel();
+        strSub?.cancel();
+      },
+    );
+
+    return controller.stream;
   }
 
   @override
@@ -40,6 +88,7 @@ final class FirestoreAttendanceRepository implements AttendanceRepository {
   Future<void> markAttendance(AttendanceRecord record) {
     final key = _idempotencyKey(record);
     final data = toFirestoreData(record.toJson())..remove('id');
+    data['date'] = Timestamp.fromDate(record.date);
     return _collection(
       record.academyId,
     ).doc(key).set(data, SetOptions(merge: true));
@@ -53,6 +102,7 @@ final class FirestoreAttendanceRepository implements AttendanceRepository {
       final key = _idempotencyKey(record);
       final ref = _collection(record.academyId).doc(key);
       final data = toFirestoreData(record.toJson())..remove('id');
+      data['date'] = Timestamp.fromDate(record.date);
       batch.set(ref, data, SetOptions(merge: true));
     }
     await batch.commit();

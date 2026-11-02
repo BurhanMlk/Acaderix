@@ -20,7 +20,15 @@ class StaffAttendanceTab extends ConsumerStatefulWidget {
 }
 
 class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
-  DateTime _date = DateTime.now();
+  DateTime _date = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  /// Optimistic status store for instantaneous, responsive feedback on tap.
+  final Map<String, AttendanceStatus> _optimisticStatus = {};
+  final Set<String> _savingStudentIds = {};
 
   Future<void> _markStatus(
     String academyId,
@@ -29,17 +37,46 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
     String courseId = '',
     String staffId = '',
   }) async {
+    final normalizedDate = DateTime(_date.year, _date.month, _date.day);
+
+    setState(() {
+      _optimisticStatus[studentId] = status;
+      _savingStudentIds.add(studentId);
+    });
+
     final record = AttendanceRecord(
       id: const Uuid().v4(),
       academyId: academyId,
       courseId: courseId,
       studentId: studentId,
       markedById: staffId,
-      date: _date,
+      date: normalizedDate,
       status: status,
     );
-    await ref.read(attendanceRepositoryProvider).markAttendance(record);
-    ref.invalidate(attendanceForDateProvider);
+
+    try {
+      await ref.read(attendanceRepositoryProvider).markAttendance(record);
+      ref.invalidate(attendanceForDateProvider);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _optimisticStatus.remove(studentId);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save attendance: $e'),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _savingStudentIds.remove(studentId);
+        });
+      }
+    }
   }
 
   Future<void> _markAllPresent(
@@ -48,6 +85,16 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
     String courseId = '',
     String staffId = '',
   }) async {
+    if (students.isEmpty) return;
+
+    final normalizedDate = DateTime(_date.year, _date.month, _date.day);
+
+    setState(() {
+      for (final s in students) {
+        _optimisticStatus[s.id] = AttendanceStatus.present;
+      }
+    });
+
     final records = students
         .map(
           (s) => AttendanceRecord(
@@ -56,22 +103,34 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
             courseId: courseId,
             studentId: s.id,
             markedById: staffId,
-            date: _date,
+            date: normalizedDate,
             status: AttendanceStatus.present,
           ),
         )
         .toList();
 
-    await ref.read(attendanceRepositoryProvider).markBatchAttendance(records);
-    ref.invalidate(attendanceForDateProvider);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('All enrolled students marked Present for today!'),
-          backgroundColor: Color(0xFF10B981),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+    try {
+      await ref.read(attendanceRepositoryProvider).markBatchAttendance(records);
+      ref.invalidate(attendanceForDateProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('All enrolled students marked Present for today!'),
+            backgroundColor: Color(0xFF10B981),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to mark all present: $e'),
+            backgroundColor: const Color(0xFFEF4444),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 
@@ -104,12 +163,18 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
           final studentIds = students.map((s) => s.id).toSet();
           final relevant = records.where((r) {
             final matchStudent = studentIds.contains(r.studentId);
-            final matchCourse =
-                currentCourseId.isEmpty ||
-                r.courseId.isEmpty ||
-                r.courseId == currentCourseId;
+            final matchCourse = currentCourseId.isEmpty
+                ? true
+                : (r.courseId == currentCourseId || r.courseId.isEmpty);
             return matchStudent && matchCourse;
           }).toList();
+
+          // Crucial: sort so course-specific records appear last and take precedence in the map
+          relevant.sort((a, b) {
+            final aMatch = a.courseId == currentCourseId ? 1 : 0;
+            final bMatch = b.courseId == currentCourseId ? 1 : 0;
+            return aMatch.compareTo(bMatch);
+          });
 
           final recordMap = {for (final r in relevant) r.studentId: r};
 
@@ -119,14 +184,15 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
           int unmarked = 0;
 
           for (final s in students) {
-            final rec = recordMap[s.id];
-            if (rec == null) {
+            final effectiveStatus =
+                _optimisticStatus[s.id] ?? recordMap[s.id]?.status;
+            if (effectiveStatus == null) {
               unmarked++;
-            } else if (rec.status == AttendanceStatus.present) {
+            } else if (effectiveStatus == AttendanceStatus.present) {
               present++;
-            } else if (rec.status == AttendanceStatus.absent) {
+            } else if (effectiveStatus == AttendanceStatus.absent) {
               absent++;
-            } else if (rec.status == AttendanceStatus.late) {
+            } else if (effectiveStatus == AttendanceStatus.late) {
               late++;
             }
           }
@@ -193,7 +259,14 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                           lastDate: DateTime(2100),
                         );
                         if (picked != null) {
-                          setState(() => _date = picked);
+                          setState(() {
+                            _date = DateTime(
+                              picked.year,
+                              picked.month,
+                              picked.day,
+                            );
+                            _optimisticStatus.clear();
+                          });
                         }
                       },
                     ),
@@ -259,6 +332,9 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                             }).toList(),
                             onChanged: (val) {
                               if (val != null) {
+                                setState(() {
+                                  _optimisticStatus.clear();
+                                });
                                 ref
                                     .read(selectedStaffCourseIdProvider.notifier)
                                     .state = val;
@@ -361,7 +437,9 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
               else
                 ...students.map((student) {
                   final rec = recordMap[student.id];
-                  final currentStatus = rec?.status;
+                  final currentStatus =
+                      _optimisticStatus[student.id] ?? rec?.status;
+                  final isSaving = _savingStudentIds.contains(student.id);
 
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
@@ -417,6 +495,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                         ),
                         _AttendanceStatusSelector(
                           currentStatus: currentStatus,
+                          isSaving: isSaving,
                           onStatusSelected: (status) => _markStatus(
                             academyId,
                             student.id,
@@ -489,10 +568,12 @@ class _AttendanceStatusSelector extends StatelessWidget {
   const _AttendanceStatusSelector({
     required this.currentStatus,
     required this.onStatusSelected,
+    this.isSaving = false,
   });
 
   final AttendanceStatus? currentStatus;
   final ValueChanged<AttendanceStatus> onStatusSelected;
+  final bool isSaving;
 
   @override
   Widget build(BuildContext context) {
@@ -501,20 +582,23 @@ class _AttendanceStatusSelector extends StatelessWidget {
       children: [
         _StatusCircleBtn(
           label: 'P',
+          tooltip: 'Present',
           color: const Color(0xFF10B981),
           isSelected: currentStatus == AttendanceStatus.present,
           onTap: () => onStatusSelected(AttendanceStatus.present),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 8),
         _StatusCircleBtn(
           label: 'L',
+          tooltip: 'Late',
           color: const Color(0xFFF59E0B),
           isSelected: currentStatus == AttendanceStatus.late,
           onTap: () => onStatusSelected(AttendanceStatus.late),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: 8),
         _StatusCircleBtn(
           label: 'A',
+          tooltip: 'Absent',
           color: const Color(0xFFEF4444),
           isSelected: currentStatus == AttendanceStatus.absent,
           onTap: () => onStatusSelected(AttendanceStatus.absent),
@@ -527,39 +611,61 @@ class _AttendanceStatusSelector extends StatelessWidget {
 class _StatusCircleBtn extends StatelessWidget {
   const _StatusCircleBtn({
     required this.label,
+    required this.tooltip,
     required this.color,
     required this.isSelected,
     required this.onTap,
   });
 
   final String label;
+  final String tooltip;
   final Color color;
   final bool isSelected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: 32,
-        height: 32,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: isSelected ? color : color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? color : color.withValues(alpha: 0.3),
-            width: isSelected ? 1.5 : 1.0,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.black : color,
-            fontWeight: FontWeight.w800,
-            fontSize: 12,
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          splashColor: color.withValues(alpha: 0.3),
+          highlightColor: color.withValues(alpha: 0.15),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            curve: Curves.easeInOut,
+            width: 38,
+            height: 38,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: isSelected ? color : color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: isSelected ? color : color.withValues(alpha: 0.35),
+                width: isSelected ? 2.0 : 1.2,
+              ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.4),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : color,
+                fontWeight: FontWeight.w900,
+                fontSize: 14,
+                letterSpacing: 0.5,
+              ),
+            ),
           ),
         ),
       ),
