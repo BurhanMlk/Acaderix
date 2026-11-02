@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:academy_management/core/constants/roles.dart';
 import 'package:academy_management/core/errors/app_exception.dart';
 import 'package:academy_management/features/auth/application/auth_controller.dart';
@@ -8,13 +10,23 @@ import 'package:academy_management/features/super_admin/application/academy_repo
 import 'package:academy_management/features/super_admin/application/super_admin_providers.dart';
 import 'package:academy_management/features/super_admin/domain/academy.dart';
 import 'package:academy_management/features/super_admin/domain/academy_repository.dart';
+import 'package:academy_management/features/super_admin/application/platform_broadcast_providers.dart';
+import 'package:academy_management/features/super_admin/application/support_ticket_providers.dart';
+import 'package:academy_management/features/super_admin/domain/platform_broadcast.dart';
+import 'package:academy_management/features/super_admin/domain/platform_broadcast_repository.dart';
+import 'package:academy_management/features/super_admin/domain/support_ticket.dart';
+import 'package:academy_management/features/super_admin/domain/support_ticket_repository.dart';
 import 'package:academy_management/features/super_admin/presentation/screens/academy_admin_reset_password_screen.dart';
 import 'package:academy_management/features/super_admin/presentation/screens/academy_details_screen.dart';
+import 'package:academy_management/features/super_admin/presentation/screens/platform_broadcasts_screen.dart';
+import 'package:academy_management/features/super_admin/presentation/screens/platform_settings_screen.dart';
 import 'package:academy_management/features/super_admin/presentation/screens/super_admin_reset_password_screen.dart';
 import 'package:academy_management/features/super_admin/presentation/screens/super_admin_shell.dart';
+import 'package:academy_management/features/super_admin/presentation/screens/support_tickets_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:academy_management/core/widgets/stat_card.dart';
 import 'package:go_router/go_router.dart';
 
 class _FakeAcademyRepository implements AcademyRepository {
@@ -178,6 +190,180 @@ class _FakeAuthRepo implements AuthRepository {
   @override
   Future<void> signOut() async {
     signedOut = true;
+  }
+}
+
+class _FakePlatformBroadcastRepository implements PlatformBroadcastRepository {
+  final List<PlatformBroadcast> _broadcasts = [
+    PlatformBroadcast(
+      id: 'b_1',
+      title: 'Platform v1.2 Release',
+      message: 'New broadcast capabilities deployed.',
+      category: 'feature',
+      priority: 'high',
+      targetAudience: 'all',
+      isActive: true,
+      createdAt: DateTime(2026, 11, 1),
+    ),
+    PlatformBroadcast(
+      id: 'b_2',
+      title: 'Scheduled Cloud Maintenance Notice',
+      message: 'System upgrade on Sunday 02:00 AM.',
+      category: 'maintenance',
+      priority: 'urgent',
+      targetAudience: 'all',
+      isActive: true,
+      createdAt: DateTime(2026, 10, 28),
+    ),
+  ];
+
+  final _ctrl = StreamController<List<PlatformBroadcast>>.broadcast();
+  bool created = false;
+  bool deleted = false;
+  bool toggled = false;
+
+  @override
+  Stream<List<PlatformBroadcast>> watchBroadcasts() async* {
+    yield List.of(_broadcasts);
+    yield* _ctrl.stream;
+  }
+
+  @override
+  Future<List<PlatformBroadcast>> getBroadcasts() async => List.of(_broadcasts);
+
+  @override
+  Future<void> createBroadcast(PlatformBroadcast broadcast) async {
+    created = true;
+    _broadcasts.insert(0, broadcast);
+    _ctrl.add(List.of(_broadcasts));
+  }
+
+  @override
+  Future<void> toggleBroadcastActive(String id, bool isActive) async {
+    toggled = true;
+    final i = _broadcasts.indexWhere((b) => b.id == id);
+    if (i != -1) {
+      _broadcasts[i] = _broadcasts[i].copyWith(isActive: isActive);
+      _ctrl.add(List.of(_broadcasts));
+    }
+  }
+
+  @override
+  Future<void> deleteBroadcast(String id) async {
+    deleted = true;
+    _broadcasts.removeWhere((b) => b.id == id);
+    _ctrl.add(List.of(_broadcasts));
+  }
+}
+
+class _FakeSupportTicketRepository implements SupportTicketRepository {
+  final List<SupportTicket> _tickets = [
+    SupportTicket(
+      id: 't_1',
+      ticketNumber: 'TICK-1042',
+      academyId: 'acad_1',
+      academyName: 'Premier Science Academy',
+      academyCode: 'ACD-PSA10',
+      contactName: 'Dr. Tariq',
+      contactEmail: 'tariq@test.com',
+      contactPhone: '03001234567',
+      subject: 'Branch quota upgrade request',
+      description: 'Opening campus in Model Town Lahore.',
+      category: 'billing',
+      priority: 'high',
+      status: 'open',
+      createdAt: DateTime(2026, 11, 1),
+      updatedAt: DateTime(2026, 11, 1),
+      messages: [
+        SupportTicketMessage(
+          id: 'm_1',
+          senderName: 'Dr. Tariq',
+          senderRole: 'academyAdmin',
+          message: 'Opening campus in Model Town Lahore.',
+          createdAt: DateTime(2026, 11, 1),
+        ),
+      ],
+    ),
+    SupportTicket(
+      id: 't_2',
+      ticketNumber: 'TICK-1038',
+      academyId: 'acad_2',
+      academyName: 'Apex Coaching Center',
+      academyCode: 'ACD-ACC22',
+      contactName: 'Prof. Aslam',
+      contactEmail: 'aslam@test.com',
+      contactPhone: '03009876543',
+      subject: 'Bulk enrollment sync verification',
+      description: 'Enrolled 120 new session students.',
+      category: 'technical',
+      priority: 'medium',
+      status: 'in_progress',
+      createdAt: DateTime(2026, 10, 30),
+      updatedAt: DateTime(2026, 10, 30),
+      messages: [],
+    ),
+  ];
+
+  final _ctrl = StreamController<List<SupportTicket>>.broadcast();
+  bool created = false;
+  bool deleted = false;
+  String? updatedStatus;
+  String? addedReply;
+
+  @override
+  Stream<List<SupportTicket>> watchTickets() async* {
+    yield List.of(_tickets);
+    yield* _ctrl.stream;
+  }
+
+  @override
+  Future<List<SupportTicket>> getTickets() async => List.of(_tickets);
+
+  @override
+  Future<SupportTicket?> getTicketById(String id) async =>
+      _tickets.where((t) => t.id == id).firstOrNull;
+
+  @override
+  Future<void> createTicket(SupportTicket ticket) async {
+    created = true;
+    _tickets.insert(0, ticket);
+    _ctrl.add(List.of(_tickets));
+  }
+
+  @override
+  Future<void> updateTicketStatus(
+    String id,
+    String status, {
+    String? resolutionNote,
+  }) async {
+    updatedStatus = status;
+    final i = _tickets.indexWhere((t) => t.id == id);
+    if (i != -1) {
+      _tickets[i] = _tickets[i].copyWith(
+        status: status,
+        resolutionNote: resolutionNote,
+      );
+      _ctrl.add(List.of(_tickets));
+    }
+  }
+
+  @override
+  Future<void> addTicketMessage(String id, SupportTicketMessage message) async {
+    addedReply = message.message;
+    final i = _tickets.indexWhere((t) => t.id == id);
+    if (i != -1) {
+      final updatedList = List<SupportTicketMessage>.from(_tickets[i].messages)
+        ..add(message);
+      _tickets[i] = _tickets[i].copyWith(messages: updatedList);
+      _ctrl.add(List.of(_tickets));
+    }
+  }
+
+  @override
+  Future<void> deleteTicket(String id) async {
+    deleted = true;
+    _tickets.removeWhere((t) => t.id == id);
+    _ctrl.add(List.of(_tickets));
   }
 }
 
@@ -665,6 +851,361 @@ void main() {
         find.widgetWithText(FilledButton, 'Send Password Reset Link'),
         findsOneWidget,
       );
+    });
+
+    testWidgets(
+        'SuperAdminShell navigates to Broadcasts and Support modules',
+        (tester) async {
+      final fakeBroadcastRepo = _FakePlatformBroadcastRepository();
+      final fakeTicketRepo = _FakeSupportTicketRepository();
+
+      final router = GoRouter(
+        initialLocation: '/super-admin/broadcasts',
+        routes: [
+          ShellRoute(
+            builder: (context, state, child) => SuperAdminShell(
+              location: state.matchedLocation,
+              child: child,
+            ),
+            routes: [
+              GoRoute(
+                path: '/super-admin/broadcasts',
+                builder: (context, state) =>
+                    const PlatformBroadcastsScreen(),
+              ),
+              GoRoute(
+                path: '/super-admin/support-tickets',
+                builder: (context, state) => const SupportTicketsScreen(),
+              ),
+            ],
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            platformBroadcastRepositoryProvider
+                .overrideWithValue(fakeBroadcastRepo),
+            supportTicketRepositoryProvider.overrideWithValue(fakeTicketRepo),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify Broadcasts screen is displayed
+      expect(find.text('Total Broadcasts'), findsOneWidget);
+      expect(find.text('Platform v1.2 Release'), findsOneWidget);
+
+      // Navigate to Support Tickets
+      router.go('/super-admin/support-tickets');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Total Tickets'), findsOneWidget);
+      expect(find.text('TICK-1042'), findsOneWidget);
+    });
+
+    testWidgets(
+        'PlatformBroadcastsScreen renders stats, filters, and logs new broadcast',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final fakeBroadcastRepo = _FakePlatformBroadcastRepository();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            platformBroadcastRepositoryProvider
+                .overrideWithValue(fakeBroadcastRepo),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: PlatformBroadcastsScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify StatCards
+      expect(find.text('Total Broadcasts'), findsOneWidget);
+      expect(find.text('Active Notices'), findsOneWidget);
+      expect(find.text('Urgent Alerts'), findsOneWidget);
+
+      // Verify Seeded Broadcasts
+      expect(find.text('Platform v1.2 Release'), findsOneWidget);
+      expect(find.text('Scheduled Cloud Maintenance Notice'), findsOneWidget);
+
+      // Test Search Filter
+      final searchField =
+          find.widgetWithText(TextField, 'Search broadcasts by title or keyword...');
+      await tester.enterText(searchField, 'Maintenance');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Scheduled Cloud Maintenance Notice'), findsOneWidget);
+      expect(find.text('Platform v1.2 Release'), findsNothing);
+
+      // Clear search
+      await tester.tap(find.byIcon(Icons.clear));
+      await tester.pumpAndSettle();
+      expect(find.text('Platform v1.2 Release'), findsOneWidget);
+
+      // Open New Broadcast Modal
+      await tester.tap(find.text('New Broadcast'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Create Platform Broadcast'), findsOneWidget);
+
+      // Fill in Form
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Notice Title *'),
+        'Emergency Infrastructure Upgrade',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Detailed Message *'),
+        'Global network route optimization complete.',
+      );
+
+      // Submit
+      final publishBtn =
+          find.widgetWithText(FilledButton, 'Publish Broadcast');
+      await tester.ensureVisible(publishBtn);
+      await tester.pumpAndSettle();
+      await tester.tap(publishBtn);
+      await tester.pumpAndSettle();
+
+      // Verify created in repo
+      expect(fakeBroadcastRepo.created, isTrue);
+      expect(
+        find.text('Emergency Infrastructure Upgrade'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+        'PlatformBroadcastsScreen toggles status and deletes with confirmation dialog',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final fakeBroadcastRepo = _FakePlatformBroadcastRepository();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            platformBroadcastRepositoryProvider
+                .overrideWithValue(fakeBroadcastRepo),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: PlatformBroadcastsScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Toggle Active State
+      final pauseBtn = find.byIcon(Icons.pause_circle_outline_rounded).first;
+      await tester.tap(pauseBtn);
+      await tester.pumpAndSettle();
+      expect(fakeBroadcastRepo.toggled, isTrue);
+
+      // Delete Broadcast with confirmation
+      final deleteBtn = find.byIcon(Icons.delete_outline_rounded).first;
+      await tester.tap(deleteBtn);
+      await tester.pumpAndSettle();
+
+      // Confirmation dialog should be open
+      expect(find.text('Delete Broadcast'), findsOneWidget);
+      expect(
+        find.text('Are you sure you want to permanently delete "Platform v1.2 Release"?'),
+        findsOneWidget,
+      );
+
+      // Confirm Delete
+      await tester.tap(find.widgetWithText(FilledButton, 'Delete'));
+      await tester.pumpAndSettle();
+
+      expect(fakeBroadcastRepo.deleted, isTrue);
+    });
+
+    testWidgets(
+        'SupportTicketsScreen renders KPI stats, opens details, updates status and replies',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final fakeTicketRepo = _FakeSupportTicketRepository();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            supportTicketRepositoryProvider.overrideWithValue(fakeTicketRepo),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: SupportTicketsScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify KPI StatCards
+      expect(find.text('Total Tickets'), findsOneWidget);
+      expect(find.widgetWithText(StatCard, 'Open'), findsOneWidget);
+      expect(find.widgetWithText(StatCard, 'In Progress'), findsOneWidget);
+      expect(find.widgetWithText(StatCard, 'Resolved'), findsOneWidget);
+
+      // Verify Tickets List
+      expect(find.text('TICK-1042'), findsOneWidget);
+      expect(find.text('Branch quota upgrade request'), findsOneWidget);
+
+      // Tap ticket to view details
+      await tester.tap(find.text('TICK-1042'));
+      await tester.pumpAndSettle();
+
+      // Details view should be displayed
+      expect(find.text('Activity Thread'), findsOneWidget);
+      expect(find.text('Opening campus in Model Town Lahore.'), findsWidgets);
+
+      // Add Admin Reply
+      final replyField = find.widgetWithText(
+        TextField,
+        'Type response to academy administrator...',
+      );
+      await tester.enterText(
+        replyField,
+        'Approved branch quota for Model Town campus.',
+      );
+      await tester.tap(find.widgetWithText(FilledButton, 'Send Reply'));
+      await tester.pumpAndSettle();
+
+      expect(
+        fakeTicketRepo.addedReply,
+        equals('Approved branch quota for Model Town campus.'),
+      );
+      expect(
+        find.text('Reply dispatched to academy administrator.'),
+        findsOneWidget,
+      );
+
+      // Open details again and update status to Resolved
+      await tester.tap(find.text('TICK-1042'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Mark Resolved'));
+      await tester.pumpAndSettle();
+
+      expect(fakeTicketRepo.updatedStatus, equals('resolved'));
+    });
+
+    testWidgets(
+        'PlatformSettingsScreen toggles System Maintenance Mode with confirmation',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authRepositoryProvider.overrideWithValue(_FakeAuthRepo()),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: PlatformSettingsScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Platform Settings'), findsOneWidget);
+      expect(find.text('System Maintenance Mode'), findsOneWidget);
+
+      // Toggle Maintenance Switch ON
+      final maintenanceSwitch =
+          find.widgetWithText(SwitchListTile, 'System Maintenance Mode');
+      await tester.tap(maintenanceSwitch);
+      await tester.pumpAndSettle();
+
+      // Confirmation dialog should be displayed
+      expect(find.text('Enable Maintenance Mode?'), findsOneWidget);
+
+      // Confirm
+      await tester.tap(find.widgetWithText(FilledButton, 'Enable Maintenance'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Active: All non-admin operations are temporarily paused.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+        'Super admin remaining screens render cleanly on narrow 320px phone viewport',
+        (tester) async {
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final fakeBroadcastRepo = _FakePlatformBroadcastRepository();
+      final fakeTicketRepo = _FakeSupportTicketRepository();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            platformBroadcastRepositoryProvider
+                .overrideWithValue(fakeBroadcastRepo),
+            supportTicketRepositoryProvider.overrideWithValue(fakeTicketRepo),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: PlatformBroadcastsScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Total Broadcasts'), findsOneWidget);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            platformBroadcastRepositoryProvider
+                .overrideWithValue(fakeBroadcastRepo),
+            supportTicketRepositoryProvider.overrideWithValue(fakeTicketRepo),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: SupportTicketsScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Total Tickets'), findsOneWidget);
     });
   });
 }

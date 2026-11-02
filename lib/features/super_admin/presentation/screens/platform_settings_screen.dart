@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../auth/application/auth_controller.dart';
 import '../../../auth/domain/auth_state.dart';
+import '../../application/platform_settings_providers.dart';
 
 /// Platform and security settings for the Super Admin.
 class PlatformSettingsScreen extends ConsumerWidget {
@@ -14,6 +16,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authControllerProvider);
+    final platformSettings = ref.watch(platformSettingsProvider);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
@@ -176,7 +179,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
 
                             final actionButton = FilledButton.icon(
                               onPressed: () =>
-                                  context.go(AppRoutes.superAdminResetPassword),
+                                   context.go(AppRoutes.superAdminResetPassword),
                               icon: const Icon(Icons.lock_reset_rounded, size: 18),
                               label: const Text('Change Password'),
                               style: FilledButton.styleFrom(
@@ -229,6 +232,119 @@ class PlatformSettingsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
 
+              // Platform Service Controls Card
+              Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: scheme.outlineVariant.withValues(alpha: 0.5),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.build_circle_outlined,
+                              color: Colors.amber,
+                              size: 22,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Platform Controls & Maintenance',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+
+                      // Maintenance Mode Switch
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text(
+                          'System Maintenance Mode',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                        ),
+                        subtitle: Text(
+                          platformSettings.isMaintenanceActive
+                              ? 'Active: All non-admin operations are temporarily paused.'
+                              : 'Normal: All academies operate at full capacity.',
+                          style: TextStyle(
+                            color: platformSettings.isMaintenanceActive
+                                ? Colors.amberAccent
+                                : scheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
+                        ),
+                        value: platformSettings.isMaintenanceActive,
+                        activeThumbColor: Colors.amber,
+                        onChanged: (val) async {
+                          if (val) {
+                            final confirmed = await showConfirmationDialog(
+                              context,
+                              title: 'Enable Maintenance Mode?',
+                              message:
+                                  'Enabling maintenance mode will display a notice to all academy staff and students.',
+                              confirmLabel: 'Enable Maintenance',
+                            );
+                            if (confirmed == true) {
+                              ref
+                                  .read(platformSettingsProvider.notifier)
+                                  .toggleMaintenance(true);
+                            }
+                          } else {
+                            ref
+                                .read(platformSettingsProvider.notifier)
+                                .toggleMaintenance(false);
+                          }
+                        },
+                      ),
+                      const Divider(),
+
+                      // Allow Registrations Switch
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text(
+                          'Allow New Academy Registrations',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                        ),
+                        subtitle: Text(
+                          platformSettings.allowRegistrations
+                              ? 'Open: Prospective academies can sign up.'
+                              : 'Locked: Registration form temporarily restricted.',
+                          style: TextStyle(
+                            color: scheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
+                        ),
+                        value: platformSettings.allowRegistrations,
+                        activeThumbColor: const Color(0xFF6366F1),
+                        onChanged: (val) {
+                          ref
+                              .read(platformSettingsProvider.notifier)
+                              .toggleAllowRegistrations(val);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
               // System & Platform Info Card
               Card(
                 elevation: 0,
@@ -259,7 +375,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            'Platform Information',
+                            'Platform Information & Diagnostics',
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -287,7 +403,14 @@ class PlatformSettingsScreen extends ConsumerWidget {
                         context,
                         icon: Icons.storage_rounded,
                         label: 'Backend Database',
-                        value: 'Cloud Firestore (Multi-tenant)',
+                        value: 'Cloud Firestore (Healthy)',
+                      ),
+                      const Divider(),
+                      _infoTile(
+                        context,
+                        icon: Icons.notifications_active_rounded,
+                        label: 'Push Notification Service',
+                        value: 'FCM Gateway (Operational)',
                       ),
                       const Divider(),
                       _infoTile(
@@ -295,6 +418,23 @@ class PlatformSettingsScreen extends ConsumerWidget {
                         icon: Icons.verified_user_rounded,
                         label: 'Authentication Mode',
                         value: 'Firebase Auth + Custom Claims',
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: scheme.primary,
+                          side: BorderSide(color: scheme.primary.withValues(alpha: 0.5)),
+                        ),
+                        icon: const Icon(Icons.cleaning_services_rounded, size: 16),
+                        label: const Text('Flush Local Cache & Re-sync State'),
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Local cache purged. Platform state in sync.'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

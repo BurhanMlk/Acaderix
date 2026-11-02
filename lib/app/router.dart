@@ -23,8 +23,9 @@ import '../features/super_admin/presentation/screens/academy_details_screen.dart
 import '../features/super_admin/presentation/screens/change_plan_screen.dart';
 import '../features/super_admin/presentation/screens/edit_plan_price_screen.dart';
 import '../features/super_admin/presentation/screens/extend_subscription_screen.dart';
+import '../features/super_admin/presentation/screens/platform_broadcasts_screen.dart';
 import '../features/super_admin/presentation/screens/platform_settings_screen.dart';
-import '../features/super_admin/presentation/screens/coming_soon_screen.dart';
+import '../features/super_admin/presentation/screens/support_tickets_screen.dart';
 import '../features/super_admin/presentation/screens/record_payment_screen.dart';
 import '../features/super_admin/presentation/screens/super_admin_dashboard.dart';
 import '../features/super_admin/presentation/screens/super_admin_reset_password_screen.dart';
@@ -398,11 +399,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: AppRoutes.broadcasts,
-            builder: (context, state) => const ComingSoonScreen(),
+            builder: (context, state) => const PlatformBroadcastsScreen(),
           ),
           GoRoute(
             path: AppRoutes.supportTickets,
-            builder: (context, state) => const ComingSoonScreen(),
+            builder: (context, state) => const SupportTicketsScreen(),
           ),
           GoRoute(
             path: AppRoutes.platformSettings,
