@@ -91,7 +91,6 @@ class _BrandHeader extends StatelessWidget {
           size: 92,
           borderRadius: 26,
           withGlow: true,
-          heroTag: 'app_brand_logo',
         ),
         const SizedBox(height: 16),
         Text(

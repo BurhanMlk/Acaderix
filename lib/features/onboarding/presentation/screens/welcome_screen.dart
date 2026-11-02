@@ -29,7 +29,6 @@ class WelcomeScreen extends StatelessWidget {
                         size: 112,
                         borderRadius: 28,
                         withGlow: true,
-                        heroTag: 'app_brand_logo',
                       ),
                     ),
                     const SizedBox(height: 28),

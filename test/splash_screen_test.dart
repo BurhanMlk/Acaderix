@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:academy_management/core/widgets/app_logo.dart';
-import 'package:academy_management/core/widgets/quran_verse_card.dart';
 import 'package:academy_management/features/onboarding/presentation/screens/splash_screen.dart';
 
 void main() {
-  testWidgets('SplashScreen renders Acaderix emblem, title, blessing, and loading bar cleanly', (tester) async {
+  testWidgets('SplashScreen renders Acaderix emblem, title, tagline, and loading bar cleanly', (tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -25,8 +24,7 @@ void main() {
     expect(find.text('Acaderix'), findsOneWidget);
     expect(find.text('Academy Management System'), findsOneWidget);
 
-    // Verify blessing card & loading progress bar
-    expect(find.byType(QuranVerseCard), findsOneWidget);
+    // Verify loading progress bar and version badge
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
     expect(find.text('Initializing Acaderix...'), findsOneWidget);
     expect(find.text('v1.0.0 • Acaderix Core'), findsOneWidget);

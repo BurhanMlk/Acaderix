@@ -15,13 +15,13 @@ final academyRegistrationServiceProvider = Provider<AcademyRegistrationService>(
   (ref) => AcademyRegistrationService(ref.watch(firestoreProvider)),
 );
 
-final class AcademyRegistrationService {
+class AcademyRegistrationService {
   AcademyRegistrationService(this._firestore);
 
   final FirebaseFirestore _firestore;
 
-  /// Writes the academy, its code and the owner profile, returning the new
-  /// academy id.
+  /// Writes the academy, its code, subscription, and owner profile, returning
+  /// the new academy id.
   Future<String> registerAcademy({
     required String uid,
     required String email,
@@ -70,6 +70,21 @@ final class AcademyRegistrationService {
             'role': 'academy_admin',
             'academyId': academyId,
             'email': email,
+          },
+        );
+
+        transaction.set(
+          _firestore.doc('${FirestorePaths.subscriptions}/$academyId'),
+          {
+            'academyId': academyId,
+            'planName': planName,
+            'planPrice': planPrice,
+            'status': 'active',
+            'paymentStatus': 'paid',
+            'createdAt': FieldValue.serverTimestamp(),
+            'renewalDate': Timestamp.fromDate(
+              DateTime.now().add(const Duration(days: 30)),
+            ),
           },
         );
       });

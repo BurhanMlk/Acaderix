@@ -94,7 +94,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     });
     try {
       final plan = _plans[_selectedPlan];
-      await ref.read(authControllerProvider.notifier).registerAcademy(
+      final user = await ref.read(authControllerProvider.notifier).registerAcademy(
         email: _email.text.trim(),
         password: _password.text,
         academyName: _academyName.text.trim(),
@@ -107,8 +107,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         logoBytes: _logoBytes,
         logoContentType: _logoMime,
       );
-      // On success the auth state flips to academy_admin and the router
-      // redirects to the academy dashboard automatically.
+      if (mounted) {
+        context.go(homeForRole(user.role));
+      }
     } on AppException catch (e) {
       setState(() => _error = e.message);
     } catch (_) {
@@ -171,9 +172,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: 16),
                   GlassTextField(
                     controller: _ownerName,
-                    label: 'Academy Head',
+                    label: 'Academy Head *',
                     icon: Icons.person_outline,
                     textInputAction: TextInputAction.next,
+                    validator: (v) =>
+                        Validators.required(v, 'Academy Head name'),
                   ),
                   const SizedBox(height: 16),
                   GlassTextField(
@@ -187,11 +190,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   const SizedBox(height: 16),
                   GlassTextField(
                     controller: _contact,
-                    label: 'Contact Number',
+                    label: 'Contact Number *',
                     icon: Icons.phone_outlined,
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
-                    validator: Validators.phone,
+                    validator: (v) {
+                      final req = Validators.required(v, 'Contact number');
+                      if (req != null) return req;
+                      return Validators.phone(v);
+                    },
                   ),
                   const SizedBox(height: 16),
                   GlassTextField(
@@ -233,18 +240,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     const SizedBox(height: 12),
                   ],
-                  OutlinedButton.icon(
+                  OutlinedButton(
                     style: glassGhostButtonStyle(),
                     onPressed: _loading ? null : _pickLogo,
-                    icon: Icon(
-                      _logoBytes == null
-                          ? Icons.cloud_upload_outlined
-                          : Icons.check_circle_outline,
-                    ),
-                    label: Text(
-                      _logoBytes == null
-                          ? 'Upload Academy Logo (optional)'
-                          : 'Logo selected — tap to change',
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _logoBytes == null
+                              ? Icons.cloud_upload_outlined
+                              : Icons.check_circle_outline,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            _logoBytes == null
+                                ? 'Upload Academy Logo (optional)'
+                                : 'Logo selected — tap to change',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   if (_error != null) ...[

@@ -11,13 +11,13 @@ import '../../../../core/widgets/quran_verse_card.dart';
 /// Clean, seamless branded splash screen shown during app initialization,
 /// router authentication resolution, or session transitions.
 ///
-/// Combines the deep dark ambient glass theme, glowing Acaderix emblem,
-/// Quranic blessing card, and sleek indeterminate progress bar.
+/// Displays the ambient dark glass theme, glowing Acaderix emblem,
+/// brand identity typography, and sleek indeterminate progress bar.
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({
     super.key,
     this.statusMessage = 'Initializing Acaderix...',
-    this.showVerse = true,
+    this.showVerse = false,
   });
 
   final String statusMessage;
@@ -36,11 +36,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   void initState() {
     super.initState();
-    try {
-      FlutterNativeSplash.remove();
-    } catch (_) {
-      // Safe no-op in test environments or unsupported platforms
-    }
+    // Dismiss native splash as soon as the first Flutter frame is painted
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      try {
+        FlutterNativeSplash.remove();
+      } catch (_) {
+        // Safe no-op in test environments or unsupported platforms
+      }
+    });
 
     _controller = AnimationController(
       vsync: this,
@@ -58,7 +61,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _controller.forward();
 
     // In production, keep splash visible for 2.2s so the user experiences the
-    // seamless branding, Quranic blessing, and progress indicator.
+    // clean branding and progress indicator before dissolving into the destination.
     final isTest =
         WidgetsBinding.instance.runtimeType.toString().contains('Test');
     if (!isTest) {
@@ -86,7 +89,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 520),
+                constraints: const BoxConstraints(maxWidth: 480),
                 child: AnimatedBuilder(
                   animation: _controller,
                   builder: (context, child) {
@@ -103,12 +106,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     children: [
                       // Acaderix Emblem with ambient luminous glow
                       const AppLogo(
-                        size: 96,
-                        borderRadius: 26,
+                        size: 104,
+                        borderRadius: 28,
                         withGlow: true,
-                        heroTag: 'app_brand_logo',
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 24),
 
                       // Primary Brand Title
                       Text(
@@ -118,10 +120,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             ?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w800,
-                              letterSpacing: 2.0,
+                              letterSpacing: 2.5,
                             ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
 
                       // Descriptive Subtitle
                       Text(
@@ -134,9 +136,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           letterSpacing: 0.6,
                         ),
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 36),
 
-                      // Quranic Blessing Card
+                      // Optional Quranic blessing card (used in full mode)
                       if (widget.showVerse) ...[
                         const QuranVerseCard(glass: true),
                         const SizedBox(height: 28),
@@ -170,13 +172,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           letterSpacing: 0.4,
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 32),
 
                       // Minimalist Version Tag Pill
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
+                          horizontal: 12,
+                          vertical: 5,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.06),
@@ -197,7 +199,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 color: Color(0xFF10B981),
                               ),
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 8),
                             Flexible(
                               child: Text(
                                 'v1.0.0 • Acaderix Core',
