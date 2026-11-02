@@ -22,6 +22,7 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
   final _academyCode = TextEditingController();
   final _rollNumber = TextEditingController();
   final _pin = TextEditingController();
+  bool _obscurePin = true;
   bool _loading = false;
   String? _error;
 
@@ -117,7 +118,20 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                     label: 'PIN / Password',
                     hint: 'e.g. 1234',
                     icon: Icons.lock_outline,
-                    obscureText: true,
+                    obscureText: _obscurePin,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePin
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                      tooltip: _obscurePin ? 'Show PIN' : 'Hide PIN',
+                      onPressed: () => setState(
+                        () => _obscurePin = !_obscurePin,
+                      ),
+                    ),
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
                     validator: (v) => Validators.required(v, 'PIN'),

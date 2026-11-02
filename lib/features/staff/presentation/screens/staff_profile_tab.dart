@@ -77,10 +77,13 @@ class StaffProfileTab extends ConsumerWidget {
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            obscureNew ? Icons.visibility_off : Icons.visibility,
+                            obscureNew
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
                             color: Colors.white60,
                             size: 18,
                           ),
+                          tooltip: obscureNew ? 'Show password' : 'Hide password',
                           onPressed: () =>
                               setDialogState(() => obscureNew = !obscureNew),
                         ),
@@ -108,11 +111,13 @@ class StaffProfileTab extends ConsumerWidget {
                         suffixIcon: IconButton(
                           icon: Icon(
                             obscureConfirm
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
                             color: Colors.white60,
                             size: 18,
                           ),
+                          tooltip:
+                              obscureConfirm ? 'Show password' : 'Hide password',
                           onPressed: () => setDialogState(
                             () => obscureConfirm = !obscureConfirm,
                           ),

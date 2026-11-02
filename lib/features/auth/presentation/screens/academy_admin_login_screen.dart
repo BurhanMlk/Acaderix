@@ -25,6 +25,7 @@ class _AcademyAdminLoginScreenState
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  bool _obscurePassword = true;
   bool _loading = false;
   String? _error;
 
@@ -142,7 +143,22 @@ class _AcademyAdminLoginScreenState
                     controller: _password,
                     label: 'Password',
                     icon: Icons.lock_outline,
-                    obscureText: true,
+                    obscureText: _obscurePassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                      tooltip: _obscurePassword
+                          ? 'Show password'
+                          : 'Hide password',
+                      onPressed: () => setState(
+                        () => _obscurePassword = !_obscurePassword,
+                      ),
+                    ),
                     textInputAction: TextInputAction.done,
                     validator: (v) => Validators.required(v, 'Password'),
                   ),

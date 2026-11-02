@@ -195,6 +195,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
     final passwordController = TextEditingController(
       text: IdGenerators.generateStaffPassword(),
     );
+    bool obscurePassword = true;
 
     await showDialog<void>(
       context: context,
@@ -276,10 +277,28 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: passwordController,
+                        obscureText: obscurePassword,
                         style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'New Password',
-                          prefixIcon: Icon(Icons.lock_outline),
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              obscurePassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: Colors.white70,
+                              size: 20,
+                            ),
+                            tooltip: obscurePassword
+                                ? 'Show password'
+                                : 'Hide password',
+                            onPressed: () {
+                              setDialogState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
+                          ),
                         ),
                         validator: (v) {
                           if (v == null || v.trim().isEmpty) {

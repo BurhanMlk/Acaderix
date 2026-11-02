@@ -45,6 +45,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _email = TextEditingController();
   final _contact = TextEditingController();
   final _password = TextEditingController();
+  bool _obscurePassword = true;
 
   Uint8List? _logoBytes;
   String _logoMime = 'image/png';
@@ -205,7 +206,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     controller: _password,
                     label: 'Password *',
                     icon: Icons.lock_outline,
-                    obscureText: true,
+                    obscureText: _obscurePassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
+                      tooltip: _obscurePassword
+                          ? 'Show password'
+                          : 'Hide password',
+                      onPressed: () => setState(
+                        () => _obscurePassword = !_obscurePassword,
+                      ),
+                    ),
                     textInputAction: TextInputAction.done,
                     validator: Validators.password,
                   ),
