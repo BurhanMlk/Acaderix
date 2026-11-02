@@ -85,41 +85,12 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Students and parents sign in here.',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      TextButton.icon(
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF38BDF8),
-                          visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                        ),
-                        icon: const Icon(Icons.flash_on, size: 14),
-                        label: const Text(
-                          'Demo Fill',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _academyCode.text = 'ACD-900';
-                            _rollNumber.text = '100001';
-                            _pin.text = '1234';
-                          });
-                        },
-                      ),
-                    ],
+                  Text(
+                    'Students and parents sign in here using credentials provided on your admission slip.',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 12,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   GlassTextField(

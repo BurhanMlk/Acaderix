@@ -42,9 +42,9 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
 
     final primaryStudent = student ??
         const Student(
-          id: 'std_demo',
-          academyId: 'demo_academy',
-          fullName: 'Demo Student',
+          id: 'std_default',
+          academyId: '',
+          fullName: 'Student',
           rollNumber: '100001',
           academicSession: '2026-2027',
         );
