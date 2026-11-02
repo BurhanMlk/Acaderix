@@ -86,6 +86,7 @@ final class FirestoreAttendanceRepository implements AttendanceRepository {
 
   @override
   Future<void> markAttendance(AttendanceRecord record) {
+    _assertDateNotFuture(record.date);
     final key = _idempotencyKey(record);
     final data = toFirestoreData(record.toJson())..remove('id');
     data['date'] = Timestamp.fromDate(record.date);
@@ -97,6 +98,9 @@ final class FirestoreAttendanceRepository implements AttendanceRepository {
   @override
   Future<void> markBatchAttendance(List<AttendanceRecord> records) async {
     if (records.isEmpty) return;
+    for (final record in records) {
+      _assertDateNotFuture(record.date);
+    }
     final batch = _firestore.batch();
     for (final record in records) {
       final key = _idempotencyKey(record);
@@ -106,6 +110,17 @@ final class FirestoreAttendanceRepository implements AttendanceRepository {
       batch.set(ref, data, SetOptions(merge: true));
     }
     await batch.commit();
+  }
+
+  void _assertDateNotFuture(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final target = DateTime(date.year, date.month, date.day);
+    if (target.isAfter(today)) {
+      throw ArgumentError(
+        'Attendance cannot be recorded in advance for future dates.',
+      );
+    }
   }
 
   String _idempotencyKey(AttendanceRecord record) {

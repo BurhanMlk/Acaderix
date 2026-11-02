@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/constants/roles.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../core/utils/security_utils.dart';
 import '../domain/app_user.dart';
 import '../domain/auth_repository.dart';
 import '../domain/auth_state.dart';
@@ -246,10 +247,10 @@ final class FirebaseAuthRepository implements AuthRepository {
       }
 
       // 3. Verify PIN / Password
-      // If student has a stored PIN, check exact match.
+      // If student has a stored PIN, check exact match or hashed match.
       // If student has no stored PIN yet, allow '1234' or cleanRoll as default credentials.
       final validPin = (storedPin != null && storedPin.isNotEmpty)
-          ? (storedPin == cleanPin)
+          ? SecurityUtils.verifyPin(cleanPin, storedPin)
           : (cleanPin == '1234' || cleanPin == cleanRoll);
 
       if (!validPin) {
@@ -374,7 +375,8 @@ final class FirebaseAuthRepository implements AuthRepository {
         );
       }
 
-      if (storedPassword.isEmpty || storedPassword != password) {
+      if (storedPassword.isEmpty ||
+          !SecurityUtils.verifyPassword(password, storedPassword)) {
         throw const AuthException(
           'Incorrect password. Please verify your credentials and try again.',
           code: 'wrong-password',

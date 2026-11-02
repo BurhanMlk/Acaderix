@@ -38,7 +38,23 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     AttendanceStatus status, {
     String courseId = '',
   }) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final normalizedDate = DateTime(_date.year, _date.month, _date.day);
+
+    if (normalizedDate.isAfter(today)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Advance attendance is locked. Attendance cannot be recorded for future dates.',
+          ),
+          backgroundColor: Color(0xFFEF4444),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
     final record = AttendanceRecord(
       id: const Uuid().v4(),
       academyId: academyId,
@@ -373,9 +389,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     onPressed: () async {
                       final picked = await showDatePicker(
                         context: context,
-                        initialDate: _date,
+                        initialDate: _date.isAfter(DateTime.now()) ? DateTime.now() : _date,
                         firstDate: DateTime(2020),
-                        lastDate: DateTime(2100),
+                        lastDate: DateTime.now(),
                       );
                       if (picked != null) setState(() => _date = picked);
                     },

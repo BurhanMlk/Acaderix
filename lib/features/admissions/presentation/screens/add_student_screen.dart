@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/firebase_services.dart';
 import '../../../../core/utils/id_generators.dart';
+import '../../../../core/utils/security_utils.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -118,7 +119,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
             'rollNumber': rollNumber,
             'fullName': student.fullName,
             'branchId': student.branchId,
-            'pin': pin,
+            'pin': SecurityUtils.hashPin(pin),
             'status': 'active',
           });
         }

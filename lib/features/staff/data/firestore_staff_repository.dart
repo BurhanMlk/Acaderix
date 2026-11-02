@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/network/firestore_ext.dart';
 import '../../../core/utils/id_generators.dart';
+import '../../../core/utils/security_utils.dart';
 import '../domain/staff.dart';
 import '../domain/staff_repository.dart';
 
@@ -57,9 +58,13 @@ final class FirestoreStaffRepository implements StaffRepository {
   @override
   Future<void> create(Staff staff) async {
     final data = toFirestoreData(staff.toJson())..remove('id');
+    // Never persist plain-text passwords in Firestore
+    if (staff.password.isNotEmpty) {
+      data['password'] = SecurityUtils.hashPassword(staff.password);
+    }
     await _collection(staff.academyId).doc(staff.id).set(data);
 
-    // Sync to global staff_accounts for seamless Staff ID login
+    // Sync to global staff_accounts for seamless Staff ID login with hashed credential
     if (staff.staffId.isNotEmpty) {
       await _firestore
           .collection('staff_accounts')
@@ -71,7 +76,7 @@ final class FirestoreStaffRepository implements StaffRepository {
         'branchId': staff.branchId,
         'fullName': staff.fullName,
         'email': staff.email,
-        'password': staff.password,
+        'password': SecurityUtils.hashPassword(staff.password),
         'status': staff.status,
       }, SetOptions(merge: true));
     }
@@ -80,6 +85,11 @@ final class FirestoreStaffRepository implements StaffRepository {
   @override
   Future<void> update(Staff staff) async {
     final data = toFirestoreData(staff.toJson())..remove('id');
+    if (staff.password.isNotEmpty) {
+      data['password'] = SecurityUtils.hashPassword(staff.password);
+    } else {
+      data.remove('password');
+    }
     await _collection(
       staff.academyId,
     ).doc(staff.id).set(data, SetOptions(merge: true));
@@ -96,7 +106,8 @@ final class FirestoreStaffRepository implements StaffRepository {
         'fullName': staff.fullName,
         'email': staff.email,
         'status': staff.status,
-        if (staff.password.isNotEmpty) 'password': staff.password,
+        if (staff.password.isNotEmpty)
+          'password': SecurityUtils.hashPassword(staff.password),
       }, SetOptions(merge: true));
     }
   }
@@ -112,13 +123,15 @@ final class FirestoreStaffRepository implements StaffRepository {
     final staffDocStaffId =
         (snap.data()?['staffId'] as String?)?.toUpperCase() ?? '';
 
-    await docRef.update({'password': newPassword});
+    final hashedPassword = SecurityUtils.hashPassword(newPassword);
+
+    await docRef.update({'password': hashedPassword});
 
     if (staffDocStaffId.isNotEmpty) {
       await _firestore
           .collection('staff_accounts')
           .doc(staffDocStaffId)
-          .set({'password': newPassword}, SetOptions(merge: true));
+          .set({'password': hashedPassword}, SetOptions(merge: true));
     }
   }
 

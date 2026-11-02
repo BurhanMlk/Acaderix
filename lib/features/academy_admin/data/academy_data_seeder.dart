@@ -5,6 +5,7 @@ import '../../../core/constants/firestore_paths.dart';
 import '../../../core/domain/attendance_calculator.dart';
 import '../../../core/network/firebase_services.dart';
 import '../../../core/network/firestore_ext.dart';
+import '../../../core/utils/security_utils.dart';
 import '../../academics/domain/course.dart';
 import '../../admissions/domain/student.dart';
 import '../../attendance/domain/attendance_record.dart';
@@ -222,7 +223,7 @@ class AcademyDataSeeder {
           'branchId': stf.branchId,
           'fullName': stf.fullName,
           'email': stf.email,
-          'password': stf.password,
+          'password': SecurityUtils.hashPassword(stf.password),
           'status': stf.status,
         },
       );
@@ -319,7 +320,7 @@ class AcademyDataSeeder {
     for (final s in students) {
       batch.set(
         studentsRef.doc(s.id),
-        toFirestoreData(s.toJson())..remove('id')..['pin'] = '1234',
+        toFirestoreData(s.toJson())..remove('id')..['pin'] = SecurityUtils.hashPin('1234'),
       );
       batch.set(
         _firestore
@@ -332,7 +333,7 @@ class AcademyDataSeeder {
           'rollNumber': s.rollNumber,
           'fullName': s.fullName,
           'branchId': s.branchId,
-          'pin': '1234',
+          'pin': SecurityUtils.hashPin('1234'),
           'status': s.status,
         },
       );

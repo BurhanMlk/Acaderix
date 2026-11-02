@@ -47,7 +47,22 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
     String courseId = '',
     String staffId = '',
   }) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final normalizedDate = DateTime(_date.year, _date.month, _date.day);
+
+    if (normalizedDate.isAfter(today)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Advance attendance is locked. Attendance cannot be recorded for future dates.',
+          ),
+          backgroundColor: Color(0xFFEF4444),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
 
     setState(() {
       _optimisticStatus[studentId] = status;
@@ -97,7 +112,22 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
   }) async {
     if (students.isEmpty) return;
 
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final normalizedDate = DateTime(_date.year, _date.month, _date.day);
+
+    if (normalizedDate.isAfter(today)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Advance attendance is locked. Attendance cannot be recorded for future dates.',
+          ),
+          backgroundColor: Color(0xFFEF4444),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
 
     setState(() {
       for (final s in students) {
@@ -184,7 +214,11 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
     final students = ref.watch(staffBranchStudentsProvider);
     final academyId = staff?.academyId ?? '';
 
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final normalizedDate = DateTime(_date.year, _date.month, _date.day);
+    final isFutureDate = normalizedDate.isAfter(today);
+
     final recordsAsync = ref.watch(
       attendanceForDateProvider((academyId: academyId, date: normalizedDate)),
     );
@@ -365,9 +399,9 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                       onPressed: () async {
                         final picked = await showDatePicker(
                           context: context,
-                          initialDate: _date,
+                          initialDate: _date.isAfter(DateTime.now()) ? DateTime.now() : _date,
                           firstDate: DateTime(2020),
-                          lastDate: DateTime(2100),
+                          lastDate: DateTime.now(),
                         );
                         if (picked != null) {
                           setState(() {
@@ -385,6 +419,38 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                 ),
               ),
               const SizedBox(height: 8),
+
+              // Advance Attendance Guardrail Warning
+              if (isFutureDate) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                    ),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.lock_clock, color: Color(0xFFEF4444), size: 18),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Advance Attendance Locked: Attendance cannot be recorded for future dates.',
+                          style: TextStyle(
+                            color: Color(0xFFFCA5A5),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
 
               // 2. Course / Batch Selector Card
               if (assignedCourses.isNotEmpty) ...[
@@ -571,7 +637,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                         vertical: 6,
                       ),
                     ),
-                    onPressed: students.isEmpty
+                    onPressed: isFutureDate || students.isEmpty
                         ? null
                         : () => _markAllPresent(
                             academyId,
@@ -932,6 +998,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                         _AttendanceStatusSelector(
                           currentStatus: currentStatus,
                           isSaving: isSaving,
+                          isLocked: isFutureDate,
                           onStatusSelected: (status) => _markStatus(
                             academyId,
                             student.id,
@@ -1045,49 +1112,62 @@ class _AttendanceStatusSelector extends StatelessWidget {
     required this.currentStatus,
     required this.onStatusSelected,
     this.isSaving = false,
+    this.isLocked = false,
   });
 
   final AttendanceStatus? currentStatus;
   final ValueChanged<AttendanceStatus> onStatusSelected;
   final bool isSaving;
+  final bool isLocked;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _StatusCircleBtn(
-          label: 'P',
-          tooltip: 'Present',
-          color: const Color(0xFF10B981),
-          isSelected: currentStatus == AttendanceStatus.present,
-          onTap: () => onStatusSelected(AttendanceStatus.present),
-        ),
-        const SizedBox(width: 5),
-        _StatusCircleBtn(
-          label: 'L',
-          tooltip: 'Late',
-          color: const Color(0xFFF59E0B),
-          isSelected: currentStatus == AttendanceStatus.late,
-          onTap: () => onStatusSelected(AttendanceStatus.late),
-        ),
-        const SizedBox(width: 5),
-        _StatusCircleBtn(
-          label: 'A',
-          tooltip: 'Absent',
-          color: const Color(0xFFEF4444),
-          isSelected: currentStatus == AttendanceStatus.absent,
-          onTap: () => onStatusSelected(AttendanceStatus.absent),
-        ),
-        const SizedBox(width: 5),
-        _StatusCircleBtn(
-          label: 'LV',
-          tooltip: 'Leave',
-          color: const Color(0xFF8B5CF6),
-          isSelected: currentStatus == AttendanceStatus.leave,
-          onTap: () => onStatusSelected(AttendanceStatus.leave),
-        ),
-      ],
+    return Opacity(
+      opacity: isLocked ? 0.35 : 1.0,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _StatusCircleBtn(
+            label: 'P',
+            tooltip: isLocked ? 'Advance attendance is locked' : 'Present',
+            color: const Color(0xFF10B981),
+            isSelected: currentStatus == AttendanceStatus.present,
+            onTap: isLocked
+                ? () {}
+                : () => onStatusSelected(AttendanceStatus.present),
+          ),
+          const SizedBox(width: 5),
+          _StatusCircleBtn(
+            label: 'L',
+            tooltip: isLocked ? 'Advance attendance is locked' : 'Late',
+            color: const Color(0xFFF59E0B),
+            isSelected: currentStatus == AttendanceStatus.late,
+            onTap: isLocked
+                ? () {}
+                : () => onStatusSelected(AttendanceStatus.late),
+          ),
+          const SizedBox(width: 5),
+          _StatusCircleBtn(
+            label: 'A',
+            tooltip: isLocked ? 'Advance attendance is locked' : 'Absent',
+            color: const Color(0xFFEF4444),
+            isSelected: currentStatus == AttendanceStatus.absent,
+            onTap: isLocked
+                ? () {}
+                : () => onStatusSelected(AttendanceStatus.absent),
+          ),
+          const SizedBox(width: 5),
+          _StatusCircleBtn(
+            label: 'LV',
+            tooltip: isLocked ? 'Advance attendance is locked' : 'Leave',
+            color: const Color(0xFF8B5CF6),
+            isSelected: currentStatus == AttendanceStatus.leave,
+            onTap: isLocked
+                ? () {}
+                : () => onStatusSelected(AttendanceStatus.leave),
+          ),
+        ],
+      ),
     );
   }
 }

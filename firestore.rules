@@ -39,7 +39,17 @@ service cloud.firestore {
         || (isSignedIn() && resource.data.ownerUid == request.auth.uid);
       allow delete: if isSuperAdmin();
 
-      // All subcollections under an academy (students, staff, branches, fees, attendance, etc.)
+      // Attendance: advance attendance guardrail at database level
+      match /attendance/{attendanceId} {
+        allow read: if isSuperAdmin()
+          || (get(/databases/$(database)/documents/academies/$(academyId)).data.status == 'active');
+        allow create, update: if (isSuperAdmin()
+          || get(/databases/$(database)/documents/academies/$(academyId)).data.status == 'active')
+          && (!('date' in request.resource.data) || request.resource.data.date <= request.time);
+        allow delete: if isSuperAdmin();
+      }
+
+      // All subcollections under an academy (students, staff, branches, fees, etc.)
       // Enforces active tenant standing: pending or suspended academies are blocked at server level.
       match /{subcollection}/{docId=**} {
         allow read, write, delete: if isSuperAdmin()
@@ -58,6 +68,12 @@ service cloud.firestore {
 
     // Staff accounts: read allowed for staff login verification; write by signed-in admins.
     match /staff_accounts/{staffId} {
+      allow read: if true;
+      allow create, update, delete: if isSuperAdmin() || isSignedIn();
+    }
+
+    // Student accounts: read allowed for student portal roll number login lookup; write by signed-in admins.
+    match /student_accounts/{accountKey} {
       allow read: if true;
       allow create, update, delete: if isSuperAdmin() || isSignedIn();
     }
