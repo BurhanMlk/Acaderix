@@ -202,6 +202,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         children: [
                                           Text(
                                             student.fullName,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w600,
@@ -210,6 +212,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                           ),
                                           Text(
                                             'Roll #${student.rollNumber}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               color: Colors.white.withValues(alpha: 0.6),
                                               fontSize: 11,
@@ -218,6 +222,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         ],
                                       ),
                                     ),
+                                    const SizedBox(width: 6),
                                     _StatusToggleButton(
                                       status: AttendanceStatus.present,
                                       isSelected: currentStatus == AttendanceStatus.present,
@@ -235,7 +240,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         );
                                       },
                                     ),
-                                    const SizedBox(width: 6),
+                                    const SizedBox(width: 4),
                                     _StatusToggleButton(
                                       status: AttendanceStatus.late,
                                       isSelected: currentStatus == AttendanceStatus.late,
@@ -253,7 +258,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         );
                                       },
                                     ),
-                                    const SizedBox(width: 6),
+                                    const SizedBox(width: 4),
                                     _StatusToggleButton(
                                       status: AttendanceStatus.absent,
                                       isSelected: currentStatus == AttendanceStatus.absent,
@@ -271,7 +276,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                         );
                                       },
                                     ),
-                                    const SizedBox(width: 6),
+                                    const SizedBox(width: 4),
                                     _StatusToggleButton(
                                       status: AttendanceStatus.leave,
                                       isSelected: currentStatus == AttendanceStatus.leave,
@@ -337,24 +342,52 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.event, color: Color(0xFFF59E0B), size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                  Expanded(
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: _date.isAfter(DateTime.now())
+                              ? DateTime.now()
+                              : _date,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) setState(() => _date = picked);
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.event, color: Color(0xFFF59E0B), size: 18),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              '${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 4),
                   IconButton(
+                    tooltip: 'Export Campus Attendance Register',
                     icon: const Icon(
                       Icons.picture_as_pdf_outlined,
                       color: Color(0xFF38BDF8),
                       size: 20,
                     ),
-                    tooltip: 'Export Campus Attendance Register',
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                     onPressed: () async {
                       final currentStudents = students.value ?? [];
                       final currentBranch = branches.where((b) => b.id == selectedBranchId).firstOrNull;
@@ -377,10 +410,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   ),
                   const SizedBox(width: 4),
                   OutlinedButton.icon(
-                    icon: const Icon(Icons.calendar_today, size: 13),
-                    label: const Text('Change Date'),
+                    icon: const Icon(Icons.calendar_today, size: 12),
+                    label: const Text('Date'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
+                      minimumSize: Size.zero,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       visualDensity: VisualDensity.compact,
                       side: BorderSide(
                         color: Colors.white.withValues(alpha: 0.2),
@@ -424,30 +460,36 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         ),
                       ),
                       alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.rule,
-                            size: 15,
-                            color: _viewMode == 0
-                                ? const Color(0xFF38BDF8)
-                                : Colors.white70,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.rule,
+                                size: 15,
+                                color: _viewMode == 0
+                                    ? const Color(0xFF38BDF8)
+                                    : Colors.white70,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Course Monitoring',
+                                style: TextStyle(
+                                  color: _viewMode == 0
+                                      ? const Color(0xFF38BDF8)
+                                      : Colors.white70,
+                                  fontWeight: _viewMode == 0
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Course Monitoring',
-                            style: TextStyle(
-                              color: _viewMode == 0
-                                  ? const Color(0xFF38BDF8)
-                                  : Colors.white70,
-                              fontWeight: _viewMode == 0
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -471,30 +513,36 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         ),
                       ),
                       alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.people_outline,
-                            size: 15,
-                            color: _viewMode == 1
-                                ? const Color(0xFF38BDF8)
-                                : Colors.white70,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.people_outline,
+                                size: 15,
+                                color: _viewMode == 1
+                                    ? const Color(0xFF38BDF8)
+                                    : Colors.white70,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'General Roster',
+                                style: TextStyle(
+                                  color: _viewMode == 1
+                                      ? const Color(0xFF38BDF8)
+                                      : Colors.white70,
+                                  fontWeight: _viewMode == 1
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'General Roster',
-                            style: TextStyle(
-                              color: _viewMode == 1
-                                  ? const Color(0xFF38BDF8)
-                                  : Colors.white70,
-                              fontWeight: _viewMode == 1
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -795,34 +843,45 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        OutlinedButton.icon(
-                          icon: Icon(
-                            isSubmitted ? Icons.visibility : Icons.edit_note,
-                            size: 14,
-                          ),
-                          label: Text(
-                            isSubmitted
-                                ? 'View Roster'
-                                : 'Admin Override / Mark',
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: isSubmitted
-                                ? const Color(0xFF38BDF8)
-                                : const Color(0xFFF59E0B),
-                            side: BorderSide(
-                              color: (isSubmitted
-                                      ? const Color(0xFF38BDF8)
-                                      : const Color(0xFFF59E0B))
-                                  .withValues(alpha: 0.4),
+                        Flexible(
+                          child: OutlinedButton.icon(
+                            icon: Icon(
+                              isSubmitted ? Icons.visibility : Icons.edit_note,
+                              size: 14,
                             ),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                          onPressed: () => _showCourseLedgerModal(
-                            context,
-                            academyId,
-                            course,
-                            allStudents,
-                            recordsList,
+                            label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                isSubmitted
+                                    ? 'View Roster'
+                                    : 'Admin Override / Mark',
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: isSubmitted
+                                  ? const Color(0xFF38BDF8)
+                                  : const Color(0xFFF59E0B),
+                              minimumSize: Size.zero,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              side: BorderSide(
+                                color: (isSubmitted
+                                        ? const Color(0xFF38BDF8)
+                                        : const Color(0xFFF59E0B))
+                                    .withValues(alpha: 0.4),
+                              ),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                            onPressed: () => _showCourseLedgerModal(
+                              context,
+                              academyId,
+                              course,
+                              allStudents,
+                              recordsList,
+                            ),
                           ),
                         ),
                       ],
@@ -1035,8 +1094,8 @@ class _StatusToggleButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         splashColor: color.withValues(alpha: 0.3),
         child: Container(
-          width: 36,
-          height: 36,
+          width: 32,
+          height: 32,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? color : color.withValues(alpha: 0.1),
@@ -1051,7 +1110,7 @@ class _StatusToggleButton extends StatelessWidget {
             style: TextStyle(
               color: isSelected ? Colors.white : color,
               fontWeight: FontWeight.w800,
-              fontSize: 13,
+              fontSize: 12,
             ),
           ),
         ),
@@ -1075,31 +1134,38 @@ class _StatBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '$count',
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w800,
-                fontSize: 16,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                ),
               ),
             ),
             const SizedBox(height: 2),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -1168,35 +1234,45 @@ class _StatusButton extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: color,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
               onPressed: onTap,
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             )
           : OutlinedButton(
               style: OutlinedButton.styleFrom(
                 foregroundColor: color,
+                minimumSize: Size.zero,
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 side: BorderSide(color: color.withValues(alpha: 0.4)),
-                padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
               onPressed: onTap,
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

@@ -2137,5 +2137,105 @@ void main() {
         commRepo.dispose();
       },
     );
+
+    testWidgets(
+      '26. Attendance tab renders cleanly without RenderFlex overflow on narrow mobile screens (320px & 360px)',
+      (tester) async {
+        tester.view.physicalSize = const Size(320, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final studentRepo = _FakeStudentRepo();
+        studentRepo.addStudents(_createSeededStudents(testAcademyId));
+        final branchRepo = _FakeBranchRepo();
+        branchRepo.addBranches(_createSeededBranches(testAcademyId));
+        final courseRepo = _FakeCourseRepo();
+        final attRepo = _FakeAttendanceRepo();
+
+        final today = DateTime.now();
+        final normalizedToday = DateTime(today.year, today.month, today.day);
+
+        final testCourses = [
+          const Course(
+            id: 'c1',
+            academyId: testAcademyId,
+            branchId: 'br_1',
+            name: 'Physics 10th - Batch A',
+            courseCode: 'PHY-101',
+            teacherId: 'staff_1',
+            teacherName: 'Sir Tariq Mehmood',
+            enrolledStudentIds: ['stu_100001', 'stu_100002'],
+            schedule: 'Mon, Wed • 4:00 PM',
+          ),
+        ];
+        courseRepo.addCourses(testCourses);
+
+        attRepo.addRecords([
+          AttendanceRecord(
+            id: 'rec_1',
+            academyId: testAcademyId,
+            courseId: 'c1',
+            studentId: 'stu_100001',
+            date: normalizedToday,
+            status: AttendanceStatus.present,
+          ),
+        ]);
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              currentAcademyIdProvider.overrideWithValue(testAcademyId),
+              studentsStreamProvider.overrideWith(
+                (ref, id) => studentRepo.watchAll(id),
+              ),
+              branchesStreamProvider.overrideWith(
+                (ref, id) => branchRepo.watchAll(id),
+              ),
+              coursesStreamProvider.overrideWith(
+                (ref, id) => courseRepo.watchAll(id),
+              ),
+              attendanceForDateProvider.overrideWith(
+                (ref, args) => attRepo.watchForDate(args.academyId, args.date),
+              ),
+              attendanceRepositoryProvider.overrideWithValue(attRepo),
+            ],
+            child: const MaterialApp(
+              home: AttendanceScreen(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. Course Monitoring view on 320px screen
+        expect(find.text('Course Monitoring'), findsOneWidget);
+        expect(find.text('Date'), findsOneWidget);
+        expect(find.text('Physics 10th - Batch A'), findsOneWidget);
+        expect(find.byType(FlutterErrorDetails), findsNothing);
+
+        // 2. Open Course Ledger Modal on 320px screen
+        await tester.tap(find.text('View Roster'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Teacher: Sir Tariq Mehmood'), findsOneWidget);
+        expect(find.text('Muhammad Ali'), findsOneWidget);
+        expect(find.text('P'), findsWidgets);
+        expect(find.text('LV'), findsWidgets);
+        expect(find.byType(FlutterErrorDetails), findsNothing);
+
+        // Close modal
+        await tester.tap(find.byIcon(Icons.close));
+        await tester.pumpAndSettle();
+
+        // 3. Switch to General Roster view on 320px screen
+        await tester.tap(find.text('General Roster'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Muhammad Ali'), findsOneWidget);
+        expect(find.text('Fatima Zahra'), findsOneWidget);
+        expect(find.widgetWithText(FilledButton, 'Present'), findsWidgets);
+        expect(find.byType(FlutterErrorDetails), findsNothing);
+      },
+    );
   });
 }
