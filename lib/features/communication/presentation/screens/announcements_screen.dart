@@ -4,7 +4,10 @@ import 'package:academy_management/features/auth/application/auth_controller.dar
 import 'package:academy_management/features/auth/domain/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
+import '../../../super_admin/application/platform_broadcast_providers.dart';
+import '../../../super_admin/domain/platform_broadcast.dart';
 import '../../application/communication_providers.dart';
 import '../../domain/announcement.dart';
 import '../widgets/announcement_card.dart';
@@ -23,6 +26,7 @@ class AnnouncementsScreen extends ConsumerStatefulWidget {
 
 class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
   String _audienceFilter = 'all'; // 'all', 'staff', 'students'
+  int _selectedTab = 0; // 0: Campus Broadcasts, 1: Super Admin Platform Notices
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +47,13 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
       )),
     );
     final announcements = announcementsAsync.value ?? const [];
+
+    final platformBroadcastsAsync = ref.watch(platformBroadcastsStreamProvider);
+    final platformBroadcasts = (platformBroadcastsAsync.value ??
+            const <PlatformBroadcast>[])
+        .where((b) => b.isActive)
+        .toList();
+
     final theme = Theme.of(context);
 
     final filtered = announcements.where((a) {
@@ -51,6 +62,8 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     }).toList();
 
     final urgentCount = announcements.where((a) => a.isUrgent).length;
+    final urgentPlatformCount =
+        platformBroadcasts.where((b) => b.isUrgent).length;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -66,196 +79,444 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            tooltip: 'New Broadcast',
-            icon: const Icon(Icons.add_circle_outline, color: Color(0xFF38BDF8)),
-            onPressed: () =>
-                _showCreateAnnouncementDialog(context, effectiveAcademyId),
-          ),
-          const SizedBox(width: 8),
+          if (_selectedTab == 0) ...[
+            IconButton(
+              tooltip: 'New Broadcast',
+              icon: const Icon(Icons.add_circle_outline,
+                  color: Color(0xFF38BDF8)),
+              onPressed: () =>
+                  _showCreateAnnouncementDialog(context, effectiveAcademyId),
+            ),
+            const SizedBox(width: 8),
+          ],
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF6366F1),
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.campaign, size: 20),
-        label: const Text(
-          'Broadcast Announcement',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        onPressed: () =>
-            _showCreateAnnouncementDialog(context, effectiveAcademyId),
-      ),
+      floatingActionButton: _selectedTab == 0
+          ? FloatingActionButton.extended(
+              backgroundColor: const Color(0xFF6366F1),
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.campaign, size: 20),
+              label: const Text(
+                'Broadcast Announcement',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              onPressed: () =>
+                  _showCreateAnnouncementDialog(context, effectiveAcademyId),
+            )
+          : null,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
         children: [
-          // Metrics Row
-          Row(
-            children: [
-              Expanded(
-                child: GlassCard(
-                  padding: const EdgeInsets.all(12),
-                  borderRadius: 14,
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF6366F1).withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.campaign_outlined,
-                          color: Color(0xFF818CF8),
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${announcements.length}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            Text(
-                              'Broadcasts Sent',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
-                                fontSize: 10,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: GlassCard(
-                  padding: const EdgeInsets.all(12),
-                  borderRadius: 14,
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEF4444).withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.warning_amber_rounded,
-                          color: Color(0xFFF87171),
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '$urgentCount',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            Text(
-                              'Urgent Alerts',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
-                                fontSize: 10,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 14),
-
-          // Audience Filter Chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
+          // Segmented Navigation: Campus vs Super Admin Notices
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            ),
             child: Row(
               children: [
-                _buildAudienceChip('All Audience (${announcements.length})', 'all'),
-                const SizedBox(width: 8),
-                _buildAudienceChip('Staff Only', 'staff'),
-                const SizedBox(width: 8),
-                _buildAudienceChip('Students Only', 'students'),
+                Expanded(
+                  child: InkWell(
+                    onTap: () => setState(() => _selectedTab = 0),
+                    borderRadius: BorderRadius.circular(9),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _selectedTab == 0
+                            ? const Color(0xFF6366F1).withValues(alpha: 0.35)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(9),
+                        border: _selectedTab == 0
+                            ? Border.all(color: const Color(0xFF6366F1))
+                            : null,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.campaign_outlined,
+                              size: 16, color: Colors.white),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Campus (${announcements.length})',
+                            style: TextStyle(
+                              color: _selectedTab == 0
+                                  ? Colors.white
+                                  : Colors.white70,
+                              fontWeight: _selectedTab == 0
+                                  ? FontWeight.w700
+                                  : FontWeight.normal,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: InkWell(
+                    onTap: () => setState(() => _selectedTab = 1),
+                    borderRadius: BorderRadius.circular(9),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _selectedTab == 1
+                            ? const Color(0xFF6366F1).withValues(alpha: 0.35)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(9),
+                        border: _selectedTab == 1
+                            ? Border.all(color: const Color(0xFF6366F1))
+                            : null,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.shield_outlined,
+                              size: 16, color: Color(0xFF818CF8)),
+                          const SizedBox(width: 6),
+                          Text(
+                            'From Super Admin (${platformBroadcasts.length})',
+                            style: TextStyle(
+                              color: _selectedTab == 1
+                                  ? Colors.white
+                                  : Colors.white70,
+                              fontWeight: _selectedTab == 1
+                                  ? FontWeight.w700
+                                  : FontWeight.normal,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-
           const SizedBox(height: 14),
 
-          if (filtered.isEmpty)
-            Container(
-              padding: const EdgeInsets.all(36),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E293B).withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white12),
-              ),
-              child: Center(
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.campaign_outlined,
-                      size: 44,
-                      color: Colors.white30,
+          if (_selectedTab == 0) ...[
+            // Metrics Row
+            Row(
+              children: [
+                Expanded(
+                  child: GlassCard(
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: 14,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFF6366F1).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.campaign_outlined,
+                            color: Color(0xFF818CF8),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${announcements.length}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Text(
+                                'Broadcasts Sent',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 10,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'No Broadcast Announcements',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Post campus-wide notices, exam alerts, and institutional messages to staff and students.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.6),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: GlassCard(
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: 14,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFFEF4444).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.warning_amber_rounded,
+                            color: Color(0xFFF87171),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$urgentCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Text(
+                                'Urgent Alerts',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 10,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            // Audience Filter Chips
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildAudienceChip(
+                      'All Audience (${announcements.length})', 'all'),
+                  const SizedBox(width: 8),
+                  _buildAudienceChip('Staff Only', 'staff'),
+                  const SizedBox(width: 8),
+                  _buildAudienceChip('Students Only', 'students'),
+                ],
               ),
-            )
-          else
-            ...filtered.map((a) {
-              return AnnouncementCard(
-                announcement: a,
-                onDelete: () async {
-                  await ref
-                      .read(communicationRepositoryProvider)
-                      .deleteAnnouncement(a.academyId, a.id);
-                },
-              );
-            }),
+            ),
+            const SizedBox(height: 14),
+
+            if (filtered.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(36),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E293B).withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: Center(
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.campaign_outlined,
+                        size: 44,
+                        color: Colors.white30,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'No Broadcast Announcements',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Post campus-wide notices, exam alerts, and institutional messages to staff and students.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              ...filtered.map((a) {
+                return AnnouncementCard(
+                  announcement: a,
+                  onDelete: () async {
+                    await ref
+                        .read(communicationRepositoryProvider)
+                        .deleteAnnouncement(a.academyId, a.id);
+                  },
+                );
+              }),
+          ] else ...[
+            // Super Admin Platform Notices View
+            Row(
+              children: [
+                Expanded(
+                  child: GlassCard(
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: 14,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFF6366F1).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.shield_outlined,
+                            color: Color(0xFF818CF8),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${platformBroadcasts.length}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Text(
+                                'Platform Notices',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 10,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: GlassCard(
+                    padding: const EdgeInsets.all(12),
+                    borderRadius: 14,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFFEF4444).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.priority_high_rounded,
+                            color: Color(0xFFF87171),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$urgentPlatformCount',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Text(
+                                'Critical Alerts',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 10,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            if (platformBroadcasts.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(36),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E293B).withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: const Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.shield_outlined,
+                        size: 44,
+                        color: Colors.white30,
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        'No Platform Notices',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 6),
+                      Text(
+                        'Platform maintenance, billing announcements, and upgrades from Super Admin will appear here.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white60, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              for (final pb in platformBroadcasts) ...[
+                _AcademyPlatformNoticeCard(
+                  broadcast: pb,
+                  onTap: () => _showPlatformNoticeDetailDialog(context, pb),
+                ),
+                const SizedBox(height: 12),
+              ],
+          ],
         ],
       ),
     );
@@ -294,6 +555,306 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => _CreateAnnouncementSheet(academyId: academyId),
+    );
+  }
+
+  void _showPlatformNoticeDetailDialog(
+    BuildContext context,
+    PlatformBroadcast broadcast,
+  ) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF0F172A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.shield_outlined,
+                color: Color(0xFF818CF8),
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Super Admin Notice',
+                    style: TextStyle(
+                      color: Color(0xFF818CF8),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  Text(
+                    broadcast.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.white12,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        broadcast.category.toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: broadcast.isUrgent
+                            ? const Color(0xFFEF4444).withValues(alpha: 0.2)
+                            : const Color(0xFF38BDF8).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        broadcast.priority.toUpperCase(),
+                        style: TextStyle(
+                          color: broadcast.isUrgent
+                              ? const Color(0xFFF87171)
+                              : const Color(0xFF38BDF8),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      DateFormat('MMM dd • hh:mm a').format(broadcast.createdAt),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                const Divider(color: Colors.white12),
+                const SizedBox(height: 12),
+                Text(
+                  broadcast.message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.groups_outlined,
+                        size: 16,
+                        color: Colors.white.withValues(alpha: 0.6),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Target Audience: ${broadcast.audienceLabel}',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF6366F1),
+            ),
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AcademyPlatformNoticeCard extends StatelessWidget {
+  const _AcademyPlatformNoticeCard({
+    required this.broadcast,
+    required this.onTap,
+  });
+
+  final PlatformBroadcast broadcast;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  _priorityBadge(broadcast.priority),
+                  const SizedBox(width: 8),
+                  _categoryChip(broadcast.category),
+                  const Spacer(),
+                  Text(
+                    DateFormat('MMM dd • hh:mm a').format(broadcast.createdAt),
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                broadcast.title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                broadcast.message,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.75),
+                  fontSize: 13,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Divider(color: Colors.white10),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.shield_outlined,
+                    size: 14,
+                    color: Color(0xFF818CF8),
+                  ),
+                  const SizedBox(width: 6),
+                  const Text(
+                    'Official Super Admin Broadcast',
+                    style: TextStyle(
+                      color: Color(0xFF818CF8),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (broadcast.sentPushNotification) ...[
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.notifications_active_outlined,
+                      size: 13,
+                      color: Colors.amber.withValues(alpha: 0.8),
+                    ),
+                  ],
+                  const Spacer(),
+                  Icon(
+                    Icons.chevron_right,
+                    size: 16,
+                    color: Colors.white.withValues(alpha: 0.4),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _priorityBadge(String priority) {
+    final (color, label) = switch (priority.toLowerCase()) {
+      'urgent' => (const Color(0xFFEF4444), 'URGENT'),
+      'high' => (const Color(0xFFF59E0B), 'HIGH'),
+      'low' => (const Color(0xFF10B981), 'LOW'),
+      _ => (const Color(0xFF38BDF8), 'NORMAL'),
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget _categoryChip(String category) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        category.toUpperCase(),
+        style: const TextStyle(
+          color: Colors.white70,
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }

@@ -58,4 +58,9 @@ const List<AcademyAdminModule> academyAdminModules = [
     Icons.campaign_outlined,
     AppRoutes.academyAnnouncements,
   ),
+  AcademyAdminModule(
+    'Help & Support',
+    Icons.support_agent_rounded,
+    AppRoutes.academySupport,
+  ),
 ];

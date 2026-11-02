@@ -15,6 +15,8 @@ import '../../../branches/domain/branch.dart';
 import '../../../staff/domain/staff.dart';
 import '../../../communication/application/communication_providers.dart';
 import '../../../onboarding/presentation/screens/splash_screen.dart';
+import '../../../super_admin/application/platform_broadcast_providers.dart';
+import '../../../super_admin/domain/platform_broadcast.dart';
 import '../../application/academy_access_provider.dart';
 import '../../application/academy_admin_providers.dart';
 import '../../data/academy_data_seeder.dart';
@@ -54,6 +56,11 @@ class AcademyAdminDashboard extends ConsumerWidget {
     final attendanceAsync = ref.watch(
       attendanceForDateProvider((academyId: academyId, date: today)),
     );
+    final platformBroadcastsAsync = ref.watch(platformBroadcastsStreamProvider);
+    final activeAlert = (platformBroadcastsAsync.value ??
+            const <PlatformBroadcast>[])
+        .where((b) => b.isActive)
+        .firstOrNull;
 
     // Calculate aggregated or filtered counts
     final allStudents = studentsAsync.value ?? const <Student>[];
@@ -155,6 +162,98 @@ class AcademyAdminDashboard extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 14),
+
+        if (activeAlert != null)
+          Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => context.push(AppRoutes.academyAnnouncements),
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: activeAlert.isUrgent
+                        ? const Color(0xFFEF4444).withValues(alpha: 0.15)
+                        : const Color(0xFF6366F1).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: activeAlert.isUrgent
+                          ? const Color(0xFFEF4444).withValues(alpha: 0.4)
+                          : const Color(0xFF6366F1).withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: activeAlert.isUrgent
+                              ? const Color(0xFFEF4444).withValues(alpha: 0.25)
+                              : const Color(0xFF6366F1).withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          activeAlert.isUrgent
+                              ? Icons.warning_amber_rounded
+                              : Icons.shield_outlined,
+                          color: activeAlert.isUrgent
+                              ? const Color(0xFFF87171)
+                              : const Color(0xFF818CF8),
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              activeAlert.isUrgent
+                                  ? 'CRITICAL NOTICE FROM SUPER ADMIN'
+                                  : 'PLATFORM NOTICE FROM SUPER ADMIN',
+                              style: TextStyle(
+                                color: activeAlert.isUrgent
+                                    ? const Color(0xFFF87171)
+                                    : const Color(0xFF818CF8),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              activeAlert.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
+                            Text(
+                              activeAlert.message,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.arrow_forward_ios,
+                          size: 13, color: Colors.white54),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
 
         if (allStudents.isEmpty && allStaff.isEmpty)
           Container(
@@ -437,6 +536,18 @@ class AcademyAdminDashboard extends ConsumerWidget {
               label: 'Branches',
               color: const Color(0xFF38BDF8),
               onTap: () => context.push(AppRoutes.branchesList),
+            ),
+            _ModuleTile(
+              icon: Icons.campaign_outlined,
+              label: 'Broadcasts',
+              color: const Color(0xFFEC4899),
+              onTap: () => context.push(AppRoutes.academyAnnouncements),
+            ),
+            _ModuleTile(
+              icon: Icons.support_agent_rounded,
+              label: 'Help Desk',
+              color: const Color(0xFF818CF8),
+              onTap: () => context.push(AppRoutes.academySupport),
             ),
           ],
         ),

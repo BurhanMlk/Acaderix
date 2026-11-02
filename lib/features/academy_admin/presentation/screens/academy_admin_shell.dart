@@ -50,6 +50,9 @@ class AcademyAdminShell extends ConsumerWidget {
     if (location == AppRoutes.academyAnnouncements) {
       return 'Broadcasts & Noticeboard';
     }
+    if (location == AppRoutes.academySupport) {
+      return 'Help & Support Desk';
+    }
     for (final module in academyAdminModules) {
       if (module.route == location) return module.label;
     }
