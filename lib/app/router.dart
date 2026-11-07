@@ -57,6 +57,7 @@ import '../features/branches/presentation/screens/add_branch_screen.dart';
 import '../features/branches/presentation/screens/edit_branch_screen.dart';
 import '../features/branches/presentation/screens/branches_list_screen.dart';
 import '../features/communication/presentation/screens/announcements_screen.dart';
+import '../features/academy_admin/presentation/screens/academy_conversations_screen.dart';
 import '../features/academy_admin/presentation/screens/academy_support_screen.dart';
 import '../features/student/presentation/screens/student_shell.dart';
 
@@ -108,6 +109,7 @@ abstract final class AppRoutes {
   static const String coursesList = '/academy-admin/courses';
   static const String addCourse = '/academy-admin/courses/new';
   static const String editCourse = '/academy-admin/courses/edit';
+  static const String academyConversations = '/academy-admin/conversations';
   static const String academyAnnouncements = '/academy-admin/announcements';
   static const String academySupport = '/academy-admin/support';
 
@@ -178,6 +180,7 @@ final Map<AppRole, Set<String>> _roleRoutes = {
     AppRoutes.coursesList,
     AppRoutes.addCourse,
     AppRoutes.editCourse,
+    AppRoutes.academyConversations,
     AppRoutes.academyAnnouncements,
     AppRoutes.academySupport,
   },
@@ -493,6 +496,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.results,
             builder: (context, state) => const ResultsScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.academyConversations,
+            builder: (context, state) => const AcademyConversationsScreen(),
           ),
           GoRoute(
             path: AppRoutes.academyAnnouncements,

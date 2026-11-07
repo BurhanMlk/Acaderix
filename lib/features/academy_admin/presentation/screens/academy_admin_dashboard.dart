@@ -527,6 +527,12 @@ class AcademyAdminDashboard extends ConsumerWidget {
               onTap: () => context.push(AppRoutes.results),
             ),
             _ModuleTile(
+              icon: Icons.forum_outlined,
+              label: 'Conversations',
+              color: const Color(0xFF0EA5E9),
+              onTap: () => context.push(AppRoutes.academyConversations),
+            ),
+            _ModuleTile(
               icon: Icons.badge_outlined,
               label: 'Staff',
               color: const Color(0xFF14B8A6),

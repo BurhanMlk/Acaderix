@@ -51,6 +51,7 @@ import 'package:academy_management/features/branches/presentation/screens/branch
 import 'package:academy_management/features/communication/application/communication_providers.dart';
 import 'package:academy_management/features/communication/domain/announcement.dart';
 import 'package:academy_management/features/communication/domain/app_notification.dart';
+import 'package:academy_management/features/communication/domain/chat_message.dart';
 import 'package:academy_management/features/communication/domain/communication_repository.dart';
 import 'package:academy_management/features/communication/domain/inquiry.dart';
 import 'package:academy_management/features/communication/presentation/screens/announcements_screen.dart';
@@ -435,6 +436,8 @@ class _FakeAdminCommunicationRepo implements CommunicationRepository {
     required String inquiryId,
     required String reply,
     String status = 'answered',
+    String? replierRole,
+    String? replierId,
   }) async {}
 
   @override
@@ -442,6 +445,7 @@ class _FakeAdminCommunicationRepo implements CommunicationRepository {
     String academyId, {
     required String recipientId,
     required String recipientRole,
+    List<String>? alternativeRecipientIds,
   }) =>
       Stream.value([]);
 
@@ -455,6 +459,60 @@ class _FakeAdminCommunicationRepo implements CommunicationRepository {
   @override
   Future<void> markAllNotificationsAsRead(
       String academyId, String recipientId) async {}
+
+  @override
+  Stream<List<ChatMessage>> watchChatMessages(
+    String academyId,
+    String conversationId,
+  ) =>
+      Stream.value([]);
+
+  @override
+  Future<void> sendChatMessage(
+    ChatMessage message, {
+    required String recipientId,
+    required String recipientRole,
+  }) async {}
+
+  @override
+  Stream<List<AcademicConversation>> watchAcademicConversations(
+    String academyId, {
+    String? teacherId,
+    String? studentId,
+  }) =>
+      Stream.value([]);
+
+  @override
+  Future<AcademicConversation> getOrCreateConversation({
+    required String academyId,
+    required String teacherId,
+    required String teacherName,
+    String teacherStaffId = '',
+    required String studentId,
+    required String studentName,
+    required String studentRollNumber,
+    String courseId = '',
+    String courseName = 'Academic Guidance',
+  }) async {
+    return AcademicConversation(
+      id: 'conv_${teacherId}_$studentId',
+      academyId: academyId,
+      teacherId: teacherId,
+      teacherName: teacherName,
+      teacherStaffId: teacherStaffId,
+      studentId: studentId,
+      studentName: studentName,
+      studentRollNumber: studentRollNumber,
+      courseId: courseId,
+      courseName: courseName,
+      lastMessage: '',
+      lastMessageAt: DateTime.now(),
+      lastSenderRole: 'teacher',
+      lastSenderId: teacherId,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
 }
 
 class _FakeAccessRepo implements AcademyAccessRepository {
