@@ -37,6 +37,9 @@ jobs:
       - name: Decode Service Account JSON
         run: echo "${{ secrets.SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 --decode > service-account.json
 
+      - name: Decode Firebase Options
+        run: echo "${{ secrets.FIREBASE_OPTIONS_BASE64 }}" | base64 --decode > lib/app/firebase_options.dart
+
       - name: Install dependencies
         run: flutter pub get
 

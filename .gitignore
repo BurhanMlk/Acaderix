@@ -64,3 +64,4 @@ service-account-b64.txt
 keystore-b64.txt
 .gradle/
 android/build/
+firebase-options-b64.txt
