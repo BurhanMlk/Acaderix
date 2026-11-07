@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../application/communication_providers.dart';
 import '../../domain/app_notification.dart';
+import '../screens/academic_chat_screen.dart';
 
 /// Opens the slide-up modal sheet presenting the user's live in-app notifications.
 Future<void> showNotificationCenterModal(BuildContext context, {String? academyId}) {
@@ -29,7 +30,7 @@ class NotificationCenterModal extends ConsumerStatefulWidget {
 
 class _NotificationCenterModalState
     extends ConsumerState<NotificationCenterModal> {
-  String _selectedFilter = 'all'; // 'all', 'broadcast', 'inquiry'
+  String _selectedFilter = 'all'; // 'all', 'broadcast', 'chat'
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +40,8 @@ class _NotificationCenterModalState
 
     final filteredNotifs = allNotifs.where((n) {
       if (_selectedFilter == 'broadcast') return n.type == 'broadcast';
-      if (_selectedFilter == 'inquiry') {
-        return n.type.startsWith('inquiry');
+      if (_selectedFilter == 'chat') {
+        return n.type == 'chat_message' || n.type.startsWith('inquiry');
       }
       return true;
     }).toList();
@@ -169,7 +170,7 @@ class _NotificationCenterModalState
                 const SizedBox(width: 8),
                 _buildFilterChip('Announcements', 'broadcast'),
                 const SizedBox(width: 8),
-                _buildFilterChip('Inquiries & Q&A', 'inquiry'),
+                _buildFilterChip('Direct Chats', 'chat'),
               ],
             ),
           ),
@@ -291,6 +292,26 @@ class _NotificationCenterModalState
               ref
                   .read(communicationRepositoryProvider)
                   .markNotificationAsRead(academyId, notif.id);
+            }
+
+            if (notif.type == 'chat_message' &&
+                notif.relatedId.isNotEmpty) {
+              Navigator.of(context).pop();
+              final auth = ref.read(authControllerProvider);
+              final isStaff = auth is AuthAuthenticated && auth.user.isStaff;
+
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => AcademicChatScreen(
+                    academyId: academyId.isNotEmpty ? academyId : notif.academyId,
+                    conversationId: notif.relatedId,
+                    otherPartyName: notif.title.replaceFirst('New message from ', ''),
+                    otherPartyRole: isStaff ? 'student' : 'teacher',
+                    recipientId: notif.recipientId,
+                    recipientRole: notif.recipientRole,
+                  ),
+                ),
+              );
             }
           },
           child: Ink(

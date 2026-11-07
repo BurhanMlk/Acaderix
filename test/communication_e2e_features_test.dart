@@ -17,11 +17,13 @@ import 'package:academy_management/features/branches/domain/branch_repository.da
 import 'package:academy_management/features/communication/application/communication_providers.dart';
 import 'package:academy_management/features/communication/domain/announcement.dart';
 import 'package:academy_management/features/communication/domain/app_notification.dart';
+import 'package:academy_management/features/communication/domain/chat_message.dart';
 import 'package:academy_management/features/communication/domain/communication_repository.dart';
 import 'package:academy_management/features/communication/domain/inquiry.dart';
+import 'package:academy_management/features/communication/presentation/screens/academic_chat_screen.dart';
 import 'package:academy_management/features/communication/presentation/screens/announcements_screen.dart';
-import 'package:academy_management/features/communication/presentation/screens/ask_teacher_modal.dart';
 import 'package:academy_management/features/communication/presentation/screens/student_inquiries_screen.dart';
+import 'package:academy_management/features/communication/presentation/screens/teacher_initiate_chat_modal.dart';
 import 'package:academy_management/features/communication/presentation/widgets/announcement_card.dart';
 import 'package:academy_management/features/communication/presentation/widgets/notification_bell_button.dart';
 import 'package:academy_management/features/communication/presentation/widgets/notification_center_modal.dart';
@@ -154,31 +156,43 @@ class _FakeCommunicationRepo implements CommunicationRepository {
     List<Announcement>? announcements,
     List<StudentInquiry>? inquiries,
     List<AppNotification>? notifications,
+    List<AcademicConversation>? conversations,
   })  : _announcements = announcements ?? [],
         _inquiries = inquiries ?? [],
-        _notifications = notifications ?? [] {
+        _notifications = notifications ?? [],
+        _conversations = conversations ?? [] {
     _announcementsCtrl = StreamController<List<Announcement>>.broadcast();
     _inquiriesCtrl = StreamController<List<StudentInquiry>>.broadcast();
     _notificationsCtrl = StreamController<List<AppNotification>>.broadcast();
+    _conversationsCtrl = StreamController<List<AcademicConversation>>.broadcast();
+    _messagesCtrl = StreamController<Map<String, List<ChatMessage>>>.broadcast();
   }
 
   final List<Announcement> _announcements;
   final List<StudentInquiry> _inquiries;
   final List<AppNotification> _notifications;
+  final List<AcademicConversation> _conversations;
+  final Map<String, List<ChatMessage>> _messages = {};
 
   late final StreamController<List<Announcement>> _announcementsCtrl;
   late final StreamController<List<StudentInquiry>> _inquiriesCtrl;
   late final StreamController<List<AppNotification>> _notificationsCtrl;
+  late final StreamController<List<AcademicConversation>> _conversationsCtrl;
+  late final StreamController<Map<String, List<ChatMessage>>> _messagesCtrl;
 
   void dispose() {
     _announcementsCtrl.close();
     _inquiriesCtrl.close();
     _notificationsCtrl.close();
+    _conversationsCtrl.close();
+    _messagesCtrl.close();
   }
 
   void _emitAnnouncements() => _announcementsCtrl.add(List.from(_announcements));
   void _emitInquiries() => _inquiriesCtrl.add(List.from(_inquiries));
   void _emitNotifications() => _notificationsCtrl.add(List.from(_notifications));
+  void _emitConversations() => _conversationsCtrl.add(List.from(_conversations));
+  void _emitMessages() => _messagesCtrl.add(Map.from(_messages));
 
   @override
   Stream<List<Announcement>> watchAnnouncements(
@@ -350,6 +364,8 @@ class _FakeCommunicationRepo implements CommunicationRepository {
     required String inquiryId,
     required String reply,
     String status = 'answered',
+    String? replierRole,
+    String? replierId,
   }) async {
     final idx = _inquiries.indexWhere((i) => i.id == inquiryId);
     if (idx != -1) {
@@ -386,25 +402,31 @@ class _FakeCommunicationRepo implements CommunicationRepository {
     String academyId, {
     required String recipientId,
     required String recipientRole,
+    List<String>? alternativeRecipientIds,
   }) async* {
     yield _filterNotifications(
       recipientId: recipientId,
       recipientRole: recipientRole,
+      alternativeRecipientIds: alternativeRecipientIds,
     );
     yield* _notificationsCtrl.stream.map((_) => _filterNotifications(
           recipientId: recipientId,
           recipientRole: recipientRole,
+          alternativeRecipientIds: alternativeRecipientIds,
         ));
   }
 
   List<AppNotification> _filterNotifications({
     required String recipientId,
     required String recipientRole,
+    List<String>? alternativeRecipientIds,
   }) {
     return _notifications.where((n) {
       if (n.recipientId != 'broadcast' &&
           n.recipientId.isNotEmpty &&
-          n.recipientId != recipientId) {
+          n.recipientId != recipientId &&
+          !(alternativeRecipientIds != null &&
+              alternativeRecipientIds.contains(n.recipientId))) {
         return false;
       }
       if (recipientRole != 'all' &&
@@ -441,6 +463,121 @@ class _FakeCommunicationRepo implements CommunicationRepository {
       _notifications[i] = _notifications[i].copyWith(isRead: true);
     }
     _emitNotifications();
+  }
+
+  @override
+  Stream<List<ChatMessage>> watchChatMessages(
+    String academyId,
+    String conversationId,
+  ) async* {
+    yield List.from(_messages[conversationId] ?? []);
+    yield* _messagesCtrl.stream.map((m) => List.from(m[conversationId] ?? []));
+  }
+
+  @override
+  Future<void> sendChatMessage(
+    ChatMessage message, {
+    required String recipientId,
+    required String recipientRole,
+  }) async {
+    _messages.putIfAbsent(message.conversationId, () => []).add(message);
+    final convIdx =
+        _conversations.indexWhere((c) => c.id == message.conversationId);
+    if (convIdx != -1) {
+      _conversations[convIdx] = _conversations[convIdx].copyWith(
+        lastMessage: message.text,
+        lastMessageAt: message.createdAt,
+      );
+    }
+    if (recipientId.isNotEmpty && recipientId != message.senderId) {
+      _notifications.insert(
+        0,
+        AppNotification(
+          id: 'notif_${DateTime.now().millisecondsSinceEpoch}',
+          academyId: message.academyId,
+          recipientId: recipientId,
+          recipientRole: recipientRole,
+          title: 'New message from ${message.senderName}',
+          body: message.text,
+          type: 'chat_message',
+          relatedId: message.conversationId,
+          createdAt: DateTime.now(),
+        ),
+      );
+      _emitNotifications();
+    }
+    _emitMessages();
+    _emitConversations();
+  }
+
+  @override
+  Stream<List<AcademicConversation>> watchAcademicConversations(
+    String academyId, {
+    String? teacherId,
+    String? studentId,
+  }) async* {
+    yield _filterConversations(teacherId: teacherId, studentId: studentId);
+    yield* _conversationsCtrl.stream.map((_) =>
+        _filterConversations(teacherId: teacherId, studentId: studentId));
+  }
+
+  List<AcademicConversation> _filterConversations({
+    String? teacherId,
+    String? studentId,
+  }) {
+    return _conversations.where((c) {
+      if (teacherId != null &&
+          teacherId.isNotEmpty &&
+          c.teacherId != teacherId &&
+          c.teacherStaffId != teacherId) {
+        return false;
+      }
+      if (studentId != null &&
+          studentId.isNotEmpty &&
+          c.studentId != studentId &&
+          c.studentRollNumber != studentId) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  @override
+  Future<AcademicConversation> getOrCreateConversation({
+    required String academyId,
+    required String teacherId,
+    required String teacherName,
+    String teacherStaffId = '',
+    required String studentId,
+    required String studentName,
+    required String studentRollNumber,
+    String courseId = '',
+    String courseName = 'Academic Guidance',
+  }) async {
+    final convId = 'conv_${teacherId}_$studentId';
+    final existing = _conversations.where((c) => c.id == convId).firstOrNull;
+    if (existing != null) return existing;
+    final conv = AcademicConversation(
+      id: convId,
+      academyId: academyId,
+      teacherId: teacherId,
+      teacherName: teacherName,
+      teacherStaffId: teacherStaffId,
+      studentId: studentId,
+      studentName: studentName,
+      studentRollNumber: studentRollNumber,
+      courseId: courseId,
+      courseName: courseName,
+      lastMessage: '',
+      lastMessageAt: DateTime.now(),
+      lastSenderRole: 'teacher',
+      lastSenderId: teacherId,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+    _conversations.insert(0, conv);
+    _emitConversations();
+    return conv;
   }
 }
 
@@ -879,8 +1016,8 @@ void main() {
       expect(find.text('Campus Notice 1'), findsOneWidget);
       expect(find.text('Teacher Reply 1'), findsOneWidget);
 
-      // Filter by 'Inquiries'
-      await tester.tap(find.textContaining('Inquiries'));
+      // Filter by 'Direct Chats'
+      await tester.tap(find.textContaining('Direct Chats'));
       await tester.pumpAndSettle();
 
       expect(find.text('Teacher Reply 1'), findsOneWidget);
@@ -904,7 +1041,7 @@ void main() {
     });
 
     testWidgets(
-        'AskTeacherModal submits student question with auto-filled faculty',
+        'Student initiates direct 1-to-1 chat with teacher without asking for topic/description',
         (tester) async {
       final repo = _FakeCommunicationRepo();
       final authRepo = _FakeAuthRepo(studentUser);
@@ -921,7 +1058,7 @@ void main() {
             home: Scaffold(
               body: Builder(
                 builder: (context) => ElevatedButton(
-                  onPressed: () => showAskTeacherModal(
+                  onPressed: () => showStudentInitiateChatModal(
                     context,
                     academyId: testAcademyId,
                   ),
@@ -936,53 +1073,62 @@ void main() {
       await tester.tap(find.text('Open Modal'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Ask Teacher a Question'), findsOneWidget);
+      expect(find.text('Message Instructor'), findsOneWidget);
+      expect(find.text('Prof. Tariq'), findsOneWidget);
+      expect(find.text('Advanced Mathematics'), findsOneWidget);
 
-      // Enter topic/subject
-      final subjectFinder = find.byType(TextField).at(0);
-      await tester.enterText(subjectFinder, 'Need help with Integration problem');
-      await tester.pump();
-
-      // Enter detailed question
-      final questionFinder = find.byType(TextField).at(1);
-      await tester.enterText(
-          questionFinder, 'Could you please explain step 3 of the theorem derivation?');
-      await tester.pump();
-
-      // Tap submit
-      await tester.tap(find.text('Send Question to Teacher'));
+      // Student taps instructor -> directly opens AcademicChatScreen without any topic/description forms
+      await tester.tap(find.text('Prof. Tariq'));
       await tester.pumpAndSettle();
 
-      // Verify question stored in repository
-      final inquiries =
-          await repo.watchInquiriesForStudent(testAcademyId, 'stu_1').first;
-      expect(inquiries.length, 1);
-      expect(inquiries.first.subject, 'Need help with Integration problem');
-      expect(inquiries.first.teacherName, 'Prof. Tariq');
-      expect(inquiries.first.courseName, 'Advanced Mathematics');
+      expect(find.byType(AcademicChatScreen), findsOneWidget);
+      expect(find.text('Prof. Tariq'), findsWidgets);
+
+      // Type and send message inside AcademicChatScreen input bar
+      final chatInput = find.byType(TextField).last;
+      await tester.enterText(
+          chatInput, 'Hello Professor! When is our next tutorial?');
+      await tester.pump();
+
+      await tester.tap(find.byIcon(Icons.send_rounded));
+      await tester.pumpAndSettle();
+
+      // Verify message saved in repository
+      final messages = await repo
+          .watchChatMessages(testAcademyId, 'conv_staff_t1_stu_1')
+          .first;
+      expect(messages.length, 1);
+      expect(messages.first.text, 'Hello Professor! When is our next tutorial?');
+      expect(messages.first.senderRole, 'student');
 
       repo.dispose();
     });
 
     testWidgets(
-        'StudentInquiriesScreen displays inquiries and enables teacher replies',
+        'StudentInquiriesScreen displays unified 1-to-1 conversations list and opens chat',
         (tester) async {
       final repo = _FakeCommunicationRepo(
-        inquiries: [
-          StudentInquiry(
-            id: 'inq_test_1',
+        conversations: [
+          AcademicConversation(
+            id: 'conv_staff_t1_stu_1',
             academyId: testAcademyId,
+            teacherId: 'staff_t1',
+            teacherName: 'Prof. Tariq',
+            teacherStaffId: 'T-1001',
             studentId: 'stu_1',
             studentName: 'Hamza Khan',
             studentRollNumber: '100001',
-            teacherId: 'staff_t1',
-            teacherName: 'Prof. Tariq',
             courseId: 'crs_math_10',
             courseName: 'Advanced Mathematics',
-            subject: 'Trigonometry identities',
-            question: 'Is sin^2(x) + cos^2(x) = 1 true for all radians?',
-            status: 'open',
+            lastMessage: 'Class will start at 10:00 AM tomorrow.',
+            lastMessageAt: DateTime.now(),
+            lastSenderRole: 'teacher',
+            lastSenderId: 'staff_t1',
+            unreadCountForTeacher: 0,
+            unreadCountForStudent: 1,
+            status: 'active',
             createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
           ),
         ],
       );
@@ -1007,61 +1153,47 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Student Q&A Desk'), findsOneWidget);
-      expect(find.text('Trigonometry identities'), findsOneWidget);
-      expect(find.text('Pending'), findsOneWidget);
+      expect(find.text('Student Messages'), findsOneWidget);
+      expect(find.text('Hamza Khan'), findsOneWidget);
+      expect(find.textContaining('Roll #100001'), findsOneWidget);
+      expect(find.text('Class will start at 10:00 AM tomorrow.'), findsOneWidget);
 
-      // Teacher taps "Reply to Student"
-      await tester.tap(find.text('Reply to Student'));
+      // Teacher taps conversation card to open AcademicChatScreen
+      await tester.tap(find.text('Hamza Khan'));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Reply to Hamza Khan'), findsOneWidget);
-
-      // Type reply
-      final replyInput =
-          find.widgetWithText(TextFormField, 'Type your explanation or guidance here...');
-      await tester.enterText(replyInput,
-          'Yes, it is the fundamental Pythagorean trigonometric identity for all real radians.');
-      await tester.pump();
-
-      // Submit reply
-      await tester.tap(find.text('Send Reply & Notify Student'));
-      await tester.pumpAndSettle();
-
-      // Verify updated status
-      expect(find.text('Answered'), findsWidgets);
-      expect(find.textContaining('Pythagorean trigonometric identity'),
-          findsOneWidget);
+      expect(find.byType(AcademicChatScreen), findsOneWidget);
+      expect(find.text('Hamza Khan'), findsWidgets);
 
       repo.dispose();
     });
 
     testWidgets(
-        'End-to-End Q&A thread lifecycle: Student asks question -> stored -> Teacher views & replies -> Student verifies guidance',
+        'End-to-End 1-to-1 conversation lifecycle: Teacher initiates -> Student replies in real time',
         (tester) async {
       final repo = _FakeCommunicationRepo();
       final studentAuthRepo = _FakeAuthRepo(studentUser);
       final teacherAuthRepo = _FakeAuthRepo(teacherUser);
 
-      // 1. Student opens AskTeacherModal and asks a question
+      // 1. Teacher initiates chat with student via fast student picker
       await tester.pumpWidget(
         ProviderScope(
-          key: const ValueKey('student_ask_scope'),
+          key: const ValueKey('teacher_initiate_scope'),
           overrides: [
             communicationRepositoryProvider.overrideWithValue(repo),
-            authRepositoryProvider.overrideWithValue(studentAuthRepo),
-            currentStudentProfileProvider.overrideWithValue(sampleStudent),
-            currentStudentCoursesProvider.overrideWithValue([sampleCourse]),
+            authRepositoryProvider.overrideWithValue(teacherAuthRepo),
+            currentStaffMemberProvider.overrideWithValue(sampleTeacher),
+            staffBranchStudentsProvider.overrideWithValue([sampleStudent]),
           ],
           child: MaterialApp(
             home: Scaffold(
               body: Builder(
                 builder: (context) => ElevatedButton(
-                  onPressed: () => showAskTeacherModal(
+                  onPressed: () => showTeacherInitiateChatModal(
                     context,
                     academyId: testAcademyId,
                   ),
-                  child: const Text('Ask Doubts'),
+                  child: const Text('Start Student Chat'),
                 ),
               ),
             ),
@@ -1069,94 +1201,82 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('Ask Doubts'));
+      await tester.tap(find.text('Start Student Chat'));
       await tester.pumpAndSettle();
 
+      expect(find.text('Start Direct Chat'), findsOneWidget);
+      expect(find.text('Hamza Khan'), findsOneWidget);
+
+      // Tap student row -> immediately opens AcademicChatScreen
+      await tester.tap(find.text('Hamza Khan'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AcademicChatScreen), findsOneWidget);
+
+      // Teacher sends initial message
+      final teacherMsgInput = find.byType(TextField).last;
       await tester.enterText(
-          find.byType(TextField).at(0), 'Quadratic Formula clarification');
-      await tester.pump();
-      await tester.enterText(find.byType(TextField).at(1),
-          'When the discriminant is negative, does the quadratic have complex conjugate roots?');
+          teacherMsgInput, 'Please submit assignment 3 by Friday.');
       await tester.pump();
 
-      await tester.tap(find.text('Send Question to Teacher'));
+      await tester.tap(find.byIcon(Icons.send_rounded));
       await tester.pumpAndSettle();
 
-      // Verify question is stored in the repository
-      final studentInquiriesBefore =
-          await repo.watchInquiriesForStudent(testAcademyId, 'stu_1').first;
-      expect(studentInquiriesBefore.length, 1);
-      expect(studentInquiriesBefore.first.status, 'open');
-      expect(studentInquiriesBefore.first.subject,
-          'Quadratic Formula clarification');
+      // Verify notification delivered to student (Anti-echo: teacher does NOT receive it)
+      var notifs = await repo
+          .watchNotifications(
+            testAcademyId,
+            recipientId: 'stu_1',
+            recipientRole: 'student',
+          )
+          .first;
+      expect(notifs.length, 1);
+      expect(notifs.first.type, 'chat_message');
+      expect(notifs.first.body, 'Please submit assignment 3 by Friday.');
 
-      // 2. Teacher opens StudentInquiriesScreen (Teacher Q&A Desk)
+      // 2. Student opens AcademicChatScreen and replies
       await tester.pumpWidget(
         ProviderScope(
-          key: const ValueKey('teacher_qna_scope'),
-          overrides: [
-            communicationRepositoryProvider.overrideWithValue(repo),
-            authRepositoryProvider.overrideWithValue(teacherAuthRepo),
-            currentStaffMemberProvider.overrideWithValue(sampleTeacher),
-          ],
-          child: const MaterialApp(
-            home: StudentInquiriesScreen(
-              academyId: testAcademyId,
-              teacherId: 'staff_t1',
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.text('Student Q&A Desk'), findsOneWidget);
-      expect(find.text('Quadratic Formula clarification'), findsOneWidget);
-      expect(find.text('Pending'), findsOneWidget);
-
-      // 3. Teacher replies to student
-      await tester.tap(find.text('Reply to Student'));
-      await tester.pumpAndSettle();
-
-      final replyInput = find.widgetWithText(
-          TextFormField, 'Type your explanation or guidance here...');
-      await tester.enterText(replyInput,
-          'Exactly correct! When b^2 - 4ac < 0, the roots are two complex conjugate numbers.');
-      await tester.pump();
-
-      await tester.tap(find.text('Send Reply & Notify Student'));
-      await tester.pumpAndSettle();
-
-      // Verify inquiry updated in repository
-      final studentInquiriesAfter =
-          await repo.watchInquiriesForStudent(testAcademyId, 'stu_1').first;
-      expect(studentInquiriesAfter.length, 1);
-      expect(studentInquiriesAfter.first.status, 'answered');
-      expect(studentInquiriesAfter.first.reply,
-          contains('Exactly correct! When b^2 - 4ac < 0'));
-
-      // 4. Student re-opens StudentInquiriesScreen and verifies answer appears
-      await tester.pumpWidget(
-        ProviderScope(
-          key: const ValueKey('student_verify_scope'),
+          key: const ValueKey('student_chat_scope'),
           overrides: [
             communicationRepositoryProvider.overrideWithValue(repo),
             authRepositoryProvider.overrideWithValue(studentAuthRepo),
             currentStudentProfileProvider.overrideWithValue(sampleStudent),
           ],
           child: const MaterialApp(
-            home: StudentInquiriesScreen(
+            home: AcademicChatScreen(
               academyId: testAcademyId,
-              studentId: 'stu_1',
+              conversationId: 'conv_staff_t1_stu_1',
+              otherPartyName: 'Prof. Tariq',
+              otherPartySubtitle: 'Advanced Mathematics',
+              otherPartyRole: 'teacher',
+              recipientId: 'staff_t1',
+              recipientRole: 'staff',
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Course Q&A & Inquiries'), findsOneWidget);
-      expect(find.text('Answered'), findsWidgets);
-      expect(find.textContaining('Exactly correct! When b^2 - 4ac < 0'),
-          findsOneWidget);
+      expect(find.text('Please submit assignment 3 by Friday.'), findsOneWidget);
+
+      // Student replies
+      final studentMsgInput = find.byType(TextField).last;
+      await tester.enterText(
+          studentMsgInput, 'Noted, thank you Sir! Will submit on time.');
+      await tester.pump();
+
+      await tester.tap(find.byIcon(Icons.send_rounded));
+      await tester.pumpAndSettle();
+
+      // Verify conversation has both messages
+      final chatMessages = await repo
+          .watchChatMessages(testAcademyId, 'conv_staff_t1_stu_1')
+          .first;
+      expect(chatMessages.length, 2);
+      expect(chatMessages.first.text, 'Please submit assignment 3 by Friday.');
+      expect(chatMessages.last.text,
+          'Noted, thank you Sir! Will submit on time.');
 
       repo.dispose();
     });

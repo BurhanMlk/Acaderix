@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/firestore_communication_repository.dart';
 import '../domain/announcement.dart';
 import '../domain/app_notification.dart';
+import '../domain/chat_message.dart';
 import '../domain/communication_repository.dart';
 import '../domain/inquiry.dart';
 
@@ -129,10 +130,16 @@ final userNotificationsStreamProvider =
       ? user.rollNumber!
       : user.id;
 
+  final alternativeIds = <String>{
+    user.id,
+    if (user.rollNumber != null && user.rollNumber!.isNotEmpty) user.rollNumber!,
+  }.toList();
+
   return ref.watch(communicationRepositoryProvider).watchNotifications(
         academyId,
         recipientId: recipientId,
         recipientRole: roleStr,
+        alternativeRecipientIds: alternativeIds,
       );
 });
 
@@ -142,3 +149,32 @@ final unreadNotificationsCountProvider = Provider<int>((ref) {
   final list = notifsAsync.value ?? const [];
   return list.where((n) => !n.isRead).length;
 });
+
+/// Streams two-way academic conversations for an academy with optional participant filters.
+final academicConversationsStreamProvider = StreamProvider.family<
+    List<AcademicConversation>,
+    ({String academyId, String? teacherId, String? studentId})>(
+  (ref, params) {
+    if (params.academyId.isEmpty) return const Stream.empty();
+    return ref.watch(communicationRepositoryProvider).watchAcademicConversations(
+          params.academyId,
+          teacherId: params.teacherId,
+          studentId: params.studentId,
+        );
+  },
+);
+
+/// Streams chat messages for a specific conversation thread.
+final chatMessagesStreamProvider = StreamProvider.family<
+    List<ChatMessage>,
+    ({String academyId, String conversationId})>(
+  (ref, params) {
+    if (params.academyId.isEmpty || params.conversationId.isEmpty) {
+      return const Stream.empty();
+    }
+    return ref.watch(communicationRepositoryProvider).watchChatMessages(
+          params.academyId,
+          params.conversationId,
+        );
+  },
+);

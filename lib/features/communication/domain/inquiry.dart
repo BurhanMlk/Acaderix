@@ -16,6 +16,8 @@ class StudentInquiry {
     this.status = 'open', // 'open', 'answered', 'resolved'
     required this.createdAt,
     this.answeredAt,
+    this.senderRole = 'student', // 'student' or 'teacher' / 'staff'
+    this.senderId,
   });
 
   final String id;
@@ -33,10 +35,14 @@ class StudentInquiry {
   final String status;
   final DateTime createdAt;
   final DateTime? answeredAt;
+  final String senderRole;
+  final String? senderId;
 
   bool get isOpen => status == 'open';
   bool get isAnswered => status == 'answered';
   bool get isResolved => status == 'resolved';
+  bool get isSentByTeacher => senderRole == 'teacher' || senderRole == 'staff';
+  bool get isSentByStudent => !isSentByTeacher;
 
   StudentInquiry copyWith({
     String? id,
@@ -54,6 +60,8 @@ class StudentInquiry {
     String? status,
     DateTime? createdAt,
     DateTime? answeredAt,
+    String? senderRole,
+    String? senderId,
   }) {
     return StudentInquiry(
       id: id ?? this.id,
@@ -71,6 +79,8 @@ class StudentInquiry {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       answeredAt: answeredAt ?? this.answeredAt,
+      senderRole: senderRole ?? this.senderRole,
+      senderId: senderId ?? this.senderId,
     );
   }
 
@@ -91,6 +101,8 @@ class StudentInquiry {
       'status': status,
       'createdAt': createdAt.toIso8601String(),
       'answeredAt': answeredAt?.toIso8601String(),
+      'senderRole': senderRole,
+      if (senderId != null) 'senderId': senderId,
     };
   }
 
@@ -111,6 +123,8 @@ class StudentInquiry {
       status: json['status'] as String? ?? 'open',
       createdAt: _parseDateTime(json['createdAt']) ?? DateTime.now(),
       answeredAt: _parseDateTime(json['answeredAt']),
+      senderRole: json['senderRole'] as String? ?? 'student',
+      senderId: json['senderId'] as String?,
     );
   }
 

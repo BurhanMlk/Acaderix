@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:academy_management/core/widgets/glass.dart';
 import 'package:academy_management/features/communication/application/communication_providers.dart';
-import 'package:academy_management/features/communication/presentation/screens/ask_teacher_modal.dart';
+import 'package:academy_management/features/communication/presentation/screens/student_inquiries_screen.dart';
 import 'package:academy_management/features/communication/presentation/widgets/announcement_card.dart';
 import 'package:academy_management/features/student/application/student_providers.dart';
 import 'student_profile_modal.dart';
@@ -191,7 +191,7 @@ class StudentDashboardTab extends ConsumerWidget {
                   color: const Color(0xFF38BDF8).withValues(alpha: 0.2),
                 ),
                 child: const Icon(
-                  Icons.help_outline,
+                  Icons.chat_bubble_outline,
                   color: Color(0xFF38BDF8),
                   size: 18,
                 ),
@@ -202,7 +202,7 @@ class StudentDashboardTab extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Have an academic doubt?',
+                      'Direct Teacher Chat',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -210,7 +210,7 @@ class StudentDashboardTab extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      'Ask questions directly to your teachers',
+                      'Message your course instructors in real-time',
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 11,
@@ -231,11 +231,17 @@ class StudentDashboardTab extends ConsumerWidget {
                     fontSize: 11,
                   ),
                 ),
-                onPressed: () => showAskTeacherModal(
-                  context,
-                  academyId: student?.academyId ?? '',
-                ),
-                child: const Text('Ask Now'),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => StudentInquiriesScreen(
+                        academyId: student?.academyId,
+                        studentId: student?.id,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Open Chats'),
               ),
             ],
           ),

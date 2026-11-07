@@ -112,9 +112,9 @@ class _StudentShellState extends ConsumerState<StudentShell> {
               ),
               actions: [
                 IconButton(
-                  tooltip: 'Course Q&A & Doubts',
+                  tooltip: 'Messages',
                   icon: const Icon(
-                    Icons.question_answer_outlined,
+                    Icons.chat_bubble_outline,
                     color: Color(0xFF38BDF8),
                     size: 20,
                   ),

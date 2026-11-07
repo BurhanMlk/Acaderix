@@ -279,15 +279,15 @@ class StaffDashboardScreen extends ConsumerWidget {
           icon: Icons.people_outline,
           color: const Color(0xFFF59E0B),
           title: 'Campus Student Directory',
-          subtitle: 'Look up student roll numbers, grades, and parent contacts',
+          subtitle: 'Look up student roll numbers, branches, and grades',
           onTap: () => onNavigateToTab(3),
         ),
         const SizedBox(height: 10),
         _StaffActionTile(
-          icon: Icons.question_answer_outlined,
+          icon: Icons.chat_bubble_outline,
           color: const Color(0xFF38BDF8),
-          title: 'Student Q&A Desk',
-          subtitle: 'Answer academic doubts and questions from enrolled students',
+          title: 'Student Messages',
+          subtitle: 'Direct 1-on-1 text chat with students',
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(

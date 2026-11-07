@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:academy_management/core/widgets/glass.dart';
 import 'package:academy_management/features/academics/domain/course.dart';
-import 'package:academy_management/features/communication/presentation/screens/ask_teacher_modal.dart';
+import 'package:academy_management/features/communication/application/communication_providers.dart';
+import 'package:academy_management/features/communication/presentation/screens/academic_chat_screen.dart';
 import 'package:academy_management/features/student/application/student_providers.dart';
 
 /// Tab displaying the student's enrolled courses and weekly timetable.
@@ -330,21 +331,64 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   visualDensity: VisualDensity.compact,
                 ),
-                icon: const Icon(Icons.help_outline, size: 14),
+                icon: const Icon(Icons.chat_bubble_outline, size: 14),
                 label: const Text(
-                  'Ask Teacher',
+                  'Message Teacher',
                   style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   final student = ref.read(currentStudentProfileProvider);
-                  showAskTeacherModal(
-                    context,
-                    academyId: course.academyId.isNotEmpty
-                        ? course.academyId
-                        : (student?.academyId ?? ''),
-                    preselectedCourseId: course.id,
-                    preselectedCourseName: course.name,
-                  );
+                  if (student == null) return;
+                  final academyId = course.academyId.isNotEmpty
+                      ? course.academyId
+                      : student.academyId;
+                  final teacherId = course.teacherId.isNotEmpty
+                      ? course.teacherId
+                      : (course.teacherName.isNotEmpty
+                          ? course.teacherName
+                          : 'faculty');
+                  final teacherName = course.teacherName.isNotEmpty
+                      ? course.teacherName
+                      : 'Course Instructor';
+
+                  try {
+                    final repo = ref.read(communicationRepositoryProvider);
+                    final conv = await repo.getOrCreateConversation(
+                      academyId: academyId,
+                      teacherId: teacherId,
+                      teacherName: teacherName,
+                      studentId: student.id,
+                      studentName: student.fullName,
+                      studentRollNumber: student.rollNumber,
+                      courseId: course.id,
+                      courseName: course.name,
+                    );
+
+                    if (mounted) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => AcademicChatScreen(
+                            academyId: conv.academyId,
+                            conversationId: conv.id,
+                            otherPartyName: teacherName,
+                            otherPartySubtitle: course.name,
+                            otherPartyRole: 'teacher',
+                            recipientId: teacherId,
+                            recipientRole: 'staff',
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to open chat: $e'),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
+                    }
+                  }
                 },
               ),
             ),

@@ -108,9 +108,9 @@ class _StaffShellState extends ConsumerState<StaffShell> {
               ),
               actions: [
                 IconButton(
-                  tooltip: 'Student Q&A Desk',
+                  tooltip: 'Student Messages',
                   icon: const Icon(
-                    Icons.question_answer_outlined,
+                    Icons.chat_bubble_outline,
                     color: Color(0xFF38BDF8),
                     size: 20,
                   ),

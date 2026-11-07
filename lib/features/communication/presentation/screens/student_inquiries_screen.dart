@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../auth/application/auth_controller.dart';
 import '../../../auth/domain/auth_state.dart';
 import '../../../staff/application/staff_providers.dart';
 import '../../../student/application/student_providers.dart';
 import '../../application/communication_providers.dart';
-import '../../domain/inquiry.dart';
-import 'ask_teacher_modal.dart';
+import '../../domain/chat_message.dart';
+import 'academic_chat_screen.dart';
+import 'teacher_initiate_chat_modal.dart';
 
-/// Screen displaying course-scoped Student-to-Teacher Q&A threads and inquiries.
-/// Allows students to track questions asked to teachers, and allows teachers/staff
-/// to reply directly with academic guidance.
+/// Screen displaying the unified 1-to-1 WhatsApp-style conversations between
+/// Teachers and Students. Replaces legacy academic doubt threads with a single,
+/// direct messaging hub.
 class StudentInquiriesScreen extends ConsumerStatefulWidget {
   const StudentInquiriesScreen({
     super.key,
@@ -22,6 +24,7 @@ class StudentInquiriesScreen extends ConsumerStatefulWidget {
     this.studentId,
     this.courseId,
     this.courseName,
+    this.initialTab,
   });
 
   final String? academyId;
@@ -29,6 +32,7 @@ class StudentInquiriesScreen extends ConsumerStatefulWidget {
   final String? studentId;
   final String? courseId;
   final String? courseName;
+  final int? initialTab;
 
   @override
   ConsumerState<StudentInquiriesScreen> createState() =>
@@ -37,7 +41,7 @@ class StudentInquiriesScreen extends ConsumerStatefulWidget {
 
 class _StudentInquiriesScreenState
     extends ConsumerState<StudentInquiriesScreen> {
-  String _selectedFilter = 'all'; // 'all', 'open', 'answered'
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -56,33 +60,17 @@ class _StudentInquiriesScreenState
         user?.academyId ??
         '';
 
-    final effectiveTeacherId = widget.teacherId ?? currentStaff?.id;
+    final effectiveTeacherId = widget.teacherId ?? currentStaff?.staffId ?? currentStaff?.id;
     final effectiveStudentId =
         widget.studentId ?? currentStudent?.id ?? user?.id;
 
     final isTeacher = currentStaff != null || widget.teacherId != null;
-    final isStudent = currentStudent != null ||
-        widget.studentId != null ||
-        (user != null && user.isStudent);
+    final isStudent = !isTeacher &&
+        (currentStudent != null ||
+            widget.studentId != null ||
+            (user != null && user.isStudent));
 
     final repo = ref.watch(communicationRepositoryProvider);
-    final Stream<List<StudentInquiry>> inquiriesStream;
-    if (isTeacher && effectiveTeacherId != null) {
-      inquiriesStream = repo.watchInquiriesForTeacher(
-        effectiveAcademyId,
-        effectiveTeacherId,
-        teacherStaffId: currentStaff?.staffId,
-        teacherName: currentStaff?.fullName ?? user?.displayName,
-      );
-    } else if (isStudent && effectiveStudentId != null) {
-      inquiriesStream = repo.watchInquiriesForStudent(
-        effectiveAcademyId,
-        effectiveStudentId,
-        studentRollNumber: currentStudent?.rollNumber ?? user?.rollNumber,
-      );
-    } else {
-      inquiriesStream = repo.watchAllInquiries(effectiveAcademyId);
-    }
 
     return DashboardBackground(
       child: Scaffold(
@@ -96,7 +84,7 @@ class _StudentInquiriesScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                isTeacher ? 'Student Q&A Desk' : 'Course Q&A & Inquiries',
+                isTeacher ? 'Student Messages' : 'Instructor Messages',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -107,8 +95,8 @@ class _StudentInquiriesScreenState
               ),
               Text(
                 isTeacher
-                    ? 'Answer doubts from enrolled students'
-                    : 'Ask your teacher questions anytime',
+                    ? 'Direct 1-on-1 real-time chat with students'
+                    : 'Direct 1-on-1 real-time chat with your teachers',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -119,55 +107,59 @@ class _StudentInquiriesScreenState
             ],
           ),
           actions: [
-            if (isStudent)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Builder(
-                  builder: (context) {
-                    final isCompact = MediaQuery.sizeOf(context).width < 380;
-                    if (isCompact) {
-                      return IconButton(
-                        tooltip: 'Ask Question',
-                        style: IconButton.styleFrom(
-                          backgroundColor: const Color(0xFF38BDF8),
-                          foregroundColor: const Color(0xFF0F172A),
-                        ),
-                        icon: const Icon(Icons.help_outline, size: 20),
-                        onPressed: () => showAskTeacherModal(
-                          context,
-                          academyId: effectiveAcademyId,
-                          preselectedCourseId: widget.courseId,
-                          preselectedCourseName: widget.courseName,
-                        ),
-                      );
-                    }
-                    return FilledButton.icon(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF38BDF8),
-                        foregroundColor: const Color(0xFF0F172A),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        textStyle: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                        ),
-                      ),
-                      icon: const Icon(Icons.help_outline, size: 16),
-                      label: const Text('Ask Question'),
-                      onPressed: () => showAskTeacherModal(
-                        context,
-                        academyId: effectiveAcademyId,
-                        preselectedCourseId: widget.courseId,
-                        preselectedCourseName: widget.courseName,
-                      ),
-                    );
-                  },
-                ),
+            IconButton(
+              tooltip: isTeacher ? 'New Chat with Student' : 'Message Instructor',
+              icon: const Icon(
+                Icons.add_comment_outlined,
+                color: Color(0xFF38BDF8),
+                size: 20,
               ),
+              onPressed: () {
+                if (isTeacher) {
+                  showTeacherInitiateChatModal(
+                    context,
+                    academyId: effectiveAcademyId,
+                  );
+                } else {
+                  showStudentInitiateChatModal(
+                    context,
+                    academyId: effectiveAcademyId,
+                  );
+                }
+              },
+            ),
+            const SizedBox(width: 8),
           ],
         ),
-        body: StreamBuilder<List<StudentInquiry>>(
-          stream: inquiriesStream,
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: const Color(0xFF38BDF8),
+          foregroundColor: const Color(0xFF0F172A),
+          elevation: 4,
+          icon: const Icon(Icons.chat_bubble_outline, size: 18),
+          label: Text(
+            isTeacher ? 'Message Student' : 'Message Teacher',
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+          ),
+          onPressed: () {
+            if (isTeacher) {
+              showTeacherInitiateChatModal(
+                context,
+                academyId: effectiveAcademyId,
+              );
+            } else {
+              showStudentInitiateChatModal(
+                context,
+                academyId: effectiveAcademyId,
+              );
+            }
+          },
+        ),
+        body: StreamBuilder<List<AcademicConversation>>(
+          stream: repo.watchAcademicConversations(
+            effectiveAcademyId,
+            teacherId: isTeacher ? effectiveTeacherId : null,
+            studentId: isStudent ? effectiveStudentId : null,
+          ),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(
@@ -180,7 +172,7 @@ class _StudentInquiriesScreenState
                           size: 40, color: Colors.redAccent),
                       const SizedBox(height: 12),
                       Text(
-                        'Unable to load questions: ${snapshot.error}',
+                        'Failed to load messages: ${snapshot.error}',
                         style: const TextStyle(color: Colors.white70),
                         textAlign: TextAlign.center,
                       ),
@@ -197,182 +189,152 @@ class _StudentInquiriesScreenState
               );
             }
 
-            final allInquiries = snapshot.data ?? const <StudentInquiry>[];
+            final allConvs = snapshot.data ?? const <AcademicConversation>[];
 
-            final filteredInquiries = allInquiries.where((inq) {
-              if (_selectedFilter == 'open') {
-                return inq.status == 'open';
+            final filtered = allConvs.where((c) {
+              if (widget.studentId != null &&
+                  widget.studentId!.isNotEmpty &&
+                  c.studentId != widget.studentId) {
+                return false;
               }
-              if (_selectedFilter == 'answered') {
-                return inq.status == 'answered' || inq.status == 'resolved';
+              if (widget.courseId != null &&
+                  widget.courseId!.isNotEmpty &&
+                  c.courseId != widget.courseId) {
+                return false;
               }
+
+              if (_searchQuery.isNotEmpty) {
+                final q = _searchQuery.toLowerCase();
+                final matchStudent = c.studentName.toLowerCase().contains(q) ||
+                    c.studentRollNumber.toLowerCase().contains(q);
+                final matchTeacher = c.teacherName.toLowerCase().contains(q);
+                final matchCourse = c.courseName.toLowerCase().contains(q);
+                final matchMsg = c.lastMessage.toLowerCase().contains(q);
+                return matchStudent || matchTeacher || matchCourse || matchMsg;
+              }
+
               return true;
             }).toList();
-
-            final openCount =
-                allInquiries.where((i) => i.status == 'open').length;
-            final answeredCount = allInquiries
-                .where((i) => i.status == 'answered' || i.status == 'resolved')
-                .length;
 
             return CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // KPI cards row
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _KpiChip(
-                                label: 'Total Inquiries',
-                                count: allInquiries.length.toString(),
-                                icon: Icons.question_answer_outlined,
-                                color: const Color(0xFF6366F1),
-                              ),
+                        // Search bar
+                        TextField(
+                          onChanged: (val) =>
+                              setState(() => _searchQuery = val.trim()),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 13),
+                          decoration: InputDecoration(
+                            hintText: isTeacher
+                                ? 'Search student name, roll #, or message...'
+                                : 'Search instructor, course, or message...',
+                            hintStyle: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.4),
+                              fontSize: 13,
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _KpiChip(
-                                label: 'Pending Reply',
-                                count: openCount.toString(),
-                                icon: Icons.pending_actions_outlined,
-                                color: const Color(0xFFF59E0B),
-                              ),
+                            prefixIcon: const Icon(Icons.search,
+                                color: Color(0xFF38BDF8), size: 18),
+                            suffixIcon: _searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear,
+                                        color: Colors.white38, size: 16),
+                                    onPressed: () =>
+                                        setState(() => _searchQuery = ''),
+                                  )
+                                : null,
+                            filled: true,
+                            fillColor: Colors.white.withValues(alpha: 0.05),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Colors.white12),
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _KpiChip(
-                                label: 'Answered',
-                                count: answeredCount.toString(),
-                                icon: Icons.check_circle_outline,
-                                color: const Color(0xFF10B981),
-                              ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Colors.white12),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-
-                        // Filter segmented tabs
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            _FilterButton(
-                              label: 'All Threads (${allInquiries.length})',
-                              isSelected: _selectedFilter == 'all',
-                              onTap: () =>
-                                  setState(() => _selectedFilter = 'all'),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFF38BDF8)),
                             ),
-                            _FilterButton(
-                              label: 'Pending ($openCount)',
-                              isSelected: _selectedFilter == 'open',
-                              accentColor: const Color(0xFFF59E0B),
-                              onTap: () =>
-                                  setState(() => _selectedFilter = 'open'),
-                            ),
-                            _FilterButton(
-                              label: 'Answered ($answeredCount)',
-                              isSelected: _selectedFilter == 'answered',
-                              accentColor: const Color(0xFF10B981),
-                              onTap: () =>
-                                  setState(() => _selectedFilter = 'answered'),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-
-                if (filteredInquiries.isEmpty)
+                if (filtered.isEmpty)
                   SliverFillRemaining(
                     hasScrollBody: false,
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(18),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: const Color(0xFF38BDF8)
-                                    .withValues(alpha: 0.1),
-                              ),
-                              child: const Icon(
-                                Icons.forum_outlined,
-                                size: 40,
-                                color: Color(0xFF38BDF8),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              isTeacher
-                                  ? 'No student questions pending'
-                                  : 'No inquiry threads found',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              isTeacher
-                                  ? 'When students enrolled in your courses have doubts, their questions will appear here.'
-                                  : 'Have a question about your course, assignment, or syllabus? Tap "Ask Question" to reach your teacher.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.65),
-                                fontSize: 13,
-                              ),
-                            ),
-                            if (isStudent) ...[
-                              const SizedBox(height: 18),
-                              FilledButton.icon(
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: const Color(0xFF38BDF8),
-                                  foregroundColor: const Color(0xFF0F172A),
-                                ),
-                                icon: const Icon(Icons.help_outline, size: 18),
-                                label: const Text('Ask Teacher Now'),
-                                onPressed: () => showAskTeacherModal(
-                                  context,
-                                  academyId: effectiveAcademyId,
-                                  preselectedCourseId: widget.courseId,
-                                  preselectedCourseName: widget.courseName,
-                                ),
-                              ),
-                            ],
-                          ],
+                        padding: const EdgeInsets.all(24),
+                        child: EmptyState(
+                          icon: Icons.chat_bubble_outline,
+                          title: _searchQuery.isNotEmpty
+                              ? 'No Matching Messages'
+                              : 'No Conversations Yet',
+                          message: _searchQuery.isNotEmpty
+                              ? 'Try searching with a different name, roll number, or course.'
+                              : (isTeacher
+                                  ? 'No student chats yet. Tap "Message Student" below to start a direct 1-to-1 chat.'
+                                  : 'No instructor chats yet. Tap "Message Teacher" below to start a direct 1-to-1 chat.'),
                         ),
                       ),
                     ),
                   )
                 else
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
-                          final inquiry = filteredInquiries[index];
+                          final conv = filtered[index];
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _InquiryCard(
-                              inquiry: inquiry,
-                              isTeacher: isTeacher,
-                              currentStaffName: currentStaff?.fullName ??
-                                  user?.displayName ??
-                                  'Teacher',
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: _AcademicConversationListTile(
+                              conversation: conv,
+                              isViewerTeacher: isTeacher,
+                              onTap: () {
+                                final otherName = isTeacher
+                                    ? conv.studentName
+                                    : conv.teacherName;
+                                final otherSubtitle = isTeacher
+                                    ? 'Roll #${conv.studentRollNumber} • ${conv.courseName}'
+                                    : conv.courseName;
+                                final otherRole =
+                                    isTeacher ? 'student' : 'teacher';
+                                final recipientId =
+                                    isTeacher ? conv.studentId : conv.teacherId;
+                                final recipientRole =
+                                    isTeacher ? 'student' : 'staff';
+
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => AcademicChatScreen(
+                                      academyId: conv.academyId,
+                                      conversationId: conv.id,
+                                      otherPartyName: otherName,
+                                      otherPartySubtitle: otherSubtitle,
+                                      otherPartyRole: otherRole,
+                                      recipientId: recipientId,
+                                      recipientRole: recipientRole,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           );
                         },
-                        childCount: filteredInquiries.length,
+                        childCount: filtered.length,
                       ),
                     ),
                   ),
@@ -385,586 +347,152 @@ class _StudentInquiriesScreenState
   }
 }
 
-class _KpiChip extends StatelessWidget {
-  const _KpiChip({
-    required this.label,
-    required this.count,
-    required this.icon,
-    required this.color,
+class _AcademicConversationListTile extends StatelessWidget {
+  const _AcademicConversationListTile({
+    required this.conversation,
+    required this.isViewerTeacher,
+    required this.onTap,
   });
 
-  final String label;
-  final String count;
-  final IconData icon;
-  final Color color;
+  final AcademicConversation conversation;
+  final bool isViewerTeacher;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      padding: const EdgeInsets.all(10),
-      borderRadius: 12,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 14, color: color),
-              const Spacer(),
-              Text(
-                count,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.65),
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
+    final dateFormat = DateFormat('MMM dd • hh:mm a');
+    final displayName =
+        isViewerTeacher ? conversation.studentName : conversation.teacherName;
+    final displaySubtitle = isViewerTeacher
+        ? 'Roll #${conversation.studentRollNumber} • ${conversation.courseName}'
+        : conversation.courseName;
+
+    final unreadCount = isViewerTeacher
+        ? conversation.unreadCountForTeacher
+        : conversation.unreadCountForStudent;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: unreadCount > 0
+                  ? const Color(0xFF38BDF8).withValues(alpha: 0.5)
+                  : Colors.white12,
+              width: unreadCount > 0 ? 1.5 : 1.0,
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FilterButton extends StatelessWidget {
-  const _FilterButton({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-    this.accentColor = const Color(0xFF38BDF8),
-  });
-
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final Color accentColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? accentColor.withValues(alpha: 0.2)
-              : Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected
-                ? accentColor.withValues(alpha: 0.6)
-                : Colors.white.withValues(alpha: 0.12),
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? accentColor : Colors.white70,
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _InquiryCard extends ConsumerWidget {
-  const _InquiryCard({
-    required this.inquiry,
-    required this.isTeacher,
-    required this.currentStaffName,
-  });
-
-  final StudentInquiry inquiry;
-  final bool isTeacher;
-  final String currentStaffName;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dateFormat = DateFormat('MMM dd, yyyy • hh:mm a');
-    final dateStr = dateFormat.format(inquiry.createdAt);
-
-    final isAnswered =
-        inquiry.status == 'answered' || inquiry.status == 'resolved';
-
-    return GlassCard(
-      padding: const EdgeInsets.all(14),
-      borderRadius: 16,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header: Student info & Status pill
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
+              // Contact Avatar
               CircleAvatar(
-                radius: 18,
-                backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.25),
+                radius: 22,
+                backgroundColor: isViewerTeacher
+                    ? const Color(0xFF6366F1).withValues(alpha: 0.25)
+                    : const Color(0xFF38BDF8).withValues(alpha: 0.25),
                 child: Text(
-                  inquiry.studentName.isNotEmpty
-                      ? inquiry.studentName[0].toUpperCase()
-                      : 'S',
-                  style: const TextStyle(
-                    color: Color(0xFFA5B4FC),
+                  displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U',
+                  style: TextStyle(
+                    color: isViewerTeacher
+                        ? const Color(0xFF818CF8)
+                        : const Color(0xFF38BDF8),
+                    fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
+
+              // Conversation Info & Message Snippet
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            displayName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          dateFormat.format(conversation.lastMessageAt),
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.5),
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
                     Text(
-                      inquiry.studentName,
+                      displaySubtitle,
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
+                        color: Color(0xFF38BDF8),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 2,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        if (inquiry.studentRollNumber.isNotEmpty)
-                          Text(
-                            'Roll #${inquiry.studentRollNumber}',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
-                              fontSize: 11,
-                            ),
-                          ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF38BDF8)
-                                .withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            inquiry.courseName,
-                            style: const TextStyle(
-                              color: Color(0xFF38BDF8),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              _StatusPill(status: inquiry.status),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Subject & Question content
-          Text(
-            inquiry.subject,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            inquiry.question,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.85),
-              fontSize: 13,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Footer with date and teacher name
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              Text.rich(
-                TextSpan(
-                  children: [
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 4),
-                        child: Icon(
-                          Icons.schedule,
-                          size: 12,
-                          color: Colors.white.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ),
-                    TextSpan(
-                      text: dateStr,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (inquiry.teacherName.isNotEmpty)
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      const WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 4),
-                          child: Icon(
-                            Icons.person_pin,
-                            size: 12,
-                            color: Colors.white54,
-                          ),
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'Teacher: ${inquiry.teacherName}',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-
-          // Teacher's reply bubble (if answered)
-          if (isAnswered && inquiry.reply.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.25),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              const WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: 6),
-                                  child: Icon(
-                                    Icons.verified,
-                                    size: 14,
-                                    color: Color(0xFF10B981),
-                                  ),
-                                ),
-                              ),
-                              TextSpan(
-                                text: 'Teacher Reply (${inquiry.teacherName})',
-                                style: const TextStyle(
-                                  color: Color(0xFF10B981),
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (inquiry.answeredAt != null) ...[
-                        const SizedBox(width: 8),
-                        Text(
-                          DateFormat('MMM dd • hh:mm a')
-                              .format(inquiry.answeredAt!),
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            fontSize: 10,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    inquiry.reply,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      height: 1.4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          // Reply Action button for Teacher
-          if (isTeacher) ...[
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerRight,
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: isAnswered
-                      ? Colors.white70
-                      : const Color(0xFF38BDF8),
-                  side: BorderSide(
-                    color: isAnswered
-                        ? Colors.white24
-                        : const Color(0xFF38BDF8).withValues(alpha: 0.5),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                ),
-                icon: Icon(
-                  isAnswered ? Icons.edit_note : Icons.reply,
-                  size: 16,
-                ),
-                label: Text(
-                  isAnswered ? 'Update Response' : 'Reply to Student',
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-                ),
-                onPressed: () => _showReplyDialog(context, ref),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  void _showReplyDialog(BuildContext context, WidgetRef ref) {
-    final replyController = TextEditingController(text: inquiry.reply);
-    final formKey = GlobalKey<FormState>();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (bottomSheetContext) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(bottomSheetContext).viewInsets.bottom,
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-              color: Color(0xFF0F172A),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              border: Border(
-                top: BorderSide(color: Color(0xFF334155), width: 1),
-              ),
-            ),
-            child: Form(
-              key: formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+                    const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.reply,
-                          color: Color(0xFF38BDF8),
-                          size: 22,
-                        ),
-                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Reply to ${inquiry.studentName}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
+                            conversation.lastMessage.isNotEmpty
+                                ? conversation.lastMessage
+                                : 'Direct conversation opened',
+                            style: TextStyle(
+                              color: unreadCount > 0
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.65),
+                              fontSize: 12,
+                              fontWeight: unreadCount > 0
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Colors.white70),
-                          onPressed: () => Navigator.of(bottomSheetContext).pop(),
-                        ),
+                        if (unreadCount > 0)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF38BDF8),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '$unreadCount',
+                              style: const TextStyle(
+                                color: Color(0xFF0F172A),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
                       ],
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Q: ${inquiry.subject}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            inquiry.question,
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.7),
-                              fontSize: 12,
-                            ),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: replyController,
-                      maxLines: 4,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        labelText: 'Your Guidance / Explanation',
-                        labelStyle: const TextStyle(color: Colors.white70),
-                        hintText: 'Type your explanation or guidance here...',
-                        hintStyle: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.05),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                            color: Colors.white.withValues(alpha: 0.15),
-                          ),
-                        ),
-                      ),
-                      validator: (val) {
-                        if (val == null || val.trim().isEmpty) {
-                          return 'Please enter your reply.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    FilledButton.icon(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF38BDF8),
-                        foregroundColor: const Color(0xFF0F172A),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      icon: const Icon(Icons.send, size: 18),
-                      label: const Text(
-                        'Send Reply & Notify Student',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      onPressed: () async {
-                        if (!formKey.currentState!.validate()) return;
-                        final repo = ref.read(communicationRepositoryProvider);
-                        await repo.answerInquiry(
-                          academyId: inquiry.academyId,
-                          inquiryId: inquiry.id,
-                          reply: replyController.text.trim(),
-                        );
-                        if (bottomSheetContext.mounted) {
-                          Navigator.of(bottomSheetContext).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Reply submitted and push notification dispatched!'),
-                              backgroundColor: Color(0xFF10B981),
-                            ),
-                          );
-                        }
-                      },
                     ),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-        );
-      },
-    );
-  }
-}
-
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.status});
-
-  final String status;
-
-  @override
-  Widget build(BuildContext context) {
-    Color bg;
-    Color fg;
-    String label;
-
-    switch (status) {
-      case 'answered':
-      case 'resolved':
-        bg = const Color(0xFF10B981).withValues(alpha: 0.15);
-        fg = const Color(0xFF10B981);
-        label = 'Answered';
-        break;
-      case 'open':
-      default:
-        bg = const Color(0xFFF59E0B).withValues(alpha: 0.15);
-        fg = const Color(0xFFF59E0B);
-        label = 'Pending';
-        break;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: fg.withValues(alpha: 0.3)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: fg,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
         ),
       ),
     );

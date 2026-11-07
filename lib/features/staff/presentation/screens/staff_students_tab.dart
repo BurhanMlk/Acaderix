@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/empty_state.dart';
 import '../../../admissions/domain/student.dart';
+import '../../../communication/application/communication_providers.dart';
+import '../../../communication/presentation/screens/academic_chat_screen.dart';
+import '../../../communication/presentation/screens/teacher_initiate_chat_modal.dart';
 import '../../application/staff_providers.dart';
 
-/// Staff view for browsing the campus student roster and looking up contact details.
+/// Staff view for browsing the campus student roster and looking up student profiles.
 class StaffStudentsTab extends ConsumerStatefulWidget {
   const StaffStudentsTab({super.key});
 
@@ -98,12 +101,116 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
 
               _DetailItem(label: 'Gender', value: student.gender),
               _DetailItem(label: 'Father/Guardian', value: student.fatherName),
-              _DetailItem(label: 'Guardian Phone', value: student.guardianPhone),
               _DetailItem(label: 'Relation', value: student.guardianRelation),
               _DetailItem(label: 'Address', value: student.address),
               _DetailItem(label: 'Admission Status', value: student.status.toUpperCase()),
               _DetailItem(label: 'Academic Session', value: student.academicSession),
               const SizedBox(height: 12),
+
+              // Student Privacy Notice
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF38BDF8).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF38BDF8).withValues(alpha: 0.25),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.shield_outlined,
+                      size: 20,
+                      color: Color(0xFF38BDF8),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Parent phone numbers are restricted to protect family privacy. Communication is conducted via in-app chat.',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 11,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF38BDF8),
+                    foregroundColor: const Color(0xFF0F172A),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.chat_bubble_outline, size: 16),
+                  label: Text(
+                    'Message ${student.fullName}',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  onPressed: () async {
+                    Navigator.of(ctx).pop();
+                    final staff = ref.read(currentStaffMemberProvider);
+                    final teacherId = staff?.id.isNotEmpty == true
+                        ? staff!.id
+                        : (staff?.staffId ?? 'faculty');
+                    final teacherName = staff?.fullName.isNotEmpty == true
+                        ? staff!.fullName
+                        : 'Faculty Teacher';
+                    final teacherStaffId = staff?.staffId ?? '';
+
+                    try {
+                      final repo = ref.read(communicationRepositoryProvider);
+                      final conv = await repo.getOrCreateConversation(
+                        academyId: student.academyId,
+                        teacherId: teacherId,
+                        teacherName: teacherName,
+                        teacherStaffId: teacherStaffId,
+                        studentId: student.id,
+                        studentName: student.fullName,
+                        studentRollNumber: student.rollNumber,
+                      );
+
+                      if (context.mounted) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => AcademicChatScreen(
+                              academyId: student.academyId,
+                              conversationId: conv.id,
+                              otherPartyName: student.fullName,
+                              otherPartySubtitle:
+                                  'Roll #${student.rollNumber}${student.academicSession.isNotEmpty ? " • ${student.academicSession}" : ""}',
+                              otherPartyRole: 'student',
+                              recipientId: student.id,
+                              recipientRole: 'student',
+                            ),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to open chat: $e'),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
             ],
           ),
         ),
@@ -190,6 +297,22 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
+                        ),
+                      ),
+                      TextButton.icon(
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFF38BDF8),
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        icon: const Icon(Icons.add_comment_outlined, size: 14),
+                        label: const Text(
+                          'Message Student',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                        ),
+                        onPressed: () => showTeacherInitiateChatModal(
+                          context,
+                          academyId: branch.academyId,
                         ),
                       ),
                     ],
@@ -299,17 +422,6 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                                           ),
                                       ],
                                     ),
-                                    if (s.guardianPhone.isNotEmpty) ...[
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        'Parent: ${s.guardianPhone}',
-                                        style: TextStyle(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.5),
-                                          fontSize: 11,
-                                        ),
-                                      ),
-                                    ],
                                   ],
                                 ),
                               ),
