@@ -592,22 +592,86 @@ class _AcademyConversationsScreenState
     ];
   }
 
+  static bool matchesTeacher(AcademicConversation c, Staff staff) {
+    final staffId = staff.id.trim();
+    final staffCode = staff.staffId.trim().toUpperCase();
+    final staffName = staff.fullName.trim().toLowerCase();
+    final staffEmail = staff.email.trim().toLowerCase();
+
+    final cTeacherId = c.teacherId.trim();
+    final cTeacherStaffId = c.teacherStaffId.trim().toUpperCase();
+    final cTeacherName = c.teacherName.trim().toLowerCase();
+
+    // 1. Direct ID / Staff ID match
+    if (staffId.isNotEmpty &&
+        (cTeacherId == staffId ||
+            cTeacherStaffId == staffId.toUpperCase())) {
+      return true;
+    }
+    if (staffCode.isNotEmpty &&
+        (cTeacherId.toUpperCase() == staffCode ||
+            cTeacherStaffId == staffCode)) {
+      return true;
+    }
+
+    // 2. Email match
+    if (staffEmail.isNotEmpty &&
+        (cTeacherId.toLowerCase() == staffEmail ||
+            cTeacherStaffId.toLowerCase() == staffEmail)) {
+      return true;
+    }
+
+    // 3. Name match (case-insensitive)
+    if (staffName.isNotEmpty &&
+        cTeacherName.isNotEmpty &&
+        cTeacherName == staffName) {
+      return true;
+    }
+    if (staffName.isNotEmpty &&
+        cTeacherId.isNotEmpty &&
+        cTeacherId.toLowerCase() == staffName) {
+      return true;
+    }
+
+    return false;
+  }
+
+  static bool matchesStudent(AcademicConversation c, Student student) {
+    final studentId = student.id.trim();
+    final roll = student.rollNumber.trim().toUpperCase();
+    final studentName = student.fullName.trim().toLowerCase();
+
+    final cStudentId = c.studentId.trim();
+    final cRoll = c.studentRollNumber.trim().toUpperCase();
+    final cStudentName = c.studentName.trim().toLowerCase();
+
+    // 1. Direct ID / Roll Number match
+    if (studentId.isNotEmpty &&
+        (cStudentId == studentId ||
+            cRoll == studentId.toUpperCase())) {
+      return true;
+    }
+    if (roll.isNotEmpty &&
+        (cStudentId.toUpperCase() == roll || cRoll == roll)) {
+      return true;
+    }
+
+    // 2. Name match (case-insensitive)
+    if (studentName.isNotEmpty &&
+        (cStudentName == studentName ||
+            cStudentId.toLowerCase() == studentName)) {
+      return true;
+    }
+
+    return false;
+  }
+
   List<AcademicConversation> _findTeacherConversations({
     required Staff staff,
     required Map<String, List<AcademicConversation>> teacherConvsMap,
     required List<AcademicConversation> allConversations,
   }) {
-    if (teacherConvsMap.containsKey(staff.id)) {
-      return teacherConvsMap[staff.id]!;
-    }
-    if (staff.staffId.isNotEmpty &&
-        teacherConvsMap.containsKey(staff.staffId)) {
-      return teacherConvsMap[staff.staffId]!;
-    }
-    return allConversations.where((c) {
-      return c.teacherId == staff.id ||
-          (staff.staffId.isNotEmpty && c.teacherStaffId == staff.staffId);
-    }).toList();
+    return allConversations.where((c) => matchesTeacher(c, staff)).toList();
   }
 
   List<AcademicConversation> _findStudentConversations({
@@ -615,18 +679,7 @@ class _AcademyConversationsScreenState
     required Map<String, List<AcademicConversation>> studentConvsMap,
     required List<AcademicConversation> allConversations,
   }) {
-    if (studentConvsMap.containsKey(student.id)) {
-      return studentConvsMap[student.id]!;
-    }
-    if (student.rollNumber.isNotEmpty &&
-        studentConvsMap.containsKey(student.rollNumber)) {
-      return studentConvsMap[student.rollNumber]!;
-    }
-    return allConversations.where((c) {
-      return c.studentId == student.id ||
-          (student.rollNumber.isNotEmpty &&
-              c.studentRollNumber == student.rollNumber);
-    }).toList();
+    return allConversations.where((c) => matchesStudent(c, student)).toList();
   }
 }
 
@@ -660,15 +713,18 @@ class _TeacherConversationsAuditScreenState
     final repo = ref.watch(communicationRepositoryProvider);
 
     return StreamBuilder<List<AcademicConversation>>(
-      stream: repo.watchAcademicConversations(
-        widget.academyId,
-        teacherId: widget.staff.id,
-      ),
+      stream: repo.watchAcademicConversations(widget.academyId),
       initialData: widget.initialConversations.isNotEmpty
           ? widget.initialConversations
           : null,
       builder: (context, snapshot) {
-        final convs = snapshot.data ?? widget.initialConversations;
+        final allConvs = snapshot.data ?? widget.initialConversations;
+        final convs = allConvs
+            .where((c) => _AcademyConversationsScreenState.matchesTeacher(
+                  c,
+                  widget.staff,
+                ))
+            .toList();
 
         if (convs.isEmpty) {
           return DashboardBackground(
@@ -1053,15 +1109,18 @@ class _StudentConversationsAuditScreenState
     final repo = ref.watch(communicationRepositoryProvider);
 
     return StreamBuilder<List<AcademicConversation>>(
-      stream: repo.watchAcademicConversations(
-        widget.academyId,
-        studentId: widget.student.id,
-      ),
+      stream: repo.watchAcademicConversations(widget.academyId),
       initialData: widget.initialConversations.isNotEmpty
           ? widget.initialConversations
           : null,
       builder: (context, snapshot) {
-        final convs = snapshot.data ?? widget.initialConversations;
+        final allConvs = snapshot.data ?? widget.initialConversations;
+        final convs = allConvs
+            .where((c) => _AcademyConversationsScreenState.matchesStudent(
+                  c,
+                  widget.student,
+                ))
+            .toList();
 
         if (convs.isEmpty) {
           return DashboardBackground(

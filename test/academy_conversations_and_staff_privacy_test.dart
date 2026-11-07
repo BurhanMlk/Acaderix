@@ -1092,5 +1092,112 @@ void main() {
         expect(find.text('Export'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'AcademyConversationsScreen: teacher chats appear even when conversation uses staffId or name instead of staff doc id',
+      (tester) async {
+        tester.view.physicalSize = const Size(1280, 1600);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final commRepo = _FakeCommunicationRepository();
+        addTearDown(commRepo.dispose);
+
+        // Staff has a random Firestore doc id, but staffId is STF-CHEM-99
+        final staffMember = Staff(
+          id: 'random_firestore_uuid_9999',
+          staffId: 'STF-CHEM-99',
+          fullName: 'Prof. Rashid Chemistry',
+          jobTitle: 'Senior Chemistry Faculty',
+          email: 'rashid@apex.edu.pk',
+          academyId: testAcademyId,
+        );
+
+        // Conversation was created with teacherId: 'STF-CHEM-99' (the staffId)
+        final chemConversation = AcademicConversation(
+          id: 'conv_chem_01',
+          academyId: testAcademyId,
+          courseId: 'course_chem_12',
+          courseName: 'Organic Chemistry',
+          studentId: 'stu_001',
+          studentName: 'Hamza Farooq',
+          studentRollNumber: '100001',
+          teacherId: 'STF-CHEM-99', // Uses staffId, NOT doc UUID
+          teacherName: 'Prof. Rashid Chemistry',
+          lastMessage: 'Review reaction mechanisms for tomorrow.',
+          lastMessageAt: DateTime.now(),
+          lastSenderRole: 'teacher',
+          lastSenderId: 'STF-CHEM-99',
+          unreadCountForTeacher: 0,
+          unreadCountForStudent: 1,
+          status: 'active',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        commRepo.addConversations([chemConversation]);
+        await commRepo.sendChatMessage(
+          ChatMessage(
+            id: 'msg_chem_1',
+            conversationId: 'conv_chem_01',
+            academyId: testAcademyId,
+            senderId: 'STF-CHEM-99',
+            senderName: 'Prof. Rashid Chemistry',
+            senderRole: 'teacher',
+            text: 'Review reaction mechanisms for tomorrow.',
+            createdAt: DateTime.now(),
+          ),
+          recipientId: 'stu_001',
+          recipientRole: 'student',
+        );
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authRepositoryProvider.overrideWithValue(_FakeAuthRepo(adminUser)),
+              currentAcademyIdProvider.overrideWithValue(testAcademyId),
+              academyAccessProvider.overrideWith(
+                (ref) => Stream.value(
+                  const AcademyAccessInfo(
+                    state: AcademyAccessState.active,
+                    academyId: testAcademyId,
+                    academyName: 'Apex Academic Institute',
+                  ),
+                ),
+              ),
+              communicationRepositoryProvider.overrideWithValue(commRepo),
+              staffStreamProvider.overrideWith(
+                (ref, id) => Stream.value([staffMember]),
+              ),
+              studentsStreamProvider.overrideWith(
+                (ref, id) => Stream.value([student1]),
+              ),
+            ],
+            child: const MaterialApp(
+              home: Scaffold(body: AcademyConversationsScreen()),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Verify Staff tab renders Prof. Rashid Chemistry with 1 conversation
+        expect(find.text('Prof. Rashid Chemistry'), findsOneWidget);
+        expect(find.text('1 Student Chats'), findsOneWidget);
+
+        // Tap Prof. Rashid Chemistry card to open TeacherConversationsAuditScreen
+        await tester.tap(find.text('Prof. Rashid Chemistry'));
+        await tester.pumpAndSettle();
+
+        // Verify the conversation IS found and WhatsApp messages appear (NO empty state!)
+        expect(find.byType(TeacherConversationsAuditScreen), findsOneWidget);
+        expect(find.text('No Conversation History'), findsNothing);
+        expect(find.textContaining('Hamza Farooq'), findsWidgets);
+        expect(
+          find.text('Review reaction mechanisms for tomorrow.'),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }

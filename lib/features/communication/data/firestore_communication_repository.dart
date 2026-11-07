@@ -456,12 +456,20 @@ final class FirestoreCommunicationRepository
       });
       return list.where((c) {
         if (teacherId != null && teacherId.isNotEmpty) {
-          if (c.teacherId != teacherId && c.teacherStaffId != teacherId) {
+          final t = teacherId.trim().toLowerCase();
+          final matchesId = c.teacherId.toLowerCase() == t;
+          final matchesStaffId = c.teacherStaffId.toLowerCase() == t;
+          final matchesName = c.teacherName.toLowerCase() == t;
+          if (!matchesId && !matchesStaffId && !matchesName) {
             return false;
           }
         }
         if (studentId != null && studentId.isNotEmpty) {
-          if (c.studentId != studentId && c.studentRollNumber != studentId) {
+          final s = studentId.trim().toLowerCase();
+          final matchesId = c.studentId.toLowerCase() == s;
+          final matchesRoll = c.studentRollNumber.toLowerCase() == s;
+          final matchesName = c.studentName.toLowerCase() == s;
+          if (!matchesId && !matchesRoll && !matchesName) {
             return false;
           }
         }
