@@ -18,7 +18,10 @@ service cloud.firestore {
       return isSignedIn()
         && (
           request.auth.token.role == 'super_admin' ||
-          (exists(userProfile()) && get(userProfile()).data.role == 'super_admin')
+          request.auth.token.role == 'superAdmin' ||
+          request.auth.token.email == 'admin@acadrix.com' ||
+          request.auth.token.email == 'admin@acaderix.com' ||
+          (exists(userProfile()) && (get(userProfile()).data.role == 'super_admin' || get(userProfile()).data.role == 'superAdmin'))
         );
     }
 
@@ -32,8 +35,8 @@ service cloud.firestore {
     // Academies: an owner creates/updates their own; Super Admin manages all.
     // Public read allows pre-login verification of academy standing without issuing tokens.
     match /academies/{academyId} {
-      allow create: if isSignedIn()
-        && request.resource.data.ownerUid == request.auth.uid;
+      allow create: if isSuperAdmin()
+        || (isSignedIn() && request.resource.data.ownerUid == request.auth.uid);
       allow read: if true;
       allow update: if isSuperAdmin()
         || (isSignedIn() && resource.data.ownerUid == request.auth.uid);

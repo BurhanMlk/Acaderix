@@ -114,6 +114,8 @@ class AcademySubscription {
     this.paymentStatus = 'paid', // 'paid', 'unpaid', 'overdue'
     this.ownerEmail = '',
     this.ownerPhone = '',
+    this.maxBranches = 1,
+    this.maxStudents = 200,
   });
 
   final String id;
@@ -131,6 +133,8 @@ class AcademySubscription {
   final String paymentStatus;
   final String ownerEmail;
   final String ownerPhone;
+  final int maxBranches;
+  final int maxStudents;
 
   int get daysRemaining {
     final now = DateTime.now();
@@ -157,6 +161,8 @@ class AcademySubscription {
         'paymentStatus': paymentStatus,
         'ownerEmail': ownerEmail,
         'ownerPhone': ownerPhone,
+        'maxBranches': maxBranches,
+        'maxStudents': maxStudents,
       };
 
   factory AcademySubscription.fromJson(
@@ -189,6 +195,8 @@ class AcademySubscription {
       paymentStatus: json['paymentStatus'] as String? ?? 'paid',
       ownerEmail: json['ownerEmail'] as String? ?? '',
       ownerPhone: json['ownerPhone'] as String? ?? '',
+      maxBranches: (json['maxBranches'] as num?)?.toInt() ?? 1,
+      maxStudents: (json['maxStudents'] as num?)?.toInt() ?? 200,
     );
   }
 
@@ -206,6 +214,8 @@ class AcademySubscription {
     String? logoUrl,
     String? ownerEmail,
     String? ownerPhone,
+    int? maxBranches,
+    int? maxStudents,
   }) {
     return AcademySubscription(
       id: id,
@@ -223,6 +233,8 @@ class AcademySubscription {
       paymentStatus: paymentStatus ?? this.paymentStatus,
       ownerEmail: ownerEmail ?? this.ownerEmail,
       ownerPhone: ownerPhone ?? this.ownerPhone,
+      maxBranches: maxBranches ?? this.maxBranches,
+      maxStudents: maxStudents ?? this.maxStudents,
     );
   }
 }

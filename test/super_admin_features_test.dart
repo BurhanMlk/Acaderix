@@ -100,6 +100,44 @@ class _FakeAcademyRepository implements AcademyRepository {
     deleted = true;
     _academies.removeWhere((a) => a.id == id);
   }
+
+  @override
+  Future<String> createCustomAcademyWithPackage({
+    required String academyName,
+    required String academyCode,
+    required String address,
+    required String city,
+    required String province,
+    required String ownerName,
+    required String ownerEmail,
+    required String ownerPassword,
+    required String ownerPhone,
+    required int maxBranches,
+    required int maxStudents,
+    required int monthlyFee,
+    String billingCycle = 'monthly',
+    String status = 'active',
+    String paymentStatus = 'paid',
+    String? logoUrl,
+    String? cnic,
+  }) async {
+    final id = 'acad_${_academies.length + 1}';
+    _academies.add(Academy(
+      id: id,
+      code: academyCode.isNotEmpty ? academyCode : 'CODE-$id',
+      name: academyName,
+      city: city,
+      province: province,
+      address: address,
+      ownerName: ownerName,
+      ownerEmail: ownerEmail,
+      ownerPhone: ownerPhone,
+      status: status,
+      branchCount: 1,
+      registrationDate: DateTime.now(),
+    ));
+    return id;
+  }
 }
 
 class _FakeAuthRepo implements AuthRepository {

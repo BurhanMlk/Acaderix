@@ -7,6 +7,7 @@ import '../../../../core/widgets/async_list_state.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../../../shared/selected_branch_provider.dart';
+import '../../../academy_admin/application/academy_access_provider.dart';
 import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../application/branch_repository_provider.dart';
 import '../../domain/branch.dart';
@@ -72,6 +73,12 @@ class _BranchesListScreenState extends ConsumerState<BranchesListScreen> {
     final academyId = ref.watch(currentAcademyIdProvider) ?? '';
     final branches = ref.watch(branchesStreamProvider(academyId));
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
+    final access = ref.watch(academyAccessProvider).value;
+
+    final branchCount = branches.value?.length ?? 0;
+    final maxBranches = access?.maxBranches ?? 1;
+    final isUnlimited = maxBranches <= 0;
+    final isAtLimit = !isUnlimited && branchCount >= maxBranches;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -90,6 +97,55 @@ class _BranchesListScreenState extends ConsumerState<BranchesListScreen> {
                 hintText: 'Search branches by name or city',
                 prefixIcon: Icon(Icons.search),
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isAtLimit
+                        ? Colors.amber.withValues(alpha: 0.15)
+                        : Colors.white.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isAtLimit
+                          ? Colors.amber.withValues(alpha: 0.4)
+                          : Colors.white12,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isAtLimit ? Icons.warning_amber_rounded : Icons.domain,
+                        size: 14,
+                        color: isAtLimit ? Colors.amber : Colors.white70,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Quota: $branchCount / ${isUnlimited ? '∞' : maxBranches} Campuses',
+                        style: TextStyle(
+                          color: isAtLimit ? Colors.amber : Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  access?.planName ?? 'Standard',
+                  style: const TextStyle(
+                    color: Colors.white38,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(

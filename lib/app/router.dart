@@ -18,6 +18,7 @@ import '../features/onboarding/presentation/screens/welcome_screen.dart';
 import '../features/super_admin/domain/academy.dart';
 import '../features/super_admin/domain/subscription_models.dart';
 import '../features/super_admin/presentation/screens/academies_list_screen.dart';
+import '../features/super_admin/presentation/screens/create_custom_academy_screen.dart';
 import '../features/super_admin/presentation/screens/academy_admin_reset_password_screen.dart';
 import '../features/super_admin/presentation/screens/academy_details_screen.dart';
 import '../features/super_admin/presentation/screens/change_plan_screen.dart';
@@ -76,6 +77,7 @@ abstract final class AppRoutes {
 
   static const String superAdmin = '/super-admin';
   static const String academiesList = '/super-admin/academies';
+  static const String createAcademy = '/super-admin/academies/create';
   static const String academyDetails = '/super-admin/academies/details';
   static const String academyAdminResetPassword =
       '/super-admin/academies/reset-password';
@@ -150,6 +152,7 @@ final Map<AppRole, Set<String>> _roleRoutes = {
   AppRole.superAdmin: {
     AppRoutes.superAdmin,
     AppRoutes.academiesList,
+    AppRoutes.createAcademy,
     AppRoutes.academyDetails,
     AppRoutes.academyAdminResetPassword,
     AppRoutes.superAdminResetPassword,
@@ -357,6 +360,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.academiesList,
             builder: (context, state) => const AcademiesListScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.createAcademy,
+            builder: (context, state) => const CreateCustomAcademyScreen(),
           ),
           GoRoute(
             path: AppRoutes.academyDetails,

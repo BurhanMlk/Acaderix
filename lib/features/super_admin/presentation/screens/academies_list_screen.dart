@@ -88,11 +88,18 @@ class _AcademiesListScreenState extends ConsumerState<AcademiesListScreen> {
   Widget build(BuildContext context) {
     final academies = ref.watch(academiesStreamProvider);
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: TextField(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push(AppRoutes.createAcademy),
+        icon: const Icon(Icons.add_business),
+        label: const Text('Add Academy'),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: TextField(
             onChanged: (value) => setState(() => _query = value),
             decoration: InputDecoration(
               hintText: 'Search by name or code',
@@ -258,6 +265,7 @@ class _AcademiesListScreenState extends ConsumerState<AcademiesListScreen> {
           ),
         ),
       ],
+      ),
     );
   }
 

@@ -8,6 +8,7 @@ import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../shared/branch_tab_bar.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../../../shared/selected_branch_provider.dart';
+import '../../../academy_admin/application/academy_access_provider.dart';
 import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../../branches/domain/branch.dart';
 import '../../application/student_repository_provider.dart';
@@ -82,6 +83,12 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
     final branches =
         ref.watch(branchesStreamProvider(academyId)).value ?? const <Branch>[];
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
+    final access = ref.watch(academyAccessProvider).value;
+
+    final studentCount = students.value?.length ?? 0;
+    final maxStudents = access?.maxStudents ?? 200;
+    final isUnlimited = maxStudents <= 0;
+    final isAtLimit = !isUnlimited && studentCount >= maxStudents;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -102,6 +109,57 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                 hintText: 'Search by name or roll number',
                 prefixIcon: Icon(Icons.search),
               ),
+            ),
+          ),
+
+          // Capacity & Package Quota Indicator
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isAtLimit
+                        ? Colors.amber.withValues(alpha: 0.15)
+                        : Colors.white.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isAtLimit
+                          ? Colors.amber.withValues(alpha: 0.4)
+                          : Colors.white12,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isAtLimit ? Icons.warning_amber_rounded : Icons.people,
+                        size: 14,
+                        color: isAtLimit ? Colors.amber : Colors.white70,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Capacity: $studentCount / ${isUnlimited ? '∞' : maxStudents} Students',
+                        style: TextStyle(
+                          color: isAtLimit ? Colors.amber : Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  access?.planName ?? 'Standard',
+                  style: const TextStyle(
+                    color: Colors.white38,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
             ),
           ),
 

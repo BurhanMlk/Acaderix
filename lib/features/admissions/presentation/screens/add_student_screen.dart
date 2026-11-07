@@ -10,6 +10,7 @@ import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/loading_button.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../../../shared/selected_branch_provider.dart';
+import '../../../academy_admin/application/academy_access_provider.dart';
 import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../application/student_repository_provider.dart';
 import '../../domain/student.dart';
@@ -69,6 +70,17 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
     final academyId = ref.read(currentAcademyIdProvider);
     if (academyId == null) {
       setState(() => _error = 'No academy context available.');
+      return;
+    }
+
+    final access = ref.read(academyAccessProvider).value;
+    final currentStudents =
+        ref.read(studentsStreamProvider(academyId)).value ?? [];
+    if (access != null &&
+        access.maxStudents > 0 &&
+        currentStudents.length >= access.maxStudents) {
+      setState(() => _error =
+          'Student enrollment capacity reached (${currentStudents.length}/${access.maxStudents}). Your current subscription package does not allow admitting more students. Please contact Super Admin to upgrade.');
       return;
     }
 
@@ -219,6 +231,12 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
   Widget build(BuildContext context) {
     final academyId = ref.watch(currentAcademyIdProvider) ?? '';
     final branchesAsync = ref.watch(branchesStreamProvider(academyId));
+    final access = ref.watch(academyAccessProvider).value;
+    final students = ref.watch(studentsStreamProvider(academyId)).value ?? [];
+
+    final maxStudents = access?.maxStudents ?? 200;
+    final isUnlimited = maxStudents <= 0;
+    final isLimitReached = !isUnlimited && students.length >= maxStudents;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -228,12 +246,41 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              if (isLimitReached)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.amber.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.warning_amber_rounded,
+                          color: Colors.amber),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Student Capacity Reached (${students.length}/$maxStudents enrolled).\nYour subscription package does not allow admitting more students. Please contact Super Admin to upgrade.',
+                          style: const TextStyle(
+                            color: Colors.amber,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               AppTextField(
                 controller: _fullName,
                 label: 'Full name',
                 icon: Icons.person_outline,
                 textInputAction: TextInputAction.next,
                 validator: (v) => Validators.required(v, 'Full name'),
+                enabled: !isLimitReached,
               ),
               const SizedBox(height: 12),
               AppTextField(
@@ -383,10 +430,10 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
               ],
               const SizedBox(height: 20),
               LoadingButton(
-                label: 'Admit Student',
+                label: isLimitReached ? 'Capacity Reached' : 'Admit Student',
                 icon: Icons.person_add,
                 loading: _submitting,
-                onPressed: _submit,
+                onPressed: isLimitReached ? null : _submit,
               ),
             ],
           ),

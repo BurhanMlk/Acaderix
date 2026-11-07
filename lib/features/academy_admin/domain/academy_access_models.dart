@@ -26,6 +26,9 @@ class AcademyAccessInfo {
     this.supportPhone = AppConstants.superAdminSupportPhone,
     this.supportEmail = AppConstants.superAdminSupportEmail,
     this.statusReason = '',
+    this.maxBranches = 1,
+    this.maxStudents = 200,
+    this.planPrice = 15000,
   });
 
   final AcademyAccessState state;
@@ -42,6 +45,9 @@ class AcademyAccessInfo {
   final String supportPhone;
   final String supportEmail;
   final String statusReason;
+  final int maxBranches;
+  final int maxStudents;
+  final int planPrice;
 
   bool get isActive => state == AcademyAccessState.active;
   bool get isSuspended => state == AcademyAccessState.suspended;
@@ -64,6 +70,9 @@ class AcademyAccessInfo {
     String? supportPhone,
     String? supportEmail,
     String? statusReason,
+    int? maxBranches,
+    int? maxStudents,
+    int? planPrice,
   }) {
     return AcademyAccessInfo(
       state: state ?? this.state,
@@ -80,6 +89,9 @@ class AcademyAccessInfo {
       supportPhone: supportPhone ?? this.supportPhone,
       supportEmail: supportEmail ?? this.supportEmail,
       statusReason: statusReason ?? this.statusReason,
+      maxBranches: maxBranches ?? this.maxBranches,
+      maxStudents: maxStudents ?? this.maxStudents,
+      planPrice: planPrice ?? this.planPrice,
     );
   }
 

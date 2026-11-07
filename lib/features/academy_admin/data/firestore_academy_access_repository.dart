@@ -317,7 +317,25 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         .trim();
     final rawStatus =
         (academyData['status'] as String? ?? 'pending').toLowerCase();
-    final planName = academyData['subscriptionPlan'] as String? ?? 'Standard';
+    final planName = subData?['planName'] as String? ??
+        academyData['subscriptionPlan'] as String? ??
+        'Standard';
+
+    final int maxStudents = (subData?['maxStudents'] as num?)?.toInt() ??
+        (academyData['maxStudents'] as num?)?.toInt() ??
+        (academyData['allowedStudents'] as num?)?.toInt() ??
+        200;
+
+    final int maxBranches = (subData?['maxBranches'] as num?)?.toInt() ??
+        (academyData['maxBranches'] as num?)?.toInt() ??
+        (academyData['allowedBranches'] as num?)?.toInt() ??
+        1;
+
+    final int planPrice = (subData?['price'] as num?)?.toInt() ??
+        (academyData['price'] as num?)?.toInt() ??
+        (academyData['subscriptionPrice'] as num?)?.toInt() ??
+        (academyData['monthlyFee'] as num?)?.toInt() ??
+        15000;
 
     // 1. Check raw academy approval status
     if (rawStatus == 'pending') {
@@ -331,6 +349,9 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         ownerName: ownerName,
         rawStatus: rawStatus,
         planName: planName,
+        maxBranches: maxBranches,
+        maxStudents: maxStudents,
+        planPrice: planPrice,
         statusReason:
             'Your academy registration is awaiting approval from the platform administration.',
       );
@@ -347,6 +368,9 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         ownerName: ownerName,
         rawStatus: rawStatus,
         planName: planName,
+        maxBranches: maxBranches,
+        maxStudents: maxStudents,
+        planPrice: planPrice,
         statusReason:
             'This academy has been suspended by the platform administrator.',
       );
@@ -393,6 +417,9 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         renewalDate: renewalDate,
         paymentStatus: paymentStatus,
         planName: planName,
+        maxBranches: maxBranches,
+        maxStudents: maxStudents,
+        planPrice: planPrice,
         statusReason:
             'Subscription period has expired. Please contact Super Admin to renew your monthly plan.',
       );
@@ -412,6 +439,9 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
         renewalDate: renewalDate,
         paymentStatus: paymentStatus,
         planName: planName,
+        maxBranches: maxBranches,
+        maxStudents: maxStudents,
+        planPrice: planPrice,
         statusReason:
             'Subscription fee payment is pending clearance. Please contact Super Admin.',
       );
@@ -430,6 +460,9 @@ class FirestoreAcademyAccessRepository implements AcademyAccessRepository {
       renewalDate: renewalDate,
       paymentStatus: paymentStatus,
       planName: planName,
+      maxBranches: maxBranches,
+      maxStudents: maxStudents,
+      planPrice: planPrice,
       statusReason: 'Active',
     );
   }

@@ -21,6 +21,7 @@ class SuperAdminShell extends ConsumerWidget {
   final Widget child;
 
   String get _title {
+    if (location.startsWith(AppRoutes.createAcademy)) return 'Create Academy';
     if (location.startsWith(AppRoutes.academyDetails)) return 'Academy Details';
     if (location.startsWith(AppRoutes.academyAdminResetPassword)) {
       return 'Reset Admin Password';

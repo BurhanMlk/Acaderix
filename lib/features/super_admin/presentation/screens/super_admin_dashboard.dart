@@ -84,13 +84,28 @@ class SuperAdminDashboard extends ConsumerWidget {
             },
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Academies',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Academies',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              FilledButton.icon(
+                onPressed: () => context.push(AppRoutes.createAcademy),
+                icon: const Icon(Icons.add, size: 16),
+                label: const Text('Add Academy'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF6366F1),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           ..._academySection(context, ref, academies),
