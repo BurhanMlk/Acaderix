@@ -1,0 +1,53 @@
+name: Deploy to Google Play
+
+on:
+  push:
+    branches:
+      - main # Triggers on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > upload-keystore.jks
+          cp upload-keystore.jks android/upload-keystore.jks
+          cp upload-keystore.jks android/app/upload-keystore.jks
+
+      - name: Decode Key Properties
+        run: |
+          echo "${{ secrets.KEY_PROPERTIES_BASE64 }}" | base64 --decode > android/app/key.properties
+          cp android/app/key.properties android/key.properties
+
+      - name: Decode Service Account JSON
+        run: echo "${{ secrets.SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 --decode > service-account.json
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Android App Bundle
+        run: flutter build appbundle --release
+
+      - name: Upload to Google Play Console
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: service-account.json
+          packageName: com.acadrix.academy_management
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: internal # Can be internal, alpha, beta, or production
+          status: completed

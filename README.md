@@ -76,6 +76,33 @@ The app initializes Firebase on startup using
 > for a private project. `Firebase Admin SDK` credentials are used **only**
 > inside Cloud Functions.
 
+## Android release signing
+
+Release builds require a private upload keystore and `android/key.properties`.
+Both are ignored by Git. Use your existing upload keystore if this app has
+already been published; generating a new one will not replace the original
+signing key.
+
+Create `android/key.properties` locally with the values for your keystore:
+
+```properties
+storePassword=<keystore password>
+keyPassword=<key password>
+keyAlias=<key alias>
+storeFile=../<keystore filename>
+```
+
+`storeFile` is resolved relative to `android/app`. Keep the keystore and
+passwords private, and do not commit them. Then build a signed release:
+
+```sh
+flutter build appbundle --release
+```
+
+Debug builds do not need release signing credentials. Without this file or
+the referenced keystore, a release build intentionally fails rather than
+signing with a debug key.
+
 ## Local emulator
 
 ```sh

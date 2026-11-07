@@ -56,3 +56,11 @@ app.*.map.json
 # Firebase service-account keys (used by local dev scripts)
 **/serviceAccount*.json
 **/*-service-account.json
+android/key.properties
+upload-keystore.jks
+service-account.json
+keyprops-b64.txt
+service-account-b64.txt
+keystore-b64.txt
+.gradle/
+android/build/
