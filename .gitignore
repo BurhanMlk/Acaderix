@@ -65,3 +65,4 @@ keystore-b64.txt
 .gradle/
 android/build/
 firebase-options-b64.txt
+google-services-b64.txt
