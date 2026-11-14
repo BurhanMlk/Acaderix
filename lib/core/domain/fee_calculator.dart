@@ -27,4 +27,19 @@ abstract final class FeeCalculator {
   static bool isSettled(double invoiceTotal, double paid) {
     return outstanding(invoiceTotal, paid) < 0.01;
   }
+
+  /// Calculates accumulated late fine based on days overdue.
+  /// Returns 0 if not overdue or fine rate is 0.
+  static double lateFine({
+    required DateTime dueDate,
+    required double finePerDay,
+    double maxFine = 0,
+    DateTime? asOf,
+  }) {
+    final now = asOf ?? DateTime.now();
+    if (now.isBefore(dueDate) || finePerDay <= 0) return 0;
+    final daysLate = now.difference(dueDate).inDays;
+    final fine = daysLate * finePerDay;
+    return maxFine > 0 ? math.min(fine, maxFine) : fine;
+  }
 }
