@@ -66,7 +66,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                     child: Text(
                       'Attendance Overview',
                       style: theme.textTheme.titleSmall?.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF111827),
                         fontWeight: FontWeight.w700,
                       ),
                       maxLines: 1,
@@ -122,7 +122,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                                 ? [
                                     PieChartSectionData(
                                       value: 100,
-                                      color: Colors.white12,
+                                      color: const Color(0xFFF3F4F6),
                                       showTitle: false,
                                       radius: 14,
                                     ),
@@ -165,7 +165,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                             Text(
                               '${percentage.toStringAsFixed(0)}%',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -173,7 +173,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                             Text(
                               'Present',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
+                                color: const Color(0xFF6B7280),
                                 fontSize: 10,
                               ),
                             ),
@@ -212,7 +212,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                         child: Text(
                           'Minimum Exam Requirement (75%)',
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Color(0xFF6B7280),
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
@@ -239,7 +239,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                     child: LinearProgressIndicator(
                       value: (percentage / 100).clamp(0.0, 1.0),
                       minHeight: 8,
-                      backgroundColor: Colors.white12,
+                      backgroundColor: const Color(0xFFF3F4F6),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         isEligible
                             ? const Color(0xFF10B981)
@@ -302,7 +302,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
         Text(
           'Attendance Records (${filteredRecords.length})',
           style: theme.textTheme.titleSmall?.copyWith(
-            color: Colors.white,
+            color: const Color(0xFF111827),
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -312,9 +312,9 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
           Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E293B).withValues(alpha: 0.4),
+              color: const Color(0xFF111827).withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: const Color(0xFFF3F4F6)),
             ),
             child: Center(
               child: Column(
@@ -322,13 +322,13 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                   Icon(
                     Icons.event_note_outlined,
                     size: 40,
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: const Color(0xFFD1D5DB),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'No attendance logs recorded yet',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF6B7280),
                       fontSize: 13,
                     ),
                   ),
@@ -366,7 +366,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: const Color(0xFF374151),
                     fontSize: 12,
                   ),
                   maxLines: 1,
@@ -380,7 +380,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
         Text(
           '$count days',
           style: const TextStyle(
-            color: Colors.white,
+            color: Color(0xFF111827),
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -403,17 +403,17 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
         decoration: BoxDecoration(
           color: isSelected
               ? chipColor.withValues(alpha: 0.25)
-              : const Color(0xFF1E293B),
+              : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? chipColor : Colors.white12,
+            color: isSelected ? chipColor : const Color(0xFFF3F4F6),
             width: 1,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? chipColor : Colors.white60,
+            color: isSelected ? chipColor : const Color(0xFF9CA3AF),
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
@@ -454,9 +454,9 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B).withValues(alpha: 0.6),
+        color: const Color(0xFF111827).withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: const Color(0xFFF3F4F6)),
       ),
       child: Row(
         children: [
@@ -476,7 +476,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                 Text(
                   courseName,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -487,7 +487,7 @@ class _StudentAttendanceTabState extends ConsumerState<StudentAttendanceTab> {
                 Text(
                   dateStr,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: const Color(0xFF9CA3AF),
                     fontSize: 11,
                   ),
                 ),

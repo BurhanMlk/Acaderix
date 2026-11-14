@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/domain/fee_calculator.dart';
@@ -6,6 +7,7 @@ import '../../../core/network/firestore_ext.dart';
 import '../domain/fee_invoice.dart';
 import '../domain/fee_payment.dart';
 import '../domain/fee_repository.dart';
+import '../domain/fee_structure.dart';
 
 /// Firestore-backed [FeeRepository].
 ///
@@ -16,11 +18,43 @@ final class FirestoreFeeRepository implements FeeRepository {
 
   final FirebaseFirestore _firestore;
 
+  static const _uuid = Uuid();
+
+  // ── Collection references ───────────────────────────────────────────
+
+  CollectionReference<Map<String, dynamic>> _structures(String academyId) =>
+      _firestore.collection(FirestorePaths.feeStructures(academyId));
+
   CollectionReference<Map<String, dynamic>> _invoices(String academyId) =>
       _firestore.collection(FirestorePaths.feeInvoices(academyId));
 
   CollectionReference<Map<String, dynamic>> _payments(String academyId) =>
       _firestore.collection(FirestorePaths.feePayments(academyId));
+
+  // ── Fee Structures ──────────────────────────────────────────────────
+
+  @override
+  Stream<List<FeeStructure>> watchFeeStructures(String academyId) {
+    return _structures(academyId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => mapQueryDocs(snapshot, _structureFromDoc));
+  }
+
+  @override
+  Future<void> saveFeeStructure(FeeStructure structure) {
+    final data = toFirestoreData(structure.toJson())..remove('id');
+    return _structures(
+      structure.academyId,
+    ).doc(structure.id).set(data, SetOptions(merge: true));
+  }
+
+  @override
+  Future<void> deleteFeeStructure(String academyId, String structureId) {
+    return _structures(academyId).doc(structureId).delete();
+  }
+
+  // ── Invoices ────────────────────────────────────────────────────────
 
   @override
   Stream<List<FeeInvoice>> watchInvoices(
@@ -37,6 +71,69 @@ final class FirestoreFeeRepository implements FeeRepository {
   }
 
   @override
+  Future<void> createInvoice(FeeInvoice invoice) {
+    final data = toFirestoreData(invoice.toJson())..remove('id');
+    return _invoices(invoice.academyId).doc(invoice.id).set(data);
+  }
+
+  @override
+  Future<int> bulkCreateInvoices({
+    required FeeStructure structure,
+    required List<String> studentIds,
+    required String monthLabel,
+    required DateTime dueDate,
+  }) async {
+    if (studentIds.isEmpty) return 0;
+
+    final now = DateTime.now();
+    final timestampSuffix = now.millisecondsSinceEpoch.toString().substring(
+      now.millisecondsSinceEpoch.toString().length - 6,
+    );
+
+    // Firestore batches are capped at 500 operations.
+    const batchLimit = 500;
+    var count = 0;
+
+    for (var i = 0; i < studentIds.length; i += batchLimit) {
+      final batch = _firestore.batch();
+      final end = (i + batchLimit > studentIds.length)
+          ? studentIds.length
+          : i + batchLimit;
+
+      for (var j = i; j < end; j++) {
+        final invoiceId = _uuid.v4();
+        final invoiceNo = 'INV-$timestampSuffix-$j';
+
+        final invoice = FeeInvoice(
+          id: invoiceId,
+          academyId: structure.academyId,
+          studentId: studentIds[j],
+          invoiceNo: invoiceNo,
+          title: '${structure.title} — $monthLabel',
+          baseAmount: structure.amount,
+          fine: 0,
+          discount: 0,
+          scholarship: 0,
+          paidAmount: 0,
+          status: 'unpaid',
+          dueDate: dueDate,
+          issuedAt: now,
+        );
+
+        final data = toFirestoreData(invoice.toJson())..remove('id');
+        batch.set(_invoices(structure.academyId).doc(invoiceId), data);
+      }
+
+      await batch.commit();
+      count += end - i;
+    }
+
+    return count;
+  }
+
+  // ── Payments ────────────────────────────────────────────────────────
+
+  @override
   Stream<List<FeePayment>> watchPayments(
     String academyId, {
     String? studentId,
@@ -48,12 +145,6 @@ final class FirestoreFeeRepository implements FeeRepository {
     return query.snapshots().map(
       (snapshot) => mapQueryDocs(snapshot, _paymentFromDoc),
     );
-  }
-
-  @override
-  Future<void> createInvoice(FeeInvoice invoice) {
-    final data = toFirestoreData(invoice.toJson())..remove('id');
-    return _invoices(invoice.academyId).doc(invoice.id).set(data);
   }
 
   @override
@@ -83,6 +174,11 @@ final class FirestoreFeeRepository implements FeeRepository {
       });
     });
   }
+
+  // ── Mappers ─────────────────────────────────────────────────────────
+
+  FeeStructure _structureFromDoc(String id, Map<String, dynamic> data) =>
+      FeeStructure.fromJson({...fromFirestoreData(data), 'id': id});
 
   FeeInvoice _invoiceFromDoc(String id, Map<String, dynamic> data) =>
       FeeInvoice.fromJson({...fromFirestoreData(data), 'id': id});

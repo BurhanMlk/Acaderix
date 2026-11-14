@@ -113,10 +113,10 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
         ref.watch(staffStreamProvider(academyId)).value ?? const <Staff>[];
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
         title: const Text('Edit Course / Batch'),
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFFFFFFFF),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -129,12 +129,12 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
               // Course Name
               TextFormField(
                 controller: _nameCtrl,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Course Name *',
-                  labelStyle: const TextStyle(color: Colors.white70),
+                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -147,12 +147,12 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
               // Course Code
               TextFormField(
                 controller: _codeCtrl,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Course Code',
-                  labelStyle: const TextStyle(color: Colors.white70),
+                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -164,13 +164,13 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
               DropdownButtonFormField<String?>(
                 initialValue: _selectedBranchId,
                 isExpanded: true,
-                dropdownColor: const Color(0xFF1E293B),
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                dropdownColor: Colors.white,
+                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Campus Branch',
-                  labelStyle: const TextStyle(color: Colors.white70),
+                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -202,13 +202,13 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
               DropdownButtonFormField<String?>(
                 initialValue: _selectedTeacherId,
                 isExpanded: true,
-                dropdownColor: const Color(0xFF1E293B),
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                dropdownColor: Colors.white,
+                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Assigned Teacher / Staff Member *',
-                  labelStyle: const TextStyle(color: Colors.white70),
+                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -255,12 +255,12 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
               // Schedule
               TextFormField(
                 controller: _scheduleCtrl,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Schedule / Timetable',
-                  labelStyle: const TextStyle(color: Colors.white70),
+                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -274,12 +274,12 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _roomCtrl,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                      style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                       decoration: InputDecoration(
                         labelText: 'Room #',
-                        labelStyle: const TextStyle(color: Colors.white70),
+                        labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.05),
+                        fillColor: const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -291,12 +291,12 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
                     child: TextFormField(
                       controller: _feeCtrl,
                       keyboardType: TextInputType.number,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                      style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                       decoration: InputDecoration(
                         labelText: 'Monthly Fee (PKR)',
-                        labelStyle: const TextStyle(color: Colors.white70),
+                        labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.05),
+                        fillColor: const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -323,7 +323,7 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                         ),
                       )
                     : const Text(
@@ -331,7 +331,7 @@ class _EditCourseScreenState extends ConsumerState<EditCourseScreen> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                         ),
                       ),
               ),

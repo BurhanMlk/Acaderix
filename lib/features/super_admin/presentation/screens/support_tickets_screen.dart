@@ -40,7 +40,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     final ticketsAsync = ref.watch(supportTicketsStreamProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: ticketsAsync.when(
         loading: () => _buildLoadingState(),
         error: (err, _) => ErrorState(
@@ -171,14 +171,14 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
           TextField(
             controller: _searchController,
             onChanged: (_) => setState(() {}),
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Color(0xFF111827)),
             decoration: InputDecoration(
               hintText: 'Search by ticket #, academy, subject...',
-              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-              prefixIcon: const Icon(Icons.search, color: Colors.white70),
+              hintStyle: TextStyle(color: const Color(0xFF9CA3AF)),
+              prefixIcon: const Icon(Icons.search, color: Color(0xFF6B7280)),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: Colors.white70),
+                      icon: const Icon(Icons.clear, color: Color(0xFF6B7280)),
                       onPressed: () {
                         _searchController.clear();
                         setState(() {});
@@ -186,17 +186,17 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     )
                   : null,
               filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.06),
+              fillColor: const Color(0xFFF9FAFB),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: const Color(0xFFE5E7EB),
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: const Color(0xFFE5E7EB),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -307,16 +307,16 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
       selected: isSelected,
       onSelected: (_) => onSelected(value),
       selectedColor: const Color(0xFF6366F1).withValues(alpha: 0.35),
-      backgroundColor: Colors.white.withValues(alpha: 0.05),
+      backgroundColor: const Color(0xFFF9FAFB),
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.white70,
+        color: isSelected ? Colors.white : const Color(0xFF6B7280),
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         fontSize: 13,
       ),
       side: BorderSide(
         color: isSelected
             ? const Color(0xFF6366F1)
-            : Colors.white.withValues(alpha: 0.1),
+            : const Color(0xFFF3F4F6),
       ),
     );
   }
@@ -525,7 +525,7 @@ class _TicketCard extends StatelessWidget {
               Text(
                 ticket.subject,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -536,13 +536,13 @@ class _TicketCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.75),
+                  color: const Color(0xFF374151),
                   fontSize: 13,
                   height: 1.4,
                 ),
               ),
               const SizedBox(height: 14),
-              const Divider(color: Colors.white10),
+              const Divider(color: Color(0xFFF3F4F6)),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -557,7 +557,7 @@ class _TicketCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF111827),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -567,7 +567,7 @@ class _TicketCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: const Color(0xFF9CA3AF),
                             fontSize: 11,
                           ),
                         ),
@@ -582,7 +582,7 @@ class _TicketCard extends StatelessWidget {
                 child: Text(
                   DateFormat('MMM dd • hh:mm a').format(ticket.updatedAt),
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.45),
+                    color: const Color(0xFFD1D5DB),
                     fontSize: 11,
                   ),
                 ),
@@ -694,7 +694,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white24,
+                  color: const Color(0xFFE5E7EB),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -715,12 +715,12 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: Colors.white12,
+                    color: const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     t.categoryLabel,
-                    style: const TextStyle(color: Colors.white70, fontSize: 11),
+                    style: const TextStyle(color: Color(0xFF6B7280), fontSize: 11),
                   ),
                 ),
                 const Spacer(),
@@ -736,7 +736,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             Text(
               t.subject,
               style: const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF111827),
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
@@ -745,13 +745,13 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             Text(
               t.description,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: const Color(0xFF374151),
                 fontSize: 14,
                 height: 1.5,
               ),
             ),
             const SizedBox(height: 16),
-            const Divider(color: Colors.white12),
+            const Divider(color: Color(0xFFF3F4F6)),
             const SizedBox(height: 10),
 
             // Academy & Contact Info
@@ -766,7 +766,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                       Text(
                         t.academyName,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -774,7 +774,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                       Text(
                         '${t.contactName} (${t.contactEmail})',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: const Color(0xFF6B7280),
                           fontSize: 12,
                         ),
                       ),
@@ -790,7 +790,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
               const Text(
                 'Activity Thread',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: Color(0xFF6B7280),
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
@@ -802,12 +802,12 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                   decoration: BoxDecoration(
                     color: msg.isStaffReply
                         ? const Color(0xFF6366F1).withValues(alpha: 0.15)
-                        : Colors.white.withValues(alpha: 0.05),
+                        : const Color(0xFFF9FAFB),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: msg.isStaffReply
                           ? const Color(0xFF6366F1).withValues(alpha: 0.3)
-                          : Colors.white.withValues(alpha: 0.08),
+                          : const Color(0xFFF3F4F6),
                     ),
                   ),
                   child: Column(
@@ -830,7 +830,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                             DateFormat('MMM dd • hh:mm a')
                                 .format(msg.createdAt),
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: const Color(0xFF9CA3AF),
                               fontSize: 10,
                             ),
                           ),
@@ -840,7 +840,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                       Text(
                         msg.message,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                           fontSize: 13,
                           height: 1.4,
                         ),
@@ -856,7 +856,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             const Text(
               'Update Status',
               style: TextStyle(
-                color: Colors.white70,
+                color: Color(0xFF6B7280),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -891,8 +891,8 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                 if (!t.isClosed)
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white70,
-                      side: const BorderSide(color: Colors.white24),
+                      foregroundColor: const Color(0xFF6B7280),
+                      side: const BorderSide(color: Color(0xFFE5E7EB)),
                     ),
                     icon: const Icon(Icons.close_rounded, size: 16),
                     label: const Text('Close Ticket'),
@@ -906,7 +906,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             const Text(
               'Add Admin Response / Resolution Note',
               style: TextStyle(
-                color: Colors.white70,
+                color: Color(0xFF6B7280),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -915,17 +915,17 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             TextField(
               controller: _replyController,
               maxLines: 2,
-              style: const TextStyle(color: Colors.white, fontSize: 13),
+              style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Type response to academy administrator...',
                 hintStyle:
-                    TextStyle(color: Colors.white.withValues(alpha: 0.4)),
+                    TextStyle(color: const Color(0xFF9CA3AF)),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.06),
+                fillColor: const Color(0xFFF9FAFB),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.12),
+                    color: const Color(0xFFE5E7EB),
                   ),
                 ),
               ),
@@ -1046,7 +1046,7 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: const Color(0xFFE5E7EB),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1055,7 +1055,7 @@ class _NewTicketFormState extends State<_NewTicketForm> {
               const Text(
                 'Log New Support Ticket',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1064,7 +1064,7 @@ class _NewTicketFormState extends State<_NewTicketForm> {
               Text(
                 'Record an incoming inquiry or technical request for an academy.',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: const Color(0xFF6B7280),
                   fontSize: 13,
                 ),
               ),
@@ -1072,13 +1072,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
 
               TextFormField(
                 controller: _academyName,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Color(0xFF111827)),
                 decoration: InputDecoration(
                   labelText: 'Academy Name *',
                   labelStyle:
-                      TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                      TextStyle(color: const Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.06),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1093,13 +1093,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                   Expanded(
                     child: TextFormField(
                       controller: _academyCode,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFF111827)),
                       decoration: InputDecoration(
                         labelText: 'Academy Code *',
                         labelStyle: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7)),
+                            color: const Color(0xFF6B7280)),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
+                        fillColor: const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1112,13 +1112,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                   Expanded(
                     child: TextFormField(
                       controller: _contactName,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFF111827)),
                       decoration: InputDecoration(
                         labelText: 'Contact Person *',
                         labelStyle: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7)),
+                            color: const Color(0xFF6B7280)),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
+                        fillColor: const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1133,14 +1133,14 @@ class _NewTicketFormState extends State<_NewTicketForm> {
 
               TextFormField(
                 controller: _contactEmail,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Color(0xFF111827)),
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'Contact Email *',
                   labelStyle:
-                      TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                      TextStyle(color: const Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.06),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1156,14 +1156,14 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                     child: DropdownButtonFormField<String>(
                       initialValue: _category,
                       isExpanded: true,
-                      dropdownColor: const Color(0xFF1E293B),
-                      style: const TextStyle(color: Colors.white),
+                      dropdownColor: Colors.white,
+                      style: const TextStyle(color: Color(0xFF111827)),
                       decoration: InputDecoration(
                         labelText: 'Category',
                         labelStyle: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7)),
+                            color: const Color(0xFF6B7280)),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
+                        fillColor: const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1188,14 +1188,14 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                     child: DropdownButtonFormField<String>(
                       initialValue: _priority,
                       isExpanded: true,
-                      dropdownColor: const Color(0xFF1E293B),
-                      style: const TextStyle(color: Colors.white),
+                      dropdownColor: Colors.white,
+                      style: const TextStyle(color: Color(0xFF111827)),
                       decoration: InputDecoration(
                         labelText: 'Priority',
                         labelStyle: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7)),
+                            color: const Color(0xFF6B7280)),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
+                        fillColor: const Color(0xFFF9FAFB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1220,13 +1220,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
 
               TextFormField(
                 controller: _subject,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Color(0xFF111827)),
                 decoration: InputDecoration(
                   labelText: 'Subject *',
                   labelStyle:
-                      TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                      TextStyle(color: const Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.06),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1239,13 +1239,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
               TextFormField(
                 controller: _description,
                 maxLines: 3,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Color(0xFF111827)),
                 decoration: InputDecoration(
                   labelText: 'Inquiry Description *',
                   labelStyle:
-                      TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                      TextStyle(color: const Color(0xFF6B7280)),
                   filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.06),
+                  fillColor: const Color(0xFFF9FAFB),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

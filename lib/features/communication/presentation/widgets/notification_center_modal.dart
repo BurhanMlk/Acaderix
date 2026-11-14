@@ -13,7 +13,7 @@ Future<void> showNotificationCenterModal(BuildContext context, {String? academyI
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: const Color(0xFFFFFFFF),
     builder: (ctx) => NotificationCenterModal(academyId: academyId),
   );
 }
@@ -68,7 +68,7 @@ class _NotificationCenterModalState
         color: const Color(0xFF0F172A),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.12),
+          color: const Color(0xFFE5E7EB),
           width: 1,
         ),
       ),
@@ -82,7 +82,7 @@ class _NotificationCenterModalState
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: const Color(0xFFD1D5DB),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -105,7 +105,7 @@ class _NotificationCenterModalState
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
@@ -125,7 +125,7 @@ class _NotificationCenterModalState
                     child: Text(
                       '$unreadCount',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                       ),
@@ -153,7 +153,7 @@ class _NotificationCenterModalState
                   )
                 else
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white60, size: 20),
+                    icon: const Icon(Icons.close, color: Color(0xFF9CA3AF), size: 20),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
               ],
@@ -176,7 +176,7 @@ class _NotificationCenterModalState
           ),
 
           const SizedBox(height: 6),
-          const Divider(color: Colors.white12, height: 1),
+          const Divider(color: Color(0xFFF3F4F6), height: 1),
 
           // Notifications List
           Flexible(
@@ -190,13 +190,13 @@ class _NotificationCenterModalState
                           Icon(
                             Icons.notifications_none,
                             size: 48,
-                            color: Colors.white.withValues(alpha: 0.25),
+                            color: const Color(0xFFD1D5DB),
                           ),
                           const SizedBox(height: 12),
                           const Text(
                             "You're all caught up!",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                             ),
@@ -205,7 +205,7 @@ class _NotificationCenterModalState
                           Text(
                             'No new notifications or alerts at this time.',
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
+                              color: const Color(0xFF6B7280),
                               fontSize: 12,
                             ),
                           ),
@@ -236,16 +236,16 @@ class _NotificationCenterModalState
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF6366F1).withValues(alpha: 0.25)
-              : const Color(0xFF1E293B),
+              : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? const Color(0xFF6366F1) : Colors.white12,
+            color: isSelected ? const Color(0xFF6366F1) : const Color(0xFFF3F4F6),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? const Color(0xFF818CF8) : Colors.white60,
+            color: isSelected ? const Color(0xFF818CF8) : const Color(0xFF9CA3AF),
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
@@ -318,12 +318,12 @@ class _NotificationCenterModalState
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: notif.isRead
-                  ? const Color(0xFF1E293B).withValues(alpha: 0.4)
-                  : const Color(0xFF1E293B).withValues(alpha: 0.85),
+                  ? const Color(0xFF9CA3AF)
+                  : const Color(0xFF374151),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: notif.isRead
-                    ? Colors.white10
+                    ? const Color(0xFFF3F4F6)
                     : const Color(0xFF6366F1).withValues(alpha: 0.4),
                 width: notif.isRead ? 0.8 : 1.2,
               ),
@@ -350,7 +350,7 @@ class _NotificationCenterModalState
                             child: Text(
                               notif.title,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: const Color(0xFF111827),
                                 fontSize: 13,
                                 fontWeight: notif.isRead
                                     ? FontWeight.w600
@@ -377,7 +377,7 @@ class _NotificationCenterModalState
                       Text(
                         notif.body,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.75),
+                          color: const Color(0xFF374151),
                           fontSize: 12,
                           height: 1.3,
                         ),
@@ -388,7 +388,7 @@ class _NotificationCenterModalState
                       Text(
                         timeStr,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: const Color(0xFF9CA3AF),
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                         ),

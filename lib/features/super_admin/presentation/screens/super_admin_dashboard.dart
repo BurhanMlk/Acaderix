@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -42,7 +41,7 @@ class SuperAdminDashboard extends ConsumerWidget {
               Text(
                 'Platform Overview',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                 ),
@@ -50,10 +49,7 @@ class SuperAdminDashboard extends ConsumerWidget {
               SizedBox(height: 4),
               Text(
                 'Manage academies, subscriptions and platform settings.',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
               ),
             ],
           ),
@@ -61,8 +57,9 @@ class SuperAdminDashboard extends ConsumerWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final isPhone = constraints.maxWidth < 480;
-              final crossAxisCount =
-                  isPhone ? 2 : (constraints.maxWidth < 800 ? 3 : 4);
+              final crossAxisCount = isPhone
+                  ? 2
+                  : (constraints.maxWidth < 800 ? 3 : 4);
               final childAspectRatio = isPhone ? 1.45 : 1.2;
 
               return GridView.count(
@@ -90,7 +87,7 @@ class SuperAdminDashboard extends ConsumerWidget {
               const Text(
                 'Academies',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                 ),
@@ -101,8 +98,10 @@ class SuperAdminDashboard extends ConsumerWidget {
                 label: const Text('Add Academy'),
                 style: FilledButton.styleFrom(
                   backgroundColor: const Color(0xFF6366F1),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
               ),
             ],
@@ -207,7 +206,7 @@ class SuperAdminDashboard extends ConsumerWidget {
           const Text(
             'Recent additions',
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF111827),
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -230,8 +229,7 @@ class SuperAdminDashboard extends ConsumerWidget {
           child: _glassWrapper(
             child: InkWell(
               borderRadius: BorderRadius.circular(16),
-              onTap: () =>
-                  context.go(AppRoutes.academyDetails, extra: academy),
+              onTap: () => context.go(AppRoutes.academyDetails, extra: academy),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -248,7 +246,7 @@ class SuperAdminDashboard extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                   ),
@@ -258,7 +256,7 @@ class SuperAdminDashboard extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.65),
+                    color: const Color(0xFF6B7280),
                     fontSize: 13,
                   ),
                 ),
@@ -271,22 +269,14 @@ class SuperAdminDashboard extends ConsumerWidget {
   }
 
   Widget _glassWrapper({required Widget child}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.16),
-              width: 1.2,
-            ),
-          ),
-          child: child,
-        ),
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.2),
       ),
+      child: child,
     );
   }
 }
@@ -304,56 +294,47 @@ class _ModuleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.16),
-              width: 1.2,
-            ),
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(16),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(module.icon, color: color, size: 22),
-                    ),
-                    const SizedBox(height: 8),
-                    Flexible(
-                      child: Text(
-                        module.label,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.2),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(module.icon, color: color, size: 22),
                 ),
-              ),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: Text(
+                    module.label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Color(0xFF111827),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,11 +14,7 @@ import '../widgets/academy_avatar.dart';
 
 /// Dedicated screen inside Super Admin shell to view, update status, and manage an academy record.
 class AcademyDetailsScreen extends ConsumerStatefulWidget {
-  const AcademyDetailsScreen({
-    super.key,
-    this.initialAcademy,
-    this.academyId,
-  });
+  const AcademyDetailsScreen({super.key, this.initialAcademy, this.academyId});
 
   final Academy? initialAcademy;
   final String? academyId;
@@ -83,7 +78,9 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
     if (!confirmed || !mounted) return;
 
     try {
-      await ref.read(academyRepositoryProvider).updateStatus(academy.id, newStatus);
+      await ref
+          .read(academyRepositoryProvider)
+          .updateStatus(academy.id, newStatus);
       ref.invalidate(academiesStreamProvider);
       setState(() {
         _academy = academy.copyWith(status: newStatus);
@@ -152,28 +149,18 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
     }
   }
 
-  Widget _glassCard({
-    required Widget child,
-    Color? color,
-    Color? borderColor,
-  }) {
-    final effectiveColor = color ?? Colors.white.withValues(alpha: 0.08);
-    final effectiveBorder =
-        borderColor ?? Colors.white.withValues(alpha: 0.16);
+  Widget _glassCard({required Widget child, Color? color, Color? borderColor}) {
+    final effectiveColor = color ?? const Color(0xFFF3F4F6);
+    final effectiveBorder = borderColor ?? const Color(0xFFE5E7EB);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Material(
-          color: effectiveColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: effectiveBorder, width: 1.2),
-          ),
-          child: child,
-        ),
+    return Material(
+      clipBehavior: Clip.antiAlias,
+      color: effectiveColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: effectiveBorder, width: 1.2),
       ),
+      child: child,
     );
   }
 
@@ -227,368 +214,380 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
     };
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 900),
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             children: [
-            // Navigation Header
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  tooltip: 'Back',
-                  onPressed: () {
-                    if (context.canPop()) {
-                      context.pop();
-                    } else {
-                      context.go(AppRoutes.academiesList);
-                    }
-                  },
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Academy Details',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
+              // Navigation Header
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    tooltip: 'Back',
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go(AppRoutes.academiesList);
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Academy Details',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'View full profile, update status, and manage this academy record.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: const Color(0xFF6B7280),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Overview Banner Card
+              _glassCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      AcademyAvatar(
+                        name: academy.name,
+                        logoUrl: academy.logoUrl,
+                        size: 64,
+                        borderRadius: 16,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'View full profile, update status, and manage this academy record.',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white70,
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              academy.name.isEmpty
+                                  ? 'Unnamed Academy'
+                                  : academy.name,
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 4,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(
+                                      0xFF6366F1,
+                                    ).withValues(alpha: 0.3),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: const Color(
+                                        0xFF6366F1,
+                                      ).withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    academy.code,
+                                    style: const TextStyle(
+                                      color: Color(0xFFE0E7FF),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: statusColor.withValues(alpha: 0.16),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: statusColor.withValues(alpha: 0.4),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    statusLabel,
+                                    style: TextStyle(
+                                      color: statusColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 24),
+              ),
+              const SizedBox(height: 20),
 
-            // Overview Banner Card
-            _glassCard(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    AcademyAvatar(
-                      name: academy.name,
-                      logoUrl: academy.logoUrl,
-                      size: 64,
-                      borderRadius: 16,
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              // Status Control Action Card
+              _glassCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Text(
-                            academy.name.isEmpty ? 'Unnamed Academy' : academy.name,
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
+                          Icon(
+                            Icons.tune,
+                            size: 20,
+                            color: theme.colorScheme.primary,
                           ),
-                          const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 4,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF6366F1).withValues(alpha: 0.3),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: const Color(0xFF6366F1).withValues(alpha: 0.5),
-                                  ),
-                                ),
-                                child: Text(
-                                  academy.code,
-                                  style: const TextStyle(
-                                    color: Color(0xFFE0E7FF),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: statusColor.withValues(alpha: 0.16),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: statusColor.withValues(alpha: 0.4),
-                                  ),
-                                ),
-                                child: Text(
-                                  statusLabel,
-                                  style: TextStyle(
-                                    color: statusColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          const SizedBox(width: 8),
+                          Text(
+                            'Status Controls',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Status Control Action Card
-            _glassCard(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.tune,
-                          size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Status Controls',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 8,
+                        children: [
+                          ChoiceChip(
+                            label: const Text('Active'),
+                            selected: academy.status == 'active',
+                            selectedColor: const Color(
+                              0xFF10B981,
+                            ).withValues(alpha: 0.3),
+                            onSelected: (_) => _updateStatus('active'),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 8,
-                      children: [
-                        ChoiceChip(
-                          label: const Text('Active'),
-                          selected: academy.status == 'active',
-                          selectedColor: const Color(0xFF10B981).withValues(alpha: 0.3),
-                          onSelected: (_) => _updateStatus('active'),
-                        ),
-                        ChoiceChip(
-                          label: const Text('Pending'),
-                          selected: academy.status == 'pending',
-                          selectedColor: const Color(0xFFF59E0B).withValues(alpha: 0.3),
-                          onSelected: (_) => _updateStatus('pending'),
-                        ),
-                        ChoiceChip(
-                          label: const Text('Suspended'),
-                          selected: academy.status == 'suspended',
-                          selectedColor: const Color(0xFFEF4444).withValues(alpha: 0.3),
-                          onSelected: (_) => _updateStatus('suspended'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Information Section
-            _glassCard(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'General Information',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                          ChoiceChip(
+                            label: const Text('Pending'),
+                            selected: academy.status == 'pending',
+                            selectedColor: const Color(
+                              0xFFF59E0B,
+                            ).withValues(alpha: 0.3),
+                            onSelected: (_) => _updateStatus('pending'),
+                          ),
+                          ChoiceChip(
+                            label: const Text('Suspended'),
+                            selected: academy.status == 'suspended',
+                            selectedColor: const Color(
+                              0xFFEF4444,
+                            ).withValues(alpha: 0.3),
+                            onSelected: (_) => _updateStatus('suspended'),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    _DetailTile(
-                      icon: Icons.apartment,
-                      label: 'Total Branches',
-                      value: '${academy.branchCount}',
-                    ),
-                    const Divider(),
-                    _DetailTile(
-                      icon: Icons.calendar_today,
-                      label: 'Registration Date',
-                      value: DateFormatters.date(academy.registrationDate),
-                    ),
-                    const Divider(),
-                    _DetailTile(
-                      icon: Icons.fingerprint,
-                      label: 'Academy Record ID',
-                      value: academy.id,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Owner & Contact Section
-            _glassCard(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Owner & Contact Information',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _DetailTile(
-                      icon: Icons.person_outline,
-                      label: 'Owner Name',
-                      value: academy.ownerName.isEmpty
-                          ? 'Not provided'
-                          : academy.ownerName,
-                    ),
-                    const Divider(),
-                    _DetailTile(
-                      icon: Icons.email_outlined,
-                      label: 'Contact Email',
-                      value: academy.ownerEmail.isEmpty
-                          ? 'Not provided'
-                          : academy.ownerEmail,
-                    ),
-                    const Divider(),
-                    _DetailTile(
-                      icon: Icons.phone_outlined,
-                      label: 'Phone Number',
-                      value: academy.ownerPhone.isEmpty
-                          ? 'Not provided'
-                          : academy.ownerPhone,
-                    ),
-                    const SizedBox(height: 16),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        context.push(
-                          '${AppRoutes.academyAdminResetPassword}?id=${academy.id}',
-                          extra: academy,
-                        );
-                      },
-                      icon: const Icon(Icons.lock_reset, size: 18),
-                      label: const Text('Change Admin Password'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Location Section
-            _glassCard(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Location Details',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _DetailTile(
-                      icon: Icons.location_on_outlined,
-                      label: 'Campus Address',
-                      value: academy.address.isEmpty
-                          ? 'Address not set'
-                          : academy.address,
-                    ),
-                    const Divider(),
-                    _DetailTile(
-                      icon: Icons.map_outlined,
-                      label: 'City & Province',
-                      value:
-                          '${academy.city.isEmpty ? "City not set" : academy.city}${academy.province.isNotEmpty ? ", ${academy.province}" : ""}',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 28),
-
-            // Danger Zone
-            _glassCard(
-              color: const Color(0xFFEF4444).withValues(alpha: 0.12),
-              borderColor: const Color(0xFFEF4444).withValues(alpha: 0.35),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(
-                          Icons.warning_amber_rounded,
-                          color: Color(0xFFEF4444),
+              // Information Section
+              _glassCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'General Information',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
                         ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Danger Zone',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
+                      ),
+                      const SizedBox(height: 16),
+                      _DetailTile(
+                        icon: Icons.apartment,
+                        label: 'Total Branches',
+                        value: '${academy.branchCount}',
+                      ),
+                      const Divider(),
+                      _DetailTile(
+                        icon: Icons.calendar_today,
+                        label: 'Registration Date',
+                        value: DateFormatters.date(academy.registrationDate),
+                      ),
+                      const Divider(),
+                      _DetailTile(
+                        icon: Icons.fingerprint,
+                        label: 'Academy Record ID',
+                        value: academy.id,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Owner & Contact Section
+              _glassCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Owner & Contact Information',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _DetailTile(
+                        icon: Icons.person_outline,
+                        label: 'Owner Name',
+                        value: academy.ownerName.isEmpty
+                            ? 'Not provided'
+                            : academy.ownerName,
+                      ),
+                      const Divider(),
+                      _DetailTile(
+                        icon: Icons.email_outlined,
+                        label: 'Contact Email',
+                        value: academy.ownerEmail.isEmpty
+                            ? 'Not provided'
+                            : academy.ownerEmail,
+                      ),
+                      const Divider(),
+                      _DetailTile(
+                        icon: Icons.phone_outlined,
+                        label: 'Phone Number',
+                        value: academy.ownerPhone.isEmpty
+                            ? 'Not provided'
+                            : academy.ownerPhone,
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          context.push(
+                            '${AppRoutes.academyAdminResetPassword}?id=${academy.id}',
+                            extra: academy,
+                          );
+                        },
+                        icon: const Icon(Icons.lock_reset, size: 18),
+                        label: const Text('Change Admin Password'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Location Section
+              _glassCard(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Location Details',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _DetailTile(
+                        icon: Icons.location_on_outlined,
+                        label: 'Campus Address',
+                        value: academy.address.isEmpty
+                            ? 'Address not set'
+                            : academy.address,
+                      ),
+                      const Divider(),
+                      _DetailTile(
+                        icon: Icons.map_outlined,
+                        label: 'City & Province',
+                        value:
+                            '${academy.city.isEmpty ? "City not set" : academy.city}${academy.province.isNotEmpty ? ", ${academy.province}" : ""}',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // Danger Zone
+              _glassCard(
+                color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+                borderColor: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
                             color: Color(0xFFEF4444),
-                            fontSize: 16,
                           ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Danger Zone',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFEF4444),
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Permanently delete this academy and all its records from the platform. This action is irreversible and the deleted data cannot be recovered. The unique academy code will become available for new registrations.',
+                        style: TextStyle(
+                          color: Color(0xFF6B7280),
+                          height: 1.4,
+                          fontSize: 13.5,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Permanently delete this academy and all its records from the platform. This action is irreversible and the deleted data cannot be recovered. The unique academy code will become available for new registrations.',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        height: 1.4,
-                        fontSize: 13.5,
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    FilledButton.icon(
-                      onPressed: _deleteAcademy,
-                      icon: const Icon(Icons.delete_forever, size: 18),
-                      label: const Text('Delete Academy Record'),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF4444),
-                        foregroundColor: Colors.white,
+                      const SizedBox(height: 16),
+                      FilledButton.icon(
+                        onPressed: _deleteAcademy,
+                        icon: const Icon(Icons.delete_forever, size: 18),
+                        label: const Text('Delete Academy Record'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFEF4444),
+                          foregroundColor: Colors.white,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class _DetailTile extends StatelessWidget {
@@ -618,7 +617,7 @@ class _DetailTile extends StatelessWidget {
                 Text(
                   label,
                   style: const TextStyle(
-                    color: Colors.white70,
+                    color: Color(0xFF6B7280),
                     fontSize: 12,
                   ),
                 ),
@@ -628,7 +627,7 @@ class _DetailTile extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                   ),
                 ),
               ],

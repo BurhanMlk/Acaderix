@@ -49,7 +49,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: const Color(0xFF1F2937),
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -125,7 +125,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: const Color(0xFF1F2937),
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
                   ),
@@ -143,7 +143,7 @@ class StaffDashboardScreen extends ConsumerWidget {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
+                color: const Color(0xFFF9FAFB),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSubmitted
@@ -168,7 +168,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -192,7 +192,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color:
-                                        Colors.white.withValues(alpha: 0.6),
+                                        const Color(0xFF6B7280),
                                     fontSize: 11,
                                   ),
                                 ),
@@ -249,7 +249,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: const Color(0xFF1F2937),
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -318,7 +318,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: const Color(0xFF1F2937),
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -363,12 +363,12 @@ class _StaffHeroCard extends StatelessWidget {
           colors: [
             const Color(0xFF6366F1).withValues(alpha: 0.25),
             const Color(0xFF38BDF8).withValues(alpha: 0.15),
-            Colors.white.withValues(alpha: 0.05),
+            const Color(0xFFF9FAFB),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
@@ -388,7 +388,7 @@ class _StaffHeroCard extends StatelessWidget {
                 child: Text(
                   staffName.isNotEmpty ? staffName[0].toUpperCase() : 'S',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontWeight: FontWeight.w800,
                     fontSize: 20,
                   ),
@@ -404,7 +404,7 @@ class _StaffHeroCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                         fontWeight: FontWeight.w800,
                         fontSize: 18,
                       ),
@@ -415,7 +415,7 @@ class _StaffHeroCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
+                        color: const Color(0xFF374151),
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -449,7 +449,7 @@ class _StaffHeroCard extends StatelessWidget {
           ),
           if (email.isNotEmpty || phone.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Divider(color: Colors.white.withValues(alpha: 0.1), height: 1),
+            Divider(color: const Color(0xFFF3F4F6), height: 1),
             const SizedBox(height: 10),
             Wrap(
               spacing: 12,
@@ -459,12 +459,12 @@ class _StaffHeroCard extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.email_outlined, size: 14, color: Colors.white.withValues(alpha: 0.6)),
+                      Icon(Icons.email_outlined, size: 14, color: const Color(0xFF6B7280)),
                       const SizedBox(width: 6),
                       Text(
                         email,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.75),
+                          color: const Color(0xFF374151),
                           fontSize: 12,
                         ),
                       ),
@@ -474,12 +474,12 @@ class _StaffHeroCard extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.phone_outlined, size: 14, color: Colors.white.withValues(alpha: 0.6)),
+                      Icon(Icons.phone_outlined, size: 14, color: const Color(0xFF6B7280)),
                       const SizedBox(width: 6),
                       Text(
                         phone,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.75),
+                          color: const Color(0xFF374151),
                           fontSize: 12,
                         ),
                       ),
@@ -562,9 +562,9 @@ class _StaffMetricCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: const Color(0xFFF9FAFB),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: const Color(0xFFF3F4F6)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,7 +579,7 @@ class _StaffMetricCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF6B7280),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -601,7 +601,7 @@ class _StaffMetricCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: Colors.white,
+                color: const Color(0xFF111827),
                 fontWeight: FontWeight.w800,
                 fontSize: 18,
               ),
@@ -646,9 +646,9 @@ class _StaffActionTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: const Color(0xFFF9FAFB),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: const Color(0xFFF3F4F6)),
         ),
         child: Row(
           children: [
@@ -670,7 +670,7 @@ class _StaffActionTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
@@ -681,7 +681,7 @@ class _StaffActionTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.65),
+                      color: const Color(0xFF6B7280),
                       fontSize: 12,
                     ),
                   ),
@@ -691,7 +691,7 @@ class _StaffActionTile extends StatelessWidget {
             const SizedBox(width: 8),
             Icon(
               Icons.chevron_right,
-              color: Colors.white.withValues(alpha: 0.4),
+              color: const Color(0xFF9CA3AF),
               size: 20,
             ),
           ],
@@ -726,22 +726,22 @@ class _StaffNoticeboardPreview extends ConsumerWidget {
           return Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
+              color: const Color(0xFFF9FAFB),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              border: Border.all(color: const Color(0xFFF3F4F6)),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.campaign_outlined,
                   size: 20,
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: const Color(0xFF9CA3AF),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   'No recent broadcast announcements',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: const Color(0xFF6B7280),
                     fontSize: 12,
                   ),
                 ),

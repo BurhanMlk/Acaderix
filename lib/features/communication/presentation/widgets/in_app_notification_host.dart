@@ -155,7 +155,7 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                                   _currentNotification?['title'] ??
                                       'New Notification',
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF111827),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 13,
                                   ),
@@ -166,7 +166,7 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                                 Text(
                                   _currentNotification?['body'] ?? '',
                                   style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.75),
+                                    color: const Color(0xFF374151),
                                     fontSize: 12,
                                   ),
                                   maxLines: 2,
@@ -179,7 +179,7 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                           IconButton(
                             icon: const Icon(
                               Icons.close,
-                              color: Colors.white60,
+                              color: Color(0xFF9CA3AF),
                               size: 18,
                             ),
                             padding: EdgeInsets.zero,

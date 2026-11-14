@@ -478,7 +478,7 @@ class _AcademyAdminResetPasswordScreenState
                               height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                               ),
                             )
                           : const Icon(Icons.send_rounded, size: 18),

@@ -89,13 +89,13 @@ class AnnouncementCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     announcement.category,
                     style: const TextStyle(
-                      color: Colors.white70,
+                      color: Color(0xFF6B7280),
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                     ),
@@ -109,7 +109,7 @@ class AnnouncementCard extends StatelessWidget {
                   ),
                 if (onDelete != null)
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.white38, size: 18),
+                    icon: const Icon(Icons.delete_outline, color: Color(0xFFD1D5DB), size: 18),
                     visualDensity: VisualDensity.compact,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -123,7 +123,7 @@ class AnnouncementCard extends StatelessWidget {
             Text(
               announcement.title,
               style: const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF111827),
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
@@ -134,7 +134,7 @@ class AnnouncementCard extends StatelessWidget {
             Text(
               announcement.content,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: const Color(0xFF374151),
                 fontSize: 13,
                 height: 1.4,
               ),
@@ -163,7 +163,7 @@ class AnnouncementCard extends StatelessWidget {
             ],
 
             const SizedBox(height: 12),
-            const Divider(color: Colors.white10, height: 1),
+            const Divider(color: Color(0xFFF3F4F6), height: 1),
             const SizedBox(height: 10),
 
             // Footer: Author & Timestamp
@@ -176,14 +176,14 @@ class AnnouncementCard extends StatelessWidget {
                       CircleAvatar(
                         radius: 10,
                         backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.3),
-                        child: const Icon(Icons.person, size: 12, color: Colors.white70),
+                        child: const Icon(Icons.person, size: 12, color: Color(0xFF6B7280)),
                       ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           announcement.authorName,
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.65),
+                            color: const Color(0xFF6B7280),
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
@@ -197,7 +197,7 @@ class AnnouncementCard extends StatelessWidget {
                 Text(
                   dateStr,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.45),
+                    color: const Color(0xFFD1D5DB),
                     fontSize: 10,
                   ),
                 ),

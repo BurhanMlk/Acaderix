@@ -67,7 +67,7 @@ class _AcademicChatScreenState extends ConsumerState<AcademicChatScreen> {
         backgroundColor: const Color(0xFF0F172A),
         elevation: 0,
         scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Color(0xFF374151)),
         titleSpacing: 0,
         title: Row(
           children: [
@@ -97,7 +97,7 @@ class _AcademicChatScreenState extends ConsumerState<AcademicChatScreen> {
                   Text(
                     widget.otherPartyName,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
@@ -204,7 +204,7 @@ class _AcademicChatScreenState extends ConsumerState<AcademicChatScreen> {
                             Text(
                               'Start conversation with ${widget.otherPartyName}',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15,
                               ),
@@ -214,7 +214,7 @@ class _AcademicChatScreenState extends ConsumerState<AcademicChatScreen> {
                             Text(
                               'Academic text communication is end-to-end recorded and viewable by academy administration.',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5),
+                                color: const Color(0xFF9CA3AF),
                                 fontSize: 12,
                               ),
                               textAlign: TextAlign.center,
@@ -257,7 +257,7 @@ class _AcademicChatScreenState extends ConsumerState<AcademicChatScreen> {
                 decoration: const BoxDecoration(
                   color: Color(0xFF0F172A),
                   border: Border(
-                    top: BorderSide(color: Color(0xFF1E293B), width: 1),
+                    top: BorderSide(color: Color(0xFF111827), width: 1),
                   ),
                 ),
                 child: Row(
@@ -266,21 +266,21 @@ class _AcademicChatScreenState extends ConsumerState<AcademicChatScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1E293B),
+                          color: const Color(0xFF111827),
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(color: const Color(0xFF334155)),
                         ),
                         child: TextField(
                           controller: _textController,
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 14),
+                              color: Color(0xFF111827), fontSize: 14),
                           maxLines: 4,
                           minLines: 1,
                           textCapitalization: TextCapitalization.sentences,
                           decoration: InputDecoration(
                             hintText: 'Type message to ${widget.otherPartyName}...',
                             hintStyle: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: const Color(0xFF9CA3AF),
                               fontSize: 13,
                             ),
                             border: InputBorder.none,
@@ -498,7 +498,7 @@ class _ChatBubble extends StatelessWidget {
         decoration: BoxDecoration(
           color: isMe
               ? const Color(0xFF0284C7)
-              : const Color(0xFF1E293B).withValues(alpha: 0.9),
+              : const Color(0xFF1F2937),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -540,7 +540,7 @@ class _ChatBubble extends StatelessWidget {
             Text(
               message.text,
               style: const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF111827),
                 fontSize: 13.5,
                 height: 1.35,
               ),
@@ -554,7 +554,7 @@ class _ChatBubble extends StatelessWidget {
                 Text(
                   timeStr,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: const Color(0xFF6B7280),
                     fontSize: 10,
                   ),
                 ),
@@ -563,7 +563,7 @@ class _ChatBubble extends StatelessWidget {
                   Icon(
                     Icons.done_all,
                     size: 13,
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: const Color(0xFF374151),
                   ),
                 ],
               ],

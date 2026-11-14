@@ -91,7 +91,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
     final isAtLimit = !isUnlimited && studentCount >= maxStudents;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.addStudent),
         icon: const Icon(Icons.person_add),
@@ -124,12 +124,12 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                   decoration: BoxDecoration(
                     color: isAtLimit
                         ? Colors.amber.withValues(alpha: 0.15)
-                        : Colors.white.withValues(alpha: 0.08),
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isAtLimit
                           ? Colors.amber.withValues(alpha: 0.4)
-                          : Colors.white12,
+                          : const Color(0xFFF3F4F6),
                     ),
                   ),
                   child: Row(
@@ -138,13 +138,13 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                       Icon(
                         isAtLimit ? Icons.warning_amber_rounded : Icons.people,
                         size: 14,
-                        color: isAtLimit ? Colors.amber : Colors.white70,
+                        color: isAtLimit ? Colors.amber : const Color(0xFF6B7280),
                       ),
                       const SizedBox(width: 6),
                       Text(
                         'Capacity: $studentCount / ${isUnlimited ? '∞' : maxStudents} Students',
                         style: TextStyle(
-                          color: isAtLimit ? Colors.amber : Colors.white70,
+                          color: isAtLimit ? Colors.amber : const Color(0xFF6B7280),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -155,7 +155,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                 Text(
                   access?.planName ?? 'Standard',
                   style: const TextStyle(
-                    color: Colors.white38,
+                    color: Color(0xFFD1D5DB),
                     fontSize: 11,
                   ),
                 ),
@@ -180,7 +180,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                       padding: EdgeInsets.all(24),
                       child: Text(
                         'No students match search or branch filter.',
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(color: Color(0xFF6B7280)),
                       ),
                     ),
                   );
@@ -240,7 +240,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                         Text(
                                           student.fullName,
                                           style: const TextStyle(
-                                            color: Colors.white,
+                                            color: Color(0xFF111827),
                                             fontWeight: FontWeight.w700,
                                             fontSize: 15,
                                           ),
@@ -287,7 +287,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                             vertical: 2,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: Colors.white
+                                            color: const Color(0xFF111827)
                                                 .withValues(alpha: 0.08),
                                             borderRadius:
                                                 BorderRadius.circular(4),
@@ -305,7 +305,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                           Text(
                                             student.notes,
                                             style: const TextStyle(
-                                              color: Colors.white70,
+                                              color: Color(0xFF6B7280),
                                               fontSize: 11,
                                             ),
                                           ),
@@ -320,13 +320,13 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                           const Icon(
                                             Icons.phone_outlined,
                                             size: 13,
-                                            color: Colors.white54,
+                                            color: Color(0xFF9CA3AF),
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
                                             '${student.guardianRelation.isNotEmpty ? '${student.guardianRelation}: ' : ''}${student.guardianPhone}',
                                             style: const TextStyle(
-                                              color: Colors.white60,
+                                              color: Color(0xFF9CA3AF),
                                               fontSize: 11,
                                             ),
                                           ),
@@ -339,7 +339,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                               PopupMenuButton<String>(
                                 icon: const Icon(
                                   Icons.more_vert,
-                                  color: Colors.white60,
+                                  color: Color(0xFF9CA3AF),
                                 ),
                                 onSelected: (val) {
                                   if (val == 'edit') {

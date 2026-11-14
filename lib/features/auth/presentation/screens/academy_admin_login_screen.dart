@@ -115,7 +115,7 @@ class _AcademyAdminLoginScreenState
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(
@@ -149,7 +149,7 @@ class _AcademyAdminLoginScreenState
                         _obscurePassword
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: Colors.white70,
+                        color: const Color(0xFF6B7280),
                         size: 20,
                       ),
                       tooltip: _obscurePassword
@@ -169,7 +169,7 @@ class _AcademyAdminLoginScreenState
                       child: Text(
                         'Forgot password?',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.85),
+                          color: const Color(0xFF374151),
                         ),
                       ),
                     ),

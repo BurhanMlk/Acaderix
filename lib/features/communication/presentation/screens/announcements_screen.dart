@@ -66,14 +66,14 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
         platformBroadcasts.where((b) => b.isUrgent).length;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFFFFFFFF),
         elevation: 0,
         title: const Text(
           'Noticeboard & Broadcasts',
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFF111827),
             fontWeight: FontWeight.w700,
             fontSize: 16,
           ),
@@ -111,9 +111,9 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.06),
+              color: const Color(0xFFF9FAFB),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
             ),
             child: Row(
               children: [
@@ -140,14 +140,14 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(Icons.campaign_outlined,
-                                  size: 16, color: Colors.white),
+                                  size: 16, color: Color(0xFF111827)),
                               const SizedBox(width: 6),
                               Text(
                                 'Campus (${announcements.length})',
                                 style: TextStyle(
                                   color: _selectedTab == 0
                                       ? Colors.white
-                                      : Colors.white70,
+                                      : const Color(0xFF6B7280),
                                   fontWeight: _selectedTab == 0
                                       ? FontWeight.w700
                                       : FontWeight.normal,
@@ -192,7 +192,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                                 style: TextStyle(
                                   color: _selectedTab == 1
                                       ? Colors.white
-                                      : Colors.white70,
+                                      : const Color(0xFF6B7280),
                                   fontWeight: _selectedTab == 1
                                       ? FontWeight.w700
                                       : FontWeight.normal,
@@ -242,7 +242,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                               Text(
                                 '${announcements.length}',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF111827),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -250,7 +250,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                               Text(
                                 'Broadcasts Sent',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.6),
+                                  color: const Color(0xFF6B7280),
                                   fontSize: 10,
                                 ),
                                 maxLines: 1,
@@ -291,7 +291,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                               Text(
                                 '$urgentCount',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF111827),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -299,7 +299,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                               Text(
                                 'Urgent Alerts',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.6),
+                                  color: const Color(0xFF6B7280),
                                   fontSize: 10,
                                 ),
                                 maxLines: 1,
@@ -336,9 +336,9 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
               Container(
                 padding: const EdgeInsets.all(36),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B).withValues(alpha: 0.4),
+                  color: const Color(0xFF111827).withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white12),
+                  border: Border.all(color: const Color(0xFFF3F4F6)),
                 ),
                 child: Center(
                   child: Column(
@@ -346,13 +346,13 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       const Icon(
                         Icons.campaign_outlined,
                         size: 44,
-                        color: Colors.white30,
+                        color: Color(0xFFD1D5DB),
                       ),
                       const SizedBox(height: 12),
                       Text(
                         'No Broadcast Announcements',
                         style: theme.textTheme.titleSmall?.copyWith(
-                          color: Colors.white,
+                          color: const Color(0xFF111827),
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -361,7 +361,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                         'Post campus-wide notices, exam alerts, and institutional messages to staff and students.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: const Color(0xFF6B7280),
                           fontSize: 12,
                         ),
                       ),
@@ -411,7 +411,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                               Text(
                                 '${platformBroadcasts.length}',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF111827),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -419,7 +419,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                               Text(
                                 'Platform Notices',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.6),
+                                  color: const Color(0xFF6B7280),
                                   fontSize: 10,
                                 ),
                                 maxLines: 1,
@@ -460,7 +460,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                               Text(
                                 '$urgentPlatformCount',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF111827),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -468,7 +468,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                               Text(
                                 'Critical Alerts',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.6),
+                                  color: const Color(0xFF6B7280),
                                   fontSize: 10,
                                 ),
                                 maxLines: 1,
@@ -489,9 +489,9 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
               Container(
                 padding: const EdgeInsets.all(36),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B).withValues(alpha: 0.4),
+                  color: const Color(0xFF111827).withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white12),
+                  border: Border.all(color: const Color(0xFFF3F4F6)),
                 ),
                 child: const Center(
                   child: Column(
@@ -499,13 +499,13 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       Icon(
                         Icons.shield_outlined,
                         size: 44,
-                        color: Colors.white30,
+                        color: Color(0xFFD1D5DB),
                       ),
                       SizedBox(height: 12),
                       Text(
                         'No Platform Notices',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
@@ -514,7 +514,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       Text(
                         'Platform maintenance, billing announcements, and upgrades from Super Admin will appear here.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white60, fontSize: 12),
+                        style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 12),
                       ),
                     ],
                   ),
@@ -543,16 +543,16 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF6366F1).withValues(alpha: 0.25)
-              : const Color(0xFF1E293B),
+              : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? const Color(0xFF818CF8) : Colors.white12,
+            color: isSelected ? const Color(0xFF818CF8) : const Color(0xFFF3F4F6),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.white60,
+            color: isSelected ? Colors.white : const Color(0xFF9CA3AF),
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
@@ -565,7 +565,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       builder: (ctx) => _CreateAnnouncementSheet(academyId: academyId),
     );
   }
@@ -610,7 +610,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                   Text(
                     broadcast.title,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
@@ -633,13 +633,13 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.white12,
+                        color: const Color(0xFFF3F4F6),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         broadcast.category.toUpperCase(),
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: Color(0xFF6B7280),
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
@@ -670,19 +670,19 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                     Text(
                       DateFormat('MMM dd • hh:mm a').format(broadcast.createdAt),
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.5),
+                        color: const Color(0xFF9CA3AF),
                         fontSize: 11,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 14),
-                const Divider(color: Colors.white12),
+                const Divider(color: Color(0xFFF3F4F6)),
                 const SizedBox(height: 12),
                 Text(
                   broadcast.message,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontSize: 14,
                     height: 1.5,
                   ),
@@ -691,7 +691,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: const Color(0xFFF9FAFB),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -699,13 +699,13 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       Icon(
                         Icons.groups_outlined,
                         size: 16,
-                        color: Colors.white.withValues(alpha: 0.6),
+                        color: const Color(0xFF6B7280),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         'Target Audience: ${broadcast.audienceLabel}',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.7),
+                          color: const Color(0xFF6B7280),
                           fontSize: 12,
                         ),
                       ),
@@ -759,7 +759,7 @@ class _AcademyPlatformNoticeCard extends StatelessWidget {
                   Text(
                     DateFormat('MMM dd • hh:mm a').format(broadcast.createdAt),
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: const Color(0xFF9CA3AF),
                       fontSize: 11,
                     ),
                   ),
@@ -769,7 +769,7 @@ class _AcademyPlatformNoticeCard extends StatelessWidget {
               Text(
                 broadcast.title,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),
@@ -780,13 +780,13 @@ class _AcademyPlatformNoticeCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.75),
+                  color: const Color(0xFF374151),
                   fontSize: 13,
                   height: 1.4,
                 ),
               ),
               const SizedBox(height: 12),
-              const Divider(color: Colors.white10),
+              const Divider(color: Color(0xFFF3F4F6)),
               const SizedBox(height: 6),
               Row(
                 children: [
@@ -816,7 +816,7 @@ class _AcademyPlatformNoticeCard extends StatelessWidget {
                   Icon(
                     Icons.chevron_right,
                     size: 16,
-                    color: Colors.white.withValues(alpha: 0.4),
+                    color: const Color(0xFF9CA3AF),
                   ),
                 ],
               ),
@@ -856,13 +856,13 @@ class _AcademyPlatformNoticeCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
+        color: const Color(0xFFF3F4F6),
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
         category.toUpperCase(),
         style: const TextStyle(
-          color: Colors.white70,
+          color: Color(0xFF6B7280),
           fontSize: 10,
           fontWeight: FontWeight.w600,
         ),
@@ -932,7 +932,7 @@ class _CreateAnnouncementSheetState
       decoration: BoxDecoration(
         color: const Color(0xFF0F172A),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: const Color(0xFFF3F4F6)),
       ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -947,7 +947,7 @@ class _CreateAnnouncementSheetState
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: const Color(0xFFD1D5DB),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -965,7 +965,7 @@ class _CreateAnnouncementSheetState
                     Text(
                       'Broadcast New Message',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
                       ),
@@ -973,14 +973,14 @@ class _CreateAnnouncementSheetState
                   ],
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white60, size: 20),
+                  icon: const Icon(Icons.close, color: Color(0xFF9CA3AF), size: 20),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
           ),
 
-          const Divider(color: Colors.white12, height: 1),
+          const Divider(color: Color(0xFFF3F4F6), height: 1),
 
           Flexible(
             child: ListView(
@@ -990,7 +990,7 @@ class _CreateAnnouncementSheetState
                 const Text(
                   'Select Target Audience',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Color(0xFF6B7280),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1037,7 +1037,7 @@ class _CreateAnnouncementSheetState
                           const Text(
                             'Priority Level',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: Color(0xFF6B7280),
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1062,7 +1062,7 @@ class _CreateAnnouncementSheetState
                 const Text(
                   'Notice Category',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Color(0xFF6B7280),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1071,14 +1071,14 @@ class _CreateAnnouncementSheetState
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E293B),
+                    color: const Color(0xFF111827),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.white12),
+                    border: Border.all(color: const Color(0xFFF3F4F6)),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      dropdownColor: const Color(0xFF1E293B),
+                      dropdownColor: Colors.white,
                       value: _category,
                       items: _categories.map((c) {
                         return DropdownMenuItem(
@@ -1086,7 +1086,7 @@ class _CreateAnnouncementSheetState
                           child: Text(
                             c,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontSize: 13,
                             ),
                           ),
@@ -1104,7 +1104,7 @@ class _CreateAnnouncementSheetState
                   const Text(
                     'Optional Course Link',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: Color(0xFF6B7280),
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1113,21 +1113,21 @@ class _CreateAnnouncementSheetState
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E293B),
+                      color: const Color(0xFF111827),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.white12),
+                      border: Border.all(color: const Color(0xFFF3F4F6)),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         isExpanded: true,
-                        dropdownColor: const Color(0xFF1E293B),
+                        dropdownColor: Colors.white,
                         value: _selectedCourseId.isEmpty ? '' : _selectedCourseId,
                         items: [
                           const DropdownMenuItem(
                             value: '',
                             child: Text(
                               'None (General Notice)',
-                              style: TextStyle(color: Colors.white60, fontSize: 13),
+                              style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
                             ),
                           ),
                           ...courses.map((c) {
@@ -1135,7 +1135,7 @@ class _CreateAnnouncementSheetState
                               value: c.id,
                               child: Text(
                                 c.name,
-                                style: const TextStyle(color: Colors.white, fontSize: 13),
+                                style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
                               ),
                             );
                           }),
@@ -1162,7 +1162,7 @@ class _CreateAnnouncementSheetState
                 const Text(
                   'Announcement Title',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Color(0xFF6B7280),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1170,19 +1170,19 @@ class _CreateAnnouncementSheetState
                 const SizedBox(height: 6),
                 TextField(
                   controller: _titleController,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                   decoration: InputDecoration(
                     hintText: 'e.g. Mid-Term Examination Schedule Released',
-                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                    hintStyle: TextStyle(color: const Color(0xFFD1D5DB)),
                     filled: true,
-                    fillColor: const Color(0xFF1E293B),
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.white12),
+                      borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.white12),
+                      borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -1198,7 +1198,7 @@ class _CreateAnnouncementSheetState
                 const Text(
                   'Message Body & Description',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Color(0xFF6B7280),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1207,20 +1207,20 @@ class _CreateAnnouncementSheetState
                 TextField(
                   controller: _contentController,
                   maxLines: 4,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
                   decoration: InputDecoration(
                     hintText:
                         'Provide full details for students and faculty regarding timings, prerequisites, or action required...',
-                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+                    hintStyle: TextStyle(color: const Color(0xFFD1D5DB)),
                     filled: true,
-                    fillColor: const Color(0xFF1E293B),
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.white12),
+                      borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Colors.white12),
+                      borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -1251,7 +1251,7 @@ class _CreateAnnouncementSheetState
                             height: 16,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                             ),
                           )
                         : const Icon(Icons.send_rounded, size: 18),
@@ -1288,10 +1288,10 @@ class _CreateAnnouncementSheetState
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF6366F1).withValues(alpha: 0.25)
-              : const Color(0xFF1E293B),
+              : Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? const Color(0xFF818CF8) : Colors.white12,
+            color: isSelected ? const Color(0xFF818CF8) : const Color(0xFFF3F4F6),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -1300,13 +1300,13 @@ class _CreateAnnouncementSheetState
             Icon(
               icon,
               size: 18,
-              color: isSelected ? const Color(0xFF818CF8) : Colors.white60,
+              color: isSelected ? const Color(0xFF818CF8) : const Color(0xFF9CA3AF),
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.white70,
+                color: isSelected ? Colors.white : const Color(0xFF6B7280),
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),
@@ -1330,23 +1330,23 @@ class _CreateAnnouncementSheetState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withValues(alpha: 0.2) : const Color(0xFF1E293B),
+          color: isSelected ? activeColor.withValues(alpha: 0.2) : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? activeColor : Colors.white12,
+            color: isSelected ? activeColor : const Color(0xFFF3F4F6),
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (isUrgent) ...[
-              Icon(Icons.bolt, size: 14, color: isSelected ? activeColor : Colors.white60),
+              Icon(Icons.bolt, size: 14, color: isSelected ? activeColor : const Color(0xFF9CA3AF)),
               const SizedBox(width: 4),
             ],
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? activeColor : Colors.white60,
+                color: isSelected ? activeColor : const Color(0xFF9CA3AF),
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),

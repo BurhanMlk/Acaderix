@@ -62,10 +62,10 @@ class StudentDashboardTab extends ConsumerWidget {
                 children: [
                   CircleAvatar(
                     radius: 26,
-                    backgroundColor: Colors.white.withValues(alpha: 0.2),
+                    backgroundColor: const Color(0xFFE5E7EB),
                     child: const Icon(
                       Icons.school_outlined,
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       size: 28,
                     ),
                   ),
@@ -77,7 +77,7 @@ class StudentDashboardTab extends ConsumerWidget {
                         Text(
                           fullName,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF111827),
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
                           ),
@@ -88,7 +88,7 @@ class StudentDashboardTab extends ConsumerWidget {
                         Text(
                           'Roll #$rollNumber • $session',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.85),
+                            color: const Color(0xFF374151),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -100,7 +100,7 @@ class StudentDashboardTab extends ConsumerWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
                       side: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: const Color(0xFF9CA3AF),
                       ),
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -137,7 +137,7 @@ class StudentDashboardTab extends ConsumerWidget {
                       child: Text(
                         branchName,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -204,7 +204,7 @@ class StudentDashboardTab extends ConsumerWidget {
                     const Text(
                       'Direct Teacher Chat',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                       ),
@@ -212,7 +212,7 @@ class StudentDashboardTab extends ConsumerWidget {
                     Text(
                       'Message your course instructors in real-time',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: const Color(0xFF6B7280),
                         fontSize: 11,
                       ),
                     ),
@@ -318,7 +318,7 @@ class StudentDashboardTab extends ConsumerWidget {
                           child: Text(
                             'Class Schedule & Lectures',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -350,7 +350,7 @@ class StudentDashboardTab extends ConsumerWidget {
                   child: Text(
                     'No enrolled classes found for current session.',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: const Color(0xFF6B7280),
                       fontSize: 12,
                     ),
                   ),
@@ -361,10 +361,10 @@ class StudentDashboardTab extends ConsumerWidget {
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.04),
+                      color: const Color(0xFFF9FAFB),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.08),
+                        color: const Color(0xFFF3F4F6),
                       ),
                     ),
                     child: Row(
@@ -385,7 +385,7 @@ class StudentDashboardTab extends ConsumerWidget {
                               Text(
                                 course.name,
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF111827),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -401,7 +401,7 @@ class StudentDashboardTab extends ConsumerWidget {
                                     Text(
                                       course.schedule,
                                       style: TextStyle(
-                                        color: Colors.white
+                                        color: const Color(0xFF111827)
                                             .withValues(alpha: 0.6),
                                         fontSize: 11,
                                       ),
@@ -471,7 +471,7 @@ class StudentDashboardTab extends ConsumerWidget {
                           child: Text(
                             'Attendance Analytics',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -571,7 +571,7 @@ class StudentDashboardTab extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: const Color(0xFF1F2937),
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -597,7 +597,7 @@ class StudentDashboardTab extends ConsumerWidget {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(color: Colors.white70, fontSize: 12),
+            style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12),
           ),
         ),
         Text(
@@ -640,7 +640,7 @@ class _StudentStatCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: const Color(0xFFF9FAFB),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: color.withValues(alpha: 0.25)),
           ),
@@ -655,7 +655,7 @@ class _StudentStatCard extends StatelessWidget {
                     child: Text(
                       title,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: const Color(0xFF6B7280),
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -670,7 +670,7 @@ class _StudentStatCard extends StatelessWidget {
               Text(
                 value,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                 ),
@@ -680,7 +680,7 @@ class _StudentStatCard extends StatelessWidget {
               Text(
                 subtitle,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.6),
+                  color: const Color(0xFF6B7280),
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                 ),
@@ -720,22 +720,22 @@ class _StudentNoticeboardPreview extends ConsumerWidget {
           return Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
+              color: const Color(0xFFF9FAFB),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              border: Border.all(color: const Color(0xFFF3F4F6)),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.campaign_outlined,
                   size: 20,
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: const Color(0xFF9CA3AF),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   'No recent broadcast announcements',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: const Color(0xFF6B7280),
                     fontSize: 12,
                   ),
                 ),

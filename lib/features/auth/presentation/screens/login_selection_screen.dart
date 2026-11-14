@@ -57,14 +57,14 @@ class LoginSelectionScreen extends StatelessWidget {
                 Text(
                   'Choose how you want to sign in',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
+                    color: const Color(0xFF111827),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'Parents can use the Student login to view their child\u2019s information.',
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                  style: TextStyle(color: const Color(0xFF6B7280)),
                 ),
                 const SizedBox(height: 20),
                 for (final option in _options) ...[
@@ -97,7 +97,7 @@ class _BrandHeader extends StatelessWidget {
           AppConstants.appName,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: Colors.white,
+            color: const Color(0xFF111827),
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -105,7 +105,7 @@ class _BrandHeader extends StatelessWidget {
         Text(
           'Smart academy management, all in one place',
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+          style: TextStyle(color: const Color(0xFF6B7280)),
         ),
       ],
     );
@@ -128,7 +128,7 @@ class _RoleTile extends StatelessWidget {
     };
 
     return Material(
-      color: Colors.white.withValues(alpha: 0.06),
+      color: const Color(0xFFF9FAFB),
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () => context.push(route),
@@ -137,17 +137,17 @@ class _RoleTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            border: Border.all(color: const Color(0xFFE5E7EB)),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: const Color(0xFFF3F4F6),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(option.icon, color: Colors.white, size: 22),
+                child: Icon(option.icon, color: const Color(0xFF111827), size: 22),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -157,7 +157,7 @@ class _RoleTile extends StatelessWidget {
                     Text(
                       option.role.label,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
@@ -166,7 +166,7 @@ class _RoleTile extends StatelessWidget {
                     Text(
                       option.description,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.6),
+                        color: const Color(0xFF6B7280),
                         fontSize: 12,
                       ),
                     ),
@@ -175,7 +175,7 @@ class _RoleTile extends StatelessWidget {
               ),
               Icon(
                 Icons.chevron_right,
-                color: Colors.white.withValues(alpha: 0.5),
+                color: const Color(0xFF9CA3AF),
               ),
             ],
           ),

@@ -128,7 +128,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -139,10 +139,10 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: const Color(0xFFF3F4F6),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.16),
+                    color: const Color(0xFFE5E7EB),
                   ),
                 ),
                 child: Row(
@@ -153,7 +153,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
                       ).withValues(alpha: 0.3),
                       child: const Icon(
                         Icons.account_balance,
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -164,7 +164,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
                           const Text(
                             'Branch Campus Profile',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                             ),
@@ -174,7 +174,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
                                 ? widget.branch.city
                                 : 'Campus Branch',
                             style: const TextStyle(
-                              color: Colors.white60,
+                              color: Color(0xFF9CA3AF),
                               fontSize: 12,
                             ),
                           ),

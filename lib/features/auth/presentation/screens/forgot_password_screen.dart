@@ -65,7 +65,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(

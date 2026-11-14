@@ -71,7 +71,7 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(
@@ -89,7 +89,7 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                   Text(
                     'Students and parents sign in here using credentials provided on your admission slip.',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF6B7280),
                       fontSize: 12,
                     ),
                   ),
@@ -124,7 +124,7 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                         _obscurePin
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: Colors.white70,
+                        color: const Color(0xFF6B7280),
                         size: 20,
                       ),
                       tooltip: _obscurePin ? 'Show PIN' : 'Hide PIN',

@@ -41,9 +41,9 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
+            color: const Color(0xFF111827),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white12),
+            border: Border.all(color: const Color(0xFFF3F4F6)),
           ),
           child: Row(
             children: [
@@ -77,7 +77,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
             Text(
               'Enrolled Subjects (${courses.length})',
               style: theme.textTheme.titleSmall?.copyWith(
-                color: Colors.white,
+                color: const Color(0xFF111827),
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -122,14 +122,14 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? Colors.white : Colors.white60,
+              color: isSelected ? Colors.white : const Color(0xFF9CA3AF),
             ),
             const SizedBox(width: 6),
             Flexible(
               child: Text(
                 title,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white70,
+                  color: isSelected ? Colors.white : const Color(0xFF6B7280),
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
@@ -181,7 +181,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                       Text(
                         course.name,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
@@ -216,7 +216,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                             style: TextStyle(
                               color: course.isActive
                                   ? const Color(0xFF34D399)
-                                  : Colors.white38,
+                                  : const Color(0xFFD1D5DB),
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -233,7 +233,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
               Text(
                 course.description,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: const Color(0xFF6B7280),
                   fontSize: 12,
                 ),
                 maxLines: 2,
@@ -241,7 +241,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
               ),
             ],
             const SizedBox(height: 12),
-            const Divider(color: Colors.white10, height: 1),
+            const Divider(color: Color(0xFFF3F4F6), height: 1),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -260,7 +260,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                               ? course.teacherName
                               : 'Faculty Assigned',
                           style: const TextStyle(
-                            color: Colors.white70,
+                            color: Color(0xFF6B7280),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -283,7 +283,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                       Text(
                         'Room ${course.room}',
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: Color(0xFF6B7280),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -432,18 +432,18 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? const Color(0xFF6366F1)
-                        : const Color(0xFF1E293B),
+                        : Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isSelected
                           ? const Color(0xFF818CF8)
-                          : Colors.white12,
+                          : const Color(0xFFF3F4F6),
                     ),
                   ),
                   child: Text(
                     _days[index],
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white60,
+                      color: isSelected ? Colors.white : const Color(0xFF9CA3AF),
                       fontSize: 12,
                       fontWeight:
                           isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -460,7 +460,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
         Text(
           '$activeDayName Schedule',
           style: theme.textTheme.titleSmall?.copyWith(
-            color: Colors.white,
+            color: const Color(0xFF111827),
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -470,9 +470,9 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E293B).withValues(alpha: 0.5),
+              color: const Color(0xFF111827).withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: const Color(0xFFF3F4F6)),
             ),
             child: Center(
               child: Column(
@@ -480,13 +480,13 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                   Icon(
                     Icons.event_available_outlined,
                     size: 36,
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: const Color(0xFFD1D5DB),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'No scheduled lectures for $activeDayName',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF6B7280),
                       fontSize: 13,
                     ),
                   ),
@@ -500,9 +500,9 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E293B).withValues(alpha: 0.7),
+                color: const Color(0xFF111827).withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.white10),
+                border: Border.all(color: const Color(0xFFF3F4F6)),
               ),
               child: Row(
                 children: [
@@ -526,7 +526,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                         Text(
                           course.name,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF111827),
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),
@@ -539,7 +539,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                               ? 'Teacher: ${course.teacherName}'
                               : 'Faculty Member',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.6),
+                            color: const Color(0xFF6B7280),
                             fontSize: 11,
                           ),
                         ),
@@ -564,7 +564,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
+                        color: const Color(0xFFF3F4F6),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -588,9 +588,9 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B).withValues(alpha: 0.4),
+        color: const Color(0xFF111827).withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: const Color(0xFFF3F4F6)),
       ),
       child: Center(
         child: Column(
@@ -598,13 +598,13 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
             const Icon(
               Icons.auto_stories_outlined,
               size: 48,
-              color: Colors.white30,
+              color: Color(0xFFD1D5DB),
             ),
             const SizedBox(height: 12),
             Text(
               'No Enrolled Courses Found',
               style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white,
+                color: const Color(0xFF111827),
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -613,7 +613,7 @@ class _StudentCoursesTabState extends ConsumerState<StudentCoursesTab> {
               'Your enrolled subjects and batches will appear here once registered by your academy administrator.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: const Color(0xFF6B7280),
                 fontSize: 12,
               ),
             ),

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +29,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
       return const Center(
         child: Text(
           'No academy context available.',
-          style: TextStyle(color: Colors.white70),
+          style: TextStyle(color: Color(0xFF6B7280)),
         ),
       );
     }
@@ -53,10 +52,10 @@ class AcademyAdminDashboard extends ConsumerWidget {
       attendanceForDateProvider((academyId: academyId, date: today)),
     );
     final platformBroadcastsAsync = ref.watch(platformBroadcastsStreamProvider);
-    final activeAlert = (platformBroadcastsAsync.value ??
-            const <PlatformBroadcast>[])
-        .where((b) => b.isActive)
-        .firstOrNull;
+    final activeAlert =
+        (platformBroadcastsAsync.value ?? const <PlatformBroadcast>[])
+            .where((b) => b.isActive)
+            .firstOrNull;
 
     // Calculate aggregated or filtered counts
     final allStudents = studentsAsync.value ?? const <Student>[];
@@ -71,8 +70,9 @@ class AcademyAdminDashboard extends ConsumerWidget {
         ? allStaff
         : allStaff.where((s) => s.branchId == selectedBranchId).toList();
 
-    final selectedBranch =
-        allBranches.where((b) => b.id == selectedBranchId).firstOrNull;
+    final selectedBranch = allBranches
+        .where((b) => b.id == selectedBranchId)
+        .firstOrNull;
 
     // Monthly Fee Collection sum
     final totalRevenue = (paymentsAsync.value ?? []).fold<double>(
@@ -107,7 +107,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                   const Text(
                     'Overview',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.3,
@@ -120,7 +120,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                         : 'Branch: ${selectedBranch?.name ?? ''} (${selectedBranch?.city ?? ''})',
                     style: TextStyle(
                       color: selectedBranchId == null
-                          ? Colors.white70
+                          ? const Color(0xFF6B7280)
                           : const Color(0xFF38BDF8),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -136,14 +136,21 @@ class AcademyAdminDashboard extends ConsumerWidget {
                 onPressed: () {
                   ref.read(selectedBranchIdProvider.notifier).state = null;
                 },
-                icon: const Icon(Icons.clear_all, size: 16, color: Colors.amber),
+                icon: const Icon(
+                  Icons.clear_all,
+                  size: 16,
+                  color: Colors.amber,
+                ),
                 label: const Text(
                   'Reset to All',
                   style: TextStyle(color: Colors.amber, fontSize: 12),
                 ),
                 style: TextButton.styleFrom(
                   visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                 ),
               ),
           ],
@@ -215,7 +222,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13,
                               ),
@@ -225,7 +232,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.7),
+                                color: const Color(0xFF6B7280),
                                 fontSize: 11,
                               ),
                             ),
@@ -233,8 +240,11 @@ class AcademyAdminDashboard extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Icon(Icons.arrow_forward_ios,
-                          size: 13, color: Colors.white54),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 13,
+                        color: Color(0xFF9CA3AF),
+                      ),
                     ],
                   ),
                 ),
@@ -268,7 +278,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                       child: Text(
                         'Welcome to Acaderix Workspace',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
                         ),
@@ -280,7 +290,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                 Text(
                   'Your academy is active and ready. Start setting up your institution by admitting students, creating campus branches, or registering staff members.',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: const Color(0xFF374151),
                     fontSize: 12.5,
                     height: 1.4,
                   ),
@@ -294,16 +304,17 @@ class AcademyAdminDashboard extends ConsumerWidget {
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFF6366F1),
                       ),
-                      icon: const Icon(Icons.person_add_alt_1_rounded, size: 16),
+                      icon: const Icon(
+                        Icons.person_add_alt_1_rounded,
+                        size: 16,
+                      ),
                       label: const Text('Admit Student'),
                       onPressed: () => context.push(AppRoutes.addStudent),
                     ),
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        side: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.25),
-                        ),
+                        side: BorderSide(color: const Color(0xFFD1D5DB)),
                       ),
                       icon: const Icon(Icons.badge_outlined, size: 16),
                       label: const Text('Add Staff Member'),
@@ -386,7 +397,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
               child: Text(
                 'Branches Overview',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -407,57 +418,50 @@ class AcademyAdminDashboard extends ConsumerWidget {
         const SizedBox(height: 8),
 
         if (allBranches.isEmpty)
-          ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.12),
+          Container(
+            clipBehavior: Clip.antiAlias,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9FAFB),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.account_balance_outlined,
+                  color: Color(0xFF38BDF8),
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'No Branches Configured',
+                        style: TextStyle(
+                          color: Color(0xFF111827),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Add campus locations to organize students, staff, and records by branch.',
+                        style: TextStyle(
+                          color: Color(0xFF6B7280),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.account_balance_outlined,
-                      color: Color(0xFF38BDF8),
-                      size: 28,
-                    ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'No Branches Configured',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(height: 2),
-                          Text(
-                            'Add campus locations to organize students, staff, and records by branch.',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    FilledButton.tonal(
-                      onPressed: () => context.push(AppRoutes.addBranch),
-                      child: const Text('Add'),
-                    ),
-                  ],
+                FilledButton.tonal(
+                  onPressed: () => context.push(AppRoutes.addBranch),
+                  child: const Text('Add'),
                 ),
-              ),
+              ],
             ),
           )
         else
@@ -469,8 +473,9 @@ class AcademyAdminDashboard extends ConsumerWidget {
                   studentCount: allStudents
                       .where((s) => s.branchId == branch.id)
                       .length,
-                  staffCount:
-                      allStaff.where((s) => s.branchId == branch.id).length,
+                  staffCount: allStaff
+                      .where((s) => s.branchId == branch.id)
+                      .length,
                   isSelected: selectedBranchId == branch.id,
                   onSelect: () {
                     ref.read(selectedBranchIdProvider.notifier).state =
@@ -488,7 +493,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
         const Text(
           'Manage',
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFF111827),
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -587,101 +592,93 @@ class _BranchBreakdownCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? const Color(0xFF38BDF8).withValues(alpha: 0.15)
-                : Colors.white.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isSelected
-                  ? const Color(0xFF38BDF8)
-                  : Colors.white.withValues(alpha: 0.14),
-              width: isSelected ? 1.5 : 1,
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? const Color(0xFF38BDF8).withValues(alpha: 0.15)
+            : const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isSelected ? const Color(0xFF38BDF8) : const Color(0xFFF3F4F6),
+          width: isSelected ? 1.5 : 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF38BDF8).withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.account_balance,
+              color: Color(0xFF38BDF8),
+              size: 20,
             ),
           ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF38BDF8).withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(10),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  branch.name,
+                  style: const TextStyle(
+                    color: Color(0xFF111827),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.account_balance,
-                  color: Color(0xFF38BDF8),
-                  size: 20,
+                const SizedBox(height: 2),
+                Text(
+                  branch.city.isNotEmpty
+                      ? '${branch.city}${branch.address.isNotEmpty ? ' · ${branch.address}' : ''}'
+                      : branch.address,
+                  style: const TextStyle(
+                    color: Color(0xFF6B7280),
+                    fontSize: 12,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
                   children: [
-                    Text(
-                      branch.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                      ),
+                    _BadgePill(
+                      label: '$studentCount Students',
+                      color: const Color(0xFF6366F1),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      branch.city.isNotEmpty
-                          ? '${branch.city}${branch.address.isNotEmpty ? ' · ${branch.address}' : ''}'
-                          : branch.address,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        _BadgePill(
-                          label: '$studentCount Students',
-                          color: const Color(0xFF6366F1),
-                        ),
-                        _BadgePill(
-                          label: '$staffCount Staff',
-                          color: const Color(0xFF14B8A6),
-                        ),
-                      ],
+                    _BadgePill(
+                      label: '$staffCount Staff',
+                      color: const Color(0xFF14B8A6),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 8),
-              FilledButton.tonal(
-                onPressed: onSelect,
-                style: FilledButton.styleFrom(
-                  backgroundColor: isSelected
-                      ? const Color(0xFF38BDF8)
-                      : Colors.white.withValues(alpha: 0.12),
-                  foregroundColor: isSelected ? Colors.black : Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  textStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                child: Text(isSelected ? 'Viewing' : 'Filter'),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          const SizedBox(width: 8),
+          FilledButton.tonal(
+            onPressed: onSelect,
+            style: FilledButton.styleFrom(
+              backgroundColor: isSelected
+                  ? const Color(0xFF38BDF8)
+                  : const Color(0xFFE5E7EB),
+              foregroundColor: isSelected ? Colors.black : Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              textStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            child: Text(isSelected ? 'Viewing' : 'Filter'),
+          ),
+        ],
       ),
     );
   }
@@ -700,9 +697,7 @@ class _BadgePill extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
@@ -721,7 +716,7 @@ class _ModuleTile extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
-    this.color = Colors.white,
+    this.color = const Color(0xFF111827),
   });
 
   final IconData icon;
@@ -731,51 +726,42 @@ class _ModuleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.16),
-              width: 1.2,
-            ),
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(icon, color: color, size: 26),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3F4F6),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.2),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: color, size: 26),
               ),
-            ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Color(0xFF111827),
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 }
-

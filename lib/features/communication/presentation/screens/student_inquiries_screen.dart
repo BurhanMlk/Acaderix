@@ -74,12 +74,12 @@ class _StudentInquiriesScreenState
 
     return DashboardBackground(
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFFFFFFFF),
         appBar: AppBar(
-          backgroundColor: Colors.white.withValues(alpha: 0.05),
+          backgroundColor: const Color(0xFFF9FAFB),
           elevation: 0,
           scrolledUnderElevation: 0,
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Color(0xFF374151)),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -88,7 +88,7 @@ class _StudentInquiriesScreenState
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontWeight: FontWeight.w700,
                   fontSize: 16,
                 ),
@@ -100,7 +100,7 @@ class _StudentInquiriesScreenState
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: const Color(0xFF6B7280),
                   fontSize: 11,
                 ),
               ),
@@ -173,7 +173,7 @@ class _StudentInquiriesScreenState
                       const SizedBox(height: 12),
                       Text(
                         'Failed to load messages: ${snapshot.error}',
-                        style: const TextStyle(color: Colors.white70),
+                        style: const TextStyle(color: Color(0xFF6B7280)),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -229,13 +229,13 @@ class _StudentInquiriesScreenState
                           onChanged: (val) =>
                               setState(() => _searchQuery = val.trim()),
                           style: const TextStyle(
-                              color: Colors.white, fontSize: 13),
+                              color: Color(0xFF111827), fontSize: 13),
                           decoration: InputDecoration(
                             hintText: isTeacher
                                 ? 'Search student name, roll #, or message...'
                                 : 'Search instructor, course, or message...',
                             hintStyle: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: const Color(0xFF9CA3AF),
                               fontSize: 13,
                             ),
                             prefixIcon: const Icon(Icons.search,
@@ -243,22 +243,22 @@ class _StudentInquiriesScreenState
                             suffixIcon: _searchQuery.isNotEmpty
                                 ? IconButton(
                                     icon: const Icon(Icons.clear,
-                                        color: Colors.white38, size: 16),
+                                        color: Color(0xFFD1D5DB), size: 16),
                                     onPressed: () =>
                                         setState(() => _searchQuery = ''),
                                   )
                                 : null,
                             filled: true,
-                            fillColor: Colors.white.withValues(alpha: 0.05),
+                            fillColor: const Color(0xFFF9FAFB),
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 14, vertical: 10),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Colors.white12),
+                              borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Colors.white12),
+                              borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -379,12 +379,12 @@ class _AcademicConversationListTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: const Color(0xFFF9FAFB),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: unreadCount > 0
                   ? const Color(0xFF38BDF8).withValues(alpha: 0.5)
-                  : Colors.white12,
+                  : const Color(0xFFF3F4F6),
               width: unreadCount > 0 ? 1.5 : 1.0,
             ),
           ),
@@ -420,7 +420,7 @@ class _AcademicConversationListTile extends StatelessWidget {
                           child: Text(
                             displayName,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -431,7 +431,7 @@ class _AcademicConversationListTile extends StatelessWidget {
                         Text(
                           dateFormat.format(conversation.lastMessageAt),
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: const Color(0xFF9CA3AF),
                             fontSize: 11,
                           ),
                         ),
@@ -459,7 +459,7 @@ class _AcademicConversationListTile extends StatelessWidget {
                             style: TextStyle(
                               color: unreadCount > 0
                                   ? Colors.white
-                                  : Colors.white.withValues(alpha: 0.65),
+                                  : const Color(0xFF6B7280),
                               fontSize: 12,
                               fontWeight: unreadCount > 0
                                   ? FontWeight.w600

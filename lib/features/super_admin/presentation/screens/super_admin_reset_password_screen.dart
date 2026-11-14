@@ -104,7 +104,7 @@ class _SuperAdminResetPasswordScreenState
     };
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680),
@@ -323,7 +323,7 @@ class _SuperAdminResetPasswordScreenState
                                   width: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Colors.white,
+                                    color: Color(0xFF111827),
                                   ),
                                 )
                               : const Text(

@@ -73,12 +73,12 @@ class _StudentShellState extends ConsumerState<StudentShell> {
           final isWide = constraints.maxWidth >= 640;
 
           return Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color(0xFFFFFFFF),
             appBar: AppBar(
-              backgroundColor: Colors.white.withValues(alpha: 0.05),
+              backgroundColor: const Color(0xFFF9FAFB),
               elevation: 0,
               scrolledUnderElevation: 0,
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: const IconThemeData(color: Color(0xFF374151)),
               leadingWidth: 48,
               leading: const Padding(
                 padding: EdgeInsets.only(left: 12),
@@ -93,7 +93,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
@@ -103,7 +103,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF6B7280),
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -140,7 +140,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                 ),
                 IconButton(
                   tooltip: 'Sign out',
-                  icon: const Icon(Icons.logout, color: Colors.white70),
+                  icon: const Icon(Icons.logout, color: Color(0xFF6B7280)),
                   onPressed: () async {
                     final confirmed = await showConfirmationDialog(
                       context,
@@ -161,7 +161,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                 ? Row(
                     children: [
                       NavigationRail(
-                        backgroundColor: Colors.white.withValues(alpha: 0.03),
+                        backgroundColor: const Color(0xFFFCFCFD),
                         selectedIndex: _currentIndex,
                         onDestinationSelected: (index) =>
                             setState(() => _currentIndex = index),
@@ -170,7 +170,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                           color: Color(0xFF38BDF8),
                         ),
                         unselectedIconTheme: IconThemeData(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: const Color(0xFF6B7280),
                         ),
                         selectedLabelTextStyle: const TextStyle(
                           color: Color(0xFF38BDF8),
@@ -178,7 +178,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                           fontWeight: FontWeight.w700,
                         ),
                         unselectedLabelTextStyle: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: const Color(0xFF6B7280),
                           fontSize: 11,
                         ),
                         destinations: const [
@@ -210,7 +210,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                         ],
                       ),
                       const VerticalDivider(
-                        color: Colors.white12,
+                        color: Color(0xFFF3F4F6),
                         width: 1,
                         thickness: 1,
                       ),
@@ -236,7 +236,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                           return const IconThemeData(color: Color(0xFF38BDF8));
                         }
                         return IconThemeData(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: const Color(0xFF6B7280),
                         );
                       }),
                       labelTextStyle: WidgetStateProperty.resolveWith((states) {
@@ -248,7 +248,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                           );
                         }
                         return TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: const Color(0xFF6B7280),
                           fontSize: 11,
                         );
                       }),

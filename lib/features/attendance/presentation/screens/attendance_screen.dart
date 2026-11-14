@@ -116,7 +116,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       height: 4,
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
-                        color: Colors.white24,
+                        color: const Color(0xFFE5E7EB),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -130,7 +130,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             Text(
                               course.name,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                               ),
@@ -138,7 +138,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             Text(
                               'Teacher: ${course.teacherName.isNotEmpty ? course.teacherName : "Unassigned"}',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
+                                color: const Color(0xFF6B7280),
                                 fontSize: 12,
                               ),
                             ),
@@ -161,13 +161,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white70),
+                        icon: const Icon(Icons.close, color: Color(0xFF6B7280)),
                         onPressed: () => Navigator.of(modalCtx).pop(),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Divider(color: Colors.white.withValues(alpha: 0.1), height: 1),
+                  Divider(color: const Color(0xFFF3F4F6), height: 1),
                   const SizedBox(height: 12),
 
                   Expanded(
@@ -175,7 +175,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         ? const Center(
                             child: Text(
                               'No students enrolled in this course.',
-                              style: TextStyle(color: Colors.white70),
+                              style: TextStyle(color: Color(0xFF6B7280)),
                             ),
                           )
                         : ListView.separated(
@@ -190,9 +190,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                               return Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.05),
+                                  color: const Color(0xFFF9FAFB),
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                                  border: Border.all(color: const Color(0xFFF3F4F6)),
                                 ),
                                 child: Row(
                                   children: [
@@ -205,7 +205,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
-                                              color: Colors.white,
+                                              color: Color(0xFF111827),
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14,
                                             ),
@@ -215,7 +215,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
-                                              color: Colors.white.withValues(alpha: 0.6),
+                                              color: const Color(0xFF6B7280),
                                               fontSize: 11,
                                             ),
                                           ),
@@ -323,7 +323,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -336,9 +336,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
+                color: const Color(0xFFF9FAFB),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                border: Border.all(color: const Color(0xFFF3F4F6)),
               ),
               child: Row(
                 children: [
@@ -367,7 +367,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
                               ),
@@ -419,7 +419,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       visualDensity: VisualDensity.compact,
                       side: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: const Color(0xFFE5E7EB),
                       ),
                     ),
                     onPressed: () async {
@@ -451,12 +451,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       decoration: BoxDecoration(
                         color: _viewMode == 0
                             ? const Color(0xFF38BDF8).withValues(alpha: 0.2)
-                            : Colors.white.withValues(alpha: 0.03),
+                            : const Color(0xFFFCFCFD),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: _viewMode == 0
                               ? const Color(0xFF38BDF8)
-                              : Colors.white.withValues(alpha: 0.08),
+                              : const Color(0xFFF3F4F6),
                         ),
                       ),
                       alignment: Alignment.center,
@@ -472,7 +472,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 size: 15,
                                 color: _viewMode == 0
                                     ? const Color(0xFF38BDF8)
-                                    : Colors.white70,
+                                    : const Color(0xFF6B7280),
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -480,7 +480,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 style: TextStyle(
                                   color: _viewMode == 0
                                       ? const Color(0xFF38BDF8)
-                                      : Colors.white70,
+                                      : const Color(0xFF6B7280),
                                   fontWeight: _viewMode == 0
                                       ? FontWeight.w700
                                       : FontWeight.w500,
@@ -504,12 +504,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       decoration: BoxDecoration(
                         color: _viewMode == 1
                             ? const Color(0xFF38BDF8).withValues(alpha: 0.2)
-                            : Colors.white.withValues(alpha: 0.03),
+                            : const Color(0xFFFCFCFD),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: _viewMode == 1
                               ? const Color(0xFF38BDF8)
-                              : Colors.white.withValues(alpha: 0.08),
+                              : const Color(0xFFF3F4F6),
                         ),
                       ),
                       alignment: Alignment.center,
@@ -525,7 +525,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 size: 15,
                                 color: _viewMode == 1
                                     ? const Color(0xFF38BDF8)
-                                    : Colors.white70,
+                                    : const Color(0xFF6B7280),
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -533,7 +533,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 style: TextStyle(
                                   color: _viewMode == 1
                                       ? const Color(0xFF38BDF8)
-                                      : Colors.white70,
+                                      : const Color(0xFF6B7280),
                                   fontWeight: _viewMode == 1
                                       ? FontWeight.w700
                                       : FontWeight.w500,
@@ -600,13 +600,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   const Icon(
                     Icons.menu_book_outlined,
                     size: 40,
-                    color: Colors.white38,
+                    color: Color(0xFFD1D5DB),
                   ),
                   const SizedBox(height: 12),
                   const Text(
                     'No Courses Created Yet',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                     ),
@@ -615,7 +615,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   const Text(
                     'Courses allow teachers to take class-specific attendance.\nSwitch to "General Roster" or create a course.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white60, fontSize: 13),
+                    style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
                   ),
                   const SizedBox(height: 14),
                   FilledButton.icon(
@@ -701,7 +701,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: const Color(0xFFF9FAFB),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isSubmitted
@@ -723,7 +723,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF111827),
                                   fontWeight: FontWeight.w700,
                                   fontSize: 15,
                                 ),
@@ -785,7 +785,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                           children: [
                             const Icon(
                               Icons.badge_outlined,
-                              color: Colors.white70,
+                              color: Color(0xFF6B7280),
                               size: 14,
                             ),
                             const SizedBox(width: 4),
@@ -794,7 +794,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                   ? course.teacherName
                                   : 'Assigned Teacher',
                               style: const TextStyle(
-                                color: Colors.white70,
+                                color: Color(0xFF6B7280),
                                 fontSize: 12,
                               ),
                             ),
@@ -813,7 +813,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                               Text(
                                 course.schedule,
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.7),
+                                  color: const Color(0xFF6B7280),
                                   fontSize: 12,
                                 ),
                               ),
@@ -827,7 +827,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       Text(
                         'Roster: $presentCount Present • $absentCount Absent • $lateCount Late',
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: const Color(0xFF6B7280),
                           fontSize: 12,
                         ),
                       ),
@@ -835,7 +835,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
                     const SizedBox(height: 10),
                     Divider(
-                      color: Colors.white.withValues(alpha: 0.08),
+                      color: const Color(0xFFF3F4F6),
                       height: 1,
                     ),
                     const SizedBox(height: 8),
@@ -928,7 +928,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
               padding: EdgeInsets.all(24),
               child: Text(
                 'No students match the selected branch.',
-                style: TextStyle(color: Colors.white70),
+                style: TextStyle(color: Color(0xFF6B7280)),
               ),
             ),
           );
@@ -1033,7 +1033,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.white.withValues(alpha: 0.6),
+                                  color: const Color(0xFF6B7280),
                                 ),
                               ),
                             ],
@@ -1162,7 +1162,7 @@ class _StatBadge extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.8),
+                  color: const Color(0xFF374151),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),

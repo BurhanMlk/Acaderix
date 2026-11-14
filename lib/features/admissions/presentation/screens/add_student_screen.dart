@@ -174,7 +174,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
               child: Text(
                 'Student Credentials',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -193,22 +193,22 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
                 const Text(
                   'A student account has been created. The PIN below is '
                   'temporary and will not be shown again.',
-                  style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+                  style: TextStyle(color: Color(0xFF6B7280), fontSize: 13, height: 1.4),
                 ),
                 const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: const Color(0xFFF9FAFB),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.12),
+                      color: const Color(0xFFE5E7EB),
                     ),
                   ),
                   child: Column(
                     children: [
                       _CredentialRow(label: 'Roll Number', value: rollNumber),
-                      const Divider(color: Colors.white12, height: 16),
+                      const Divider(color: Color(0xFFF3F4F6), height: 16),
                       _CredentialRow(label: 'Temporary PIN', value: pin),
                     ],
                   ),
@@ -239,7 +239,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
     final isLimitReached = !isUnlimited && students.length >= maxStudents;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -341,7 +341,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
                         labelText: 'Assigned Campus / Branch',
                         prefixIcon: Icon(Icons.account_balance_outlined),
                       ),
-                      dropdownColor: const Color(0xFF1E293B),
+                      dropdownColor: Colors.white,
                       selectedItemBuilder: (context) {
                         return [
                           const Align(

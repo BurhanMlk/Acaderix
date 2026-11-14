@@ -143,7 +143,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -154,10 +154,10 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: const Color(0xFFF3F4F6),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.16),
+                    color: const Color(0xFFE5E7EB),
                   ),
                 ),
                 child: Row(
@@ -166,7 +166,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                       backgroundColor: const Color(
                         0xFF6366F1,
                       ).withValues(alpha: 0.3),
-                      child: const Icon(Icons.school, color: Colors.white),
+                      child: const Icon(Icons.school, color: Color(0xFF374151)),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -176,7 +176,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                           Text(
                             'Roll Number: ${widget.student.rollNumber}',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                             ),
@@ -184,7 +184,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                           const Text(
                             'Roll numbers are permanent identifiers',
                             style: TextStyle(
-                              color: Colors.white60,
+                              color: Color(0xFF9CA3AF),
                               fontSize: 12,
                             ),
                           ),
@@ -268,7 +268,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                         labelText: 'Assigned Campus / Branch',
                         prefixIcon: Icon(Icons.account_balance_outlined),
                       ),
-                      dropdownColor: const Color(0xFF1E293B),
+                      dropdownColor: Colors.white,
                       selectedItemBuilder: (context) {
                         return [
                           const Align(
@@ -357,7 +357,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                   labelText: 'Enrollment Status',
                   prefixIcon: Icon(Icons.flag_outlined),
                 ),
-                dropdownColor: const Color(0xFF1E293B),
+                dropdownColor: Colors.white,
                 items: const [
                   DropdownMenuItem(value: 'active', child: Text('Active')),
                   DropdownMenuItem(value: 'inactive', child: Text('Inactive')),

@@ -121,7 +121,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineMedium
                             ?.copyWith(
-                              color: Colors.white,
+                              color: const Color(0xFF111827),
                               fontWeight: FontWeight.w800,
                               letterSpacing: 2.5,
                             ),
@@ -133,7 +133,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         AppConstants.appTagline,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.78),
+                          color: const Color(0xFF111827).withValues(alpha: 0.78),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.6,
@@ -153,12 +153,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         height: 3.5,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          color: Colors.white.withValues(alpha: 0.1),
+                          color: const Color(0xFFF3F4F6),
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: const LinearProgressIndicator(
                           minHeight: 3.5,
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: Color(0xFFFFFFFF),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Color(0xFF6366F1),
                           ),
@@ -170,7 +170,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       Text(
                         widget.statusMessage,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.55),
+                          color: const Color(0xFF111827).withValues(alpha: 0.55),
                           fontSize: 12,
                           letterSpacing: 0.4,
                         ),
@@ -184,10 +184,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.06),
+                          color: const Color(0xFFF9FAFB),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.12),
+                            color: const Color(0xFFE5E7EB),
                             width: 1,
                           ),
                         ),
@@ -209,7 +209,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.65),
+                                  color: const Color(0xFF6B7280),
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.5,
@@ -260,7 +260,7 @@ Future<T?> showSplashLoadingDialog<T>(
                     Text(
                       AppConstants.appName,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
@@ -271,7 +271,7 @@ Future<T?> showSplashLoadingDialog<T>(
                       message,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
+                        color: const Color(0xFF374151),
                         fontSize: 13,
                         height: 1.4,
                       ),
@@ -283,11 +283,11 @@ Future<T?> showSplashLoadingDialog<T>(
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        color: Colors.white.withValues(alpha: 0.12),
+                        color: const Color(0xFFE5E7EB),
                       ),
                       child: const LinearProgressIndicator(
                         minHeight: 3.5,
-                        backgroundColor: Colors.transparent,
+                        backgroundColor: Color(0xFFFFFFFF),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           Color(0xFF6366F1),
                         ),

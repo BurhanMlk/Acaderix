@@ -12,7 +12,7 @@ Future<void> showStudentProfileModal(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: const Color(0xFFFFFFFF),
     builder: (ctx) => const _StudentProfileSheet(),
   );
 }
@@ -52,7 +52,7 @@ class _StudentProfileSheet extends ConsumerWidget {
         color: const Color(0xFF0F172A),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.12),
+          color: const Color(0xFFE5E7EB),
           width: 1,
         ),
       ),
@@ -66,7 +66,7 @@ class _StudentProfileSheet extends ConsumerWidget {
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: const Color(0xFFD1D5DB),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -89,21 +89,21 @@ class _StudentProfileSheet extends ConsumerWidget {
                     Text(
                       'Student Digital Pass',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF111827),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white70, size: 20),
+                  icon: const Icon(Icons.close, color: Color(0xFF6B7280), size: 20),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
           ),
 
-          const Divider(color: Colors.white12, height: 1),
+          const Divider(color: Color(0xFFF3F4F6), height: 1),
 
           // Scrollable content
           Flexible(
@@ -116,7 +116,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [
-                        Color(0xFF1E1B4B),
+                        Color(0xFFFFFFFF),
                         Color(0xFF312E81),
                         Color(0xFF1E3A8A),
                       ],
@@ -148,7 +148,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                               Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.15),
+                                  color: const Color(0xFFE5E7EB),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
@@ -161,7 +161,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                               const Text(
                                 'ACADERIX ACADEMY',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF111827),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 1.2,
@@ -207,12 +207,12 @@ class _StudentProfileSheet extends ConsumerWidget {
                               gradient: const LinearGradient(
                                 colors: [Color(0xFF38BDF8), Color(0xFF818CF8)],
                               ),
-                              border: Border.all(color: Colors.white, width: 2),
+                              border: Border.all(color: const Color(0xFF111827), width: 2),
                             ),
                             child: const Center(
                               child: Icon(
                                 Icons.person,
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                                 size: 36,
                               ),
                             ),
@@ -225,7 +225,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                                 Text(
                                   fullName,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF111827),
                                     fontSize: 18,
                                     fontWeight: FontWeight.w800,
                                   ),
@@ -245,7 +245,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                                 Text(
                                   '$branchName • $session',
                                   style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.75),
+                                    color: const Color(0xFF374151),
                                     fontSize: 11,
                                   ),
                                   maxLines: 1,
@@ -258,7 +258,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                       ),
 
                       const SizedBox(height: 16),
-                      const Divider(color: Colors.white24, height: 1),
+                      const Divider(color: Color(0xFFE5E7EB), height: 1),
                       const SizedBox(height: 12),
 
                       // Barcode simulation
@@ -271,7 +271,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                               Text(
                                 'STUDENT ID',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
+                                  color: const Color(0xFF9CA3AF),
                                   fontSize: 9,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.5,
@@ -282,7 +282,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                                 student?.id.toUpperCase().substring(0, 10) ??
                                     'ACD-STD-01',
                                 style: const TextStyle(
-                                  color: Colors.white70,
+                                  color: Color(0xFF6B7280),
                                   fontSize: 11,
                                   fontFamily: 'monospace',
                                   fontWeight: FontWeight.w600,
@@ -300,7 +300,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                                     ? 3
                                     : (index % 2 == 0 ? 1.5 : 2),
                                 height: 26,
-                                color: Colors.white.withValues(alpha: 0.8),
+                                color: const Color(0xFF374151),
                               ),
                             ),
                           ),
@@ -316,7 +316,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                 const Text(
                   'Personal Information',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -332,7 +332,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                         'Date of Birth',
                         dobStr,
                       ),
-                      const Divider(color: Colors.white10, height: 14),
+                      const Divider(color: Color(0xFFF3F4F6), height: 14),
                       _buildInfoRow(
                         Icons.wc_outlined,
                         'Gender',
@@ -340,7 +340,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                             ? student!.gender
                             : 'Not specified',
                       ),
-                      const Divider(color: Colors.white10, height: 14),
+                      const Divider(color: Color(0xFFF3F4F6), height: 14),
                       _buildInfoRow(
                         Icons.phone_outlined,
                         'Student Contact',
@@ -348,7 +348,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                             ? student!.phone
                             : 'Not specified',
                       ),
-                      const Divider(color: Colors.white10, height: 14),
+                      const Divider(color: Color(0xFFF3F4F6), height: 14),
                       _buildInfoRow(
                         Icons.calendar_today_outlined,
                         'Admission Date',
@@ -364,7 +364,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                 const Text(
                   'Parent / Guardian Information',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -382,7 +382,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                             ? student!.fatherName
                             : 'Not specified',
                       ),
-                      const Divider(color: Colors.white10, height: 14),
+                      const Divider(color: Color(0xFFF3F4F6), height: 14),
                       _buildInfoRow(
                         Icons.phone_in_talk_outlined,
                         'Guardian Phone',
@@ -390,7 +390,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                             ? student!.guardianPhone
                             : 'Not specified',
                       ),
-                      const Divider(color: Colors.white10, height: 14),
+                      const Divider(color: Color(0xFFF3F4F6), height: 14),
                       _buildInfoRow(
                         Icons.people_outline,
                         'Relationship',
@@ -398,7 +398,7 @@ class _StudentProfileSheet extends ConsumerWidget {
                             ? student!.guardianRelation
                             : 'Parent',
                       ),
-                      const Divider(color: Colors.white10, height: 14),
+                      const Divider(color: Color(0xFFF3F4F6), height: 14),
                       _buildInfoRow(
                         Icons.home_outlined,
                         'Address',
@@ -433,14 +433,14 @@ class _StudentProfileSheet extends ConsumerWidget {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (dialogCtx) => AlertDialog(
-                        backgroundColor: const Color(0xFF1E293B),
+                        backgroundColor: Colors.white,
                         title: const Text(
                           'Sign Out',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Color(0xFF111827)),
                         ),
                         content: const Text(
                           'Are you sure you want to log out of the student portal?',
-                          style: TextStyle(color: Colors.white70),
+                          style: TextStyle(color: Color(0xFF6B7280)),
                         ),
                         actions: [
                           TextButton(
@@ -484,7 +484,7 @@ class _StudentProfileSheet extends ConsumerWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.6),
+              color: const Color(0xFF6B7280),
               fontSize: 12,
             ),
           ),
@@ -494,7 +494,7 @@ class _StudentProfileSheet extends ConsumerWidget {
           child: Text(
             value,
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFF111827),
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),

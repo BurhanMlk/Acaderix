@@ -36,7 +36,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addResult(context, ref, academyId),
         icon: const Icon(Icons.add),
@@ -103,7 +103,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       padding: EdgeInsets.all(24),
                       child: Text(
                         'No exam results found for the selected filter.',
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(color: Color(0xFF6B7280)),
                       ),
                     ),
                   );
@@ -200,7 +200,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                             ? student.fullName
                                             : 'Student ${result.studentId}',
                                         style: const TextStyle(
-                                          color: Colors.white,
+                                          color: Color(0xFF111827),
                                           fontWeight: FontWeight.w700,
                                           fontSize: 14,
                                         ),
@@ -217,7 +217,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                               Text(
                                                 'Roll #${student.rollNumber}',
                                                 style: const TextStyle(
-                                                  color: Colors.white60,
+                                                  color: Color(0xFF9CA3AF),
                                                   fontSize: 11,
                                                 ),
                                               ),
@@ -287,7 +287,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                             const SizedBox(height: 8),
                             Divider(
                               height: 1,
-                              color: Colors.white.withValues(alpha: 0.08),
+                              color: const Color(0xFFF3F4F6),
                             ),
                             const SizedBox(height: 8),
 
@@ -297,13 +297,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                 const Icon(
                                   Icons.assignment_turned_in_outlined,
                                   size: 14,
-                                  color: Colors.white54,
+                                  color: Color(0xFF9CA3AF),
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
                                   '${result.obtainedMarks.toStringAsFixed(0)} / ${result.totalMarks.toStringAsFixed(0)} marks',
                                   style: const TextStyle(
-                                    color: Colors.white70,
+                                    color: Color(0xFF6B7280),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -315,7 +315,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                     vertical: 1.5,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.08),
+                                    color: const Color(0xFFF3F4F6),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -379,7 +379,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
               child: Text(
                 'Add Result',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -403,7 +403,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       const Text(
                         'Select Student',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: Color(0xFF6B7280),
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -419,14 +419,14 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                 child: ActionChip(
                                   visualDensity: VisualDensity.compact,
                                   backgroundColor:
-                                      Colors.white.withValues(alpha: 0.08),
+                                      const Color(0xFFF3F4F6),
                                   side: BorderSide(
-                                    color: Colors.white.withValues(alpha: 0.16),
+                                    color: const Color(0xFFE5E7EB),
                                   ),
                                   label: Text(
                                     '${s.fullName} (${s.rollNumber})',
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Color(0xFF111827),
                                       fontSize: 11,
                                     ),
                                   ),
@@ -445,7 +445,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                     ],
                     TextFormField(
                       controller: studentRollController,
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFF111827)),
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         labelText: 'Student roll no.',
@@ -460,7 +460,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       controller: marksController,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFF111827)),
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         labelText: 'Obtained marks',
@@ -475,7 +475,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       controller: totalController,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFF111827)),
                       textInputAction: TextInputAction.done,
                       decoration: const InputDecoration(
                         labelText: 'Total marks',
@@ -552,7 +552,7 @@ class _ResultMetricCard extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(color: Colors.white60, fontSize: 10),
+              style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 10),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

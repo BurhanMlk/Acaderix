@@ -25,7 +25,7 @@ class NotificationBellButton extends ConsumerWidget {
       children: [
         IconButton(
           tooltip: 'Notifications',
-          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+          icon: const Icon(Icons.notifications_outlined, color: Color(0xFF374151)),
           onPressed: () =>
               showNotificationCenterModal(context, academyId: academyId),
         ),
@@ -53,7 +53,7 @@ class NotificationBellButton extends ConsumerWidget {
                   child: Text(
                     unreadCount > 9 ? '9+' : '$unreadCount',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontSize: 9,
                       fontWeight: FontWeight.w800,
                     ),

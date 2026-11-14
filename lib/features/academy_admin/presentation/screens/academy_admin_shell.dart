@@ -74,7 +74,7 @@ class AcademyAdminShell extends ConsumerWidget {
       ),
       error: (err, _) => DashboardBackground(
         child: Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: const Color(0xFFFFFFFF),
           body: Center(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -86,7 +86,7 @@ class AcademyAdminShell extends ConsumerWidget {
                   Text(
                     'Failed to load academy status: $err',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Color(0xFF111827)),
                   ),
                   const SizedBox(height: 16),
                   FilledButton(
@@ -111,7 +111,7 @@ class AcademyAdminShell extends ConsumerWidget {
             builder: (context, constraints) {
               if (constraints.maxWidth >= 760) {
                 return Scaffold(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: const Color(0xFFFFFFFF),
                   body: Row(
                     children: [
                       _AcademyAdminSidebar(
@@ -122,7 +122,7 @@ class AcademyAdminShell extends ConsumerWidget {
                       VerticalDivider(
                         width: 1,
                         thickness: 1,
-                        color: Colors.white.withValues(alpha: 0.12),
+                        color: const Color(0xFFE5E7EB),
                       ),
                       Expanded(
                         child: Column(
@@ -142,16 +142,16 @@ class AcademyAdminShell extends ConsumerWidget {
               }
 
               return Scaffold(
-                backgroundColor: Colors.transparent,
+                backgroundColor: const Color(0xFFFFFFFF),
                 appBar: AppBar(
-                  backgroundColor: Colors.white.withValues(alpha: 0.05),
+                  backgroundColor: const Color(0xFFF9FAFB),
                   elevation: 0,
                   scrolledUnderElevation: 0,
-                  iconTheme: const IconThemeData(color: Colors.white),
+                  iconTheme: const IconThemeData(color: Color(0xFF374151)),
                   title: Text(
                     _title,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -161,7 +161,7 @@ class AcademyAdminShell extends ConsumerWidget {
                   ],
                 ),
                 drawer: Drawer(
-                  backgroundColor: const Color(0xFF0B1120).withValues(alpha: 0.95),
+                  backgroundColor: const Color(0xFFFFFFFF).withValues(alpha: 0.95),
                   child: _AcademyAdminSidebar(
                     location: location,
                     access: access,
@@ -198,10 +198,10 @@ class AcademyAdminContentHeader extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
+        color: const Color(0xFFF9FAFB),
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.12),
+            color: const Color(0xFFE5E7EB),
           ),
         ),
       ),
@@ -211,7 +211,7 @@ class AcademyAdminContentHeader extends ConsumerWidget {
             child: Text(
               title,
               style: const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF111827),
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
@@ -243,26 +243,26 @@ class AcademyAdminContentHeader extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
+                        color: const Color(0xFFF3F4F6),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.16),
+                          color: const Color(0xFFE5E7EB),
                         ),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String?>(
                           value: effectiveBranchId,
                           isExpanded: true,
-                          dropdownColor: const Color(0xFF1E293B),
+                          dropdownColor: Colors.white,
                           borderRadius: BorderRadius.circular(10),
                           isDense: true,
                           icon: const Icon(
                             Icons.arrow_drop_down,
-                            color: Colors.white70,
+                            color: Color(0xFF6B7280),
                             size: 20,
                           ),
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF111827),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -275,7 +275,7 @@ class AcademyAdminContentHeader extends ConsumerWidget {
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF111827),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -289,7 +289,7 @@ class AcademyAdminContentHeader extends ConsumerWidget {
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Color(0xFF111827),
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -376,10 +376,10 @@ class _MobileBranchSelectorButton extends ConsumerWidget {
 
         return PopupMenuButton<String?>(
           tooltip: 'Select Branch ($tooltip)',
-          color: const Color(0xFF1E293B),
+          color: const Color(0xFF111827),
           icon: Icon(
             Icons.account_balance_outlined,
-            color: selectedBranchId != null ? const Color(0xFF38BDF8) : Colors.white70,
+            color: selectedBranchId != null ? const Color(0xFF38BDF8) : const Color(0xFF6B7280),
           ),
           onSelected: (branchId) {
             ref.read(selectedBranchIdProvider.notifier).state = branchId;
@@ -390,7 +390,7 @@ class _MobileBranchSelectorButton extends ConsumerWidget {
               checked: selectedBranchId == null,
               child: const Text(
                 'All Branches',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Color(0xFF111827)),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -401,7 +401,7 @@ class _MobileBranchSelectorButton extends ConsumerWidget {
                 checked: selectedBranchId == b.id,
                 child: Text(
                   b.city.isNotEmpty ? '${b.name} (${b.city})' : b.name,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Color(0xFF111827)),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
@@ -454,7 +454,7 @@ class _AcademyAdminSidebar extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDrawer
             ? Colors.transparent
-            : const Color(0xFF0B1120).withValues(alpha: 0.75),
+            : const Color(0xFFFFFFFF).withValues(alpha: 0.75),
       ),
       child: SafeArea(
         child: Column(
@@ -487,7 +487,7 @@ class _AcademyAdminSidebar extends ConsumerWidget {
                         Text(
                           adminName,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF111827),
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
                           ),
@@ -501,7 +501,7 @@ class _AcademyAdminSidebar extends ConsumerWidget {
                                   ? access.academyCode
                                   : 'Academy Admin'),
                           style: const TextStyle(
-                            color: Colors.white70,
+                            color: Color(0xFF6B7280),
                             fontSize: 11,
                           ),
                           maxLines: 1,
@@ -512,7 +512,7 @@ class _AcademyAdminSidebar extends ConsumerWidget {
                   ),
                   if (isDrawer)
                     IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white70),
+                      icon: const Icon(Icons.close, color: Color(0xFF6B7280)),
                       tooltip: 'Close menu',
                       onPressed: () => Navigator.of(context).pop(),
                     ),
@@ -520,7 +520,7 @@ class _AcademyAdminSidebar extends ConsumerWidget {
               ),
             ),
 
-            Divider(color: Colors.white.withValues(alpha: 0.15), height: 1),
+            Divider(color: const Color(0xFFE5E7EB), height: 1),
             const SizedBox(height: 8),
 
             // Nav Modules
@@ -540,7 +540,7 @@ class _AcademyAdminSidebar extends ConsumerWidget {
               ),
             ),
 
-            Divider(color: Colors.white.withValues(alpha: 0.15), height: 1),
+            Divider(color: const Color(0xFFE5E7EB), height: 1),
             _SidebarAction(
               icon: Icons.logout,
               label: 'Sign out',
@@ -582,9 +582,9 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final background = selected
-        ? Colors.white.withValues(alpha: 0.15)
+        ? const Color(0xFFE5E7EB)
         : Colors.transparent;
-    final foreground = selected ? Colors.white : Colors.white70;
+    final foreground = selected ? Colors.white : const Color(0xFF6B7280);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),

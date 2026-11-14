@@ -68,12 +68,12 @@ class _StaffShellState extends ConsumerState<StaffShell> {
           final isWide = constraints.maxWidth >= 640;
 
           return Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color(0xFFFFFFFF),
             appBar: AppBar(
-              backgroundColor: Colors.white.withValues(alpha: 0.05),
+              backgroundColor: const Color(0xFFF9FAFB),
               elevation: 0,
               scrolledUnderElevation: 0,
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: const IconThemeData(color: Color(0xFF374151)),
               leadingWidth: 48,
               leading: const Padding(
                 padding: EdgeInsets.only(left: 12),
@@ -88,7 +88,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
@@ -100,7 +100,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF6B7280),
                       fontSize: 11,
                     ),
                   ),
@@ -153,7 +153,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                   tooltip: 'Sign Out',
                   icon: const Icon(
                     Icons.logout,
-                    color: Colors.white70,
+                    color: Color(0xFF6B7280),
                     size: 20,
                   ),
                   onPressed: () async {
@@ -175,7 +175,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                 ? Row(
                     children: [
                       NavigationRail(
-                        backgroundColor: Colors.white.withValues(alpha: 0.04),
+                        backgroundColor: const Color(0xFFF9FAFB),
                         selectedIndex: _currentIndex,
                         onDestinationSelected: (val) =>
                             setState(() => _currentIndex = val),
@@ -184,7 +184,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                           color: Color(0xFF38BDF8),
                         ),
                         unselectedIconTheme: IconThemeData(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: const Color(0xFF6B7280),
                         ),
                         selectedLabelTextStyle: const TextStyle(
                           color: Color(0xFF38BDF8),
@@ -222,7 +222,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                       const VerticalDivider(
                         width: 1,
                         thickness: 1,
-                        color: Colors.white10,
+                        color: Color(0xFFF3F4F6),
                       ),
                       Expanded(
                         child: IndexedStack(
@@ -243,7 +243,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                       color: const Color(0xFF0F172A).withValues(alpha: 0.95),
                       border: Border(
                         top: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.1),
+                          color: const Color(0xFFF3F4F6),
                         ),
                       ),
                     ),
@@ -251,10 +251,10 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                       currentIndex: _currentIndex,
                       onTap: (val) => setState(() => _currentIndex = val),
                       type: BottomNavigationBarType.fixed,
-                      backgroundColor: Colors.transparent,
+                      backgroundColor: const Color(0xFFFFFFFF),
                       elevation: 0,
                       selectedItemColor: const Color(0xFF38BDF8),
-                      unselectedItemColor: Colors.white.withValues(alpha: 0.5),
+                      unselectedItemColor: const Color(0xFF9CA3AF),
                       selectedFontSize: 11,
                       unselectedFontSize: 11,
                       selectedLabelStyle:

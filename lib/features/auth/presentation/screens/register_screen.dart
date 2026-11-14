@@ -131,7 +131,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.go(AppRoutes.welcome),
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(
@@ -212,7 +212,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         _obscurePassword
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: Colors.white70,
+                        color: const Color(0xFF6B7280),
                         size: 20,
                       ),
                       tooltip: _obscurePassword
@@ -229,7 +229,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   Text(
                     'Subscription Plan',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: const Color(0xFF374151),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -319,8 +319,8 @@ class _PlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: selected
-          ? Colors.white.withValues(alpha: 0.14)
-          : Colors.white.withValues(alpha: 0.06),
+          ? const Color(0xFFF3F4F6)
+          : const Color(0xFFF9FAFB),
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -332,14 +332,14 @@ class _PlanCard extends StatelessWidget {
             border: Border.all(
               color: selected
                   ? Colors.white
-                  : Colors.white.withValues(alpha: 0.2),
+                  : const Color(0xFFE5E7EB),
             ),
           ),
           child: Row(
             children: [
               Icon(
                 selected ? Icons.radio_button_checked : Icons.radio_button_off,
-                color: Colors.white,
+                color: const Color(0xFF111827),
                 size: 20,
               ),
               const SizedBox(width: 12),
@@ -350,14 +350,14 @@ class _PlanCard extends StatelessWidget {
                     Text(
                       plan.name,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       '${CurrencyFormatter.pkr(plan.price)} / month',
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: const Color(0xFF6B7280),
                         fontSize: 12,
                       ),
                     ),

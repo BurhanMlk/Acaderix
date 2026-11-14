@@ -45,6 +45,7 @@ import '../features/admissions/domain/student.dart';
 import '../features/admissions/presentation/screens/add_student_screen.dart';
 import '../features/admissions/presentation/screens/edit_student_screen.dart';
 import '../features/admissions/presentation/screens/students_list_screen.dart';
+import '../features/fees/presentation/screens/fee_structures_screen.dart';
 import '../features/fees/presentation/screens/fees_screen.dart';
 import '../features/attendance/presentation/screens/attendance_screen.dart';
 import '../features/exams/presentation/screens/results_screen.dart';
@@ -86,8 +87,7 @@ abstract final class AppRoutes {
   static const String recordPayment =
       '/super-admin/subscriptions/record-payment';
   static const String changePlan = '/super-admin/subscriptions/change-plan';
-  static const String extendSubscription =
-      '/super-admin/subscriptions/extend';
+  static const String extendSubscription = '/super-admin/subscriptions/extend';
   static const String editPlanPrice =
       '/super-admin/subscriptions/edit-plan-price';
   static const String broadcasts = '/super-admin/broadcasts';
@@ -100,6 +100,7 @@ abstract final class AppRoutes {
   static const String addStudent = '/academy-admin/students/new';
   static const String editStudent = '/academy-admin/students/edit';
   static const String fees = '/academy-admin/fees';
+  static const String feeStructures = '/academy-admin/fee-structures';
   static const String attendance = '/academy-admin/attendance';
   static const String results = '/academy-admin/results';
   static const String staffList = '/academy-admin/staff';
@@ -172,6 +173,7 @@ final Map<AppRole, Set<String>> _roleRoutes = {
     AppRoutes.addStudent,
     AppRoutes.editStudent,
     AppRoutes.fees,
+    AppRoutes.feeStructures,
     AppRoutes.attendance,
     AppRoutes.results,
     AppRoutes.staffList,
@@ -200,16 +202,16 @@ final Map<AppRole, Set<String>> _roleRoutes = {
 class SplashCompletedNotifier extends Notifier<bool> {
   @override
   bool build() {
-    final isTest =
-        WidgetsBinding.instance.runtimeType.toString().contains('Test');
+    final isTest = WidgetsBinding.instance.runtimeType.toString().contains(
+      'Test',
+    );
     return isTest;
   }
 
   void complete() => state = true;
 }
 
-final splashCompletedProvider =
-    NotifierProvider<SplashCompletedNotifier, bool>(
+final splashCompletedProvider = NotifierProvider<SplashCompletedNotifier, bool>(
   SplashCompletedNotifier.new,
 );
 
@@ -247,7 +249,8 @@ String? _redirect(
 
   // Gate Academy Admin by academy access status (active vs pending/suspended/expired)
   // Only redirect to academyStatus once access is resolved and confirmed inactive
-  final isAccessResolved = access != null &&
+  final isAccessResolved =
+      access != null &&
       (access.isActive ||
           access.isPending ||
           access.isSuspended ||
@@ -265,7 +268,8 @@ String? _redirect(
     }
   }
 
-  final home = (user.role == AppRole.academyAdmin &&
+  final home =
+      (user.role == AppRole.academyAdmin &&
           isAccessResolved &&
           !access.isActive)
       ? AppRoutes.academyStatus
@@ -348,10 +352,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
       ShellRoute(
-        builder: (context, state, child) => SuperAdminShell(
-          location: state.matchedLocation,
-          child: child,
-        ),
+        builder: (context, state, child) =>
+            SuperAdminShell(location: state.matchedLocation, child: child),
         routes: [
           GoRoute(
             path: AppRoutes.superAdmin,
@@ -381,8 +383,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: AppRoutes.superAdminResetPassword,
-            builder: (context, state) =>
-                const SuperAdminResetPasswordScreen(),
+            builder: (context, state) => const SuperAdminResetPasswordScreen(),
           ),
           GoRoute(
             path: AppRoutes.subscriptions,
@@ -431,10 +432,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       ShellRoute(
-        builder: (context, state, child) => AcademyAdminShell(
-          location: state.matchedLocation,
-          child: child,
-        ),
+        builder: (context, state, child) =>
+            AcademyAdminShell(location: state.matchedLocation, child: child),
         routes: [
           GoRoute(
             path: AppRoutes.academyAdmin,
@@ -497,6 +496,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const FeesScreen(),
           ),
           GoRoute(
+            path: AppRoutes.feeStructures,
+            builder: (context, state) => const FeeStructuresScreen(),
+          ),
+          GoRoute(
             path: AppRoutes.attendance,
             builder: (context, state) => const AttendanceScreen(),
           ),
@@ -524,10 +527,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           final access = state.extra is AcademyAccessInfo
               ? state.extra as AcademyAccessInfo
               : ref.watch(academyAccessProvider).value ??
-                  const AcademyAccessInfo(
-                    state: AcademyAccessState.pending,
-                    academyId: '',
-                  );
+                    const AcademyAccessInfo(
+                      state: AcademyAccessState.pending,
+                      academyId: '',
+                    );
           return AcademyStatusNoticeScreen(accessInfo: access);
         },
       ),

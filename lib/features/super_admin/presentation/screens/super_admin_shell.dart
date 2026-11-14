@@ -48,14 +48,14 @@ class SuperAdminShell extends ConsumerWidget {
         builder: (context, constraints) {
           if (constraints.maxWidth >= 760) {
             return Scaffold(
-              backgroundColor: Colors.transparent,
+              backgroundColor: const Color(0xFFFFFFFF),
               body: Row(
                 children: [
                   _SuperAdminSidebar(location: location, isDrawer: false),
                   VerticalDivider(
                     width: 1,
                     thickness: 1,
-                    color: Colors.white.withValues(alpha: 0.12),
+                    color: const Color(0xFFE5E7EB),
                   ),
                   Expanded(
                     child: Column(
@@ -72,22 +72,22 @@ class SuperAdminShell extends ConsumerWidget {
           }
 
           return Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: const Color(0xFFFFFFFF),
             appBar: AppBar(
-              backgroundColor: Colors.white.withValues(alpha: 0.05),
+              backgroundColor: const Color(0xFFF9FAFB),
               elevation: 0,
               scrolledUnderElevation: 0,
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: const IconThemeData(color: Color(0xFF374151)),
               title: Text(
                 _title,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ),
             drawer: Drawer(
-              backgroundColor: const Color(0xFF0B1120).withValues(alpha: 0.95),
+              backgroundColor: const Color(0xFFFFFFFF).withValues(alpha: 0.95),
               child: _SuperAdminSidebar(location: location, isDrawer: true),
             ),
             body: child,
@@ -108,17 +108,17 @@ class _ContentHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: const Color(0xFFF9FAFB),
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.12),
+            color: const Color(0xFFE5E7EB),
           ),
         ),
       ),
       child: Text(
         title,
         style: const TextStyle(
-          color: Colors.white,
+          color: Color(0xFF111827),
           fontSize: 20,
           fontWeight: FontWeight.w700,
         ),
@@ -150,7 +150,7 @@ class _SuperAdminSidebar extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDrawer
             ? Colors.transparent
-            : const Color(0xFF0B1120).withValues(alpha: 0.75),
+            : const Color(0xFFFFFFFF).withValues(alpha: 0.75),
       ),
       child: SafeArea(
         child: Column(
@@ -169,7 +169,7 @@ class _SuperAdminSidebar extends ConsumerWidget {
                         Text(
                           'Acadrix',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF111827),
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
                           ),
@@ -177,7 +177,7 @@ class _SuperAdminSidebar extends ConsumerWidget {
                         Text(
                           'Super Admin',
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Color(0xFF6B7280),
                             fontSize: 12,
                           ),
                         ),
@@ -186,14 +186,14 @@ class _SuperAdminSidebar extends ConsumerWidget {
                   ),
                   if (isDrawer)
                     IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white70),
+                      icon: const Icon(Icons.close, color: Color(0xFF6B7280)),
                       tooltip: 'Close menu',
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                 ],
               ),
             ),
-            Divider(color: Colors.white.withValues(alpha: 0.15), height: 1),
+            Divider(color: const Color(0xFFE5E7EB), height: 1),
             const SizedBox(height: 12),
             for (final module in superAdminModules)
               _SidebarItem(
@@ -202,7 +202,7 @@ class _SuperAdminSidebar extends ConsumerWidget {
                 onTap: () => _navigate(context, module.route),
               ),
             const Spacer(),
-            Divider(color: Colors.white.withValues(alpha: 0.15), height: 1),
+            Divider(color: const Color(0xFFE5E7EB), height: 1),
             _SidebarAction(
               icon: Icons.logout,
               label: 'Sign out',
@@ -244,9 +244,9 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final background = selected
-        ? Colors.white.withValues(alpha: 0.15)
+        ? const Color(0xFFE5E7EB)
         : Colors.transparent;
-    final foreground = selected ? Colors.white : Colors.white70;
+    final foreground = selected ? Colors.white : const Color(0xFF6B7280);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
@@ -261,7 +261,7 @@ class _SidebarItem extends StatelessWidget {
                 ? BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.25),
+                      color: const Color(0xFFD1D5DB),
                     ),
                   )
                 : null,
@@ -316,12 +316,12 @@ class _SidebarAction extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
               children: [
-                Icon(icon, color: Colors.white70, size: 20),
+                Icon(icon, color: const Color(0xFF6B7280), size: 20),
                 const SizedBox(width: 12),
                 Text(
                   label,
                   style: const TextStyle(
-                    color: Colors.white70,
+                    color: Color(0xFF6B7280),
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),

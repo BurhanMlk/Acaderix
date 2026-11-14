@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -49,30 +48,27 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
     Color? borderColor,
   }) {
     final radius = borderRadius ?? BorderRadius.circular(16);
-    return ClipRRect(
-      borderRadius: radius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            color: color ?? Colors.white.withValues(alpha: 0.08),
-            borderRadius: radius,
-            border: Border.all(
-              color: borderColor ?? Colors.white.withValues(alpha: 0.16),
-              width: 1.2,
-            ),
-          ),
-          child: child,
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: color ?? const Color(0xFFF3F4F6),
+        borderRadius: radius,
+        border: Border.all(
+          color: borderColor ?? const Color(0xFFE5E7EB),
+          width: 1.2,
         ),
       ),
+      child: child,
     );
   }
 
   List<AcademySubscription> _filterSubscriptions(
-      List<AcademySubscription> items) {
+    List<AcademySubscription> items,
+  ) {
     return items.where((sub) {
-      final matchesQuery = _searchQuery.isEmpty ||
+      final matchesQuery =
+          _searchQuery.isEmpty ||
           sub.academyName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           sub.academyCode.toLowerCase().contains(_searchQuery.toLowerCase());
 
@@ -83,7 +79,8 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
         _ => true,
       };
 
-      final matchesPlan = _planFilter == null ||
+      final matchesPlan =
+          _planFilter == null ||
           sub.planId.toLowerCase() == _planFilter!.toLowerCase() ||
           sub.planName.toLowerCase() == _planFilter!.toLowerCase();
 
@@ -141,7 +138,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
     final paymentsAsync = ref.watch(subscriptionPaymentsStreamProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
@@ -155,7 +152,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   Text(
                     'Subscriptions & Billing',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
                     ),
@@ -163,10 +160,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   SizedBox(height: 4),
                   Text(
                     'Manage academy plans, track renewal cycles, and view revenue.',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
                   ),
                 ],
               );
@@ -215,11 +209,17 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
             ),
             error: (err, _) => const SizedBox.shrink(),
             data: (subscriptions) {
-              final activeSubs = subscriptions.where((s) => s.status == 'active');
-              final totalMRR = activeSubs.fold<int>(0, (sum, s) => sum + s.price);
+              final activeSubs = subscriptions.where(
+                (s) => s.status == 'active',
+              );
+              final totalMRR = activeSubs.fold<int>(
+                0,
+                (sum, s) => sum + s.price,
+              );
               final activeCount = activeSubs.length;
-              final expiringSoonCount =
-                  subscriptions.where((s) => s.status == 'active' && s.isExpiringSoon).length;
+              final expiringSoonCount = subscriptions
+                  .where((s) => s.status == 'active' && s.isExpiringSoon)
+                  .length;
               final expiredCount = subscriptions
                   .where((s) => s.status == 'expired' || s.isExpired)
                   .length;
@@ -283,8 +283,11 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                 ),
               ),
               labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
-              labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              unselectedLabelColor: const Color(0xFF6B7280),
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
               tabs: [
                 Tab(
                   child: FittedBox(
@@ -396,7 +399,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   const Text(
                     'Status:',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: Color(0xFF6B7280),
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -420,7 +423,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   const Text(
                     'Plan:',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: Color(0xFF6B7280),
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -451,12 +454,16 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                 child: const Center(
                   child: Column(
                     children: [
-                      Icon(Icons.search_off, size: 48, color: Colors.white54),
+                      Icon(
+                        Icons.search_off,
+                        size: 48,
+                        color: Color(0xFF9CA3AF),
+                      ),
                       SizedBox(height: 12),
                       Text(
                         'No matching academy subscriptions',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -464,7 +471,10 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                       SizedBox(height: 4),
                       Text(
                         'Try clearing search or filters to see all subscriptions.',
-                        style: TextStyle(color: Colors.white60, fontSize: 13),
+                        style: TextStyle(
+                          color: Color(0xFF9CA3AF),
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
@@ -484,9 +494,9 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
   Widget _buildSubscriptionCard(AcademySubscription sub) {
     final (badgeColor, badgeText) = switch (sub.status.toLowerCase()) {
       'active' when sub.isExpiringSoon => (
-          const Color(0xFFF59E0B),
-          'EXPIRING IN ${sub.daysRemaining}D'
-        ),
+        const Color(0xFFF59E0B),
+        'EXPIRING IN ${sub.daysRemaining}D',
+      ),
       'active' => (const Color(0xFF10B981), 'ACTIVE'),
       'grace_period' => (const Color(0xFFF59E0B), 'GRACE PERIOD'),
       _ => (const Color(0xFFEF4444), 'EXPIRED'),
@@ -523,7 +533,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                             child: Text(
                               sub.academyName,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                               ),
@@ -562,7 +572,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                           Text(
                             sub.academyCode,
                             style: const TextStyle(
-                              color: Colors.white70,
+                              color: Color(0xFF6B7280),
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -591,7 +601,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                           Text(
                             '${CurrencyFormatter.pkr(sub.price)} / ${sub.billingCycle}',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
                             ),
@@ -614,8 +624,8 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   color: sub.isExpired
                       ? const Color(0xFFEF4444)
                       : (sub.isExpiringSoon
-                          ? const Color(0xFFF59E0B)
-                          : Colors.white70),
+                            ? const Color(0xFFF59E0B)
+                            : const Color(0xFF6B7280)),
                 ),
                 const SizedBox(width: 6),
                 Expanded(
@@ -625,8 +635,8 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                       color: sub.isExpired
                           ? const Color(0xFFEF4444)
                           : (sub.isExpiringSoon
-                              ? const Color(0xFFF59E0B)
-                              : Colors.white70),
+                                ? const Color(0xFFF59E0B)
+                                : const Color(0xFF6B7280)),
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
@@ -645,7 +655,9 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   label: const Text('Change Plan'),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -656,7 +668,9 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   label: const Text('Extend'),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -669,7 +683,9 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                     backgroundColor: const Color(0xFF10B981),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -752,7 +768,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                 child: Text(
                   plan.name,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
                   ),
@@ -761,8 +777,10 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
               if (plan.isPopular) ...[
                 const SizedBox(width: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: planColor,
                     borderRadius: BorderRadius.circular(20),
@@ -770,7 +788,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   child: const Text(
                     'MOST POPULAR',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontWeight: FontWeight.w700,
                       fontSize: 10,
                     ),
@@ -797,7 +815,10 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                 ),
                 Text(
                   ' / ${plan.billingPeriod}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  style: const TextStyle(
+                    color: Color(0xFF6B7280),
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -823,7 +844,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
             'Included Features',
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: Color(0xFF111827),
               fontSize: 13,
             ),
           ),
@@ -842,7 +863,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   child: Text(
                     feat,
                     style: const TextStyle(
-                      color: Colors.white70,
+                      color: Color(0xFF6B7280),
                       fontSize: 12.5,
                       height: 1.35,
                     ),
@@ -878,7 +899,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
           child: Text(
             label,
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFF111827),
               fontWeight: FontWeight.w600,
               fontSize: 13,
             ),
@@ -893,7 +914,8 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
   // ---------------------------------------------------------------------------
 
   Widget _buildPaymentsTab(
-      AsyncValue<List<SubscriptionPayment>> paymentsAsync) {
+    AsyncValue<List<SubscriptionPayment>> paymentsAsync,
+  ) {
     return paymentsAsync.when(
       loading: () => const Column(
         children: [
@@ -916,14 +938,14 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   const Icon(
                     Icons.receipt_outlined,
                     size: 48,
-                    color: Colors.white54,
+                    color: Color(0xFF9CA3AF),
                   ),
                   const SizedBox(height: 12),
                   const Text(
                     'No payment records found',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF111827),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -932,7 +954,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                   const Text(
                     'Recorded academy subscription fee receipts will appear here.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white60, fontSize: 13),
+                    style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
                   ),
                   const SizedBox(height: 16),
                   FilledButton.icon(
@@ -983,7 +1005,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                                       ? 'Academy Payment'
                                       : payment.academyName,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF111827),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 15,
                                   ),
@@ -1009,7 +1031,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                               Text(
                                 '${DateFormatters.date(payment.paymentDate)}  ·  ${payment.paymentMethod}',
                                 style: const TextStyle(
-                                  color: Colors.white70,
+                                  color: Color(0xFF6B7280),
                                   fontSize: 12.5,
                                 ),
                               ),
@@ -1020,10 +1042,14 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF6366F1).withValues(alpha: 0.16),
+                                    color: const Color(
+                                      0xFF6366F1,
+                                    ).withValues(alpha: 0.16),
                                     borderRadius: BorderRadius.circular(4),
                                     border: Border.all(
-                                      color: const Color(0xFF6366F1).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFF6366F1,
+                                      ).withValues(alpha: 0.4),
                                     ),
                                   ),
                                   child: Text(
@@ -1042,7 +1068,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen>
                             Text(
                               payment.notes,
                               style: const TextStyle(
-                                color: Colors.white60,
+                                color: Color(0xFF9CA3AF),
                                 fontSize: 12,
                                 fontStyle: FontStyle.italic,
                               ),

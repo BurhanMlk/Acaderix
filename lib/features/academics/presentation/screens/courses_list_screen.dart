@@ -43,7 +43,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
       context: context,
       builder: (dialogCtx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          backgroundColor: const Color(0xFF1E293B),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -57,7 +57,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
                   ),
@@ -72,7 +72,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                 ? const Center(
                     child: Text(
                       'No students found in this branch.',
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(color: Color(0xFF6B7280)),
                     ),
                   )
                 : ListView.builder(
@@ -88,7 +88,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                         title: Text(
                           s.fullName,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF111827),
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -96,7 +96,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                         subtitle: Text(
                           'Roll #${s.rollNumber}${s.academicSession.isNotEmpty ? " • ${s.academicSession}" : ""}',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.6),
+                            color: const Color(0xFF6B7280),
                             fontSize: 12,
                           ),
                         ),
@@ -116,7 +116,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogCtx).pop(),
-              child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+              child: const Text('Cancel', style: TextStyle(color: Color(0xFF6B7280))),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
@@ -156,7 +156,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color(0xFF38BDF8),
         foregroundColor: Colors.white,
@@ -175,11 +175,11 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
               onChanged: (v) => setState(() => _query = v.trim().toLowerCase()),
-              style: const TextStyle(color: Colors.white, fontSize: 14),
+              style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
               decoration: InputDecoration(
                 hintText: 'Search courses by name, code, or teacher...',
                 hintStyle: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: const Color(0xFF9CA3AF),
                   fontSize: 13,
                 ),
                 prefixIcon: const Icon(
@@ -188,7 +188,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                   size: 20,
                 ),
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: const Color(0xFFF9FAFB),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 10,
@@ -196,13 +196,13 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: const Color(0xFFF3F4F6),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: const Color(0xFFF3F4F6),
                   ),
                 ),
               ),
@@ -318,9 +318,9 @@ class _CourseCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: const Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: const Color(0xFFF3F4F6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,7 +336,7 @@ class _CourseCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFF111827),
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
@@ -388,14 +388,14 @@ class _CourseCard extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.person_outline,
-                      color: Colors.white70,
+                      color: Color(0xFF6B7280),
                       size: 14,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       course.teacherName,
                       style: const TextStyle(
-                        color: Colors.white70,
+                        color: Color(0xFF6B7280),
                         fontSize: 12,
                       ),
                     ),
@@ -414,7 +414,7 @@ class _CourseCard extends StatelessWidget {
                     Text(
                       course.schedule,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
+                        color: const Color(0xFF6B7280),
                         fontSize: 12,
                       ),
                     ),
@@ -423,7 +423,7 @@ class _CourseCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Divider(color: Colors.white.withValues(alpha: 0.08), height: 1),
+          Divider(color: const Color(0xFFF3F4F6), height: 1),
           const SizedBox(height: 8),
 
           // Action Buttons
@@ -445,7 +445,7 @@ class _CourseCard extends StatelessWidget {
               const SizedBox(width: 8),
               IconButton(
                 tooltip: 'Edit Course',
-                icon: const Icon(Icons.edit, color: Colors.white70, size: 18),
+                icon: const Icon(Icons.edit, color: Color(0xFF6B7280), size: 18),
                 onPressed: onEdit,
               ),
               IconButton(

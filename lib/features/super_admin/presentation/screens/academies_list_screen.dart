@@ -89,7 +89,7 @@ class _AcademiesListScreenState extends ConsumerState<AcademiesListScreen> {
     final academies = ref.watch(academiesStreamProvider);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.createAcademy),
         icon: const Icon(Icons.add_business),

@@ -22,9 +22,9 @@ class CourseAssignmentSelector extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: const Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: const Color(0xFFF3F4F6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +48,7 @@ class CourseAssignmentSelector extends StatelessWidget {
                 child: Text(
                   'Assign Courses & Batches',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontWeight: FontWeight.w700,
                     fontSize: 14,
                   ),
@@ -78,25 +78,25 @@ class CourseAssignmentSelector extends StatelessWidget {
           const SizedBox(height: 6),
           const Text(
             'Select the courses this staff member will teach and take attendance for.',
-            style: TextStyle(color: Colors.white60, fontSize: 12),
+            style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 12),
           ),
           const SizedBox(height: 12),
           if (courses.isEmpty)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
+                color: const Color(0xFFFCFCFD),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                border: Border.all(color: const Color(0xFFF3F4F6)),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.info_outline, size: 16, color: Colors.white54),
+                  Icon(Icons.info_outline, size: 16, color: Color(0xFF9CA3AF)),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'No courses available in this academy yet. Create courses in Academics to assign them.',
-                      style: TextStyle(color: Colors.white60, fontSize: 12),
+                      style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 12),
                     ),
                   ),
                 ],
@@ -125,12 +125,12 @@ class CourseAssignmentSelector extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? const Color(0xFF38BDF8).withValues(alpha: 0.12)
-                          : Colors.white.withValues(alpha: 0.03),
+                          : const Color(0xFFFCFCFD),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected
                             ? const Color(0xFF38BDF8)
-                            : Colors.white.withValues(alpha: 0.08),
+                            : const Color(0xFFF3F4F6),
                         width: isSelected ? 1.5 : 1.0,
                       ),
                     ),
@@ -143,7 +143,7 @@ class CourseAssignmentSelector extends StatelessWidget {
                           size: 20,
                           color: isSelected
                               ? const Color(0xFF38BDF8)
-                              : Colors.white38,
+                              : const Color(0xFFD1D5DB),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
@@ -157,7 +157,7 @@ class CourseAssignmentSelector extends StatelessWidget {
                                 style: TextStyle(
                                   color: isSelected
                                       ? Colors.white
-                                      : Colors.white.withValues(alpha: 0.9),
+                                      : const Color(0xFF1F2937),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13,
                                 ),
@@ -182,7 +182,7 @@ class CourseAssignmentSelector extends StatelessWidget {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                          color: Colors.white54,
+                                          color: Color(0xFF9CA3AF),
                                           fontSize: 11,
                                         ),
                                       ),

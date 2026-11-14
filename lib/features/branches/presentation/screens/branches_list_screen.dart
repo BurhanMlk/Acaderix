@@ -81,7 +81,7 @@ class _BranchesListScreenState extends ConsumerState<BranchesListScreen> {
     final isAtLimit = !isUnlimited && branchCount >= maxBranches;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.addBranch),
         icon: const Icon(Icons.add_business),
@@ -110,12 +110,12 @@ class _BranchesListScreenState extends ConsumerState<BranchesListScreen> {
                   decoration: BoxDecoration(
                     color: isAtLimit
                         ? Colors.amber.withValues(alpha: 0.15)
-                        : Colors.white.withValues(alpha: 0.08),
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isAtLimit
                           ? Colors.amber.withValues(alpha: 0.4)
-                          : Colors.white12,
+                          : const Color(0xFFF3F4F6),
                     ),
                   ),
                   child: Row(
@@ -124,13 +124,13 @@ class _BranchesListScreenState extends ConsumerState<BranchesListScreen> {
                       Icon(
                         isAtLimit ? Icons.warning_amber_rounded : Icons.domain,
                         size: 14,
-                        color: isAtLimit ? Colors.amber : Colors.white70,
+                        color: isAtLimit ? Colors.amber : const Color(0xFF6B7280),
                       ),
                       const SizedBox(width: 6),
                       Text(
                         'Quota: $branchCount / ${isUnlimited ? '∞' : maxBranches} Campuses',
                         style: TextStyle(
-                          color: isAtLimit ? Colors.amber : Colors.white70,
+                          color: isAtLimit ? Colors.amber : const Color(0xFF6B7280),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -141,7 +141,7 @@ class _BranchesListScreenState extends ConsumerState<BranchesListScreen> {
                 Text(
                   access?.planName ?? 'Standard',
                   style: const TextStyle(
-                    color: Colors.white38,
+                    color: Color(0xFFD1D5DB),
                     fontSize: 11,
                   ),
                 ),
@@ -161,7 +161,7 @@ class _BranchesListScreenState extends ConsumerState<BranchesListScreen> {
                   return const Center(
                     child: Text(
                       'No branches match search.',
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(color: Color(0xFF6B7280)),
                     ),
                   );
                 }

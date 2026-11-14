@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,10 +13,7 @@ import '../../domain/academy_access_models.dart';
 /// Dedicated screen presented when an academy admin logs in but their academy
 /// is in a restricted state (Pending, Suspended, Expired, or Overdue).
 class AcademyStatusNoticeScreen extends ConsumerStatefulWidget {
-  const AcademyStatusNoticeScreen({
-    super.key,
-    required this.accessInfo,
-  });
+  const AcademyStatusNoticeScreen({super.key, required this.accessInfo});
 
   final AcademyAccessInfo accessInfo;
 
@@ -67,9 +63,11 @@ class _AcademyStatusNoticeScreenState
       setState(() => _isRefreshing = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_info.isActive
-              ? 'Status updated: Academy is now Active! You can sign in.'
-              : 'Status: ${_info.rawStatus.toUpperCase()}. Please contact Super Admin if you need help.'),
+          content: Text(
+            _info.isActive
+                ? 'Status updated: Academy is now Active! You can sign in.'
+                : 'Status: ${_info.rawStatus.toUpperCase()}. Please contact Super Admin if you need help.',
+          ),
           backgroundColor: _info.isActive
               ? const Color(0xFF10B981)
               : const Color(0xFF6366F1),
@@ -98,23 +96,18 @@ class _AcademyStatusNoticeScreenState
     Color? borderColor,
   }) {
     final radius = borderRadius ?? BorderRadius.circular(16);
-    return ClipRRect(
-      borderRadius: radius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: padding ?? const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: color ?? Colors.white.withValues(alpha: 0.08),
-            borderRadius: radius,
-            border: Border.all(
-              color: borderColor ?? Colors.white.withValues(alpha: 0.16),
-              width: 1.2,
-            ),
-          ),
-          child: child,
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      padding: padding ?? const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color ?? const Color(0xFFF3F4F6),
+        borderRadius: radius,
+        border: Border.all(
+          color: borderColor ?? const Color(0xFFE5E7EB),
+          width: 1.2,
         ),
       ),
+      child: child,
     );
   }
 
@@ -132,49 +125,49 @@ class _AcademyStatusNoticeScreenState
       String description,
     ) = switch (info.state) {
       AcademyAccessState.pending => (
-          const Color(0xFFF59E0B),
-          Icons.hourglass_top_rounded,
-          'APPROVAL PENDING',
-          'Account Approval Pending',
-          'Your academy registration is currently under review by Super Admin.',
-          'Once your academy is approved, full access to students, staff, attendance, fees, and examination modules will be automatically unlocked.',
-        ),
+        const Color(0xFFF59E0B),
+        Icons.hourglass_top_rounded,
+        'APPROVAL PENDING',
+        'Account Approval Pending',
+        'Your academy registration is currently under review by Super Admin.',
+        'Once your academy is approved, full access to students, staff, attendance, fees, and examination modules will be automatically unlocked.',
+      ),
       AcademyAccessState.suspended => (
-          const Color(0xFFEF4444),
-          Icons.block_rounded,
-          'ACCOUNT SUSPENDED',
-          'Academy Account Suspended',
-          'Access to this academy has been suspended by the platform administrator.',
-          'Operational features for your academy are temporarily paused. Please reach out to Super Admin to resolve the suspension.',
-        ),
+        const Color(0xFFEF4444),
+        Icons.block_rounded,
+        'ACCOUNT SUSPENDED',
+        'Academy Account Suspended',
+        'Access to this academy has been suspended by the platform administrator.',
+        'Operational features for your academy are temporarily paused. Please reach out to Super Admin to resolve the suspension.',
+      ),
       AcademyAccessState.expired => (
-          const Color(0xFFF97316),
-          Icons.timer_off_rounded,
-          'SUBSCRIPTION EXPIRED',
-          'Subscription Renewal Required',
-          'Your monthly subscription has expired or fee payment is pending clearance.',
-          'To restore complete access to your academy dashboard, please contact Super Admin to record your fee payment or extend your subscription.',
-        ),
+        const Color(0xFFF97316),
+        Icons.timer_off_rounded,
+        'SUBSCRIPTION EXPIRED',
+        'Subscription Renewal Required',
+        'Your monthly subscription has expired or fee payment is pending clearance.',
+        'To restore complete access to your academy dashboard, please contact Super Admin to record your fee payment or extend your subscription.',
+      ),
       AcademyAccessState.notFound => (
-          const Color(0xFF94A3B8),
-          Icons.search_off_rounded,
-          'ACADEMY NOT FOUND',
-          'No Academy Linked',
-          'No registered academy record was found for this user account.',
-          'Please verify your sign-in email or contact platform support to link your account to an academy.',
-        ),
+        const Color(0xFF94A3B8),
+        Icons.search_off_rounded,
+        'ACADEMY NOT FOUND',
+        'No Academy Linked',
+        'No registered academy record was found for this user account.',
+        'Please verify your sign-in email or contact platform support to link your account to an academy.',
+      ),
       AcademyAccessState.active => (
-          const Color(0xFF10B981),
-          Icons.check_circle_rounded,
-          'ACTIVE',
-          'Academy Active',
-          'Your account is in good standing.',
-          'You may proceed to your dashboard.',
-        ),
+        const Color(0xFF10B981),
+        Icons.check_circle_rounded,
+        'ACTIVE',
+        'Academy Active',
+        'Your account is in good standing.',
+        'You may proceed to your dashboard.',
+      ),
     };
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: AuthBackground(
         child: SafeArea(
           child: Center(
@@ -195,8 +188,9 @@ class _AcademyStatusNoticeScreenState
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF6366F1)
-                                  .withValues(alpha: 0.2),
+                              color: const Color(
+                                0xFF6366F1,
+                              ).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(
@@ -209,7 +203,7 @@ class _AcademyStatusNoticeScreenState
                           const Text(
                             'Acaderix Platform',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFF111827),
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                             ),
@@ -228,7 +222,7 @@ class _AcademyStatusNoticeScreenState
                         icon: const Icon(Icons.arrow_back_rounded, size: 16),
                         label: const Text('Back to Login'),
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.white70,
+                          foregroundColor: const Color(0xFF6B7280),
                         ),
                       ),
                     ],
@@ -253,11 +247,7 @@ class _AcademyStatusNoticeScreenState
                               width: 2,
                             ),
                           ),
-                          child: Icon(
-                            stateIcon,
-                            size: 48,
-                            color: stateColor,
-                          ),
+                          child: Icon(stateIcon, size: 48, color: stateColor),
                         ),
                         const SizedBox(height: 16),
 
@@ -291,7 +281,7 @@ class _AcademyStatusNoticeScreenState
                           heading,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF111827),
                             fontWeight: FontWeight.w800,
                             fontSize: 22,
                           ),
@@ -303,7 +293,7 @@ class _AcademyStatusNoticeScreenState
                           subtitle,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Colors.white70,
+                            color: Color(0xFF6B7280),
                             fontSize: 14,
                             height: 1.4,
                           ),
@@ -321,7 +311,7 @@ class _AcademyStatusNoticeScreenState
                             description,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              color: Colors.white60,
+                              color: Color(0xFF9CA3AF),
                               fontSize: 12.5,
                               height: 1.4,
                             ),
@@ -341,7 +331,7 @@ class _AcademyStatusNoticeScreenState
                           const Text(
                             'Academy Information',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: Color(0xFF6B7280),
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
                             ),
@@ -353,7 +343,7 @@ class _AcademyStatusNoticeScreenState
                               const Text(
                                 'Academy Name',
                                 style: TextStyle(
-                                  color: Colors.white60,
+                                  color: Color(0xFF9CA3AF),
                                   fontSize: 13,
                                 ),
                               ),
@@ -362,7 +352,7 @@ class _AcademyStatusNoticeScreenState
                                   info.academyName,
                                   textAlign: TextAlign.end,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF111827),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 14,
                                   ),
@@ -377,7 +367,7 @@ class _AcademyStatusNoticeScreenState
                               const Text(
                                 'Academy Code',
                                 style: TextStyle(
-                                  color: Colors.white60,
+                                  color: Color(0xFF9CA3AF),
                                   fontSize: 13,
                                 ),
                               ),
@@ -400,14 +390,14 @@ class _AcademyStatusNoticeScreenState
                               const Text(
                                 'Subscription Tier',
                                 style: TextStyle(
-                                  color: Colors.white60,
+                                  color: Color(0xFF9CA3AF),
                                   fontSize: 13,
                                 ),
                               ),
                               Text(
                                 '${info.planName} Plan',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Color(0xFF111827),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13,
                                 ),
@@ -422,7 +412,7 @@ class _AcademyStatusNoticeScreenState
                                 const Text(
                                   'Renewal / Expiry Date',
                                   style: TextStyle(
-                                    color: Colors.white60,
+                                    color: Color(0xFF9CA3AF),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -446,7 +436,7 @@ class _AcademyStatusNoticeScreenState
                               const Text(
                                 'Payment Status',
                                 style: TextStyle(
-                                  color: Colors.white60,
+                                  color: Color(0xFF9CA3AF),
                                   fontSize: 13,
                                 ),
                               ),
@@ -479,8 +469,9 @@ class _AcademyStatusNoticeScreenState
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF6366F1)
-                                    .withValues(alpha: 0.25),
+                                color: const Color(
+                                  0xFF6366F1,
+                                ).withValues(alpha: 0.25),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(
@@ -497,7 +488,7 @@ class _AcademyStatusNoticeScreenState
                                   Text(
                                     'Contact Super Admin',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Color(0xFF111827),
                                       fontWeight: FontWeight.w700,
                                       fontSize: 16,
                                     ),
@@ -505,7 +496,7 @@ class _AcademyStatusNoticeScreenState
                                   Text(
                                     'Platform Support & Activation Hotline',
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Color(0xFF6B7280),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -525,11 +516,9 @@ class _AcademyStatusNoticeScreenState
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.06),
+                            color: const Color(0xFFF9FAFB),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.12),
-                            ),
+                            border: Border.all(color: const Color(0xFFE5E7EB)),
                           ),
                           child: Row(
                             children: [
@@ -546,7 +535,7 @@ class _AcademyStatusNoticeScreenState
                                     const Text(
                                       'Super Admin Phone Number',
                                       style: TextStyle(
-                                        color: Colors.white60,
+                                        color: Color(0xFF9CA3AF),
                                         fontSize: 11,
                                       ),
                                     ),
@@ -554,7 +543,7 @@ class _AcademyStatusNoticeScreenState
                                     SelectableText(
                                       info.supportPhone,
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: Color(0xFF111827),
                                         fontWeight: FontWeight.w800,
                                         fontSize: 16,
                                         letterSpacing: 0.5,
@@ -586,11 +575,9 @@ class _AcademyStatusNoticeScreenState
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.06),
+                            color: const Color(0xFFF9FAFB),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.12),
-                            ),
+                            border: Border.all(color: const Color(0xFFE5E7EB)),
                           ),
                           child: Row(
                             children: [
@@ -607,7 +594,7 @@ class _AcademyStatusNoticeScreenState
                                     const Text(
                                       'Super Admin Support Email',
                                       style: TextStyle(
-                                        color: Colors.white60,
+                                        color: Color(0xFF9CA3AF),
                                         fontSize: 11,
                                       ),
                                     ),
@@ -615,7 +602,7 @@ class _AcademyStatusNoticeScreenState
                                     SelectableText(
                                       info.supportEmail,
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: Color(0xFF111827),
                                         fontWeight: FontWeight.w700,
                                         fontSize: 14,
                                       ),
@@ -644,7 +631,7 @@ class _AcademyStatusNoticeScreenState
                           children: [
                             Icon(
                               Icons.info_outline,
-                              color: Colors.white54,
+                              color: Color(0xFF9CA3AF),
                               size: 16,
                             ),
                             SizedBox(width: 8),
@@ -652,7 +639,7 @@ class _AcademyStatusNoticeScreenState
                               child: Text(
                                 'Tip: Quote your Academy Code when calling for faster assistance.',
                                 style: TextStyle(
-                                  color: Colors.white60,
+                                  color: Color(0xFF9CA3AF),
                                   fontSize: 12,
                                 ),
                               ),
@@ -710,7 +697,7 @@ class _AcademyStatusNoticeScreenState
                               height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                               ),
                             )
                           : const Icon(Icons.refresh_rounded),
@@ -750,10 +737,8 @@ class _AcademyStatusNoticeScreenState
                       icon: const Icon(Icons.arrow_back_rounded, size: 18),
                       label: const Text('Back to Login'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white70,
-                        side: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.2),
-                        ),
+                        foregroundColor: const Color(0xFF6B7280),
+                        side: BorderSide(color: const Color(0xFFE5E7EB)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

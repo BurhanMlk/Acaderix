@@ -66,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           onPressed: () => context.go(AppRoutes.login),
                           child: const Text(
                             'Skip',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Color(0xFF111827)),
                           ),
                         ),
                       ),
@@ -96,12 +96,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         width: 128,
                                         height: 128,
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withValues(
+                                          color: const Color(0xFF111827).withValues(
                                             alpha: 0.1,
                                           ),
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: Colors.white.withValues(
+                                            color: const Color(0xFF111827).withValues(
                                               alpha: 0.25,
                                             ),
                                           ),
@@ -109,7 +109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         child: Icon(
                                           feature.icon,
                                           size: 56,
-                                          color: Colors.white,
+                                          color: const Color(0xFF111827),
                                         ),
                                       ),
                                       const SizedBox(height: 40),
@@ -120,7 +120,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             .textTheme
                                             .headlineSmall
                                             ?.copyWith(
-                                              color: Colors.white,
+                                              color: const Color(0xFF111827),
                                               fontWeight: FontWeight.w700,
                                             ),
                                       ),
@@ -129,7 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         feature.message,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: Colors.white.withValues(
+                                          color: const Color(0xFF111827).withValues(
                                             alpha: 0.75,
                                           ),
                                           fontSize: 15,
@@ -158,7 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           decoration: BoxDecoration(
                             color: selected
                                 ? Colors.white
-                                : Colors.white.withValues(alpha: 0.3),
+                                : const Color(0xFFD1D5DB),
                             borderRadius: BorderRadius.circular(4),
                           ),
                         );

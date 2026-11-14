@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,11 +11,7 @@ import '../widgets/academy_avatar.dart';
 
 /// Dedicated full screen to change/upgrade an academy's subscription plan.
 class ChangePlanScreen extends ConsumerStatefulWidget {
-  const ChangePlanScreen({
-    super.key,
-    this.subscription,
-    this.academyId,
-  });
+  const ChangePlanScreen({super.key, this.subscription, this.academyId});
 
   final AcademySubscription? subscription;
   final String? academyId;
@@ -50,16 +45,18 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
   Future<void> _loadData() async {
     try {
       if (_subscription == null && widget.academyId != null) {
-        final subs =
-            await ref.read(subscriptionRepositoryProvider).getSubscriptions();
+        final subs = await ref
+            .read(subscriptionRepositoryProvider)
+            .getSubscriptions();
         _subscription = subs.firstWhere((s) => s.academyId == widget.academyId);
         _selectedPlanId = _subscription!.planId;
         _selectedPlanName = _subscription!.planName;
         _selectedPrice = _subscription!.price;
       }
 
-      final fetchedPlans =
-          await ref.read(subscriptionRepositoryProvider).getPlans();
+      final fetchedPlans = await ref
+          .read(subscriptionRepositoryProvider)
+          .getPlans();
       if (!mounted) return;
       setState(() {
         _plans = fetchedPlans;
@@ -78,23 +75,18 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
     Color? borderColor,
   }) {
     final radius = borderRadius ?? BorderRadius.circular(16);
-    return ClipRRect(
-      borderRadius: radius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: padding ?? const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: color ?? Colors.white.withValues(alpha: 0.08),
-            borderRadius: radius,
-            border: Border.all(
-              color: borderColor ?? Colors.white.withValues(alpha: 0.16),
-              width: 1.2,
-            ),
-          ),
-          child: child,
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      padding: padding ?? const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color ?? const Color(0xFFF3F4F6),
+        borderRadius: radius,
+        border: Border.all(
+          color: borderColor ?? const Color(0xFFE5E7EB),
+          width: 1.2,
         ),
       ),
+      child: child,
     );
   }
 
@@ -105,7 +97,9 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
     setState(() => _isSaving = true);
 
     try {
-      await ref.read(subscriptionRepositoryProvider).updateAcademySubscription(
+      await ref
+          .read(subscriptionRepositoryProvider)
+          .updateAcademySubscription(
             sub.academyId,
             planId: _selectedPlanId,
             planName: _selectedPlanName,
@@ -148,7 +142,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
     final sub = _subscription;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -192,7 +186,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                 Text(
                                   'Change Subscription Plan',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Color(0xFF111827),
                                     fontSize: 22,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -201,7 +195,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                 Text(
                                   'Select a new monthly pricing tier',
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: Color(0xFF6B7280),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -231,7 +225,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                     Text(
                                       sub.academyName,
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: Color(0xFF111827),
                                         fontWeight: FontWeight.w700,
                                         fontSize: 16,
                                       ),
@@ -246,7 +240,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                         Text(
                                           sub.academyCode,
                                           style: const TextStyle(
-                                            color: Colors.white70,
+                                            color: Color(0xFF6B7280),
                                             fontSize: 13,
                                           ),
                                         ),
@@ -256,13 +250,16 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                             vertical: 2,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF6366F1)
-                                                .withValues(alpha: 0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(6),
+                                            color: const Color(
+                                              0xFF6366F1,
+                                            ).withValues(alpha: 0.2),
+                                            borderRadius: BorderRadius.circular(
+                                              6,
+                                            ),
                                             border: Border.all(
-                                              color: const Color(0xFF6366F1)
-                                                  .withValues(alpha: 0.5),
+                                              color: const Color(
+                                                0xFF6366F1,
+                                              ).withValues(alpha: 0.5),
                                             ),
                                           ),
                                           child: Text(
@@ -295,7 +292,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                   Text(
                                     'Billing Cycle',
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Color(0xFF6B7280),
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -304,7 +301,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                   Text(
                                     'Monthly Plan (billed every 30 days)',
                                     style: TextStyle(
-                                      color: Colors.white54,
+                                      color: Color(0xFF9CA3AF),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -318,10 +315,14 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                 vertical: 5,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                                color: const Color(
+                                  0xFF6366F1,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: const Color(0xFF6366F1).withValues(alpha: 0.5),
+                                  color: const Color(
+                                    0xFF6366F1,
+                                  ).withValues(alpha: 0.5),
                                 ),
                               ),
                               child: const Text(
@@ -341,7 +342,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                       const Text(
                         'Available Plans',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFF111827),
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
@@ -368,7 +369,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                   height: 18,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Colors.white,
+                                    color: Color(0xFF111827),
                                   ),
                                 )
                               : const Icon(Icons.check_circle_outline),
@@ -409,12 +410,10 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
 
     return _glassCard(
       padding: EdgeInsets.zero,
-      borderColor: isSelected
-          ? planColor
-          : Colors.white.withValues(alpha: 0.14),
+      borderColor: isSelected ? planColor : const Color(0xFFF3F4F6),
       color: isSelected
           ? planColor.withValues(alpha: 0.16)
-          : Colors.white.withValues(alpha: 0.05),
+          : const Color(0xFFF9FAFB),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -431,121 +430,126 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-            Row(
-              children: [
-                Icon(
-                  isSelected
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_off,
-                  color: isSelected ? planColor : Colors.white54,
-                  size: 22,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        plan.name,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.white70,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 18,
-                        ),
-                      ),
-                      if (plan.isPopular)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: planColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'POPULAR',
+                Row(
+                  children: [
+                    Icon(
+                      isSelected
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_off,
+                      color: isSelected ? planColor : const Color(0xFF9CA3AF),
+                      size: 22,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            plan.name,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF6B7280),
                               fontWeight: FontWeight.w700,
-                              fontSize: 10,
+                              fontSize: 18,
                             ),
                           ),
+                          if (plan.isPopular)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: planColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                'POPULAR',
+                                style: TextStyle(
+                                  color: Color(0xFF111827),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    const SizedBox(width: 34),
+                    Text(
+                      CurrencyFormatter.pkr(plan.price),
+                      style: TextStyle(
+                        color: planColor,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      ' / month',
+                      style: const TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.only(left: 34),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        plan.maxStudents == -1
+                            ? 'Unlimited Students · Unlimited Campus Branches'
+                            : 'Up to ${plan.maxStudents} Students · Up to ${plan.maxBranches} Branches',
+                        style: const TextStyle(
+                          color: Color(0xFF6B7280),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
+                      ),
+                      const SizedBox(height: 10),
+                      for (final feat in plan.features) ...[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.check_circle_rounded,
+                              size: 15,
+                              color: Color(0xFF10B981),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                feat,
+                                style: const TextStyle(
+                                  color: Color(0xFF6B7280),
+                                  fontSize: 12.5,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                      ],
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                const SizedBox(width: 34),
-                Text(
-                  CurrencyFormatter.pkr(plan.price),
-                  style: TextStyle(
-                    color: planColor,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                Text(
-                  ' / month',
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.only(left: 34),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    plan.maxStudents == -1
-                        ? 'Unlimited Students · Unlimited Campus Branches'
-                        : 'Up to ${plan.maxStudents} Students · Up to ${plan.maxBranches} Branches',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  for (final feat in plan.features) ...[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(
-                          Icons.check_circle_rounded,
-                          size: 15,
-                          color: Color(0xFF10B981),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            feat,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12.5,
-                              height: 1.3,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                  ],
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
-    ),
-  ),
-);
+    );
   }
 }

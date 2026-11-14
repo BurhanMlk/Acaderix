@@ -36,7 +36,7 @@ class WelcomeScreen extends StatelessWidget {
                       'Welcome to Acadrix',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Colors.white,
+                        color: const Color(0xFF111827),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -45,7 +45,7 @@ class WelcomeScreen extends StatelessWidget {
                       'Smart Academy Management System',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.75),
+                        color: const Color(0xFF374151),
                         fontSize: 15,
                         height: 1.5,
                       ),

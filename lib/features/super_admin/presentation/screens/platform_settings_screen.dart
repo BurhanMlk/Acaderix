@@ -26,7 +26,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
     };
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),

@@ -104,7 +104,7 @@ class _AddBranchScreenState extends ConsumerState<AddBranchScreen> {
     final isLimitReached = !isUnlimited && branches.length >= maxBranches;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Form(
           key: _formKey,

@@ -222,7 +222,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                 child: Text(
                   'Reset Staff Password',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF111827),
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -245,10 +245,10 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
+                          color: const Color(0xFFF9FAFB),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.1),
+                            color: const Color(0xFFF3F4F6),
                           ),
                         ),
                         child: Column(
@@ -257,7 +257,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                             Text(
                               widget.staff.fullName,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFF111827),
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
                               ),
@@ -278,7 +278,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                       TextFormField(
                         controller: passwordController,
                         obscureText: obscurePassword,
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Color(0xFF111827)),
                         decoration: InputDecoration(
                           labelText: 'New Password',
                           prefixIcon: const Icon(Icons.lock_outline),
@@ -287,7 +287,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                               obscurePassword
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: Colors.white70,
+                              color: const Color(0xFF6B7280),
                               size: 20,
                             ),
                             tooltip: obscurePassword
@@ -316,9 +316,9 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                         child: ActionChip(
                           visualDensity: VisualDensity.compact,
                           backgroundColor:
-                              Colors.white.withValues(alpha: 0.08),
+                              const Color(0xFFF3F4F6),
                           side: BorderSide(
-                            color: Colors.white.withValues(alpha: 0.16),
+                            color: const Color(0xFFE5E7EB),
                           ),
                           label: const Text(
                             'Generate Random Password',
@@ -399,7 +399,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
               child: Text(
                 'Staff Credentials',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -420,7 +420,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                 const Text(
                   'Password updated successfully! Share these updated credentials with the staff member so they can sign in.',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: Color(0xFF6B7280),
                     fontSize: 13,
                     height: 1.4,
                   ),
@@ -429,10 +429,10 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: const Color(0xFFF9FAFB),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.12),
+                      color: const Color(0xFFE5E7EB),
                     ),
                   ),
                   child: Column(
@@ -441,7 +441,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                         label: 'Full Name',
                         value: widget.staff.fullName,
                       ),
-                      const Divider(color: Colors.white12, height: 16),
+                      const Divider(color: Color(0xFFF3F4F6), height: 16),
                       _CredentialRow(
                         label: 'Staff ID',
                         value:
@@ -450,14 +450,14 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                                 : widget.staff.id,
                         isHighlight: true,
                       ),
-                      const Divider(color: Colors.white12, height: 16),
+                      const Divider(color: Color(0xFFF3F4F6), height: 16),
                       _CredentialRow(
                         label: 'New Password',
                         value: newPassword,
                         isHighlight: true,
                       ),
                       if (widget.staff.jobTitle.isNotEmpty) ...[
-                        const Divider(color: Colors.white12, height: 16),
+                        const Divider(color: Color(0xFFF3F4F6), height: 16),
                         _CredentialRow(
                           label: 'Designation',
                           value: widget.staff.jobTitle,
@@ -531,7 +531,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -542,10 +542,10 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
+                  color: const Color(0xFFF3F4F6),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.16),
+                    color: const Color(0xFFE5E7EB),
                   ),
                 ),
                 child: Column(
@@ -556,7 +556,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                           backgroundColor: const Color(
                             0xFF14B8A6,
                           ).withValues(alpha: 0.3),
-                          child: const Icon(Icons.badge, color: Colors.white),
+                          child: const Icon(Icons.badge, color: Color(0xFF374151)),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -571,7 +571,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                                   Text(
                                     widget.staff.fullName,
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Color(0xFF111827),
                                       fontWeight: FontWeight.w700,
                                       fontSize: 16,
                                     ),
@@ -611,7 +611,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                                     ? widget.staff.jobTitle
                                     : 'Faculty Staff',
                                 style: const TextStyle(
-                                  color: Colors.white60,
+                                  color: Color(0xFF9CA3AF),
                                   fontSize: 12,
                                 ),
                               ),
@@ -639,7 +639,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    const Divider(color: Colors.white12, height: 1),
+                    const Divider(color: Color(0xFFF3F4F6), height: 1),
                     const SizedBox(height: 10),
                     Wrap(
                       alignment: WrapAlignment.spaceBetween,
@@ -650,7 +650,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                         const Text(
                           'Staff Login Credentials',
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Color(0xFF6B7280),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -727,7 +727,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                         labelText: 'Assigned Campus / Branch',
                         prefixIcon: Icon(Icons.account_balance_outlined),
                       ),
-                      dropdownColor: const Color(0xFF1E293B),
+                      dropdownColor: Colors.white,
                       selectedItemBuilder: (context) {
                         return [
                           const Align(
@@ -846,7 +846,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                   labelText: 'Staff Status',
                   prefixIcon: Icon(Icons.flag_outlined),
                 ),
-                dropdownColor: const Color(0xFF1E293B),
+                dropdownColor: Colors.white,
                 items: const [
                   DropdownMenuItem(value: 'active', child: Text('Active')),
                   DropdownMenuItem(
@@ -910,7 +910,7 @@ class _CredentialRow extends StatelessWidget {
             width: 105,
             child: Text(
               label,
-              style: const TextStyle(color: Colors.white70, fontSize: 13),
+              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
             ),
           ),
           const SizedBox(width: 8),

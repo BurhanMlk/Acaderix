@@ -162,7 +162,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
               child: Text(
                 'Staff Credentials',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF111827),
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -183,7 +183,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                   const Text(
                     'A staff account has been created. Please share these login credentials with the staff member.',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: Color(0xFF6B7280),
                       fontSize: 13,
                       height: 1.4,
                     ),
@@ -192,36 +192,36 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
+                      color: const Color(0xFFF9FAFB),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.12),
+                        color: const Color(0xFFE5E7EB),
                       ),
                     ),
                     child: Column(
                       children: [
                         _CredentialRow(label: 'Full Name', value: staff.fullName),
-                        const Divider(color: Colors.white12, height: 16),
+                        const Divider(color: Color(0xFFF3F4F6), height: 16),
                         _CredentialRow(
                           label: 'Staff ID',
                           value: staff.staffId,
                           isHighlight: true,
                         ),
-                        const Divider(color: Colors.white12, height: 16),
+                        const Divider(color: Color(0xFFF3F4F6), height: 16),
                         _CredentialRow(
                           label: 'Initial Password',
                           value: staff.password,
                           isHighlight: true,
                         ),
                         if (staff.jobTitle.isNotEmpty) ...[
-                          const Divider(color: Colors.white12, height: 16),
+                          const Divider(color: Color(0xFFF3F4F6), height: 16),
                           _CredentialRow(
                             label: 'Designation',
                             value: staff.jobTitle,
                           ),
                         ],
                         if (assignedCourses.isNotEmpty) ...[
-                          const Divider(color: Colors.white12, height: 16),
+                          const Divider(color: Color(0xFFF3F4F6), height: 16),
                           _CredentialRow(
                             label: 'Assigned Courses',
                             value: assignedCourses.join(', '),
@@ -280,7 +280,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
     final coursesAsync = ref.watch(coursesStreamProvider(academyId));
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -337,7 +337,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                         labelText: 'Assigned Campus / Branch',
                         prefixIcon: Icon(Icons.account_balance_outlined),
                       ),
-                      dropdownColor: const Color(0xFF1E293B),
+                      dropdownColor: Colors.white,
                       selectedItemBuilder: (context) {
                         return [
                           const Align(
@@ -472,7 +472,7 @@ class _CredentialRow extends StatelessWidget {
             width: 105,
             child: Text(
               label,
-              style: const TextStyle(color: Colors.white70, fontSize: 13),
+              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
             ),
           ),
           const SizedBox(width: 8),

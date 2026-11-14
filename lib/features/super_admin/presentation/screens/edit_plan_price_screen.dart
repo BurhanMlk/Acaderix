@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,11 +10,7 @@ import '../../domain/subscription_models.dart';
 
 /// Dedicated screen to update the standard monthly price of a subscription plan.
 class EditPlanPriceScreen extends ConsumerStatefulWidget {
-  const EditPlanPriceScreen({
-    super.key,
-    this.plan,
-    this.planId,
-  });
+  const EditPlanPriceScreen({super.key, this.plan, this.planId});
 
   final SubscriptionPlan? plan;
   final String? planId;
@@ -51,8 +46,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
   Future<void> _loadPlan() async {
     if (_plan == null && widget.planId != null) {
       try {
-        final plans =
-            await ref.read(subscriptionRepositoryProvider).getPlans();
+        final plans = await ref.read(subscriptionRepositoryProvider).getPlans();
         if (mounted) {
           setState(() {
             _plan = plans.firstWhere((p) => p.id == widget.planId);
@@ -76,23 +70,18 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
     Color? borderColor,
   }) {
     final radius = borderRadius ?? BorderRadius.circular(16);
-    return ClipRRect(
-      borderRadius: radius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: padding ?? const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: color ?? Colors.white.withValues(alpha: 0.08),
-            borderRadius: radius,
-            border: Border.all(
-              color: borderColor ?? Colors.white.withValues(alpha: 0.16),
-              width: 1.2,
-            ),
-          ),
-          child: child,
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      padding: padding ?? const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color ?? const Color(0xFFF3F4F6),
+        borderRadius: radius,
+        border: Border.all(
+          color: borderColor ?? const Color(0xFFE5E7EB),
+          width: 1.2,
         ),
       ),
+      child: child,
     );
   }
 
@@ -148,7 +137,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
     };
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -194,7 +183,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                   Text(
                                     'Edit ${plan?.name ?? 'Plan'} Fee',
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Color(0xFF111827),
                                       fontSize: 22,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -203,7 +192,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                   const Text(
                                     'Update standard monthly pricing tier',
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Color(0xFF6B7280),
                                       fontSize: 13,
                                     ),
                                   ),
@@ -229,7 +218,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                     Text(
                                       plan.name,
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: Color(0xFF111827),
                                         fontWeight: FontWeight.w700,
                                         fontSize: 20,
                                       ),
@@ -250,7 +239,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                       ? 'Unlimited Students · Unlimited Branches'
                                       : 'Up to ${plan.maxStudents} Students · Up to ${plan.maxBranches} Campus Branches',
                                   style: const TextStyle(
-                                    color: Colors.white70,
+                                    color: Color(0xFF6B7280),
                                     fontSize: 13,
                                   ),
                                 ),
@@ -267,7 +256,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                               const Text(
                                 'New Monthly Price (PKR)',
                                 style: TextStyle(
-                                  color: Colors.white70,
+                                  color: Color(0xFF6B7280),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -297,7 +286,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                               const Text(
                                 'Quick Presets',
                                 style: TextStyle(
-                                  color: Colors.white70,
+                                  color: Color(0xFF6B7280),
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -307,12 +296,20 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                 spacing: 8,
                                 runSpacing: 8,
                                 children: [
-                                  for (final amt in [8000, 10000, 15000, 20000, 25000, 30000])
+                                  for (final amt in [
+                                    8000,
+                                    10000,
+                                    15000,
+                                    20000,
+                                    25000,
+                                    30000,
+                                  ])
                                     ActionChip(
                                       label: Text(CurrencyFormatter.pkr(amt)),
                                       onPressed: () {
                                         setState(() {
-                                          _priceController.text = amt.toString();
+                                          _priceController.text = amt
+                                              .toString();
                                         });
                                       },
                                     ),
@@ -332,7 +329,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                 const Text(
                                   'Included Features for This Tier',
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: Color(0xFF6B7280),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -353,7 +350,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                         child: Text(
                                           feat,
                                           style: const TextStyle(
-                                            color: Colors.white70,
+                                            color: Color(0xFF6B7280),
                                             fontSize: 13,
                                             height: 1.3,
                                           ),
@@ -372,12 +369,14 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF6366F1).withValues(alpha: 0.12),
+                            color: const Color(
+                              0xFF6366F1,
+                            ).withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFF6366F1)
-                                  .withValues(alpha: 0.3),
+                              color: const Color(
+                                0xFF6366F1,
+                              ).withValues(alpha: 0.3),
                             ),
                           ),
                           child: const Row(
@@ -392,7 +391,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                 child: Text(
                                   'Updating the plan price sets the new standard monthly rate for academies newly registering or renewing under this tier.',
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: Color(0xFF6B7280),
                                     fontSize: 12.5,
                                   ),
                                 ),
@@ -414,12 +413,14 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                     height: 18,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Colors.white,
+                                      color: Color(0xFF111827),
                                     ),
                                   )
                                 : const Icon(Icons.check_circle_outline),
                             label: Text(
-                              _isSaving ? 'Saving Price...' : 'Save Updated Price',
+                              _isSaving
+                                  ? 'Saving Price...'
+                                  : 'Save Updated Price',
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
