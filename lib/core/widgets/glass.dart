@@ -1,10 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
-/// Glassmorphism building blocks for the authentication experience.
+/// Clean light-theme building blocks for the Acaderix UI.
 ///
-/// Full-screen ambient glass background used across all role dashboards.
+/// Full-screen white background used across all role dashboards.
 class DashboardBackground extends StatelessWidget {
   const DashboardBackground({
     super.key,
@@ -15,12 +13,6 @@ class DashboardBackground extends StatelessWidget {
   final Widget child;
   final bool useSafeArea;
 
-  static const List<Color> gradient = [
-    Color(0xFF0B1120), // deep navy
-    Color(0xFF1E1B4B), // indigo
-    Color(0xFF3B0764), // royal purple
-  ];
-
   @override
   Widget build(BuildContext context) {
     Widget content = child;
@@ -28,201 +20,55 @@ class DashboardBackground extends StatelessWidget {
       content = SafeArea(child: content);
     }
 
-    final topPadding = MediaQuery.paddingOf(context).top;
-    final statusBarHeight = topPadding > 0 ? topPadding + 14.0 : 0.0;
-
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: gradient,
-        ),
-      ),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          const Positioned(
-            top: -120,
-            right: -80,
-            child: _GlowOrb(size: 320, color: Color(0xFF6366F1)),
-          ),
-          const Positioned(
-            bottom: -140,
-            left: -100,
-            child: _GlowOrb(size: 360, color: Color(0xFFA855F7)),
-          ),
-          const Positioned(
-            top: 200,
-            left: -70,
-            child: _GlowOrb(size: 240, color: Color(0xFF0EA5E9)),
-          ),
-          content,
-          // Ambient status bar scrim protecting battery, time, and notch icons
-          // from background orbs and scrolling list content without losing glass feel.
-          if (statusBarHeight > 0)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: statusBarHeight,
-              child: const IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xB3050811), // 70% deep navy scrim directly under status bar
-                        Color(0x4D050811), // 30% soft transition
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
+    return Container(color: const Color(0xFFFFFFFF), child: content);
   }
 }
 
-/// A shared [AuthBackground] gradient plus frosted [GlassCard] and
-/// [GlassTextField] widgets produce the transparent, professional look used
-/// across the login and sign-up screens.
+/// White background wrapper for login and sign-up screens.
 class AuthBackground extends StatelessWidget {
   const AuthBackground({super.key, required this.child});
 
   final Widget child;
 
-  static const List<Color> _gradient = [
-    Color(0xFF0B1120), // deep navy
-    Color(0xFF1E1B4B), // indigo
-    Color(0xFF3B0764), // royal purple
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.paddingOf(context).top;
-    final statusBarHeight = topPadding > 0 ? topPadding + 14.0 : 0.0;
-
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: _gradient,
-          ),
-        ),
-        child: Stack(
-          children: [
-            const Positioned(
-              top: -120,
-              right: -80,
-              child: _GlowOrb(size: 300, color: Color(0xFF6366F1)),
-            ),
-            const Positioned(
-              bottom: -140,
-              left: -100,
-              child: _GlowOrb(size: 340, color: Color(0xFFA855F7)),
-            ),
-            const Positioned(
-              top: 160,
-              left: -70,
-              child: _GlowOrb(size: 200, color: Color(0xFF0EA5E9)),
-            ),
-            SafeArea(child: child),
-            if (statusBarHeight > 0)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: statusBarHeight,
-                child: const IgnorePointer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0xB3050811),
-                          Color(0x4D050811),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
+        color: const Color(0xFFFFFFFF),
+        child: SafeArea(child: child),
       ),
     );
   }
 }
 
-class _GlowOrb extends StatelessWidget {
-  const _GlowOrb({required this.size, required this.color});
-
-  final double size;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [color.withValues(alpha: 0.45), color.withValues(alpha: 0)],
-        ),
-      ),
-    );
-  }
-}
-
-/// A frosted, translucent card.
+/// A clean white card with a subtle gray border.
 class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(24),
-    this.borderRadius = 24,
-    this.blur = 18,
+    this.borderRadius = 16,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final double borderRadius;
-  final double blur;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.18),
-              width: 1.2,
-            ),
-          ),
-          child: child,
-        ),
+    return Container(
+      padding: padding,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
       ),
+      child: child,
     );
   }
 }
 
-/// A translucent text field tuned for dark glass backgrounds.
+/// A light-themed text field.
 class GlassTextField extends StatelessWidget {
   const GlassTextField({
     super.key,
@@ -251,9 +97,17 @@ class GlassTextField extends StatelessWidget {
   final int maxLines;
   final Iterable<String>? autofillHints;
 
+  static const _textColor = Color(0xFF111827);
+  static const _cursorColor = Color(0xFF4F46E5);
+  static const _hintColor = Color(0xFF6B7280);
+  static const _fillColor = Color(0xFFF9FAFB);
+  static const _borderColor = Color(0xFFE5E7EB);
+  static const _focusBorderColor = Color(0xFF4F46E5);
+  static const _errorBorderColor = Color(0xFFDC2626);
+  static const _iconColor = Color(0xFF6B7280);
+
   @override
   Widget build(BuildContext context) {
-    final white = Colors.white.withValues(alpha: 0.24);
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -262,38 +116,36 @@ class GlassTextField extends StatelessWidget {
       validator: validator,
       maxLines: maxLines,
       autofillHints: autofillHints,
-      style: const TextStyle(color: Colors.white),
-      cursorColor: Colors.white,
+      style: const TextStyle(color: _textColor),
+      cursorColor: _cursorColor,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.85)),
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-        prefixIcon: icon == null
-            ? null
-            : Icon(icon, color: Colors.white.withValues(alpha: 0.7)),
+        labelStyle: const TextStyle(color: _hintColor),
+        hintStyle: const TextStyle(color: _hintColor),
+        prefixIcon: icon == null ? null : Icon(icon, color: _iconColor),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.07),
+        fillColor: _fillColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: white),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: _borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: white),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: _borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white, width: 1.6),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: _focusBorderColor, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFFFCA5A5)),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: _errorBorderColor),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFFFCA5A5), width: 1.6),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: _errorBorderColor, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -304,25 +156,25 @@ class GlassTextField extends StatelessWidget {
   }
 }
 
-/// White primary button style for dark glass screens.
+/// Indigo primary button style for light screens.
 ButtonStyle glassPrimaryButtonStyle() => FilledButton.styleFrom(
-  backgroundColor: Colors.white,
-  foregroundColor: const Color(0xFF1E1B4B),
-  minimumSize: const Size.fromHeight(54),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  backgroundColor: const Color(0xFF4F46E5),
+  foregroundColor: Colors.white,
+  minimumSize: const Size.fromHeight(52),
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
   textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
 );
 
-/// Ghost/outline button style for dark glass screens.
+/// Outline button style for light screens.
 ButtonStyle glassGhostButtonStyle() => OutlinedButton.styleFrom(
-  foregroundColor: Colors.white,
-  side: BorderSide(color: Colors.white.withValues(alpha: 0.4)),
-  minimumSize: const Size.fromHeight(54),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  foregroundColor: const Color(0xFF374151),
+  side: const BorderSide(color: Color(0xFFD1D5DB)),
+  minimumSize: const Size.fromHeight(52),
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
   textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
 );
 
-/// Shared heading for glass login screens.
+/// Shared heading for login screens.
 class GlassLoginHeader extends StatelessWidget {
   const GlassLoginHeader({
     super.key,
@@ -343,31 +195,28 @@ class GlassLoginHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: const Color(0xFFEEF2FF),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+            border: Border.all(color: const Color(0xFFE0E7FF)),
           ),
-          child: Icon(icon, color: Colors.white, size: 30),
+          child: Icon(icon, color: const Color(0xFF4F46E5), size: 30),
         ),
         const SizedBox(height: 16),
         Text(
           title,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: Colors.white,
+            color: const Color(0xFF111827),
             fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 6),
-        Text(
-          subtitle,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-        ),
+        Text(subtitle, style: const TextStyle(color: Color(0xFF6B7280))),
       ],
     );
   }
 }
 
-/// Inline error banner for glass screens.
+/// Inline error banner for light screens.
 class GlassError extends StatelessWidget {
   const GlassError({super.key, required this.message});
 
@@ -378,20 +227,18 @@ class GlassError extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF7F1D1D).withValues(alpha: 0.6),
+        color: const Color(0xFFFEF2F2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFFFCA5A5).withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: const Color(0xFFFECACA)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFFFECACA)),
+          const Icon(Icons.error_outline, color: Color(0xFFDC2626)),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(color: Color(0xFFFECACA)),
+              style: const TextStyle(color: Color(0xFFDC2626)),
             ),
           ),
         ],

@@ -26,7 +26,8 @@ final academyLogoUrlProvider = FutureProvider<String?>((ref) async {
     AuthAuthenticated(:final user) => user,
     _ => null,
   };
-  final academyId = ref.watch(currentAcademyIdProvider) ??
+  final academyId =
+      ref.watch(currentAcademyIdProvider) ??
       user?.academyId ??
       ref.watch(academyAccessProvider).value?.academyId;
 
@@ -36,12 +37,13 @@ final academyLogoUrlProvider = FutureProvider<String?>((ref) async {
     final firestore = ref.watch(firestoreProvider);
     final doc = await firestore.doc(FirestorePaths.academy(academyId)).get();
     final data = doc.data();
-    final url = (data?['logoUrl'] as String? ??
-            data?['logo'] as String? ??
-            data?['imageUrl'] as String? ??
-            data?['photoUrl'] as String? ??
-            '')
-        .trim();
+    final url =
+        (data?['logoUrl'] as String? ??
+                data?['logo'] as String? ??
+                data?['imageUrl'] as String? ??
+                data?['photoUrl'] as String? ??
+                '')
+            .trim();
     if (url.isNotEmpty) return url;
 
     // Fallback: Check subscription doc
@@ -79,8 +81,8 @@ class AcademyLogo extends ConsumerWidget {
     final effectiveUrl = (logoUrl?.trim().isNotEmpty == true)
         ? logoUrl!.trim()
         : ((streamLogo != null && streamLogo.trim().isNotEmpty)
-            ? streamLogo.trim()
-            : (futureLogo?.trim() ?? ''));
+              ? streamLogo.trim()
+              : (futureLogo?.trim() ?? ''));
 
     if (effectiveUrl.isNotEmpty) {
       return ClipRRect(
@@ -97,7 +99,7 @@ class AcademyLogo extends ConsumerWidget {
               width: size,
               height: size,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
+                color: const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
               child: Center(

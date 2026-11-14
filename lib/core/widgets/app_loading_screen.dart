@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'app_logo.dart';
-import 'glass.dart';
 
-/// Production-ready ambient glass loading screen used across all role dashboards,
+/// Clean light-theme loading screen used across all role dashboards,
 /// authentication transitions, and asynchronous operations.
 class AppLoadingScreen extends StatefulWidget {
   const AppLoadingScreen({
@@ -53,7 +52,7 @@ class _AppLoadingScreenState extends State<AppLoadingScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Animated Glowing Logo
+            // Animated Pulsing Logo
             AnimatedBuilder(
               animation: _pulseAnimation,
               builder: (context, child) {
@@ -63,23 +62,11 @@ class _AppLoadingScreenState extends State<AppLoadingScreen>
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.08),
+                      color: const Color(0xFFEEF2FF),
                       border: Border.all(
-                        color: const Color(0xFF6366F1).withValues(alpha: 0.35),
+                        color: const Color(0xFFE0E7FF),
                         width: 1.5,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF6366F1).withValues(alpha: 0.25),
-                          blurRadius: 36,
-                          spreadRadius: 6,
-                        ),
-                        BoxShadow(
-                          color: const Color(0xFFA855F7).withValues(alpha: 0.18),
-                          blurRadius: 48,
-                          spreadRadius: 2,
-                        ),
-                      ],
                     ),
                     child: const AppLogo(size: 64),
                   ),
@@ -93,7 +80,7 @@ class _AppLoadingScreenState extends State<AppLoadingScreen>
               widget.title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                color: Colors.white,
+                color: Color(0xFF111827),
                 fontSize: 19,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.4,
@@ -105,8 +92,8 @@ class _AppLoadingScreenState extends State<AppLoadingScreen>
             Text(
               widget.message,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.65),
+              style: const TextStyle(
+                color: Color(0xFF6B7280),
                 fontSize: 13,
                 height: 1.4,
               ),
@@ -114,14 +101,12 @@ class _AppLoadingScreenState extends State<AppLoadingScreen>
             const SizedBox(height: 24),
 
             // Loading Indicator
-            SizedBox(
+            const SizedBox(
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2.5,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  const Color(0xFF818CF8).withValues(alpha: 0.9),
-                ),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4F46E5)),
               ),
             ),
           ],
@@ -130,12 +115,7 @@ class _AppLoadingScreenState extends State<AppLoadingScreen>
     );
 
     if (widget.useScaffold) {
-      return DashboardBackground(
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: content,
-        ),
-      );
+      return Scaffold(backgroundColor: const Color(0xFFFFFFFF), body: content);
     }
 
     return content;

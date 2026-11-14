@@ -19,7 +19,7 @@ Future<bool> showConfirmationDialog(
       title: Text(
         title,
         style: const TextStyle(
-          color: Colors.white,
+          color: Color(0xFF111827),
           fontSize: 18,
           fontWeight: FontWeight.w700,
         ),
@@ -30,7 +30,7 @@ Future<bool> showConfirmationDialog(
           child: Text(
             message,
             style: const TextStyle(
-              color: Colors.white70,
+              color: Color(0xFF374151),
               fontSize: 14,
               height: 1.4,
             ),

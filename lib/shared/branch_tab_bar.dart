@@ -6,7 +6,7 @@ import 'selected_branch_provider.dart';
 
 /// Unified branch selector tab bar for all Academy Admin tabs.
 ///
-/// Renders a horizontal scrolling row of stylish glass pill tabs:
+/// Renders a horizontal scrolling row of pill tabs:
 /// "All Branches" plus each campus branch with live branch scope selection.
 class BranchTabBar extends ConsumerWidget {
   const BranchTabBar({
@@ -90,8 +90,6 @@ class _BranchTabPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = const Color(0xFF6366F1);
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -102,24 +100,15 @@ class _BranchTabPill extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
             color: isSelected
-                ? activeColor.withValues(alpha: 0.28)
-                : Colors.white.withValues(alpha: 0.05),
+                ? const Color(0xFFEEF2FF)
+                : const Color(0xFFF9FAFB),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isSelected
-                  ? activeColor.withValues(alpha: 0.8)
-                  : Colors.white.withValues(alpha: 0.12),
+                  ? const Color(0xFF4F46E5).withValues(alpha: 0.5)
+                  : const Color(0xFFE5E7EB),
               width: isSelected ? 1.5 : 1,
             ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: activeColor.withValues(alpha: 0.25),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -128,14 +117,18 @@ class _BranchTabPill extends StatelessWidget {
                 Icon(
                   icon,
                   size: 15,
-                  color: isSelected ? const Color(0xFFA5B4FC) : Colors.white60,
+                  color: isSelected
+                      ? const Color(0xFF4F46E5)
+                      : const Color(0xFF9CA3AF),
                 ),
                 const SizedBox(width: 6),
               ],
               Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white70,
+                  color: isSelected
+                      ? const Color(0xFF4F46E5)
+                      : const Color(0xFF374151),
                   fontSize: 13,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
@@ -143,15 +136,22 @@ class _BranchTabPill extends StatelessWidget {
               if (subtitle != null && subtitle!.isNotEmpty) ...[
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 1.5,
+                  ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: isSelected ? 0.2 : 0.08),
+                    color: isSelected
+                        ? const Color(0xFFE0E7FF)
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     subtitle!,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white60,
+                      color: isSelected
+                          ? const Color(0xFF4F46E5)
+                          : const Color(0xFF6B7280),
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                     ),
@@ -161,15 +161,22 @@ class _BranchTabPill extends StatelessWidget {
               if (count != null) ...[
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 1.5,
+                  ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: isSelected ? 0.2 : 0.08),
+                    color: isSelected
+                        ? const Color(0xFFE0E7FF)
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     '$count',
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white60,
+                      color: isSelected
+                          ? const Color(0xFF4F46E5)
+                          : const Color(0xFF6B7280),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
