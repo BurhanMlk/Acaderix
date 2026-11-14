@@ -18,22 +18,20 @@ Future<void> bootstrap() async {
   }
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Ensure high-contrast white system status bar icons (battery, clock, wifi)
-  // across edge-to-edge transparent ambient dark background.
+  // Ensure dark system status bar icons (battery, clock, wifi)
+  // across edge-to-edge transparent white background.
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color(0x00000000),
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark,
-      systemNavigationBarColor: Color(0xFF0B1120),
-      systemNavigationBarIconBrightness: Brightness.light,
-      systemNavigationBarDividerColor: Color(0x00000000),
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: Color(0xFFFFFFFF),
+      systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarDividerColor: Color(0xFFE5E7EB),
     ),
   );
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Crashlytics is not supported on web; skip it there to avoid crashing at
   // startup.

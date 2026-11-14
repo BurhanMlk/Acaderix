@@ -21,7 +21,7 @@ class AcademyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       routerConfig: router,
       locale: const Locale('en'),
       supportedLocales: const [Locale('en')],
