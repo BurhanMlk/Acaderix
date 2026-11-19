@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -67,7 +68,7 @@ class _SuperAdminLoginScreenState extends ConsumerState<SuperAdminLoginScreen> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(
@@ -102,7 +103,7 @@ class _SuperAdminLoginScreenState extends ConsumerState<SuperAdminLoginScreen> {
                         _obscurePassword
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: const Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                         size: 20,
                       ),
                       tooltip: _obscurePassword
@@ -119,10 +120,10 @@ class _SuperAdminLoginScreenState extends ConsumerState<SuperAdminLoginScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => context.push(AppRoutes.forgotPassword),
-                      child: Text(
+                      child: const Text(
                         'Forgot password?',
                         style: TextStyle(
-                          color: const Color(0xFF374151),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),

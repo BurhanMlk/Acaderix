@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:academy_management/core/constants/roles.dart';
 import 'package:academy_management/core/errors/app_exception.dart';
@@ -109,8 +110,12 @@ class _FakeAcademyRegistrationService implements AcademyRegistrationService {
 }
 
 void main() {
-  group('Register Academy Feature Tests', () {
-    testWidgets('1. RegisterScreen renders all required fields and subscription plan options', (
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  group('Multi-Step Register Academy Feature & Draft Persistence Tests', () {
+    testWidgets('1. Step 1 (Academy Profile) renders with progress indicator', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -120,38 +125,147 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
 
-      await tester.pump();
+      // Top navigation and step status
+      expect(find.text('Step 1 of 4'), findsOneWidget);
+      expect(find.text('Academy Profile'), findsOneWidget);
+      expect(find.text('Institution Profile'), findsOneWidget);
 
-      // Verify Screen Header
-      expect(find.text('Register your academy'), findsOneWidget);
-      expect(find.text('Create your academy account'), findsOneWidget);
-
-      // Verify Text Input Fields
+      // Step 1 input fields
       expect(find.text('Academy Name *'), findsOneWidget);
       expect(find.text('Address *'), findsOneWidget);
-      expect(find.text('Email *'), findsOneWidget);
+      expect(find.text('Continue to Administrator'), findsOneWidget);
+
+      // Subsequent steps are not yet rendered
+      expect(find.text('Academy Head *'), findsNothing);
+      expect(find.text('Password *'), findsNothing);
+    });
+
+    testWidgets('2. Step 1 validation prevents advancing with empty fields', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: RegisterScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Attempt to advance with empty fields
+      await tester.tap(find.text('Continue to Administrator'));
+      await tester.pumpAndSettle();
+
+      // Validation warnings shown
+      expect(find.text('Academy name is required'), findsOneWidget);
+      expect(find.text('Address is required'), findsOneWidget);
+
+      // Still on Step 1
+      expect(find.text('Step 1 of 4'), findsOneWidget);
+    });
+
+    testWidgets('3. Multi-step progression through all 4 steps and back navigation', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: RegisterScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Complete Step 1
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Academy Name *'),
+        'Falcon High Academy',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Address *'),
+        'Plot 42, Main Boulevard, Lahore',
+      );
+      await tester.tap(find.text('Continue to Administrator'));
+      await tester.pumpAndSettle();
+
+      // Now at Step 2: Administrator & Contact
+      expect(find.text('Step 2 of 4'), findsOneWidget);
+      expect(find.text('Administrator'), findsOneWidget);
       expect(find.text('Academy Head *'), findsOneWidget);
-      expect(find.text('CNIC'), findsOneWidget);
       expect(find.text('Contact Number *'), findsOneWidget);
+
+      // Test Back button returning to Step 1 with preserved values
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Back'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Step 1 of 4'), findsOneWidget);
+      expect(find.text('Falcon High Academy'), findsOneWidget);
+
+      // Re-advance to Step 2
+      await tester.tap(find.text('Continue to Administrator'));
+      await tester.pumpAndSettle();
+
+      // Complete Step 2
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Academy Head *'),
+        'Professor Tariq Mehmood',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'CNIC'),
+        '3520198765431',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Contact Number *'),
+        '03009876543',
+      );
+      await tester.tap(find.text('Continue to Credentials'));
+      await tester.pumpAndSettle();
+
+      // Now at Step 3: Account Credentials
+      expect(find.text('Step 3 of 4'), findsOneWidget);
+      expect(find.text('Credentials'), findsOneWidget);
+      expect(find.text('Email *'), findsOneWidget);
       expect(find.text('Password *'), findsOneWidget);
 
-      // Scroll to view subscription plans and action button
-      await tester.ensureVisible(find.text('Subscription Plan'));
+      // Complete Step 3
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Email *'),
+        'tariq@falconacademy.edu.pk',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Password *'),
+        'SuperSecret99',
+      );
+      await tester.tap(find.text('Continue to Plan'));
       await tester.pumpAndSettle();
-      expect(find.text('Subscription Plan'), findsOneWidget);
+
+      // Now at Step 4: Subscription & Branding
+      expect(find.text('Step 4 of 4'), findsOneWidget);
+      expect(find.text('Plan & Branding'), findsOneWidget);
+      expect(find.text('Select Subscription Plan *'), findsOneWidget);
       expect(find.text('Basic'), findsOneWidget);
       expect(find.text('Standard'), findsOneWidget);
       expect(find.text('Premium'), findsOneWidget);
-
-      await tester.ensureVisible(find.widgetWithText(FilledButton, 'Create Account'));
-      await tester.pumpAndSettle();
+      expect(find.text('Registration Summary'), findsOneWidget);
       expect(find.text('Create Account'), findsOneWidget);
     });
 
-    testWidgets('2. Empty submission triggers validation warnings on mandatory fields', (
+    testWidgets('4. Local device storage draft restores in-progress data when user re-opens screen', (
       tester,
     ) async {
+      // Simulate draft data previously saved to device storage
+      SharedPreferences.setMockInitialValues({
+        'acaderix_reg_draft_academy_name': 'Recovered Academy',
+        'acaderix_reg_draft_address': 'Recovered Address 123',
+        'acaderix_reg_draft_owner_name': 'Principal Ahmed',
+        'acaderix_reg_draft_contact': '03001122334',
+        'acaderix_reg_draft_email': 'ahmed@recovered.com',
+        'acaderix_reg_draft_selected_plan': 1,
+        'acaderix_reg_draft_step': 2,
+      });
+
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
@@ -159,28 +273,27 @@ void main() {
           ),
         ),
       );
-
-      await tester.pump();
-
-      // Scroll to button and submit empty form
-      final submitBtn = find.widgetWithText(FilledButton, 'Create Account');
-      await tester.ensureVisible(submitBtn);
-      await tester.pumpAndSettle();
-      await tester.tap(submitBtn);
       await tester.pumpAndSettle();
 
-      // Scroll back up to verify validation messages
-      await tester.drag(find.byType(ListView).first, const Offset(0, 1000));
+      // Verify draft recovered notification banner
+      expect(find.text('Draft recovered from your device'), findsOneWidget);
+      expect(find.text('Start fresh'), findsOneWidget);
+
+      // Resumed at Step 3 (step index 2) with restored email
+      expect(find.text('Step 3 of 4'), findsOneWidget);
+      expect(find.text('ahmed@recovered.com'), findsOneWidget);
+
+      // Tap 'Start fresh' to clear draft
+      await tester.tap(find.text('Start fresh'));
       await tester.pumpAndSettle();
-      expect(find.text('Academy name is required'), findsOneWidget);
-      expect(find.text('Address is required'), findsOneWidget);
-      expect(find.text('Email is required'), findsOneWidget);
-      expect(find.text('Academy Head name is required'), findsOneWidget);
-      expect(find.text('Contact number is required'), findsOneWidget);
-      expect(find.text('Password is required'), findsOneWidget);
+
+      // Should reset to Step 1 with empty fields
+      expect(find.text('Step 1 of 4'), findsOneWidget);
+      expect(find.text('Draft recovered from your device'), findsNothing);
+      expect(find.text('Recovered Academy'), findsNothing);
     });
 
-    testWidgets('3. Successfully registers academy, saves details, and sets academyAdmin role', (
+    testWidgets('5. Full end-to-end registration submits consolidated details and clears draft', (
       tester,
     ) async {
       final fakeAuth = _FakeAuthRepository();
@@ -197,65 +310,70 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
 
-      await tester.pump();
-
-      // Enter Academy Name
+      // Step 1: Academy Profile
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Academy Name *'),
         'Falcon High Academy',
       );
-
-      // Enter Address
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Address *'),
         'Plot 42, Main Boulevard, Gulberg, Lahore',
       );
+      await tester.tap(find.text('Continue to Administrator'));
+      await tester.pumpAndSettle();
 
-      // Enter Email
-      await tester.enterText(
-        find.widgetWithText(TextFormField, 'Email *'),
-        'tariq@falconacademy.edu.pk',
-      );
-
-      // Enter Academy Head Name
+      // Step 2: Administrator & Contact
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Academy Head *'),
         'Professor Tariq Mehmood',
       );
-
-      // Enter Owner CNIC
       await tester.enterText(
         find.widgetWithText(TextFormField, 'CNIC'),
         '3520198765431',
       );
-
-      // Enter Contact Number
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Contact Number *'),
         '03009876543',
       );
+      await tester.tap(find.text('Continue to Credentials'));
+      await tester.pumpAndSettle();
 
-      // Enter Password
+      // Step 3: Account Credentials
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Email *'),
+        'tariq@falconacademy.edu.pk',
+      );
       await tester.enterText(
         find.widgetWithText(TextFormField, 'Password *'),
         'SuperSecret99',
       );
-
-      // Scroll to select 'Standard' plan
-      await tester.ensureVisible(find.text('Standard'));
+      await tester.tap(find.text('Continue to Plan'));
       await tester.pumpAndSettle();
+
+      // Step 4: Plan & Submit
+      // Select 'Standard' plan
       await tester.tap(find.text('Standard'));
       await tester.pumpAndSettle();
 
-      // Scroll to submit button and tap
+      // Verify Summary card shows all consolidated values
+      expect(find.text('Falcon High Academy'), findsOneWidget);
+      expect(find.text('Plot 42, Main Boulevard, Gulberg, Lahore'), findsOneWidget);
+      expect(find.text('Professor Tariq Mehmood'), findsOneWidget);
+      expect(find.text('03009876543'), findsOneWidget);
+      expect(find.text('tariq@falconacademy.edu.pk'), findsOneWidget);
+      expect(find.text('Standard (Rs. 15,000/mo)'), findsOneWidget);
+
+      // Submit Form
       final submitBtn = find.widgetWithText(FilledButton, 'Create Account');
+      expect(submitBtn, findsOneWidget);
       await tester.ensureVisible(submitBtn);
       await tester.pumpAndSettle();
       await tester.tap(submitBtn);
       await tester.pumpAndSettle();
 
-      // Assert registration service was called with exact attributes
+      // Assert registration service was called with all consolidated attributes
       expect(fakeReg.didRegister, isTrue);
       expect(fakeReg.registeredAcademyName, equals('Falcon High Academy'));
       expect(fakeReg.registeredAddress, equals('Plot 42, Main Boulevard, Gulberg, Lahore'));
@@ -265,12 +383,17 @@ void main() {
       expect(fakeReg.registeredPlanName, equals('Standard'));
       expect(fakeReg.registeredPlanPrice, equals(15000));
 
-      // Assert auth repository created account
+      // Assert auth repository created credentials
       expect(fakeAuth.createdEmail, equals('tariq@falconacademy.edu.pk'));
       expect(fakeAuth.createdPassword, equals('SuperSecret99'));
+
+      // Assert draft storage was purged
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('acaderix_reg_draft_academy_name'), isNull);
+      expect(prefs.getString('acaderix_reg_draft_email'), isNull);
     });
 
-    testWidgets('4. Displays error banner when registration fails (e.g. duplicate email)', (
+    testWidgets('6. Displays error banner when registration fails (e.g. duplicate email)', (
       tester,
     ) async {
       final fakeAuth = _FakeAuthRepository(
@@ -290,18 +413,27 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
 
-      await tester.pump();
-
-      // Fill in fields
+      // Step 1
       await tester.enterText(find.widgetWithText(TextFormField, 'Academy Name *'), 'Test Academy');
       await tester.enterText(find.widgetWithText(TextFormField, 'Address *'), 'Test Address');
-      await tester.enterText(find.widgetWithText(TextFormField, 'Email *'), 'existing@test.com');
+      await tester.tap(find.text('Continue to Administrator'));
+      await tester.pumpAndSettle();
+
+      // Step 2
       await tester.enterText(find.widgetWithText(TextFormField, 'Academy Head *'), 'Test Owner');
       await tester.enterText(find.widgetWithText(TextFormField, 'Contact Number *'), '03001234567');
-      await tester.enterText(find.widgetWithText(TextFormField, 'Password *'), 'Secret123');
+      await tester.tap(find.text('Continue to Credentials'));
+      await tester.pumpAndSettle();
 
-      // Scroll to submit button and tap
+      // Step 3
+      await tester.enterText(find.widgetWithText(TextFormField, 'Email *'), 'existing@test.com');
+      await tester.enterText(find.widgetWithText(TextFormField, 'Password *'), 'Secret123');
+      await tester.tap(find.text('Continue to Plan'));
+      await tester.pumpAndSettle();
+
+      // Step 4
       final submitBtn = find.widgetWithText(FilledButton, 'Create Account');
       await tester.ensureVisible(submitBtn);
       await tester.pumpAndSettle();
@@ -316,7 +448,7 @@ void main() {
       expect(fakeReg.didRegister, isFalse);
     });
 
-    testWidgets('5. Zero RenderFlex overflow on narrow mobile screen (320px width)', (
+    testWidgets('7. Zero RenderFlex overflow on narrow mobile screen (320px width)', (
       tester,
     ) async {
       tester.view.physicalSize = const Size(320, 640);
@@ -334,7 +466,7 @@ void main() {
 
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      expect(find.text('Register your academy'), findsOneWidget);
+      expect(find.text('Academy Profile'), findsOneWidget);
     });
   });
 }

@@ -14,7 +14,6 @@ import 'package:academy_management/features/auth/presentation/screens/academy_ad
 import 'package:academy_management/features/auth/presentation/screens/register_screen.dart';
 import 'package:academy_management/features/auth/presentation/screens/staff_login_screen.dart';
 import 'package:academy_management/features/auth/presentation/screens/student_login_screen.dart';
-import 'package:academy_management/features/auth/presentation/screens/super_admin_login_screen.dart';
 
 class _FakeAuthRepository implements AuthRepository {
   @override
@@ -212,56 +211,6 @@ void main() {
 
       textField = tester.widget(
         find.descendant(of: pinGlassField, matching: find.byType(TextField)),
-      );
-      expect(textField.obscureText, isTrue);
-    });
-
-    testWidgets('Super Admin Login: toggles password visibility eye icon', (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
-          ],
-          child: const MaterialApp(
-            home: SuperAdminLoginScreen(),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      final passGlassField = find.widgetWithText(GlassTextField, 'Password');
-      expect(passGlassField, findsOneWidget);
-
-      TextField textField = tester.widget(
-        find.descendant(of: passGlassField, matching: find.byType(TextField)),
-      );
-      expect(textField.obscureText, isTrue);
-
-      final eyeIconFinder = find.byTooltip('Show password');
-      expect(eyeIconFinder, findsOneWidget);
-
-      await tester.ensureVisible(eyeIconFinder);
-      await tester.pumpAndSettle();
-
-      await tester.tap(eyeIconFinder);
-      await tester.pumpAndSettle();
-
-      textField = tester.widget(
-        find.descendant(of: passGlassField, matching: find.byType(TextField)),
-      );
-      expect(textField.obscureText, isFalse);
-
-      final hideIconFinder = find.byTooltip('Hide password');
-      expect(hideIconFinder, findsOneWidget);
-
-      await tester.ensureVisible(hideIconFinder);
-      await tester.pumpAndSettle();
-
-      await tester.tap(hideIconFinder);
-      await tester.pumpAndSettle();
-
-      textField = tester.widget(
-        find.descendant(of: passGlassField, matching: find.byType(TextField)),
       );
       expect(textField.obscureText, isTrue);
     });

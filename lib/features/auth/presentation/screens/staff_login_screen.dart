@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -70,7 +71,7 @@ class _StaffLoginScreenState extends ConsumerState<StaffLoginScreen> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(
@@ -85,10 +86,10 @@ class _StaffLoginScreenState extends ConsumerState<StaffLoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
+                  const Text(
                     'Use the Staff ID and password provided by your Academy Administrator.',
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 13,
                     ),
                   ),
@@ -114,7 +115,7 @@ class _StaffLoginScreenState extends ConsumerState<StaffLoginScreen> {
                         _obscurePassword
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: const Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                         size: 20,
                       ),
                       tooltip: _obscurePassword
@@ -126,18 +127,6 @@ class _StaffLoginScreenState extends ConsumerState<StaffLoginScreen> {
                     ),
                     textInputAction: TextInputAction.done,
                     validator: (v) => Validators.required(v, 'Password'),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => context.push(AppRoutes.forgotPassword),
-                      child: Text(
-                        'Forgot password?',
-                        style: TextStyle(
-                          color: const Color(0xFF374151),
-                        ),
-                      ),
-                    ),
                   ),
                   if (_error != null) ...[
                     const SizedBox(height: 8),

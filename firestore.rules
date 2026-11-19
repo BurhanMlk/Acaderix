@@ -81,10 +81,13 @@ service cloud.firestore {
       allow create, update, delete: if isSuperAdmin() || isSignedIn();
     }
 
-    // Subscriptions: Super Admin manages all; read permitted for pre-login standing verification.
+    // Subscriptions: Super Admin manages all; Academy owner can create initial subscription during registration; read permitted for pre-login standing verification.
     match /subscriptions/{subscriptionId} {
       allow read, write, delete: if isSuperAdmin();
       allow read: if true;
+      allow create: if isSignedIn()
+        && request.resource.data.academyId == subscriptionId
+        && getAfter(/databases/$(database)/documents/academies/$(subscriptionId)).data.ownerUid == request.auth.uid;
     }
 
     // Subscription Plans: Anyone authenticated can read; Super Admin can manage.

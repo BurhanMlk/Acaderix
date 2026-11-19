@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -65,7 +66,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(
@@ -96,10 +97,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF064E3B).withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.successLight,
+                        borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: const Color(0xFF6EE7B7).withValues(alpha: 0.4),
+                          color: AppColors.success.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -107,7 +108,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                         children: [
                           const Icon(
                             Icons.mark_email_read_outlined,
-                            color: Color(0xFF6EE7B7),
+                            color: AppColors.success,
                             size: 20,
                           ),
                           const SizedBox(width: 10),
@@ -118,7 +119,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                                 const Text(
                                   'Password Reset Link Sent',
                                   style: TextStyle(
-                                    color: Color(0xFF6EE7B7),
+                                    color: AppColors.success,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 13,
                                   ),

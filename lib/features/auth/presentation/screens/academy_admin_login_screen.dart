@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/constants/roles.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -11,7 +13,10 @@ import '../../../academy_admin/application/academy_access_provider.dart';
 import '../../../academy_admin/domain/academy_access_models.dart';
 import '../../application/auth_controller.dart';
 
-/// Email/password sign in for academy administrators.
+/// Unified email/password sign in for Super Administrators and Academy Administrators.
+///
+/// Automatically detects whether the signed-in account is a Super Admin or
+/// Academy Admin and redirects to the corresponding dashboard.
 class AcademyAdminLoginScreen extends ConsumerStatefulWidget {
   const AcademyAdminLoginScreen({super.key});
 
@@ -60,9 +65,13 @@ class _AcademyAdminLoginScreenState
 
       if (!mounted) return;
 
-      // 2. If pre-login verified that academy is not active:
+      // 2. If pre-login verified that an academy exists and is not active:
       // DO NOT SIGN IN. DO NOT ISSUE TOKEN.
-      if (access != null && !access.isActive) {
+      // Note: Super Admin emails have no academy (AcademyAccessState.notFound),
+      // so they proceed to authentication and role auto-detection.
+      if (access != null &&
+          !access.isActive &&
+          access.state != AcademyAccessState.notFound) {
         context.push(
           AppRoutes.academyStatus,
           extra: access,
@@ -79,8 +88,20 @@ class _AcademyAdminLoginScreenState
           );
       if (!mounted) return;
 
-      // 4. If pre-login check was not possible due to remote rules, verify now with auth:
-      if (access == null) {
+      if (user.role == AppRole.unauthenticated) {
+        await ref.read(authControllerProvider.notifier).signOut();
+        if (mounted) {
+          setState(() {
+            _error = 'Account role not recognized. Please contact support.';
+          });
+        }
+        return;
+      }
+
+      // 4. For Academy Admins, if pre-login check was not possible or returned
+      // notFound, verify academy access now with auth:
+      if (user.role == AppRole.academyAdmin &&
+          (access == null || access.state == AcademyAccessState.notFound)) {
         try {
           final postLoginAccess = await ref.read(academyAccessProvider.future);
           if (!postLoginAccess.isActive) {
@@ -115,13 +136,13 @@ class _AcademyAdminLoginScreenState
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(
-            icon: Icons.apartment_outlined,
-            title: 'Academy Admin Login',
-            subtitle: 'Sign in to manage your academy',
+            icon: Icons.admin_panel_settings_outlined,
+            title: 'Admin Login',
+            subtitle: 'Sign in with your admin email to continue',
           ),
           const SizedBox(height: 24),
           GlassCard(
@@ -149,7 +170,7 @@ class _AcademyAdminLoginScreenState
                         _obscurePassword
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: const Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                         size: 20,
                       ),
                       tooltip: _obscurePassword
@@ -166,10 +187,10 @@ class _AcademyAdminLoginScreenState
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => context.push(AppRoutes.forgotPassword),
-                      child: Text(
+                      child: const Text(
                         'Forgot password?',
                         style: TextStyle(
-                          color: const Color(0xFF374151),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),

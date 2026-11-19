@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/errors/app_exception.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -71,7 +72,7 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             onPressed: () => context.pop(),
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF374151)),
+            icon: const Icon(Icons.arrow_back, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),
           const GlassLoginHeader(
@@ -86,10 +87,10 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
+                  const Text(
                     'Students and parents sign in here using credentials provided on your admission slip.',
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 12,
                     ),
                   ),
@@ -124,7 +125,7 @@ class _StudentLoginScreenState extends ConsumerState<StudentLoginScreen> {
                         _obscurePin
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: const Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                         size: 20,
                       ),
                       tooltip: _obscurePin ? 'Show PIN' : 'Hide PIN',

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/env.dart';
@@ -114,30 +115,39 @@ class AuthController extends Notifier<AuthState> {
       password: password,
     );
 
-    String? logoUrl;
-    if (logoBytes != null && logoBytes.isNotEmpty) {
-      logoUrl = await _uploadLogo(
-        bytes: logoBytes,
-        contentType: logoContentType,
+    try {
+      String? logoUrl;
+      if (logoBytes != null && logoBytes.isNotEmpty) {
+        logoUrl = await _uploadLogo(
+          bytes: logoBytes,
+          contentType: logoContentType,
+        );
+      }
+
+      await ref.read(academyRegistrationServiceProvider).registerAcademy(
+        uid: user.id,
+        email: user.email,
+        academyName: academyName,
+        address: address,
+        cnic: cnic,
+        ownerName: ownerName,
+        ownerPhone: ownerPhone,
+        planName: planName,
+        planPrice: planPrice,
+        logoUrl: logoUrl,
       );
+
+      final refreshed = await _repository.refreshCurrentUser();
+      state = AuthState.authenticated(refreshed);
+      return refreshed;
+    } catch (e) {
+      // Roll back the newly created Auth user so the email isn't left orphaned
+      // if logo upload or Firestore provisioning fails.
+      try {
+        await FirebaseAuth.instance.currentUser?.delete();
+      } catch (_) {}
+      rethrow;
     }
-
-    await ref.read(academyRegistrationServiceProvider).registerAcademy(
-      uid: user.id,
-      email: user.email,
-      academyName: academyName,
-      address: address,
-      cnic: cnic,
-      ownerName: ownerName,
-      ownerPhone: ownerPhone,
-      planName: planName,
-      planPrice: planPrice,
-      logoUrl: logoUrl,
-    );
-
-    final refreshed = await _repository.refreshCurrentUser();
-    state = AuthState.authenticated(refreshed);
-    return refreshed;
   }
 
   Future<String?> _uploadLogo({
