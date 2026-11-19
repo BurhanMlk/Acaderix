@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/widgets/empty_state.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -46,7 +47,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
     final effectiveOwnerEmail = access?.ownerEmail ?? '';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: ticketsAsync.when(
         loading: () => _buildLoadingState(),
         error: (err, _) => ErrorState(
@@ -71,7 +72,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF6366F1),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_comment_rounded),
         label: const Text(
@@ -154,7 +155,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
                       title: 'My Tickets',
                       value: totalCount.toString(),
                       icon: Icons.support_agent_rounded,
-                      color: const Color(0xFF6366F1),
+                      color: AppColors.primary,
                     ),
                   ),
                   SizedBox(
@@ -163,7 +164,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
                       title: 'Open',
                       value: openCount.toString(),
                       icon: Icons.error_outline_rounded,
-                      color: const Color(0xFFEF4444),
+                      color: AppColors.danger,
                     ),
                   ),
                   SizedBox(
@@ -172,7 +173,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
                       title: 'In Progress',
                       value: inProgressCount.toString(),
                       icon: Icons.pending_actions_rounded,
-                      color: const Color(0xFFF59E0B),
+                      color: AppColors.warning,
                     ),
                   ),
                   SizedBox(
@@ -181,7 +182,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
                       title: 'Resolved',
                       value: resolvedCount.toString(),
                       icon: Icons.check_circle_outline_rounded,
-                      color: const Color(0xFF10B981),
+                      color: AppColors.success,
                     ),
                   ),
                 ],
@@ -194,14 +195,14 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
           TextField(
             controller: _searchController,
             onChanged: (_) => setState(() {}),
-            style: const TextStyle(color: Color(0xFF111827)),
+            style: const TextStyle(color: AppColors.textPrimary),
             decoration: InputDecoration(
               hintText: 'Search by ticket # or subject...',
-              hintStyle: TextStyle(color: const Color(0xFF9CA3AF)),
-              prefixIcon: const Icon(Icons.search, color: Color(0xFF6B7280)),
+              hintStyle: TextStyle(color: AppColors.textMuted),
+              prefixIcon: const Icon(Icons.search, color: AppColors.textTertiary),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: Color(0xFF6B7280)),
+                      icon: const Icon(Icons.clear, color: AppColors.textTertiary),
                       onPressed: () {
                         _searchController.clear();
                         setState(() {});
@@ -209,11 +210,11 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
                     )
                   : null,
               filled: true,
-              fillColor: const Color(0xFFF9FAFB),
+              fillColor: AppColors.surfaceMuted,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: const Color(0xFFE5E7EB),
+                  color: AppColors.border,
                 ),
               ),
             ),
@@ -283,17 +284,17 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
       label: Text(label),
       selected: isSelected,
       onSelected: (_) => onSelected(value),
-      selectedColor: const Color(0xFF6366F1).withValues(alpha: 0.35),
-      backgroundColor: const Color(0xFFF9FAFB),
+      selectedColor: AppColors.primary.withValues(alpha: 0.35),
+      backgroundColor: AppColors.surfaceMuted,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : const Color(0xFF6B7280),
+        color: isSelected ? const Color(0xFF312E81) : AppColors.textTertiary,
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         fontSize: 13,
       ),
       side: BorderSide(
         color: isSelected
-            ? const Color(0xFF6366F1)
-            : const Color(0xFFF3F4F6),
+            ? AppColors.primary
+            : AppColors.surfaceMuted,
       ),
     );
   }
@@ -302,7 +303,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -321,7 +322,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
                   content: Text(
                     'Ticket "${newTicket.ticketNumber}" submitted to Super Admin!',
                   ),
-                  backgroundColor: const Color(0xFF10B981),
+                  backgroundColor: AppColors.success,
                 ),
               );
             }
@@ -347,7 +348,7 @@ class _AcademySupportScreenState extends ConsumerState<AcademySupportScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -387,17 +388,17 @@ class _AcademyTicketCard extends StatelessWidget {
                         horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color:
-                          const Color(0xFF6366F1).withValues(alpha: 0.15),
+                          AppColors.primary.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
                         color:
-                            const Color(0xFF6366F1).withValues(alpha: 0.4),
+                            AppColors.primary.withValues(alpha: 0.4),
                       ),
                     ),
                     child: Text(
                       ticket.ticketNumber,
                       style: const TextStyle(
-                        color: Color(0xFF818CF8),
+                        color: AppColors.primary,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                       ),
@@ -412,7 +413,7 @@ class _AcademyTicketCard extends StatelessWidget {
               Text(
                 ticket.subject,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -423,13 +424,13 @@ class _AcademyTicketCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF374151),
+                  color: AppColors.textSecondary,
                   fontSize: 13,
                   height: 1.4,
                 ),
               ),
               const SizedBox(height: 12),
-              const Divider(color: Color(0xFFF3F4F6)),
+              const Divider(color: AppColors.surfaceMuted),
               const SizedBox(height: 6),
               Wrap(
                 alignment: WrapAlignment.spaceBetween,
@@ -443,13 +444,13 @@ class _AcademyTicketCard extends StatelessWidget {
                       Icon(
                         Icons.chat_bubble_outline_rounded,
                         size: 14,
-                        color: const Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         '${ticket.messages.length} ${ticket.messages.length == 1 ? 'message' : 'messages'}',
                         style: TextStyle(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                         ),
                       ),
@@ -461,7 +462,7 @@ class _AcademyTicketCard extends StatelessWidget {
                           horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color:
-                            const Color(0xFF10B981).withValues(alpha: 0.2),
+                            AppColors.success.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
@@ -476,7 +477,7 @@ class _AcademyTicketCard extends StatelessWidget {
                   Text(
                     DateFormat('MMM dd • hh:mm a').format(ticket.updatedAt),
                     style: TextStyle(
-                      color: const Color(0xFFD1D5DB),
+                      color: AppColors.border,
                       fontSize: 11,
                     ),
                   ),
@@ -493,22 +494,22 @@ class _AcademyTicketCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
         label,
-        style: const TextStyle(color: Color(0xFF6B7280), fontSize: 10),
+        style: const TextStyle(color: AppColors.textTertiary, fontSize: 10),
       ),
     );
   }
 
   Widget _priorityBadge(String priority) {
     final (color, label) = switch (priority.toLowerCase()) {
-      'urgent' => (const Color(0xFFEF4444), 'URGENT'),
-      'high' => (const Color(0xFFF59E0B), 'HIGH'),
-      'low' => (const Color(0xFF10B981), 'LOW'),
-      _ => (const Color(0xFF38BDF8), 'MEDIUM'),
+      'urgent' => (AppColors.danger, 'URGENT'),
+      'high' => (AppColors.warning, 'HIGH'),
+      'low' => (AppColors.success, 'LOW'),
+      _ => (AppColors.secondary, 'MEDIUM'),
     };
 
     return Container(
@@ -530,9 +531,9 @@ class _AcademyTicketCard extends StatelessWidget {
 
   Widget _statusBadge(String status) {
     final (color, label) = switch (status.toLowerCase()) {
-      'open' => (const Color(0xFFEF4444), 'Open'),
-      'in_progress' => (const Color(0xFFF59E0B), 'In Progress'),
-      'resolved' => (const Color(0xFF10B981), 'Resolved'),
+      'open' => (AppColors.danger, 'Open'),
+      'in_progress' => (AppColors.warning, 'In Progress'),
+      'resolved' => (AppColors.success, 'Resolved'),
       _ => (Colors.grey, 'Closed'),
     };
 
@@ -644,7 +645,7 @@ class _TicketConversationViewState
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFFE5E7EB),
+                color: AppColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -658,13 +659,13 @@ class _TicketConversationViewState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                  color: AppColors.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   ticket.ticketNumber,
                   style: const TextStyle(
-                    color: Color(0xFF818CF8),
+                    color: AppColors.primary,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                   ),
@@ -674,7 +675,7 @@ class _TicketConversationViewState
               _statusBadge(ticket.status),
               const Spacer(),
               IconButton(
-                icon: const Icon(Icons.close, color: Color(0xFF6B7280)),
+                icon: const Icon(Icons.close, color: AppColors.textTertiary),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],
@@ -684,7 +685,7 @@ class _TicketConversationViewState
           Text(
             ticket.subject,
             style: const TextStyle(
-              color: Color(0xFF111827),
+              color: AppColors.textPrimary,
               fontSize: 17,
               fontWeight: FontWeight.w700,
             ),
@@ -693,7 +694,7 @@ class _TicketConversationViewState
           Text(
             ticket.description,
             style: TextStyle(
-              color: const Color(0xFF374151),
+              color: AppColors.textSecondary,
               fontSize: 13,
               height: 1.4,
             ),
@@ -706,10 +707,10 @@ class _TicketConversationViewState
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                color: AppColors.success.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                  color: AppColors.success.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -737,7 +738,7 @@ class _TicketConversationViewState
                         Text(
                           ticket.resolutionNote!,
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontSize: 12.5,
                           ),
                         ),
@@ -750,14 +751,14 @@ class _TicketConversationViewState
             const SizedBox(height: 12),
           ],
 
-          const Divider(color: Color(0xFFF3F4F6)),
+          const Divider(color: AppColors.surfaceMuted),
           const SizedBox(height: 8),
 
           // Message Thread List
           const Text(
             'Conversation Thread',
             style: TextStyle(
-              color: Color(0xFF6B7280),
+              color: AppColors.textTertiary,
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
@@ -772,7 +773,7 @@ class _TicketConversationViewState
                     child: Center(
                       child: Text(
                         'No replies yet. Super Admin will respond shortly.',
-                        style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
+                        style: TextStyle(color: AppColors.textMuted, fontSize: 13),
                       ),
                     ),
                   )
@@ -788,13 +789,13 @@ class _TicketConversationViewState
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: isSuperAdmin
-                              ? const Color(0xFF6366F1).withValues(alpha: 0.16)
-                              : const Color(0xFFF9FAFB),
+                              ? AppColors.primary.withValues(alpha: 0.16)
+                              : AppColors.surfaceMuted,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isSuperAdmin
-                                ? const Color(0xFF6366F1).withValues(alpha: 0.35)
-                                : const Color(0xFFF3F4F6),
+                                ? AppColors.primary.withValues(alpha: 0.35)
+                                : AppColors.surfaceMuted,
                           ),
                         ),
                         child: Column(
@@ -806,7 +807,7 @@ class _TicketConversationViewState
                                   const Icon(
                                     Icons.shield_outlined,
                                     size: 13,
-                                    color: Color(0xFF818CF8),
+                                    color: AppColors.primary,
                                   ),
                                   const SizedBox(width: 4),
                                 ],
@@ -818,8 +819,8 @@ class _TicketConversationViewState
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       color: isSuperAdmin
-                                          ? const Color(0xFF818CF8)
-                                          : Colors.white,
+                                          ? AppColors.primary
+                                          : AppColors.textPrimary,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -830,7 +831,7 @@ class _TicketConversationViewState
                                   DateFormat('MMM dd • hh:mm a')
                                       .format(msg.createdAt),
                                   style: TextStyle(
-                                    color: const Color(0xFFD1D5DB),
+                                    color: AppColors.border,
                                     fontSize: 10,
                                   ),
                                 ),
@@ -840,7 +841,7 @@ class _TicketConversationViewState
                             Text(
                               msg.message,
                               style: const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontSize: 13,
                                 height: 1.4,
                               ),
@@ -860,17 +861,17 @@ class _TicketConversationViewState
               Expanded(
                 child: TextField(
                   controller: _replyController,
-                  style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
                   decoration: InputDecoration(
                     hintText: 'Type your message to Super Admin...',
                     hintStyle:
-                        TextStyle(color: const Color(0xFF9CA3AF)),
+                        TextStyle(color: AppColors.textMuted),
                     filled: true,
-                    fillColor: const Color(0xFFF3F4F6),
+                    fillColor: AppColors.surfaceMuted,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: const Color(0xFFE5E7EB),
+                        color: AppColors.border,
                       ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
@@ -883,7 +884,7 @@ class _TicketConversationViewState
               const SizedBox(width: 8),
               IconButton(
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFF6366F1),
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.all(12),
                 ),
@@ -893,7 +894,7 @@ class _TicketConversationViewState
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                         ),
                       )
                     : const Icon(Icons.send_rounded, size: 18),
@@ -908,9 +909,9 @@ class _TicketConversationViewState
 
   Widget _statusBadge(String status) {
     final (color, label) = switch (status.toLowerCase()) {
-      'open' => (const Color(0xFFEF4444), 'Open'),
-      'in_progress' => (const Color(0xFFF59E0B), 'In Progress'),
-      'resolved' => (const Color(0xFF10B981), 'Resolved'),
+      'open' => (AppColors.danger, 'Open'),
+      'in_progress' => (AppColors.warning, 'In Progress'),
+      'resolved' => (AppColors.success, 'Resolved'),
       _ => (Colors.grey, 'Closed'),
     };
 
@@ -1029,7 +1030,7 @@ class _NewTicketModalState extends State<_NewTicketModal> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1038,7 +1039,7 @@ class _NewTicketModalState extends State<_NewTicketModal> {
               const Text(
                 'Submit Inquire / Ticket to Super Admin',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1047,7 +1048,7 @@ class _NewTicketModalState extends State<_NewTicketModal> {
               Text(
                 'Our platform support team will review and reply directly to your inquiry.',
                 style: TextStyle(
-                  color: const Color(0xFF6B7280),
+                  color: AppColors.textTertiary,
                   fontSize: 12.5,
                 ),
               ),
@@ -1058,14 +1059,14 @@ class _NewTicketModalState extends State<_NewTicketModal> {
                 initialValue: _category,
                 isExpanded: true,
                 dropdownColor: Colors.white,
-                style: const TextStyle(color: Color(0xFF111827), fontSize: 13.5),
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 13.5),
                 decoration: InputDecoration(
                   labelText: 'Inquiry Category',
                   labelStyle: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1098,14 +1099,14 @@ class _NewTicketModalState extends State<_NewTicketModal> {
                 initialValue: _priority,
                 isExpanded: true,
                 dropdownColor: Colors.white,
-                style: const TextStyle(color: Color(0xFF111827), fontSize: 13.5),
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 13.5),
                 decoration: InputDecoration(
                   labelText: 'Priority Level',
                   labelStyle: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1135,15 +1136,15 @@ class _NewTicketModalState extends State<_NewTicketModal> {
 
               TextFormField(
                 controller: _subjectController,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Subject *',
                   hintText: 'e.g., Request branch quota increase...',
                   labelStyle: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1156,16 +1157,16 @@ class _NewTicketModalState extends State<_NewTicketModal> {
               TextFormField(
                 controller: _descriptionController,
                 maxLines: 4,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Detailed Inquiry *',
                   hintText:
                       'Describe your issue, requirements, or question clearly...',
                   labelStyle: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

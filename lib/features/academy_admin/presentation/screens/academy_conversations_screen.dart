@@ -6,6 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../../../core/widgets/empty_state.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../../admissions/domain/student.dart';
@@ -66,7 +67,7 @@ class _AcademyConversationsScreenState
       return const Center(
         child: Text(
           'No academy context available.',
-          style: TextStyle(color: Color(0xFF6B7280)),
+          style: TextStyle(color: AppColors.textTertiary),
         ),
       );
     }
@@ -79,7 +80,7 @@ class _AcademyConversationsScreenState
     final studentsList = studentsAsync.value ?? const <Student>[];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: StreamBuilder<List<AcademicConversation>>(
         stream: repo.watchAcademicConversations(academyId),
         builder: (context, snapshot) {
@@ -98,7 +99,7 @@ class _AcademyConversationsScreenState
                     const SizedBox(height: 12),
                     Text(
                       'Failed to load conversations: ${snapshot.error}',
-                      style: const TextStyle(color: Color(0xFF6B7280)),
+                      style: const TextStyle(color: AppColors.textTertiary),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -110,7 +111,7 @@ class _AcademyConversationsScreenState
           if (snapshot.connectionState == ConnectionState.waiting &&
               !snapshot.hasData) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+              child: CircularProgressIndicator(color: AppColors.secondary),
             );
           }
 
@@ -179,7 +180,7 @@ class _AcademyConversationsScreenState
                             ),
                             child: const Icon(
                               Icons.forum_outlined,
-                              color: Color(0xFF38BDF8),
+                              color: AppColors.secondary,
                               size: 24,
                             ),
                           ),
@@ -191,7 +192,7 @@ class _AcademyConversationsScreenState
                                 const Text(
                                   'Teacher & Student Conversations',
                                   style: TextStyle(
-                                    color: Color(0xFF111827),
+                                    color: AppColors.textPrimary,
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: -0.3,
@@ -201,7 +202,7 @@ class _AcademyConversationsScreenState
                                 Text(
                                   'Directory-level supervisory audit of faculty and student direct 1-to-1 communications',
                                   style: TextStyle(
-                                    color: const Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -229,28 +230,28 @@ class _AcademyConversationsScreenState
                                 value: '$totalChats',
                                 subtitle: '$activeTeachers Active Teachers',
                                 icon: Icons.chat_bubble_outline,
-                                color: const Color(0xFF38BDF8),
+                                color: AppColors.secondary,
                               ),
                               _KpiMetricCard(
                                 title: 'Faculty Pending',
                                 value: '$facultyPending',
                                 subtitle: 'Unread by Instructor',
                                 icon: Icons.pending_actions_outlined,
-                                color: const Color(0xFFF59E0B),
+                                color: AppColors.warning,
                               ),
                               _KpiMetricCard(
                                 title: 'Student Unread',
                                 value: '$studentPending',
                                 subtitle: 'New Faculty Replies',
                                 icon: Icons.mark_chat_unread_outlined,
-                                color: const Color(0xFF10B981),
+                                color: AppColors.success,
                               ),
                               _KpiMetricCard(
                                 title: 'Supervisory Audits',
                                 value: '$totalChats',
                                 subtitle: '100% Oversight Rate',
                                 icon: Icons.security_outlined,
-                                color: const Color(0xFFA855F7),
+                                color: AppColors.primary,
                               ),
                             ],
                           );
@@ -299,9 +300,9 @@ class _AcademyConversationsScreenState
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.surfaceMuted),
       ),
       child: Row(
         children: [
@@ -311,7 +312,7 @@ class _AcademyConversationsScreenState
               badgeText: '$staffCount',
               icon: Icons.badge_outlined,
               isSelected: _tabController.index == 0,
-              accentColor: const Color(0xFF6366F1),
+              accentColor: AppColors.primary,
               onTap: () => setState(() => _tabController.animateTo(0)),
             ),
           ),
@@ -322,7 +323,7 @@ class _AcademyConversationsScreenState
               badgeText: '$studentCount',
               icon: Icons.school_outlined,
               isSelected: _tabController.index == 1,
-              accentColor: const Color(0xFF0EA5E9),
+              accentColor: AppColors.info,
               onTap: () => setState(() => _tabController.animateTo(1)),
             ),
           ),
@@ -355,23 +356,23 @@ class _AcademyConversationsScreenState
           child: TextField(
             controller: _staffSearchController,
             onChanged: (val) => setState(() => _staffSearchQuery = val),
-            style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+            style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
             decoration: InputDecoration(
               hintText: 'Search staff by name, staff ID, or designation...',
               hintStyle: TextStyle(
-                color: const Color(0xFF9CA3AF),
+                color: AppColors.textMuted,
                 fontSize: 13,
               ),
               prefixIcon: const Icon(
                 Icons.search,
-                color: Color(0xFF6366F1),
+                color: AppColors.primary,
                 size: 18,
               ),
               suffixIcon: _staffSearchQuery.isNotEmpty
                   ? IconButton(
                       icon: const Icon(
                         Icons.clear,
-                        color: Color(0xFFD1D5DB),
+                        color: AppColors.border,
                         size: 16,
                       ),
                       onPressed: () {
@@ -381,22 +382,22 @@ class _AcademyConversationsScreenState
                     )
                   : null,
               filled: true,
-              fillColor: const Color(0xFFF9FAFB),
+              fillColor: AppColors.surfaceMuted,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 14,
                 vertical: 11,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                borderSide: const BorderSide(color: AppColors.surfaceMuted),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                borderSide: const BorderSide(color: AppColors.surfaceMuted),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF6366F1)),
+                borderSide: const BorderSide(color: AppColors.primary),
               ),
             ),
           ),
@@ -485,23 +486,23 @@ class _AcademyConversationsScreenState
           child: TextField(
             controller: _studentSearchController,
             onChanged: (val) => setState(() => _studentSearchQuery = val),
-            style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+            style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
             decoration: InputDecoration(
               hintText: 'Search student by name or roll number...',
               hintStyle: TextStyle(
-                color: const Color(0xFF9CA3AF),
+                color: AppColors.textMuted,
                 fontSize: 13,
               ),
               prefixIcon: const Icon(
                 Icons.search,
-                color: Color(0xFF0EA5E9),
+                color: AppColors.info,
                 size: 18,
               ),
               suffixIcon: _studentSearchQuery.isNotEmpty
                   ? IconButton(
                       icon: const Icon(
                         Icons.clear,
-                        color: Color(0xFFD1D5DB),
+                        color: AppColors.border,
                         size: 16,
                       ),
                       onPressed: () {
@@ -511,22 +512,22 @@ class _AcademyConversationsScreenState
                     )
                   : null,
               filled: true,
-              fillColor: const Color(0xFFF9FAFB),
+              fillColor: AppColors.surfaceMuted,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 14,
                 vertical: 11,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                borderSide: const BorderSide(color: AppColors.surfaceMuted),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                borderSide: const BorderSide(color: AppColors.surfaceMuted),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF0EA5E9)),
+                borderSide: const BorderSide(color: AppColors.info),
               ),
             ),
           ),
@@ -729,12 +730,12 @@ class _TeacherConversationsAuditScreenState
         if (convs.isEmpty) {
           return DashboardBackground(
             child: Scaffold(
-              backgroundColor: const Color(0xFFFFFFFF),
+              backgroundColor: AppColors.surface,
               appBar: AppBar(
-                backgroundColor: const Color(0xFF0F172A),
+                backgroundColor: AppColors.surface,
                 elevation: 0,
                 scrolledUnderElevation: 0,
-                iconTheme: const IconThemeData(color: Color(0xFF374151)),
+                iconTheme: const IconThemeData(color: AppColors.textSecondary),
                 title: Row(
                   children: [
                     CircleAvatar(
@@ -747,7 +748,7 @@ class _TeacherConversationsAuditScreenState
                             ? widget.staff.fullName[0].toUpperCase()
                             : 'T',
                         style: const TextStyle(
-                          color: Color(0xFF818CF8),
+                          color: AppColors.primary,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                         ),
@@ -761,7 +762,7 @@ class _TeacherConversationsAuditScreenState
                           Text(
                             widget.staff.fullName,
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                             ),
@@ -773,7 +774,7 @@ class _TeacherConversationsAuditScreenState
                                 ? widget.staff.jobTitle
                                 : 'Faculty Instructor',
                             style: TextStyle(
-                              color: const Color(0xFF6B7280),
+                              color: AppColors.textTertiary,
                               fontSize: 11,
                             ),
                             maxLines: 1,
@@ -807,12 +808,12 @@ class _TeacherConversationsAuditScreenState
             : convs.first;
 
         return Scaffold(
-          backgroundColor: const Color(0xFF090D16),
+          backgroundColor: AppColors.surface,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF0F172A),
+            backgroundColor: AppColors.surface,
             elevation: 0,
             scrolledUnderElevation: 0,
-            iconTheme: const IconThemeData(color: Color(0xFF374151)),
+            iconTheme: const IconThemeData(color: AppColors.textSecondary),
             titleSpacing: 0,
             title: Row(
               children: [
@@ -826,7 +827,7 @@ class _TeacherConversationsAuditScreenState
                         ? widget.staff.fullName[0].toUpperCase()
                         : 'T',
                     style: const TextStyle(
-                      color: Color(0xFF818CF8),
+                      color: AppColors.primary,
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
@@ -840,7 +841,7 @@ class _TeacherConversationsAuditScreenState
                       Text(
                         '${widget.staff.fullName} ↔ ${activeConv.studentName}',
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 14.5,
                           fontWeight: FontWeight.w700,
                         ),
@@ -850,7 +851,7 @@ class _TeacherConversationsAuditScreenState
                       Text(
                         'Student: Roll #${activeConv.studentRollNumber} • ${activeConv.courseName}',
                         style: const TextStyle(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                           fontSize: 11,
                         ),
                         maxLines: 1,
@@ -871,12 +872,12 @@ class _TeacherConversationsAuditScreenState
                 icon: const Icon(
                   Icons.picture_as_pdf_outlined,
                   size: 16,
-                  color: Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                 ),
                 label: const Text(
                   'Export',
                   style: TextStyle(
-                    color: Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w700,
                   ),
@@ -896,13 +897,13 @@ class _TeacherConversationsAuditScreenState
                     horizontal: 16,
                     vertical: 8,
                   ),
-                  color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                  color: AppColors.warning.withValues(alpha: 0.12),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.shield_outlined,
                         size: 16,
-                        color: Color(0xFFF59E0B),
+                        color: AppColors.warning,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -929,7 +930,7 @@ class _TeacherConversationsAuditScreenState
                       horizontal: 12,
                       vertical: 6,
                     ),
-                    color: const Color(0xFF0F172A).withValues(alpha: 0.6),
+                    color: AppColors.surfaceMuted,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: convs.length,
@@ -943,7 +944,7 @@ class _TeacherConversationsAuditScreenState
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : const Color(0xFF6B7280),
+                                  : AppColors.textTertiary,
                               fontSize: 11.5,
                               fontWeight: isSelected
                                   ? FontWeight.w700
@@ -951,12 +952,12 @@ class _TeacherConversationsAuditScreenState
                             ),
                           ),
                           selected: isSelected,
-                          selectedColor: const Color(0xFF0284C7),
-                          backgroundColor: const Color(0xFFF9FAFB),
+                          selectedColor: AppColors.info,
+                          backgroundColor: AppColors.surfaceMuted,
                           side: BorderSide(
                             color: isSelected
-                                ? const Color(0xFF38BDF8)
-                                : const Color(0xFFF3F4F6),
+                                ? AppColors.secondary
+                                : AppColors.surfaceMuted,
                           ),
                           onSelected: (selected) {
                             if (selected) {
@@ -981,7 +982,7 @@ class _TeacherConversationsAuditScreenState
                           !msgSnapshot.hasData) {
                         return const Center(
                           child: CircularProgressIndicator(
-                            color: Color(0xFF38BDF8),
+                            color: AppColors.secondary,
                           ),
                         );
                       }
@@ -999,13 +1000,13 @@ class _TeacherConversationsAuditScreenState
                                 Icon(
                                   Icons.chat_bubble_outline,
                                   size: 40,
-                                  color: const Color(0xFFD1D5DB),
+                                  color: AppColors.border,
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
                                   'No messages in this chat yet',
                                   style: TextStyle(
-                                    color: const Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -1042,9 +1043,9 @@ class _TeacherConversationsAuditScreenState
                     vertical: 10,
                   ),
                   decoration: const BoxDecoration(
-                    color: Color(0xFF0F172A),
+                    color: AppColors.surfaceMuted,
                     border: Border(
-                      top: BorderSide(color: Color(0xFF111827), width: 1),
+                      top: BorderSide(color: AppColors.border, width: 1),
                     ),
                   ),
                   child: Row(
@@ -1053,14 +1054,14 @@ class _TeacherConversationsAuditScreenState
                       const Icon(
                         Icons.lock_outline,
                         size: 14,
-                        color: Color(0xFF9CA3AF),
+                        color: AppColors.textMuted,
                       ),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
                           'Read-Only Supervisory Mode • Export transcript using the button above',
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 11.5,
                           ),
                           maxLines: 1,
@@ -1125,12 +1126,12 @@ class _StudentConversationsAuditScreenState
         if (convs.isEmpty) {
           return DashboardBackground(
             child: Scaffold(
-              backgroundColor: const Color(0xFFFFFFFF),
+              backgroundColor: AppColors.surface,
               appBar: AppBar(
-                backgroundColor: const Color(0xFF0F172A),
+                backgroundColor: AppColors.surface,
                 elevation: 0,
                 scrolledUnderElevation: 0,
-                iconTheme: const IconThemeData(color: Color(0xFF374151)),
+                iconTheme: const IconThemeData(color: AppColors.textSecondary),
                 title: Row(
                   children: [
                     CircleAvatar(
@@ -1143,7 +1144,7 @@ class _StudentConversationsAuditScreenState
                             ? widget.student.fullName[0].toUpperCase()
                             : 'S',
                         style: const TextStyle(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                         ),
@@ -1157,7 +1158,7 @@ class _StudentConversationsAuditScreenState
                           Text(
                             widget.student.fullName,
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                             ),
@@ -1167,7 +1168,7 @@ class _StudentConversationsAuditScreenState
                           Text(
                             'Roll #${widget.student.rollNumber}',
                             style: TextStyle(
-                              color: const Color(0xFF6B7280),
+                              color: AppColors.textTertiary,
                               fontSize: 11,
                             ),
                             maxLines: 1,
@@ -1201,12 +1202,12 @@ class _StudentConversationsAuditScreenState
             : convs.first;
 
         return Scaffold(
-          backgroundColor: const Color(0xFF090D16),
+          backgroundColor: AppColors.surface,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF0F172A),
+            backgroundColor: AppColors.surface,
             elevation: 0,
             scrolledUnderElevation: 0,
-            iconTheme: const IconThemeData(color: Color(0xFF374151)),
+            iconTheme: const IconThemeData(color: AppColors.textSecondary),
             titleSpacing: 0,
             title: Row(
               children: [
@@ -1220,7 +1221,7 @@ class _StudentConversationsAuditScreenState
                         ? widget.student.fullName[0].toUpperCase()
                         : 'S',
                     style: const TextStyle(
-                      color: Color(0xFF38BDF8),
+                      color: AppColors.secondary,
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
@@ -1234,7 +1235,7 @@ class _StudentConversationsAuditScreenState
                       Text(
                         '${widget.student.fullName} ↔ ${activeConv.teacherName}',
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 14.5,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1244,7 +1245,7 @@ class _StudentConversationsAuditScreenState
                       Text(
                         'Instructor: ${activeConv.teacherName} • ${activeConv.courseName}',
                         style: const TextStyle(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                           fontSize: 11,
                         ),
                         maxLines: 1,
@@ -1265,12 +1266,12 @@ class _StudentConversationsAuditScreenState
                 icon: const Icon(
                   Icons.picture_as_pdf_outlined,
                   size: 16,
-                  color: Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                 ),
                 label: const Text(
                   'Export',
                   style: TextStyle(
-                    color: Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1290,13 +1291,13 @@ class _StudentConversationsAuditScreenState
                     horizontal: 16,
                     vertical: 8,
                   ),
-                  color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                  color: AppColors.warning.withValues(alpha: 0.12),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.shield_outlined,
                         size: 16,
-                        color: Color(0xFFF59E0B),
+                        color: AppColors.warning,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -1323,7 +1324,7 @@ class _StudentConversationsAuditScreenState
                       horizontal: 12,
                       vertical: 6,
                     ),
-                    color: const Color(0xFF0F172A).withValues(alpha: 0.6),
+                    color: AppColors.surfaceMuted,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: convs.length,
@@ -1337,7 +1338,7 @@ class _StudentConversationsAuditScreenState
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : const Color(0xFF6B7280),
+                                  : AppColors.textTertiary,
                               fontSize: 11.5,
                               fontWeight: isSelected
                                   ? FontWeight.w700
@@ -1345,12 +1346,12 @@ class _StudentConversationsAuditScreenState
                             ),
                           ),
                           selected: isSelected,
-                          selectedColor: const Color(0xFF0284C7),
-                          backgroundColor: const Color(0xFFF9FAFB),
+                          selectedColor: AppColors.info,
+                          backgroundColor: AppColors.surfaceMuted,
                           side: BorderSide(
                             color: isSelected
-                                ? const Color(0xFF38BDF8)
-                                : const Color(0xFFF3F4F6),
+                                ? AppColors.secondary
+                                : AppColors.surfaceMuted,
                           ),
                           onSelected: (selected) {
                             if (selected) {
@@ -1375,7 +1376,7 @@ class _StudentConversationsAuditScreenState
                           !msgSnapshot.hasData) {
                         return const Center(
                           child: CircularProgressIndicator(
-                            color: Color(0xFF38BDF8),
+                            color: AppColors.secondary,
                           ),
                         );
                       }
@@ -1393,13 +1394,13 @@ class _StudentConversationsAuditScreenState
                                 Icon(
                                   Icons.chat_bubble_outline,
                                   size: 40,
-                                  color: const Color(0xFFD1D5DB),
+                                  color: AppColors.border,
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
                                   'No messages in this chat yet',
                                   style: TextStyle(
-                                    color: const Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -1436,9 +1437,9 @@ class _StudentConversationsAuditScreenState
                     vertical: 10,
                   ),
                   decoration: const BoxDecoration(
-                    color: Color(0xFF0F172A),
+                    color: AppColors.surfaceMuted,
                     border: Border(
-                      top: BorderSide(color: Color(0xFF111827), width: 1),
+                      top: BorderSide(color: AppColors.border, width: 1),
                     ),
                   ),
                   child: Row(
@@ -1447,14 +1448,14 @@ class _StudentConversationsAuditScreenState
                       const Icon(
                         Icons.lock_outline,
                         size: 14,
-                        color: Color(0xFF9CA3AF),
+                        color: AppColors.textMuted,
                       ),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
                           'Read-Only Supervisory Mode • Export transcript using the button above',
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 11.5,
                           ),
                           maxLines: 1,
@@ -1501,17 +1502,22 @@ class _AuditWhatsAppChatBubble extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
         decoration: BoxDecoration(
           color: isRightSide
-              ? const Color(0xFF005C4B) // WhatsApp dark teal/green
-              : const Color(0xFF202C33), // WhatsApp slate grey
+              ? AppColors.primaryLight
+              : AppColors.surfaceMuted,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(14),
             topRight: const Radius.circular(14),
             bottomLeft: Radius.circular(isRightSide ? 14 : 2),
             bottomRight: Radius.circular(isRightSide ? 2 : 14),
           ),
+          border: Border.all(
+            color: isRightSide
+                ? AppColors.border
+                : AppColors.border,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.25),
+              color: Colors.black.withValues(alpha: 0.05),
               offset: const Offset(0, 1),
               blurRadius: 2,
             ),
@@ -1528,8 +1534,8 @@ class _AuditWhatsAppChatBubble extends StatelessWidget {
                   message.senderName,
                   style: TextStyle(
                     color: isTeacher
-                        ? const Color(0xFF38BDF8)
-                        : const Color(0xFFA5B4FC),
+                        ? AppColors.info
+                        : AppColors.primary,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1543,17 +1549,17 @@ class _AuditWhatsAppChatBubble extends StatelessWidget {
                   decoration: BoxDecoration(
                     color:
                         (isTeacher
-                                ? const Color(0xFF38BDF8)
-                                : const Color(0xFFA5B4FC))
-                            .withValues(alpha: 0.18),
+                                ? AppColors.info
+                                : AppColors.primary)
+                            .withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     isTeacher ? 'TEACHER' : 'STUDENT',
                     style: TextStyle(
                       color: isTeacher
-                          ? const Color(0xFF38BDF8)
-                          : const Color(0xFFA5B4FC),
+                          ? AppColors.info
+                          : AppColors.primary,
                       fontSize: 8.5,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
@@ -1567,7 +1573,7 @@ class _AuditWhatsAppChatBubble extends StatelessWidget {
             Text(
               message.text,
               style: const TextStyle(
-                color: Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontSize: 13.5,
                 height: 1.35,
               ),
@@ -1580,12 +1586,12 @@ class _AuditWhatsAppChatBubble extends StatelessWidget {
                 Text(
                   timeStr,
                   style: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 10,
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Icon(Icons.done_all, size: 14, color: Color(0xFF38BDF8)),
+                const Icon(Icons.done_all, size: 14, color: AppColors.secondary),
               ],
             ),
           ],
@@ -1750,12 +1756,12 @@ class _StaffAuditCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: unreadCount > 0
-                  ? const Color(0xFFF59E0B).withValues(alpha: 0.5)
-                  : const Color(0xFFF3F4F6),
+                  ? AppColors.warning.withValues(alpha: 0.5)
+                  : AppColors.surfaceMuted,
               width: unreadCount > 0 ? 1.5 : 1.0,
             ),
           ),
@@ -1774,7 +1780,7 @@ class _StaffAuditCard extends StatelessWidget {
                           ? staff.fullName[0].toUpperCase()
                           : 'T',
                       style: const TextStyle(
-                        color: Color(0xFF818CF8),
+                        color: AppColors.primary,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1788,7 +1794,7 @@ class _StaffAuditCard extends StatelessWidget {
                         Text(
                           staff.fullName,
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),
@@ -1801,7 +1807,7 @@ class _StaffAuditCard extends StatelessWidget {
                               ? staff.jobTitle
                               : 'Faculty Instructor',
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 12,
                           ),
                           maxLines: 1,
@@ -1812,7 +1818,7 @@ class _StaffAuditCard extends StatelessWidget {
                   ),
                   const Icon(
                     Icons.chevron_right_rounded,
-                    color: Color(0xFFD1D5DB),
+                    color: AppColors.border,
                     size: 20,
                   ),
                 ],
@@ -1829,13 +1835,13 @@ class _StaffAuditCard extends StatelessWidget {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF9FAFB),
+                      color: AppColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'ID #${staff.staffId.isNotEmpty ? staff.staffId : staff.id}',
                       style: const TextStyle(
-                        color: Color(0xFF38BDF8),
+                        color: AppColors.secondary,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1848,8 +1854,8 @@ class _StaffAuditCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: conversationCount > 0
-                          ? const Color(0xFF10B981).withValues(alpha: 0.15)
-                          : const Color(0xFFF9FAFB),
+                          ? AppColors.success.withValues(alpha: 0.15)
+                          : AppColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -1860,7 +1866,7 @@ class _StaffAuditCard extends StatelessWidget {
                           size: 11,
                           color: conversationCount > 0
                               ? const Color(0xFF34D399)
-                              : const Color(0xFFD1D5DB),
+                              : AppColors.border,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -1868,7 +1874,7 @@ class _StaffAuditCard extends StatelessWidget {
                           style: TextStyle(
                             color: conversationCount > 0
                                 ? const Color(0xFF34D399)
-                                : const Color(0xFF9CA3AF),
+                                : AppColors.textMuted,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1883,7 +1889,7 @@ class _StaffAuditCard extends StatelessWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                        color: AppColors.warning.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -1928,12 +1934,12 @@ class _StudentAuditCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: unreadCount > 0
-                  ? const Color(0xFF0EA5E9).withValues(alpha: 0.5)
-                  : const Color(0xFFF3F4F6),
+                  ? AppColors.info.withValues(alpha: 0.5)
+                  : AppColors.surfaceMuted,
               width: unreadCount > 0 ? 1.5 : 1.0,
             ),
           ),
@@ -1952,7 +1958,7 @@ class _StudentAuditCard extends StatelessWidget {
                           ? student.fullName[0].toUpperCase()
                           : 'S',
                       style: const TextStyle(
-                        color: Color(0xFF38BDF8),
+                        color: AppColors.secondary,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1966,7 +1972,7 @@ class _StudentAuditCard extends StatelessWidget {
                         Text(
                           student.fullName,
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),
@@ -1977,7 +1983,7 @@ class _StudentAuditCard extends StatelessWidget {
                         Text(
                           'Roll #${student.rollNumber}${student.notes.isNotEmpty ? " • ${student.notes}" : ""}',
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 12,
                           ),
                           maxLines: 1,
@@ -1988,7 +1994,7 @@ class _StudentAuditCard extends StatelessWidget {
                   ),
                   const Icon(
                     Icons.chevron_right_rounded,
-                    color: Color(0xFFD1D5DB),
+                    color: AppColors.border,
                     size: 20,
                   ),
                 ],
@@ -2005,13 +2011,13 @@ class _StudentAuditCard extends StatelessWidget {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF9FAFB),
+                      color: AppColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'Roll #${student.rollNumber}',
                       style: const TextStyle(
-                        color: Color(0xFF38BDF8),
+                        color: AppColors.secondary,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -2024,8 +2030,8 @@ class _StudentAuditCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: conversationCount > 0
-                          ? const Color(0xFF6366F1).withValues(alpha: 0.2)
-                          : const Color(0xFFF9FAFB),
+                          ? AppColors.primary.withValues(alpha: 0.2)
+                          : AppColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -2035,16 +2041,16 @@ class _StudentAuditCard extends StatelessWidget {
                           Icons.chat_bubble_outline,
                           size: 11,
                           color: conversationCount > 0
-                              ? const Color(0xFF818CF8)
-                              : const Color(0xFFD1D5DB),
+                              ? AppColors.primary
+                              : AppColors.border,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '$conversationCount Teacher Chats',
                           style: TextStyle(
                             color: conversationCount > 0
-                                ? const Color(0xFF818CF8)
-                                : const Color(0xFF9CA3AF),
+                                ? AppColors.primary
+                                : AppColors.textMuted,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -2059,7 +2065,7 @@ class _StudentAuditCard extends StatelessWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                        color: AppColors.success.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -2122,14 +2128,14 @@ class _TabButton extends StatelessWidget {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? accentColor : const Color(0xFF9CA3AF),
+              color: isSelected ? accentColor : AppColors.textMuted,
             ),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
                 label,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF6B7280),
+                  color: isSelected ? const Color(0xFF312E81) : AppColors.textTertiary,
                   fontSize: 13,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
@@ -2143,13 +2149,13 @@ class _TabButton extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSelected
                     ? accentColor
-                    : const Color(0xFFF3F4F6),
+                    : AppColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 badgeText,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF9CA3AF),
+                  color: isSelected ? Colors.white : AppColors.textMuted,
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                 ),
@@ -2197,7 +2203,7 @@ class _KpiMetricCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
@@ -2220,7 +2226,7 @@ class _KpiMetricCard extends StatelessWidget {
           Text(
             subtitle,
             style: TextStyle(
-              color: const Color(0xFFD1D5DB),
+              color: AppColors.border,
               fontSize: 9.5,
             ),
             maxLines: 1,

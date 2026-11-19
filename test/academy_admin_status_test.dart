@@ -61,6 +61,9 @@ class _FakeAcademyAccessRepository implements AcademyAccessRepository {
 }
 
 class _FakeAuthRepo implements AuthRepository {
+  _FakeAuthRepo({this.roleToReturn = AppRole.academyAdmin});
+
+  final AppRole roleToReturn;
   bool signInCalled = false;
   String? signedInEmail;
 
@@ -74,8 +77,8 @@ class _FakeAuthRepo implements AuthRepository {
     return AppUser(
       id: 'admin_123',
       email: email,
-      role: AppRole.academyAdmin,
-      academyId: 'acad_123',
+      role: roleToReturn,
+      academyId: roleToReturn == AppRole.academyAdmin ? 'acad_123' : null,
     );
   }
   @override
@@ -578,6 +581,79 @@ void main() {
 
         // 2. Verify navigated to Academy Admin dashboard
         expect(find.text('Academy Admin Dashboard Home'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Unified Admin Login: auto-detects Super Admin email and redirects to Super Admin dashboard',
+      (tester) async {
+        tester.view.physicalSize = const Size(1000, 1800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final fakeAuth = _FakeAuthRepo(roleToReturn: AppRole.superAdmin);
+        const notFoundInfo = AcademyAccessInfo(
+          state: AcademyAccessState.notFound,
+          academyId: '',
+          ownerEmail: 'super@acaderix.com',
+        );
+        final accessRepo = _FakeAcademyAccessRepository(notFoundInfo);
+
+        final router = GoRouter(
+          initialLocation: AppRoutes.academyAdminLogin,
+          routes: [
+            GoRoute(
+              path: AppRoutes.academyAdminLogin,
+              builder: (context, state) => const AcademyAdminLoginScreen(),
+            ),
+            GoRoute(
+              path: AppRoutes.superAdmin,
+              builder: (context, state) => const Scaffold(
+                body: Text('Super Admin Dashboard Home'),
+              ),
+            ),
+            GoRoute(
+              path: AppRoutes.academyAdmin,
+              builder: (context, state) => const Scaffold(
+                body: Text('Academy Admin Dashboard Home'),
+              ),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authRepositoryProvider.overrideWithValue(fakeAuth),
+              academyAccessRepositoryProvider.overrideWithValue(accessRepo),
+            ],
+            child: MaterialApp.router(
+              routerConfig: router,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Admin Login'), findsOneWidget);
+
+        await tester.enterText(
+          find.byType(TextFormField).first,
+          'super@acaderix.com',
+        );
+        await tester.enterText(
+          find.byType(TextFormField).last,
+          'secret123',
+        );
+
+        final signInBtn = find.widgetWithText(FilledButton, 'Sign In');
+        expect(signInBtn, findsOneWidget);
+        await tester.tap(signInBtn);
+        await tester.pumpAndSettle();
+
+        expect(fakeAuth.signInCalled, isTrue);
+        expect(fakeAuth.signedInEmail, 'super@acaderix.com');
+        expect(find.text('Super Admin Dashboard Home'), findsOneWidget);
       },
     );
   });

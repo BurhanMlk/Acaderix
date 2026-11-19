@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/domain/attendance_calculator.dart';
 import '../../../../core/widgets/stat_card.dart';
 import '../../../../shared/current_academy_provider.dart';
@@ -29,7 +31,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
       return const Center(
         child: Text(
           'No academy context available.',
-          style: TextStyle(color: Color(0xFF6B7280)),
+          style: TextStyle(color: AppColors.textTertiary),
         ),
       );
     }
@@ -92,6 +94,8 @@ class AcademyAdminDashboard extends ConsumerWidget {
         ? '$presentCount / ${attendanceRecords.length}'
         : '—';
 
+    final academyCode = access?.academyCode.trim() ?? '';
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       children: [
@@ -104,14 +108,70 @@ class AcademyAdminDashboard extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Overview',
-                    style: TextStyle(
-                      color: Color(0xFF111827),
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.3,
-                    ),
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      const Text(
+                        'Overview',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      if (academyCode.isNotEmpty)
+                        InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: academyCode));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Academy code "$academyCode" copied to clipboard',
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: AppColors.primary.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Code: $academyCode',
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.4,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Icon(
+                                  Icons.copy_rounded,
+                                  size: 13,
+                                  color: AppColors.primary,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -120,8 +180,8 @@ class AcademyAdminDashboard extends ConsumerWidget {
                         : 'Branch: ${selectedBranch?.name ?? ''} (${selectedBranch?.city ?? ''})',
                     style: TextStyle(
                       color: selectedBranchId == null
-                          ? const Color(0xFF6B7280)
-                          : const Color(0xFF38BDF8),
+                          ? AppColors.textTertiary
+                          : AppColors.info,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
@@ -139,11 +199,15 @@ class AcademyAdminDashboard extends ConsumerWidget {
                 icon: const Icon(
                   Icons.clear_all,
                   size: 16,
-                  color: Colors.amber,
+                  color: Color(0xFFD97706),
                 ),
                 label: const Text(
                   'Reset to All',
-                  style: TextStyle(color: Colors.amber, fontSize: 12),
+                  style: TextStyle(
+                    color: Color(0xFFD97706),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 style: TextButton.styleFrom(
                   visualDensity: VisualDensity.compact,
@@ -169,13 +233,13 @@ class AcademyAdminDashboard extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: activeAlert.isUrgent
-                        ? const Color(0xFFEF4444).withValues(alpha: 0.15)
-                        : const Color(0xFF6366F1).withValues(alpha: 0.15),
+                        ? const Color(0xFFFEF2F2)
+                        : AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: activeAlert.isUrgent
-                          ? const Color(0xFFEF4444).withValues(alpha: 0.4)
-                          : const Color(0xFF6366F1).withValues(alpha: 0.4),
+                          ? const Color(0xFFFECACA)
+                          : const Color(0xFFE0E7FF),
                     ),
                   ),
                   child: Row(
@@ -184,17 +248,17 @@ class AcademyAdminDashboard extends ConsumerWidget {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: activeAlert.isUrgent
-                              ? const Color(0xFFEF4444).withValues(alpha: 0.25)
-                              : const Color(0xFF6366F1).withValues(alpha: 0.25),
+                              ? const Color(0xFFFEE2E2)
+                              : const Color(0xFFE0E7FF),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           activeAlert.isUrgent
                               ? Icons.warning_amber_rounded
-                              : Icons.shield_outlined,
+                              : Icons.campaign_outlined,
                           color: activeAlert.isUrgent
-                              ? const Color(0xFFF87171)
-                              : const Color(0xFF818CF8),
+                              ? const Color(0xFFDC2626)
+                              : AppColors.primary,
                           size: 20,
                         ),
                       ),
@@ -205,12 +269,12 @@ class AcademyAdminDashboard extends ConsumerWidget {
                           children: [
                             Text(
                               activeAlert.isUrgent
-                                  ? 'CRITICAL NOTICE FROM SUPER ADMIN'
-                                  : 'PLATFORM NOTICE FROM SUPER ADMIN',
+                                  ? 'URGENT NOTICE'
+                                  : 'PLATFORM NOTICE',
                               style: TextStyle(
                                 color: activeAlert.isUrgent
-                                    ? const Color(0xFFF87171)
-                                    : const Color(0xFF818CF8),
+                                    ? const Color(0xFFDC2626)
+                                    : AppColors.primary,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.5,
@@ -222,7 +286,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13,
                               ),
@@ -231,8 +295,8 @@ class AcademyAdminDashboard extends ConsumerWidget {
                               activeAlert.message,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: const Color(0xFF6B7280),
+                              style: const TextStyle(
+                                color: AppColors.textTertiary,
                                 fontSize: 11,
                               ),
                             ),
@@ -243,7 +307,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                       const Icon(
                         Icons.arrow_forward_ios,
                         size: 13,
-                        color: Color(0xFF9CA3AF),
+                        color: AppColors.textMuted,
                       ),
                     ],
                   ),
@@ -257,11 +321,9 @@ class AcademyAdminDashboard extends ConsumerWidget {
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF6366F1).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.3),
-              ),
+              color: AppColors.surfaceMuted,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.border),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,16 +331,16 @@ class AcademyAdminDashboard extends ConsumerWidget {
                 const Row(
                   children: [
                     Icon(
-                      Icons.rocket_launch_rounded,
-                      color: Color(0xFF818CF8),
+                      Icons.school_outlined,
+                      color: AppColors.primary,
                       size: 20,
                     ),
                     SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Welcome to Acaderix Workspace',
+                        'Getting started',
                         style: TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
                         ),
@@ -287,11 +349,11 @@ class AcademyAdminDashboard extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Your academy is active and ready. Start setting up your institution by admitting students, creating campus branches, or registering staff members.',
+                const Text(
+                  'Start setting up your academy by admitting students, creating campus branches, or registering staff members.',
                   style: TextStyle(
-                    color: const Color(0xFF374151),
-                    fontSize: 12.5,
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
                     height: 1.4,
                   ),
                 ),
@@ -302,10 +364,15 @@ class AcademyAdminDashboard extends ConsumerWidget {
                   children: [
                     FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF6366F1),
+                        backgroundColor: AppColors.textPrimary,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       icon: const Icon(
-                        Icons.person_add_alt_1_rounded,
+                        Icons.person_add_outlined,
                         size: 16,
                       ),
                       label: const Text('Admit Student'),
@@ -313,8 +380,11 @@ class AcademyAdminDashboard extends ConsumerWidget {
                     ),
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        side: BorderSide(color: const Color(0xFFD1D5DB)),
+                        foregroundColor: AppColors.textSecondary,
+                        side: const BorderSide(color: AppColors.border),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       icon: const Icon(Icons.badge_outlined, size: 16),
                       label: const Text('Add Staff Member'),
@@ -342,7 +412,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                 orElse: () => '…',
               ),
               icon: Icons.people_outline,
-              color: const Color(0xFF6366F1),
+              color: AppColors.primary,
             ),
             StatCard(
               title: selectedBranchId == null ? 'Staff' : 'Branch Staff',
@@ -351,7 +421,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                 orElse: () => '…',
               ),
               icon: Icons.badge_outlined,
-              color: const Color(0xFF14B8A6),
+              color: AppColors.secondary,
             ),
             StatCard(
               title: 'Total Branches',
@@ -360,19 +430,19 @@ class AcademyAdminDashboard extends ConsumerWidget {
                 orElse: () => '…',
               ),
               icon: Icons.account_balance_outlined,
-              color: const Color(0xFF38BDF8),
+              color: AppColors.secondary,
             ),
             StatCard(
               title: 'Today Attendance',
               value: attendanceDisplay,
               icon: Icons.event_note_outlined,
-              color: const Color(0xFFF59E0B),
+              color: AppColors.warning,
             ),
             StatCard(
               title: 'Monthly Collection',
               value: revenueDisplay,
               icon: Icons.payments_outlined,
-              color: const Color(0xFF10B981),
+              color: AppColors.success,
             ),
             StatCard(
               title: 'Noticeboard',
@@ -397,7 +467,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
               child: Text(
                 'Branches Overview',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -407,10 +477,10 @@ class AcademyAdminDashboard extends ConsumerWidget {
             ),
             TextButton.icon(
               onPressed: () => context.push(AppRoutes.addBranch),
-              icon: const Icon(Icons.add, size: 16, color: Color(0xFF38BDF8)),
+              icon: const Icon(Icons.add, size: 16, color: AppColors.secondary),
               label: const Text(
                 'Add Branch',
-                style: TextStyle(color: Color(0xFF38BDF8), fontSize: 13),
+                style: TextStyle(color: AppColors.secondary, fontSize: 13),
               ),
             ),
           ],
@@ -422,15 +492,15 @@ class AcademyAdminDashboard extends ConsumerWidget {
             clipBehavior: Clip.antiAlias,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB),
+              color: AppColors.surfaceMuted,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
+              border: Border.all(color: AppColors.border),
             ),
             child: Row(
               children: [
                 const Icon(
                   Icons.account_balance_outlined,
-                  color: Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                   size: 28,
                 ),
                 const SizedBox(width: 12),
@@ -441,7 +511,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                       Text(
                         'No Branches Configured',
                         style: TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -450,7 +520,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
                       Text(
                         'Add campus locations to organize students, staff, and records by branch.',
                         style: TextStyle(
-                          color: Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                         ),
                       ),
@@ -493,7 +563,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
         const Text(
           'Manage',
           style: TextStyle(
-            color: Color(0xFF111827),
+            color: AppColors.textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -510,19 +580,19 @@ class AcademyAdminDashboard extends ConsumerWidget {
             _ModuleTile(
               icon: Icons.people_alt_outlined,
               label: 'Students',
-              color: const Color(0xFF6366F1),
+              color: AppColors.primary,
               onTap: () => context.push(AppRoutes.studentsList),
             ),
             _ModuleTile(
               icon: Icons.payments_outlined,
               label: 'Fees',
-              color: const Color(0xFF10B981),
+              color: AppColors.success,
               onTap: () => context.push(AppRoutes.fees),
             ),
             _ModuleTile(
               icon: Icons.event_note_outlined,
               label: 'Attendance',
-              color: const Color(0xFFF59E0B),
+              color: AppColors.warning,
               onTap: () => context.push(AppRoutes.attendance),
             ),
             _ModuleTile(
@@ -540,7 +610,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
             _ModuleTile(
               icon: Icons.badge_outlined,
               label: 'Staff',
-              color: const Color(0xFF14B8A6),
+              color: AppColors.secondary,
               onTap: () => context.push(AppRoutes.staffList),
             ),
             _ModuleTile(
@@ -552,7 +622,7 @@ class AcademyAdminDashboard extends ConsumerWidget {
             _ModuleTile(
               icon: Icons.account_balance_outlined,
               label: 'Branches',
-              color: const Color(0xFF38BDF8),
+              color: AppColors.secondary,
               onTap: () => context.push(AppRoutes.branchesList),
             ),
             _ModuleTile(
@@ -597,11 +667,11 @@ class _BranchBreakdownCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: isSelected
-            ? const Color(0xFF38BDF8).withValues(alpha: 0.15)
-            : const Color(0xFFF9FAFB),
+            ? AppColors.secondary.withValues(alpha: 0.15)
+            : AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isSelected ? const Color(0xFF38BDF8) : const Color(0xFFF3F4F6),
+          color: isSelected ? AppColors.secondary : AppColors.surfaceMuted,
           width: isSelected ? 1.5 : 1,
         ),
       ),
@@ -610,12 +680,12 @@ class _BranchBreakdownCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFF38BDF8).withValues(alpha: 0.2),
+              color: AppColors.secondary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
               Icons.account_balance,
-              color: Color(0xFF38BDF8),
+              color: AppColors.secondary,
               size: 20,
             ),
           ),
@@ -627,7 +697,7 @@ class _BranchBreakdownCard extends StatelessWidget {
                 Text(
                   branch.name,
                   style: const TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
                   ),
@@ -638,7 +708,7 @@ class _BranchBreakdownCard extends StatelessWidget {
                       ? '${branch.city}${branch.address.isNotEmpty ? ' · ${branch.address}' : ''}'
                       : branch.address,
                   style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 12,
                   ),
                   maxLines: 1,
@@ -651,11 +721,11 @@ class _BranchBreakdownCard extends StatelessWidget {
                   children: [
                     _BadgePill(
                       label: '$studentCount Students',
-                      color: const Color(0xFF6366F1),
+                      color: AppColors.primary,
                     ),
                     _BadgePill(
                       label: '$staffCount Staff',
-                      color: const Color(0xFF14B8A6),
+                      color: AppColors.secondary,
                     ),
                   ],
                 ),
@@ -667,9 +737,9 @@ class _BranchBreakdownCard extends StatelessWidget {
             onPressed: onSelect,
             style: FilledButton.styleFrom(
               backgroundColor: isSelected
-                  ? const Color(0xFF38BDF8)
-                  : const Color(0xFFE5E7EB),
-              foregroundColor: isSelected ? Colors.black : Colors.white,
+                  ? AppColors.secondary
+                  : AppColors.border,
+              foregroundColor: AppColors.textPrimary,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               textStyle: const TextStyle(
                 fontSize: 12,
@@ -716,7 +786,7 @@ class _ModuleTile extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
-    this.color = const Color(0xFF111827),
+    this.color = AppColors.textPrimary,
   });
 
   final IconData icon;
@@ -729,9 +799,9 @@ class _ModuleTile extends StatelessWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.2),
+        border: Border.all(color: AppColors.border, width: 1.2),
       ),
       child: Material(
         color: Colors.transparent,
@@ -753,7 +823,7 @@ class _ModuleTile extends StatelessWidget {
               Text(
                 label,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
                 ),

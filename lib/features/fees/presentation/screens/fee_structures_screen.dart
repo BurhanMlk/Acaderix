@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/utils/currency.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/async_list_state.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
@@ -105,7 +106,7 @@ class FeeStructuresScreen extends ConsumerWidget {
           title: Text(
             isEdit ? 'Edit fee structure' : 'New fee structure',
             style: const TextStyle(
-              color: Color(0xFF111827),
+              color: AppColors.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -345,7 +346,7 @@ class _StructureCard extends StatelessWidget {
                   child: Text(
                     structure.title,
                     style: const TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
@@ -357,13 +358,13 @@ class _StructureCard extends StatelessWidget {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEEF2FF),
+                    color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     freq,
                     style: const TextStyle(
-                      color: Color(0xFF4F46E5),
+                      color: AppColors.primary,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -375,7 +376,7 @@ class _StructureCard extends StatelessWidget {
             Text(
               CurrencyFormatter.pkr(structure.amount),
               style: const TextStyle(
-                color: Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
@@ -414,7 +415,7 @@ class _StructureCard extends StatelessWidget {
                     child: const Text(
                       'Inactive',
                       style: TextStyle(
-                        color: Color(0xFFDC2626),
+                        color: AppColors.danger,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -423,13 +424,13 @@ class _StructureCard extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.edit_outlined, size: 20),
-                  color: const Color(0xFF6B7280),
+                  color: AppColors.textTertiary,
                   tooltip: 'Edit',
                   onPressed: onEdit,
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_outline, size: 20),
-                  color: const Color(0xFFDC2626),
+                  color: AppColors.danger,
                   tooltip: 'Delete',
                   onPressed: onDelete,
                 ),
@@ -445,11 +446,11 @@ class _StructureCard extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 13, color: const Color(0xFF9CA3AF)),
+        Icon(icon, size: 13, color: AppColors.textMuted),
         const SizedBox(width: 4),
         Text(
           label,
-          style: const TextStyle(color: Color(0xFF6B7280), fontSize: 12),
+          style: const TextStyle(color: AppColors.textTertiary, fontSize: 12),
         ),
       ],
     );

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/domain/fee_calculator.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/validators.dart';
@@ -13,9 +14,10 @@ import '../../../../shared/branch_tab_bar.dart';
 import '../../../../shared/current_academy_provider.dart';
 import '../../../../shared/selected_branch_provider.dart';
 import '../../../academy_admin/application/academy_admin_providers.dart';
-import '../../../academics/application/course_repository_provider.dart';
 import '../../../admissions/domain/student.dart';
 import '../../../branches/domain/branch.dart';
+import '../../../communication/application/communication_providers.dart';
+import '../../../communication/domain/app_notification.dart';
 import '../../application/fee_repository_provider.dart'
     hide invoicesStreamProvider, paymentsStreamProvider;
 import '../../domain/fee_invoice.dart';
@@ -46,16 +48,16 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: AppColors.surface,
         appBar: AppBar(
-          backgroundColor: const Color(0xFFFFFFFF),
+          backgroundColor: AppColors.surface,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0.5,
           title: const Text(
             'Fees',
             style: TextStyle(
-              color: Color(0xFF111827),
+              color: AppColors.textPrimary,
               fontWeight: FontWeight.w600,
               fontSize: 18,
             ),
@@ -64,7 +66,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
             IconButton(
               icon: const Icon(
                 Icons.settings_outlined,
-                color: Color(0xFF6B7280),
+                color: AppColors.textTertiary,
               ),
               tooltip: 'Fee structures',
               onPressed: () => context.push(AppRoutes.feeStructures),
@@ -75,9 +77,9 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
               Tab(text: 'Invoices'),
               Tab(text: 'Defaulters'),
             ],
-            indicatorColor: Color(0xFF4F46E5),
-            labelColor: Color(0xFF4F46E5),
-            unselectedLabelColor: Color(0xFF6B7280),
+            indicatorColor: AppColors.primary,
+            labelColor: AppColors.primary,
+            unselectedLabelColor: AppColors.textTertiary,
             labelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
             unselectedLabelStyle: TextStyle(
               fontWeight: FontWeight.w500,
@@ -92,8 +94,8 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
             FloatingActionButton.small(
               heroTag: 'bulk',
               tooltip: 'Bulk generate',
-              backgroundColor: const Color(0xFFEEF2FF),
-              foregroundColor: const Color(0xFF4F46E5),
+              backgroundColor: AppColors.primaryLight,
+              foregroundColor: AppColors.primary,
               onPressed: () =>
                   _showBulkGenerateDialog(context, ref, academyId, students),
               child: const Icon(Icons.group_add_outlined),
@@ -166,7 +168,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                             padding: EdgeInsets.all(24),
                             child: Text(
                               'No fee invoices match the filter.',
-                              style: TextStyle(color: Color(0xFF6B7280)),
+                              style: TextStyle(color: AppColors.textTertiary),
                             ),
                           ),
                         );
@@ -192,7 +194,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                                 _FeeStatCard(
                                   label: 'Total Billed',
                                   amount: totalBilled,
-                                  color: const Color(0xFF818CF8),
+                                  color: AppColors.primary,
                                 ),
                                 const SizedBox(width: 8),
                                 _FeeStatCard(
@@ -208,7 +210,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                                       : 0,
                                   color: totalOutstanding > 0
                                       ? Colors.amber
-                                      : const Color(0xFF9CA3AF),
+                                      : AppColors.textMuted,
                                 ),
                               ],
                             );
@@ -290,12 +292,12 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                  color: AppColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.payments_outlined,
-                  color: Color(0xFF10B981),
+                  color: AppColors.success,
                   size: 20,
                 ),
               ),
@@ -304,7 +306,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                 child: Text(
                   'Collect payment',
                   style: TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -326,9 +328,9 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9FAFB),
+                        color: AppColors.surfaceMuted,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: const Color(0xFFE5E7EB)),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,7 +341,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                               Text(
                                 invoice.invoiceNo,
                                 style: const TextStyle(
-                                  color: Color(0xFF4F46E5),
+                                  color: AppColors.primary,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 12,
                                 ),
@@ -368,7 +370,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                           Text(
                             invoice.title,
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -378,7 +380,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                             Text(
                               'Student: ${student.fullName} (${student.rollNumber})',
                               style: const TextStyle(
-                                color: Color(0xFF6B7280),
+                                color: AppColors.textTertiary,
                                 fontSize: 12,
                               ),
                             ),
@@ -394,7 +396,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                         decimal: true,
                       ),
                       textInputAction: TextInputAction.next,
-                      style: const TextStyle(color: Color(0xFF111827)),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         labelText: 'Amount (PKR)',
                         prefixIcon: const Icon(
@@ -414,13 +416,13 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                             0xFF4F46E5,
                           ).withValues(alpha: 0.1),
                           side: const BorderSide(
-                            color: Color(0xFF4F46E5),
+                            color: AppColors.primary,
                             width: 0.8,
                           ),
                           label: Text(
                             'Full: ${CurrencyFormatter.pkr(outstanding)}',
                             style: const TextStyle(
-                              color: Color(0xFF4F46E5),
+                              color: AppColors.primary,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -431,12 +433,12 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                         if (outstanding >= 2000)
                           ActionChip(
                             visualDensity: VisualDensity.compact,
-                            backgroundColor: const Color(0xFFF3F4F6),
-                            side: const BorderSide(color: Color(0xFFE5E7EB)),
+                            backgroundColor: AppColors.surfaceMuted,
+                            side: const BorderSide(color: AppColors.border),
                             label: Text(
                               'Half: ${CurrencyFormatter.pkr(outstanding / 2)}',
                               style: const TextStyle(
-                                color: Color(0xFF6B7280),
+                                color: AppColors.textTertiary,
                                 fontSize: 11,
                               ),
                             ),
@@ -483,7 +485,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                       TextField(
                         controller: referenceCtrl,
                         textInputAction: TextInputAction.done,
-                        style: const TextStyle(color: Color(0xFF111827)),
+                        style: const TextStyle(color: AppColors.textPrimary),
                         decoration: InputDecoration(
                           labelText: method == 'cheque'
                               ? 'Cheque number'
@@ -590,12 +592,12 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4F46E5).withValues(alpha: 0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
                     Icons.group_add_outlined,
-                    color: Color(0xFF4F46E5),
+                    color: AppColors.primary,
                     size: 20,
                   ),
                 ),
@@ -604,7 +606,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                   child: Text(
                     'Bulk generate invoices',
                     style: TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -650,7 +652,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                       const SizedBox(height: 12),
                       TextField(
                         controller: monthCtrl,
-                        style: const TextStyle(color: Color(0xFF111827)),
+                        style: const TextStyle(color: AppColors.textPrimary),
                         decoration: const InputDecoration(
                           labelText: 'Month label',
                           hintText: 'e.g. November 2026',
@@ -675,7 +677,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                             Text(
                               '${eligible.length} invoices will be created',
                               style: const TextStyle(
-                                color: Color(0xFF16A34A),
+                                color: AppColors.success,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
                               ),
@@ -685,7 +687,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                               'Amount: ${CurrencyFormatter.pkr(selectedStructure.amount)} each\n'
                               'Due: ${DateFormat('d MMM yyyy').format(dueDate)}',
                               style: const TextStyle(
-                                color: Color(0xFF6B7280),
+                                color: AppColors.textTertiary,
                                 fontSize: 12,
                               ),
                             ),
@@ -705,23 +707,46 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
               FilledButton(
                 onPressed: () async {
                   if (eligible.isEmpty) return;
+                  final effectiveMonth = monthCtrl.text.trim().isEmpty
+                      ? monthLabel
+                      : monthCtrl.text.trim();
                   final count = await ref
                       .read(feeRepositoryProvider)
                       .bulkCreateInvoices(
                         structure: selectedStructure,
                         studentIds: eligible.map((s) => s.id).toList(),
-                        monthLabel: monthCtrl.text.trim().isEmpty
-                            ? monthLabel
-                            : monthCtrl.text.trim(),
+                        monthLabel: effectiveMonth,
                         dueDate: dueDate,
                       );
+                  final commRepo = ref.read(communicationRepositoryProvider);
+                  final invoiceTitle =
+                      '${selectedStructure.title} - $effectiveMonth';
+                  await Future.wait(
+                    eligible.map((student) async {
+                      try {
+                        await commRepo.sendNotification(
+                          AppNotification(
+                            id: const Uuid().v4(),
+                            academyId: academyId,
+                            recipientId: student.id,
+                            recipientRole: 'student',
+                            title: 'New Fee Invoice: $invoiceTitle',
+                            body:
+                                'A fee invoice for Rs. ${selectedStructure.amount.toStringAsFixed(0)} has been issued.',
+                            type: 'fee_alert',
+                            relatedId: selectedStructure.id,
+                          ),
+                        );
+                      } catch (_) {}
+                    }),
+                  );
                   ref.invalidate(invoicesStreamProvider);
                   if (ctx.mounted) {
                     Navigator.of(ctx).pop();
                     ScaffoldMessenger.of(ctx).showSnackBar(
                       SnackBar(
                         content: Text('Generated $count invoices.'),
-                        backgroundColor: const Color(0xFF16A34A),
+                        backgroundColor: AppColors.success,
                       ),
                     );
                   }
@@ -772,12 +797,12 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                  color: AppColors.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.receipt_long,
-                  color: Color(0xFFA5B4FC),
+                  color: AppColors.primary,
                   size: 20,
                 ),
               ),
@@ -786,7 +811,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                 child: Text(
                   'Issue Invoice',
                   style: TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -847,7 +872,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                       const SizedBox(height: 14),
                       TextFormField(
                         controller: titleController,
-                        style: const TextStyle(color: Color(0xFF111827)),
+                        style: const TextStyle(color: AppColors.textPrimary),
                         textInputAction: TextInputAction.next,
                         decoration: const InputDecoration(
                           labelText: 'Invoice Title',
@@ -863,7 +888,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        style: const TextStyle(color: Color(0xFF111827)),
+                        style: const TextStyle(color: AppColors.textPrimary),
                         textInputAction: TextInputAction.done,
                         decoration: const InputDecoration(
                           labelText: 'Amount (PKR)',
@@ -912,6 +937,23 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                 );
 
                 await ref.read(feeRepositoryProvider).createInvoice(newInvoice);
+                try {
+                  await ref
+                      .read(communicationRepositoryProvider)
+                      .sendNotification(
+                        AppNotification(
+                          id: const Uuid().v4(),
+                          academyId: academyId,
+                          recipientId: selectedStudentId,
+                          recipientRole: 'student',
+                          title: 'New Fee Invoice: ${newInvoice.title}',
+                          body:
+                              'Invoice ${newInvoice.invoiceNo} for Rs. ${amount.toStringAsFixed(0)} has been issued.',
+                          type: 'fee_alert',
+                          relatedId: newInvoice.id,
+                        ),
+                      );
+                } catch (_) {}
                 ref.invalidate(invoicesStreamProvider);
                 if (ctx.mounted) Navigator.of(ctx).pop();
               },
@@ -967,7 +1009,7 @@ class _InvoiceCard extends StatelessWidget {
                             ? invoice.title
                             : invoice.invoiceNo,
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                         ),
@@ -978,7 +1020,7 @@ class _InvoiceCard extends StatelessWidget {
                           Text(
                             invoice.invoiceNo,
                             style: const TextStyle(
-                              color: Color(0xFF9CA3AF),
+                              color: AppColors.textMuted,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -997,7 +1039,7 @@ class _InvoiceCard extends StatelessWidget {
                               child: const Text(
                                 'OVERDUE',
                                 style: TextStyle(
-                                  color: Color(0xFFDC2626),
+                                  color: AppColors.danger,
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -1027,13 +1069,13 @@ class _InvoiceCard extends StatelessWidget {
                         const Icon(
                           Icons.person_outline,
                           size: 13,
-                          color: Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '${student!.fullName} (Roll #${student!.rollNumber})',
                           style: const TextStyle(
-                            color: Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 11,
                           ),
                         ),
@@ -1046,13 +1088,13 @@ class _InvoiceCard extends StatelessWidget {
                         vertical: 1.5,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0284C7).withValues(alpha: 0.1),
+                        color: AppColors.info.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         branch!.name,
                         style: const TextStyle(
-                          color: Color(0xFF0284C7),
+                          color: AppColors.info,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1067,14 +1109,14 @@ class _InvoiceCard extends StatelessWidget {
                 'Due: ${DateFormat('d MMM yyyy').format(invoice.dueDate!)}',
                 style: TextStyle(
                   color: isOverdue
-                      ? const Color(0xFFDC2626)
-                      : const Color(0xFF9CA3AF),
+                      ? AppColors.danger
+                      : AppColors.textMuted,
                   fontSize: 11,
                 ),
               ),
             ],
             const SizedBox(height: 8),
-            const Divider(height: 1, color: Color(0xFFF3F4F6)),
+            const Divider(height: 1, color: AppColors.surfaceMuted),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -1085,7 +1127,7 @@ class _InvoiceCard extends StatelessWidget {
                       Text(
                         'Total: ${CurrencyFormatter.pkr(invoice.totalAmount)}',
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1096,7 +1138,7 @@ class _InvoiceCard extends StatelessWidget {
                         style: TextStyle(
                           color: outstanding > 0
                               ? Colors.amber.shade700
-                              : const Color(0xFF16A34A),
+                              : AppColors.success,
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                         ),
@@ -1123,14 +1165,14 @@ class _InvoiceCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.check_circle,
-                        color: Color(0xFF10B981),
+                        color: AppColors.success,
                         size: 18,
                       ),
                       SizedBox(width: 4),
                       Text(
                         'Settled',
                         style: TextStyle(
-                          color: Color(0xFF10B981),
+                          color: AppColors.success,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1199,13 +1241,13 @@ class _DefaultersTab extends ConsumerWidget {
               Icon(
                 Icons.check_circle_outline,
                 size: 48,
-                color: Color(0xFF10B981),
+                color: AppColors.success,
               ),
               SizedBox(height: 16),
               Text(
                 'No defaulters',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1214,7 +1256,7 @@ class _DefaultersTab extends ConsumerWidget {
               Text(
                 'All students are up to date with payments.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+                style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
               ),
             ],
           ),
@@ -1243,14 +1285,14 @@ class _DefaultersTab extends ConsumerWidget {
               color: const Color(0xFFFEF2F2),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: const Color(0xFFDC2626).withValues(alpha: 0.3),
+                color: AppColors.danger.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
               children: [
                 const Icon(
                   Icons.warning_amber_rounded,
-                  color: Color(0xFFDC2626),
+                  color: AppColors.danger,
                   size: 20,
                 ),
                 const SizedBox(width: 10),
@@ -1261,7 +1303,7 @@ class _DefaultersTab extends ConsumerWidget {
                       Text(
                         '${byStudent.length} student${byStudent.length == 1 ? '' : 's'} with overdue payments',
                         style: const TextStyle(
-                          color: Color(0xFFDC2626),
+                          color: AppColors.danger,
                           fontWeight: FontWeight.w700,
                           fontSize: 13,
                         ),
@@ -1269,7 +1311,7 @@ class _DefaultersTab extends ConsumerWidget {
                       Text(
                         'Total outstanding: ${CurrencyFormatter.pkr(totalOutstanding)}',
                         style: const TextStyle(
-                          color: Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                         ),
                       ),
@@ -1313,7 +1355,7 @@ class _DefaultersTab extends ConsumerWidget {
                             ? student!.fullName[0].toUpperCase()
                             : '?',
                         style: const TextStyle(
-                          color: Color(0xFFDC2626),
+                          color: AppColors.danger,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
                         ),
@@ -1327,7 +1369,7 @@ class _DefaultersTab extends ConsumerWidget {
                           Text(
                             student?.fullName ?? 'Unknown student',
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -1336,7 +1378,7 @@ class _DefaultersTab extends ConsumerWidget {
                             Text(
                               'Roll #${student.rollNumber}',
                               style: const TextStyle(
-                                color: Color(0xFF9CA3AF),
+                                color: AppColors.textMuted,
                                 fontSize: 11,
                               ),
                             ),
@@ -1349,7 +1391,7 @@ class _DefaultersTab extends ConsumerWidget {
                         Text(
                           CurrencyFormatter.pkr(studentOutstanding),
                           style: const TextStyle(
-                            color: Color(0xFFDC2626),
+                            color: AppColors.danger,
                             fontWeight: FontWeight.w700,
                             fontSize: 15,
                           ),
@@ -1357,7 +1399,7 @@ class _DefaultersTab extends ConsumerWidget {
                         Text(
                           '${studentInvoices.length} invoice${studentInvoices.length == 1 ? '' : 's'}',
                           style: const TextStyle(
-                            color: Color(0xFF9CA3AF),
+                            color: AppColors.textMuted,
                             fontSize: 11,
                           ),
                         ),
@@ -1385,9 +1427,9 @@ class _DefaultersTab extends ConsumerWidget {
                   label: const Text('Send reminder'),
                   style: OutlinedButton.styleFrom(
                     visualDensity: VisualDensity.compact,
-                    foregroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: AppColors.primary,
                     side: const BorderSide(
-                      color: Color(0xFF4F46E5),
+                      color: AppColors.primary,
                       width: 0.8,
                     ),
                   ),
@@ -1428,7 +1470,7 @@ class _FeeStatCard extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 10),
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1465,7 +1507,7 @@ class _StatusBadge extends StatelessWidget {
     String label;
 
     if (outstanding <= 0 || status == 'paid') {
-      bg = const Color(0xFF10B981).withValues(alpha: 0.15);
+      bg = AppColors.success.withValues(alpha: 0.15);
       fg = const Color(0xFF34D399);
       label = 'PAID';
     } else if (status == 'partial') {
