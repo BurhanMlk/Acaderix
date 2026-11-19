@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Acaderix Academy Management Platform</title>
+  <meta name="description" content="Official Privacy Policy for Acaderix Academy and School Management Platform. Learn how we safeguard student privacy, protect guardian data, and adhere to Google Play, COPPA, and GDPR standards.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    :root {
+      --bg-primary: #0b1120;
+      --bg-secondary: #111827;
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-bg: rgba(99, 102, 241, 0.12);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-primary: #f8fafc;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --border-color: #e2e8f0;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --accent: #4f46e5;
+        --accent-light: #4338ca;
+        --accent-bg: #eef2ff;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 20px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .compliance-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: var(--accent-bg);
+      color: var(--accent-light);
+      border: 1px solid var(--border-color);
+      font-weight: 600;
+    }
+
+    .layout-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 48px;
+    }
+
+    aside {
+      position: sticky;
+      top: 100px;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-right: 12px;
+    }
+
+    aside h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    aside ul {
+      list-style: none;
+    }
+
+    aside li {
+      margin-bottom: 8px;
+    }
+
+    aside a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      display: block;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    aside a:hover, aside a.active {
+      color: var(--text-main);
+      background: var(--accent-bg);
+      font-weight: 600;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .hero-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .hero-card h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .meta-bar {
+      display: flex;
+      gap: 20px;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .summary-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .summary-item h4 {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+      color: var(--accent-light);
+    }
+
+    .summary-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    section {
+      margin-bottom: 48px;
+      scroll-margin-top: 100px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-size: 1rem;
+    }
+
+    ul {
+      margin: 12px 0 20px 24px;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .card-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+
+    .card-box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .alert-box {
+      background: rgba(99, 102, 241, 0.08);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+
+    .alert-box strong {
+      color: var(--text-main);
+    }
+
+    .contact-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.08));
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 28px;
+      margin-top: 24px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-top: 60px;
+    }
+
+    @media (max-width: 860px) {
+      .layout-container {
+        grid-template-columns: 1fr;
+      }
+      aside {
+        display: none;
+      }
+      .hero-card h1 {
+        font-size: 1.75rem;
+      }
+    }
+
+    @media print {
+      header, aside, footer {
+        display: none;
+      }
+      .layout-container {
+        display: block;
+        padding: 0;
+      }
+      body {
+        background: #fff;
+        color: #000;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <a href="https://acaderix.com" class="brand">
+        <span class="brand-badge">Acaderix</span>
+        <span>Privacy Center</span>
+      </a>
+      <div class="compliance-pills">
+        <span class="pill">Google Play Compliant</span>
+        <span class="pill">COPPA</span>
+        <span class="pill">GDPR</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout-container">
+    <aside>
+      <h3>Table of Contents</h3>
+      <ul>
+        <li><a href="#intro">1. Introduction</a></li>
+        <li><a href="#roles">2. Institutional Scope</a></li>
+        <li><a href="#collection">3. Information We Collect</a></li>
+        <li><a href="#usage">4. How We Use Data</a></li>
+        <li><a href="#chat-safety">5. Chat Safety & Supervision</a></li>
+        <li><a href="#guardrails">6. Student Privacy Guardrails</a></li>
+        <li><a href="#third-parties">7. Third-Party Services</a></li>
+        <li><a href="#security">8. Security & Storage</a></li>
+        <li><a href="#children">9. Children's Privacy (COPPA)</a></li>
+        <li><a href="#deletion">10. Account & Data Deletion</a></li>
+        <li><a href="#rights">11. Your Rights</a></li>
+        <li><a href="#contact">12. Contact Information</a></li>
+      </ul>
+    </aside>
+
+    <main>
+      <div class="hero-card">
+        <h1>Acaderix Privacy Policy</h1>
+        <div class="meta-bar">
+          <span><strong>Effective Date:</strong> November 7, 2026</span>
+          <span><strong>Last Updated:</strong> November 7, 2026</span>
+          <span><strong>Version:</strong> 1.0.2</span>
+        </div>
+        <p>Acaderix is an educational academy management software platform. We take the privacy of students, guardians, educators, and academy administrators seriously. We do not sell your personal data, we do not run behavioral advertising, and student access is provisioned securely through verified academic institutions.</p>
+
+        <div class="summary-grid">
+          <div class="summary-item">
+            <h4>No Ad Tracking</h4>
+            <p>Zero third-party trackers, zero behavioral ads, and zero monetization of user records.</p>
+          </div>
+          <div class="summary-item">
+            <h4>Guardian Shielding</h4>
+            <p>Parent contact numbers are hidden from regular teaching staff to prevent unsolicited outreach.</p>
+          </div>
+          <div class="summary-item">
+            <h4>Supervised Messaging</h4>
+            <p>Academy Administrators audit student-teacher chats to maintain a safe, anti-harassment environment.</p>
+          </div>
+          <div class="summary-item">
+            <h4>Salted Encryption</h4>
+            <p>Student PINs and passwords are protected using salted SHA-256 cryptographic hashing.</p>
+          </div>
+        </div>
+      </div>
+
+      <section id="intro">
+        <h2>1. Introduction</h2>
+        <p>Welcome to Acaderix ("we", "our", or "us"). Acaderix provides an integrated cloud software platform for academies, colleges, schools, and tutoring institutions to manage student admissions, academic progress, attendance tracking, fee invoicing, and institution-wide communications.</p>
+        <p>This Privacy Policy explains how we collect, store, use, disclose, and protect personal information when you access or use our mobile applications, web portals, and software services.</p>
+      </section>
+
+      <section id="roles">
+        <h2>2. Institutional Roles & Scope</h2>
+        <p>Acaderix functions as a software service provider and Data Processor on behalf of participating educational academies and schools ("Client Institutions").</p>
+        <p>The Client Institution (represented by Academy Administrators) acts as the Data Controller responsible for authorizing student enrollment, issuing admission credentials, assigning staff roles, and obtaining necessary parental or guardian consents under local education laws.</p>
+      </section>
+
+      <section id="collection">
+        <h2>3. Information We Collect</h2>
+        <p>We collect information necessary to deliver educational administration, institutional oversight, and platform communication services:</p>
+
+        <div class="card-box">
+          <h3>A. Academy Administrator & Staff Records</h3>
+          <ul>
+            <li>Full legal name, staff designation, institutional ID (e.g. STF-01).</li>
+            <li>Email address and telephone contact number.</li>
+            <li>Cryptographically hashed login credentials (passwords stored using salted SHA-256 hashing).</li>
+            <li>Campus branch assignments and assigned academic subject courses.</li>
+            <li>National identity details (such as CNIC) where voluntarily provided by institution owners for verification.</li>
+          </ul>
+        </div>
+
+        <div class="card-box">
+          <h3>B. Student & Guardian Records</h3>
+          <ul>
+            <li>Student legal name, gender, date of birth, and assigned roll number.</li>
+            <li>Enrolled academic courses, batches, and campus branches.</li>
+            <li>Guardian / parent legal name, emergency phone number, and residential address.</li>
+            <li>Student authentication credentials (unique roll number and salted hashed secret PIN).</li>
+            <li>Daily attendance records (check-in timestamp, punctuality, and attendance status).</li>
+            <li>Exam scores, grades, percentages, and teacher evaluation remarks.</li>
+          </ul>
+        </div>
+
+        <div class="card-box">
+          <h3>C. Educational Communication & In-App Chat</h3>
+          <ul>
+            <li>Direct two-way messages exchanged between educators and students regarding coursework and questions.</li>
+            <li>Message timestamps, delivery statuses, and read acknowledgments.</li>
+            <li>Platform broadcast notices and administrative announcements.</li>
+          </ul>
+        </div>
+
+        <div class="card-box">
+          <h3>D. Tuition Fee & Billing Records</h3>
+          <ul>
+            <li>Tuition invoices, fee concessions, payment receipts, and balance statuses.</li>
+            <li>Payment reference numbers (bank slip IDs, EasyPaisa, JazzCash, or bank transfer references).</li>
+            <li><em>Notice:</em> Acaderix does not store raw credit/debit card numbers or CVV codes on our servers.</li>
+          </ul>
+        </div>
+
+        <div class="card-box">
+          <h3>E. Device & Diagnostic Telemetry</h3>
+          <ul>
+            <li>Device hardware model, operating system version, and system language.</li>
+            <li>Firebase Cloud Messaging (FCM) push tokens strictly used to route chat notices and emergency broadcasts.</li>
+            <li>Anonymous crash diagnostics collected via Firebase Crashlytics to resolve bugs and performance glitches.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="usage">
+        <h2>4. How We Use Collected Information</h2>
+        <p>We use personal information exclusively to fulfill academic and administrative obligations:</p>
+        <ul>
+          <li>To authenticate users and verify access privileges according to assigned roles (Super Admin, Academy Admin, Staff, Student).</li>
+          <li>To generate student academic progress reports, result cards, and fee invoices.</li>
+          <li>To enable real-time educational messaging between course instructors and enrolled students.</li>
+          <li>To send time-sensitive notifications regarding new messages, exam schedules, and emergency academy notices.</li>
+          <li>To enforce subscription branch and student quotas set by platform administrators.</li>
+          <li>To detect, prevent, and mitigate security threats, fraud, and unauthorized multi-tenant access.</li>
+        </ul>
+      </section>
+
+      <section id="chat-safety">
+        <h2>5. Supervisory Chat Monitoring & Safety for Minors</h2>
+        <div class="alert-box">
+          <strong>Institutional Oversight Notice:</strong> In order to protect students and minors from inappropriate communication, bullying, and harassment, all direct chat conversations between staff (teachers) and students are accessible in read-only audit mode by authorized Academy Administrators.
+        </div>
+        <p>Students and staff members are explicitly notified that institutional communication channels are supervisory tools reserved solely for curriculum-related academic guidance. Non-educational solicitation is strictly prohibited.</p>
+      </section>
+
+      <section id="guardrails">
+        <h2>6. Student Privacy & Guardian Shielding</h2>
+        <p>Acaderix embeds privacy-by-design guardrails into its core architecture:</p>
+        <ul>
+          <li><strong>Guardian Contact Shielding:</strong> In the staff portal, teachers cannot view or access the phone numbers or personal home addresses of guardians. Guardian contacts are restricted solely to authorized Academy Administrators.</li>
+          <li><strong>Tenant Isolation:</strong> Data from one academy is strictly isolated from other academies via database-level security rules.</li>
+          <li><strong>Zero Commercial Exploitation:</strong> Student records are never sold, rented, or utilized for advertising, commercial profiling, or marketing purposes.</li>
+        </ul>
+      </section>
+
+      <section id="third-parties">
+        <h2>7. Third-Party Infrastructure Services</h2>
+        <p>We rely on industry-standard cloud infrastructure partners that adhere to strict data protection standards:</p>
+        <ul>
+          <li><strong>Google Firebase Authentication:</strong> Account identity and authentication services.</li>
+          <li><strong>Google Cloud Firestore:</strong> Encrypted cloud database storage.</li>
+          <li><strong>Google Firebase Cloud Messaging (FCM):</strong> Push notification delivery.</li>
+          <li><strong>Google Firebase Crashlytics:</strong> Anonymous application crash diagnostics.</li>
+        </ul>
+      </section>
+
+      <section id="security">
+        <h2>8. Data Security & Cryptography</h2>
+        <p>We enforce rigorous security controls to protect information:</p>
+        <ul>
+          <li>All data transmissions are encrypted using modern Transport Layer Security (TLS 1.2 and TLS 1.3).</li>
+          <li>Passwords and student PINs are never saved in plaintext; they are secured using salted SHA-256 cryptographic hashing.</li>
+          <li>Cloud Firestore security rules reject any read or write operation that attempts to breach institutional tenancy boundaries.</li>
+        </ul>
+      </section>
+
+      <section id="children">
+        <h2>9. Children's Privacy (COPPA Compliance)</h2>
+        <p>Acaderix is designed in accordance with the Children's Online Privacy Protection Act (COPPA):</p>
+        <ul>
+          <li>Children and minors cannot independently create accounts on the public web. Accounts are provisioned solely by authorized educational institutions with verified parental/guardian admission consent.</li>
+          <li>Parents and guardians have the right to inspect their child's records, request corrections, or request deletion of data by contacting their academy administration or reaching our privacy officer at <a href="mailto:privacy@acaderix.com" style="color:var(--accent-light);">privacy@acaderix.com</a>.</li>
+        </ul>
+      </section>
+
+      <section id="deletion">
+        <h2>10. Data Retention & Account Deletion (Google Play Compliance)</h2>
+        <p>Acaderix provides straightforward, accessible mechanisms for users and institutions to permanently delete accounts and data:</p>
+        <div class="card-box">
+          <h3>How to Request Permanent Account and Data Deletion</h3>
+          <p>In compliance with Google Play Developer Policies, users and academies have two convenient ways to request deletion:</p>
+          <ul>
+            <li><strong>In-App Deletion:</strong> Academy Administrators can delete individual student, staff, or branch records directly from the management interface. Deletion immediately purges the record and its subcollections from the live database.</li>
+            <li><strong>Written Deletion Request:</strong> Any user or institution can submit a permanent deletion request by emailing <a href="mailto:privacy@acaderix.com" style="color:var(--accent-light);">privacy@acaderix.com</a> from their registered email address with the subject line <em>"Request Permanent Data Deletion"</em>.</li>
+          </ul>
+          <p><strong>Timeline:</strong> Once identity is verified, all personal profile records, attendance history, test scores, and chat logs are permanently expunged from production servers within 30 days.</p>
+        </div>
+      </section>
+
+      <section id="rights">
+        <h2>11. Your Privacy Rights</h2>
+        <p>Subject to applicable regulations (such as GDPR), you have the right to:</p>
+        <ul>
+          <li>Request access to your personal information held on the platform.</li>
+          <li>Request correction of inaccurate or incomplete student or staff records.</li>
+          <li>Request the erasure of personal records ("Right to be Forgotten").</li>
+          <li>Request digital export of fee challans and academic report cards in portable format (PDF).</li>
+        </ul>
+      </section>
+
+      <section id="contact">
+        <h2>12. Contact Information</h2>
+        <p>For questions or requests concerning this Privacy Policy, our Data Protection Officer can be contacted directly:</p>
+        <div class="contact-card">
+          <h3 style="margin-bottom: 8px;">Acaderix Privacy Office</h3>
+          <p style="margin-bottom: 6px;"><strong>Email:</strong> <a href="mailto:privacy@acaderix.com" style="color:var(--accent-light);">privacy@acaderix.com</a></p>
+          <p style="margin-bottom: 6px;"><strong>Technical Support:</strong> <a href="mailto:support@acaderix.com" style="color:var(--accent-light);">support@acaderix.com</a></p>
+          <p style="margin-bottom: 6px;"><strong>Organization:</strong> Acaderix Technologies</p>
+          <p style="margin-bottom: 0;"><strong>Location:</strong> Lahore, Punjab, Pakistan</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 Acaderix Technologies. All rights reserved. Built for modern educational institutions.</p>
+  </footer>
+
+</body>
+</html>

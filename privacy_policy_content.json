@@ -1,0 +1,253 @@
+{
+  "metadata": {
+    "appName": "Acaderix",
+    "appTitle": "Acaderix - Academy & School Management Platform",
+    "companyName": "Acaderix Technologies",
+    "websiteUrl": "https://acaderix.com",
+    "contactEmail": "privacy@acaderix.com",
+    "supportEmail": "support@acaderix.com",
+    "effectiveDate": "November 7, 2026",
+    "lastUpdated": "November 7, 2026",
+    "version": "1.0.2",
+    "applicableRegulations": [
+      "Google Play Developer Policy",
+      "General Data Protection Regulation (GDPR)",
+      "Children's Online Privacy Protection Act (COPPA)",
+      "Family Educational Rights and Privacy Act (FERPA principles)"
+    ]
+  },
+  "summary": {
+    "title": "Privacy at Acaderix in Brief",
+    "description": "Acaderix is an educational management platform built for academies, colleges, and schools. We take the privacy of students, guardians, educators, and administrators seriously. We never sell your personal information, we enforce strict multi-tenant isolation, and student accounts are managed through authorized educational institutions.",
+    "keyHighlights": [
+      {
+        "icon": "shield-check",
+        "title": "Zero Ad Tracking & No Data Selling",
+        "detail": "We do not sell personal data, display third-party behavioral advertisements, or track users across external apps and websites."
+      },
+      {
+        "icon": "user-check",
+        "title": "Child & Student Safety",
+        "detail": "Guardian contact information is shielded from non-administrative staff. Direct teacher-student messaging is strictly auditable by Academy Administrators to maintain safe learning environments."
+      },
+      {
+        "icon": "lock-closed",
+        "title": "Enterprise Security",
+        "detail": "All communications use TLS 1.3 encryption in transit. Sensitive credentials and PINs are protected with salted SHA-256 cryptographic hashing."
+      },
+      {
+        "icon": "trash",
+        "title": "Clear Data Deletion Rights",
+        "detail": "Educational institutions and users can request full deletion of accounts, chats, attendance logs, and student records at any time."
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "introduction",
+      "title": "1. Introduction",
+      "content": [
+        "Welcome to Acaderix ('we', 'our', or 'us'). Acaderix provides an integrated software platform for educational academies, schools, tuition centers, and coaching institutions to manage academic records, attendance, admissions, fee invoicing, staff duties, and institutional communications.",
+        "This Privacy Policy explains how we collect, use, disclose, protect, and handle personal data when you access or use the Acaderix mobile application, tablet application, web interface, and related cloud services (collectively, the 'Service').",
+        "By creating an account, logging into the application, or accessing the Service on behalf of an institution, educator, parent, or student, you acknowledge that you have read and understood this Privacy Policy."
+      ]
+    },
+    {
+      "id": "roles-and-architecture",
+      "title": "2. Roles & Educational Institution Scope",
+      "content": [
+        "Acaderix operates primarily as a software service provider and Data Processor on behalf of participating educational academies and schools ('Client Institutions').",
+        "The Client Institution (represented by Academy Administrators and institutional owners) acts as the Data Controller responsible for authorizing student enrollment, issuing admission credentials, assigning staff roles, and determining the lawful basis for handling student information under local educational privacy laws.",
+        "Acaderix processes institutional data solely under the instruction of the authorized institution and in compliance with this Privacy Policy."
+      ]
+    },
+    {
+      "id": "information-we-collect",
+      "title": "3. Information We Collect",
+      "intro": "We collect information necessary to deliver educational administration, institutional oversight, and platform communication services. The data categories include:",
+      "categories": [
+        {
+          "name": "A. Academy Administrator & Staff Information",
+          "items": [
+            "Full legal name, designation, and staff identification code",
+            "Institutional email address and contact telephone number",
+            "Cryptographically hashed authentication credentials (passwords stored using salted SHA-256 hashing)",
+            "Assigned branch location, departmental subjects, and assigned courses",
+            "National identity details (such as CNIC) where voluntarily submitted by academy owners for official institution verification"
+          ]
+        },
+        {
+          "name": "B. Student & Guardian Information",
+          "items": [
+            "Student full name, gender, date of birth, and assigned institutional roll number",
+            "Enrolled academic courses, sections, and branch campus",
+            "Guardian / parent full name, emergency telephone contact, and residential address",
+            "Student authentication credentials (unique roll number and salted hashed secret PIN)",
+            "Attendance history (daily check-in status, attendance dates, and punctuality logs)",
+            "Academic exam evaluations, percentage scores, letter grades, and assessment remarks"
+          ]
+        },
+        {
+          "name": "C. Two-Way Educational Messaging & Communication",
+          "items": [
+            "Direct two-way chat messages exchanged between teachers and students regarding coursework and academic questions",
+            "Message timestamps, delivery statuses, and read acknowledgments",
+            "Platform broadcast announcements issued by administrators and institution notices"
+          ]
+        },
+        {
+          "name": "D. Institutional Invoicing & Payment Records",
+          "items": [
+            "Student tuition fee invoices, payment receipts, fee concessions, and payment statuses (paid / unpaid / partial)",
+            "Payment transaction reference numbers (such as bank slip numbers, EasyPaisa, JazzCash, or bank transfer reference codes)",
+            "Academy subscription plans, campus branch quotas, student capacity tiers, and institutional billing cycle details",
+            "Notice: Acaderix does not store or process raw bank card CVVs or bank debit/credit card numbers on its servers."
+          ]
+        },
+        {
+          "name": "E. Device, Technical & Diagnostic Information",
+          "items": [
+            "Device model, operating system version, and unique installation identifiers",
+            "Firebase Cloud Messaging (FCM) registration tokens used exclusively to route real-time push notifications for chat messages and emergency announcements",
+            "Application crash telemetry, stack traces, and performance diagnostics collected via Firebase Crashlytics to resolve bugs and system outages"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "how-we-use-information",
+      "title": "4. How We Use Collected Information",
+      "content": [
+        "We utilize personal and institutional information strictly for legitimate academic and administrative purposes:",
+        "• To authenticate users and safeguard accounts against unauthorized access according to their assigned role (Super Admin, Academy Admin, Staff, Student).",
+        "• To generate and maintain student report cards, attendance records, and academic fee challans.",
+        "• To enable instant two-way academic communication between educators and enrolled students.",
+        "• To deliver time-sensitive push notifications for new messages, attendance notices, and institution announcements.",
+        "• To enforce campus branch and student enrollment quotas according to institutional subscription tiers.",
+        "• To detect, investigate, and prevent fraud, system abuse, software exploits, or unauthorized tenant access."
+      ]
+    },
+    {
+      "id": "chat-supervision-and-safety",
+      "title": "5. Supervisory Chat Monitoring & Safety for Minors",
+      "content": [
+        "To ensure the emotional, physical, and psychological safety of students (many of whom are minors), Acaderix implements a transparent institutional supervisory model for in-app messaging:",
+        "• All direct chat conversations between staff members (teachers) and students are accessible in read-only audit mode by authorized Academy Administrators.",
+        "• Academy Administrators have supervisory access to conversation threads to verify academic decorum, prevent inappropriate communication, investigate student bullying or harassment, and ensure educational compliance.",
+        "• Students and staff are explicitly informed that institutional communication channels are supervisory and intended solely for curriculum-related academic collaboration.",
+        "• Private, non-educational solicitation through the platform is strictly prohibited."
+      ]
+    },
+    {
+      "id": "student-privacy-guardrails",
+      "title": "6. Student Privacy & Guardian Data Protection",
+      "content": [
+        "Acaderix incorporates role-based privacy guardrails directly into the software architecture:",
+        "• Guardian Shielding: Teachers and regular staff cannot access or view guardian telephone numbers and personal home contact details in student profile views. Guardian contact details are restricted exclusively to authorized Academy Administrators.",
+        "• Tenant Isolation: Every academy's records (students, staff, exams, branches, fees) are segregated in multi-tenant cloud partitions guarded by database-level security rules.",
+        "• No Commercial Profiling: Student records are never used for marketing, ad profiling, behavioral tracking, or lead generation."
+      ]
+    },
+    {
+      "id": "third-party-services",
+      "title": "7. Third-Party Service Providers",
+      "intro": "We use trusted infrastructure providers that adhere to rigorous security standards. These sub-processors only handle data on our behalf under strict confidentiality obligations:",
+      "providers": [
+        {
+          "name": "Google Firebase Authentication",
+          "purpose": "Secure authentication, session management, and credential verification.",
+          "privacyUrl": "https://firebase.google.com/support/privacy"
+        },
+        {
+          "name": "Google Cloud Firestore",
+          "purpose": "Encrypted cloud database storage for institutional and academic records.",
+          "privacyUrl": "https://cloud.google.com/terms/data-processing-terms"
+        },
+        {
+          "name": "Google Firebase Cloud Messaging (FCM)",
+          "purpose": "Delivering instant push notifications for chat messages and urgent announcements.",
+          "privacyUrl": "https://firebase.google.com/support/privacy"
+        },
+        {
+          "name": "Google Firebase Crashlytics",
+          "purpose": "Anonymous diagnostic crash logging to identify and resolve software errors.",
+          "privacyUrl": "https://firebase.google.com/support/privacy"
+        }
+      ]
+    },
+    {
+      "id": "data-security",
+      "title": "8. Data Security & Storage",
+      "content": [
+        "We implement technical and organizational safeguards designed to protect personal information from accidental loss, unauthorized access, disclosure, and misuse:",
+        "• All network traffic is encrypted using Transport Layer Security (TLS 1.2 / TLS 1.3).",
+        "• Passwords and student secret PINs are never stored in plaintext. They are protected using salted SHA-256 cryptographic hashing.",
+        "• Cloud Firestore security rules enforce strict tenant boundaries at the database level, preventing cross-tenant access between different educational institutions.",
+        "• Internal database backups are safeguarded by access controls restricted to authorized platform engineers."
+      ]
+    },
+    {
+      "id": "childrens-privacy",
+      "title": "9. Children's Privacy (COPPA Compliance)",
+      "content": [
+        "Acaderix recognizes the sensitivity of personal data pertaining to children under 13 (or under 16 in certain jurisdictions):",
+        "• Direct Public Registration Prohibited: Children cannot independently sign up for an Acaderix account on the open web. Student accounts can only be provisioned by authorized educational institutions after parental/guardian admission consent is established.",
+        "• Parental Rights: Parents and legal guardians have the right to inspect student records, request correction of erroneous data, or request the deletion of their child's educational profile by contacting their child's academy administration or emailing our privacy office at privacy@acaderix.com.",
+        "• No Tracking of Children: We do not display advertisements to children or collect geolocation data."
+      ]
+    },
+    {
+      "id": "data-retention-and-deletion",
+      "title": "10. Data Retention & Account Deletion (Google Play Compliance)",
+      "content": [
+        "We retain personal data only for as long as necessary to provide services to the educational institution or fulfill legal obligations.",
+        "When an educational institution terminates its subscription, or when an individual user requests account deletion, we provide clear mechanisms for permanent data removal."
+      ],
+      "deletionInstructions": {
+        "title": "How to Request Account & Data Deletion",
+        "steps": [
+          "In-App Deletion: Academy Administrators can delete student, staff, or branch records directly from the respective management screens, which permanently purges the records from the live database.",
+          "Full Account & Academy Purge: Academy owners or individual users can submit a permanent deletion request by emailing privacy@acaderix.com from their registered email address with the subject line 'Request Permanent Data Deletion'.",
+          "Verification: For security, we verify requester identity to ensure deletion requests originate from authorized account holders or guardians.",
+          "Timeline: Upon verification, all associated personal identifiers, chat histories, attendance records, and authentication credentials will be permanently erased from live servers within 30 calendar days."
+        ]
+      }
+    },
+    {
+      "id": "your-rights",
+      "title": "11. Your Privacy Rights",
+      "content": [
+        "Depending on your jurisdiction (including GDPR, UK GDPR, and local privacy frameworks), you may have the following rights:",
+        "• Right of Access: You may request a copy of the personal information we hold about you.",
+        "• Right to Rectification: You may request correction of inaccurate, outdated, or incomplete academic records.",
+        "• Right to Erasure ('Right to be Forgotten'): You may request the deletion of your personal data where retention is no longer legally required.",
+        "• Right to Restrict Processing: You may request the restriction of data processing in dispute scenarios.",
+        "• Right to Data Portability: You may request an export of academic results and student registers in readable digital format (PDF/CSV)."
+      ]
+    },
+    {
+      "id": "policy-updates",
+      "title": "12. Changes to This Privacy Policy",
+      "content": [
+        "We may update this Privacy Policy from time to time to reflect operational, legal, or regulatory improvements.",
+        "When material changes occur, we will notify registered academy administrators through in-app platform broadcasts or registered email addresses prior to the changes taking effect.",
+        "The updated revision date at the top of this policy will always reflect the date of the most recent revision."
+      ]
+    },
+    {
+      "id": "contact-us",
+      "title": "13. Contact Information",
+      "content": [
+        "If you have any questions, concerns, or requests regarding this Privacy Policy or our educational data practices, please reach out to our designated Privacy Team:"
+      ],
+      "contactDetails": {
+        "entity": "Acaderix Technologies",
+        "privacyOfficer": "Data Protection & Privacy Officer",
+        "email": "privacy@acaderix.com",
+        "supportEmail": "support@acaderix.com",
+        "postalAddress": "Acaderix Technologies, Lahore, Punjab, Pakistan",
+        "website": "https://acaderix.com"
+      }
+    }
+  ]
+}

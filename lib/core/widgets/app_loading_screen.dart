@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
 import 'app_logo.dart';
 
-/// Clean light-theme loading screen used across all role dashboards,
-/// authentication transitions, and asynchronous operations.
-class AppLoadingScreen extends StatefulWidget {
+/// Calm, minimal loading screen used across role dashboards and transitions.
+class AppLoadingScreen extends StatelessWidget {
   const AppLoadingScreen({
     super.key,
-    this.title = 'Acaderix Workspace',
-    this.message = 'Synchronizing your workspace and records...',
+    this.title = 'Acaderix',
+    this.message = 'Loading your academy records...',
     this.useScaffold = true,
   });
 
@@ -17,107 +17,57 @@ class AppLoadingScreen extends StatefulWidget {
   final bool useScaffold;
 
   @override
-  State<AppLoadingScreen> createState() => _AppLoadingScreenState();
-}
-
-class _AppLoadingScreenState extends State<AppLoadingScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pulseController;
-  late final Animation<double> _pulseAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1600),
-    )..repeat(reverse: true);
-
-    _pulseAnimation = Tween<double>(begin: 0.94, end: 1.06).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _pulseController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final content = Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Animated Pulsing Logo
-            AnimatedBuilder(
-              animation: _pulseAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _pulseAnimation.value,
-                  child: Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFEEF2FF),
-                      border: Border.all(
-                        color: const Color(0xFFE0E7FF),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: const AppLogo(size: 64),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 28),
-
-            // Title
-            Text(
-              widget.title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF111827),
-                fontSize: 19,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.4,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 320),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const AppLogo(size: 56, borderRadius: 14),
+              const SizedBox(height: 20),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.2,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-
-            // Message
-            Text(
-              widget.message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF6B7280),
-                fontSize: 13,
-                height: 1.4,
+              const SizedBox(height: 6),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.textTertiary,
+                  fontSize: 13.5,
+                  height: 1.4,
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-
-            // Loading Indicator
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4F46E5)),
+              const SizedBox(height: 20),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: const LinearProgressIndicator(
+                  minHeight: 2.5,
+                  backgroundColor: AppColors.borderLight,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
 
-    if (widget.useScaffold) {
-      return Scaffold(backgroundColor: const Color(0xFFFFFFFF), body: content);
-    }
+    if (!useScaffold) return content;
 
-    return content;
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(child: content),
+    );
   }
 }

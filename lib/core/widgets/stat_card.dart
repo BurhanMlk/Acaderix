@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// Clean light-theme dashboard statistic card.
+import '../theme/app_colors.dart';
+import 'app_motion.dart';
+
+/// Clean institutional KPI card with tabular figures and hairline border.
 class StatCard extends StatelessWidget {
   const StatCard({
     super.key,
@@ -19,13 +22,13 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = color ?? const Color(0xFF6366F1);
+    final accent = color ?? AppColors.primary;
 
-    return Container(
+    final card = Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        border: Border.all(color: AppColors.border),
       ),
       child: Material(
         color: Colors.transparent,
@@ -39,16 +42,24 @@ class StatCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Container(
+                      width: 3,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: accent,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         title,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          color: Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
                         ),
@@ -56,21 +67,11 @@ class StatCard extends StatelessWidget {
                     ),
                     if (icon != null) ...[
                       const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: accent.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: accent.withValues(alpha: 0.2),
-                          ),
-                        ),
-                        child: Icon(icon, color: accent, size: 18),
-                      ),
+                      Icon(icon, color: accent, size: 17),
                     ],
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
@@ -79,7 +80,9 @@ class StatCard extends StatelessWidget {
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 22,
-                      color: Color(0xFF111827),
+                      letterSpacing: -0.4,
+                      color: AppColors.textPrimary,
+                      fontFeatures: [FontFeature.tabularFigures()],
                     ),
                   ),
                 ),
@@ -89,5 +92,8 @@ class StatCard extends StatelessWidget {
         ),
       ),
     );
+
+    if (onTap == null) return card;
+    return AnimatedPressScale(onTap: onTap, child: card);
   }
 }

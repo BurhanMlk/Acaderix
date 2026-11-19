@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../core/widgets/quran_verse_card.dart';
@@ -85,7 +86,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0B0F19),
+      backgroundColor: AppColors.background,
       body: AuthBackground(
         child: SafeArea(
           child: Center(
@@ -121,7 +122,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineMedium
                             ?.copyWith(
-                              color: const Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 2.5,
                             ),
@@ -133,7 +134,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         AppConstants.appTagline,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: const Color(0xFF111827).withValues(alpha: 0.78),
+                          color: AppColors.textSecondary,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.6,
@@ -143,24 +144,24 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
                       // Optional Quranic blessing card (used in full mode)
                       if (widget.showVerse) ...[
-                        const QuranVerseCard(glass: true),
+                        const QuranVerseCard(),
                         const SizedBox(height: 28),
                       ],
 
-                      // Sleek Gradient Progress Bar
+                      // Sleek Progress Bar
                       Container(
                         width: 140,
-                        height: 3.5,
+                        height: 3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          color: const Color(0xFFF3F4F6),
+                          color: AppColors.borderLight,
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: const LinearProgressIndicator(
-                          minHeight: 3.5,
-                          backgroundColor: Color(0xFFFFFFFF),
+                          minHeight: 3,
+                          backgroundColor: AppColors.borderLight,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF6366F1),
+                            AppColors.primary,
                           ),
                         ),
                       ),
@@ -170,7 +171,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                       Text(
                         widget.statusMessage,
                         style: TextStyle(
-                          color: const Color(0xFF111827).withValues(alpha: 0.55),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                           letterSpacing: 0.4,
                         ),
@@ -184,10 +185,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF9FAFB),
+                          color: AppColors.surface,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: const Color(0xFFE5E7EB),
+                            color: AppColors.border,
                             width: 1,
                           ),
                         ),
@@ -199,7 +200,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                               height: 6,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Color(0xFF10B981),
+                                color: AppColors.secondary,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -209,7 +210,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: const Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.5,
@@ -260,7 +261,7 @@ Future<T?> showSplashLoadingDialog<T>(
                     Text(
                       AppConstants.appName,
                       style: const TextStyle(
-                        color: Color(0xFF111827),
+                        color: AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
@@ -271,7 +272,7 @@ Future<T?> showSplashLoadingDialog<T>(
                       message,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: const Color(0xFF374151),
+                        color: AppColors.textSecondary,
                         fontSize: 13,
                         height: 1.4,
                       ),
@@ -283,13 +284,13 @@ Future<T?> showSplashLoadingDialog<T>(
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        color: const Color(0xFFE5E7EB),
+                        color: AppColors.borderLight,
                       ),
                       child: const LinearProgressIndicator(
                         minHeight: 3.5,
-                        backgroundColor: Color(0xFFFFFFFF),
+                        backgroundColor: AppColors.borderLight,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          Color(0xFF6366F1),
+                          AppColors.primary,
                         ),
                       ),
                     ),

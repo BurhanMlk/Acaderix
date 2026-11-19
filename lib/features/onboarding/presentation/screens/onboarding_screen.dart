@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/glass.dart';
 
 class _Feature {
@@ -66,7 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           onPressed: () => context.go(AppRoutes.login),
                           child: const Text(
                             'Skip',
-                            style: TextStyle(color: Color(0xFF111827)),
+                            style: TextStyle(color: AppColors.textPrimary),
                           ),
                         ),
                       ),
@@ -96,20 +97,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         width: 128,
                                         height: 128,
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFF111827).withValues(
-                                            alpha: 0.1,
-                                          ),
+                                          color: AppColors.primaryLight,
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: const Color(0xFF111827).withValues(
-                                              alpha: 0.25,
-                                            ),
+                                            color: AppColors.border,
                                           ),
                                         ),
                                         child: Icon(
                                           feature.icon,
                                           size: 56,
-                                          color: const Color(0xFF111827),
+                                          color: AppColors.primary,
                                         ),
                                       ),
                                       const SizedBox(height: 40),
@@ -120,7 +117,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             .textTheme
                                             .headlineSmall
                                             ?.copyWith(
-                                              color: const Color(0xFF111827),
+                                              color: AppColors.textPrimary,
                                               fontWeight: FontWeight.w700,
                                             ),
                                       ),
@@ -129,9 +126,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                         feature.message,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: const Color(0xFF111827).withValues(
-                                            alpha: 0.75,
-                                          ),
+                                          color: AppColors.textSecondary,
                                           fontSize: 15,
                                           height: 1.5,
                                         ),
@@ -157,7 +152,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           height: 8,
                           decoration: BoxDecoration(
                             color: selected
-                                ? Colors.white
+                                ? const Color(0xFF4F46E5)
                                 : const Color(0xFFD1D5DB),
                             borderRadius: BorderRadius.circular(4),
                           ),

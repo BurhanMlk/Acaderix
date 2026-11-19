@@ -6,7 +6,6 @@ import '../core/constants/roles.dart';
 import '../features/auth/application/auth_controller.dart';
 import '../features/auth/domain/auth_state.dart';
 import '../features/auth/presentation/screens/academy_admin_login_screen.dart';
-import '../features/auth/presentation/screens/super_admin_login_screen.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../features/auth/presentation/screens/login_selection_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
@@ -71,7 +70,6 @@ abstract final class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String academyAdminLogin = '/login/admin';
-  static const String superAdminLogin = '/login/super-admin';
   static const String staffLogin = '/login/staff';
   static const String studentLogin = '/login/student';
   static const String forgotPassword = '/forgot-password';
@@ -127,7 +125,6 @@ const Set<String> _publicRoutes = {
   AppRoutes.login,
   AppRoutes.register,
   AppRoutes.academyAdminLogin,
-  AppRoutes.superAdminLogin,
   AppRoutes.staffLogin,
   AppRoutes.studentLogin,
   AppRoutes.forgotPassword,
@@ -142,7 +139,6 @@ const Set<String> _entryRoutes = {
   AppRoutes.login,
   AppRoutes.register,
   AppRoutes.academyAdminLogin,
-  AppRoutes.superAdminLogin,
   AppRoutes.staffLogin,
   AppRoutes.studentLogin,
 };
@@ -334,10 +330,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.academyAdminLogin,
         builder: (context, state) => const AcademyAdminLoginScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.superAdminLogin,
-        builder: (context, state) => const SuperAdminLoginScreen(),
       ),
       GoRoute(
         path: AppRoutes.staffLogin,

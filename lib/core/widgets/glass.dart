@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Clean light-theme building blocks for the Acaderix UI.
-///
-/// Full-screen white background used across all role dashboards.
+import '../theme/app_colors.dart';
+
+/// Warm alabaster paper canvas used across all role dashboards.
 class DashboardBackground extends StatelessWidget {
   const DashboardBackground({
     super.key,
@@ -20,11 +20,11 @@ class DashboardBackground extends StatelessWidget {
       content = SafeArea(child: content);
     }
 
-    return Container(color: const Color(0xFFFFFFFF), child: content);
+    return ColoredBox(color: AppColors.background, child: content);
   }
 }
 
-/// White background wrapper for login and sign-up screens.
+/// Warm alabaster canvas wrapper for authentication and onboarding screens.
 class AuthBackground extends StatelessWidget {
   const AuthBackground({super.key, required this.child});
 
@@ -33,21 +33,19 @@ class AuthBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: const Color(0xFFFFFFFF),
-        child: SafeArea(child: child),
-      ),
+      backgroundColor: AppColors.background,
+      body: SafeArea(child: child),
     );
   }
 }
 
-/// A clean white card with a subtle gray border.
+/// Elevated crisp white surface card with a warm hairline border.
 class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(24),
-    this.borderRadius = 16,
+    this.borderRadius = 12,
   });
 
   final Widget child;
@@ -59,16 +57,16 @@ class GlassCard extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: AppColors.border),
       ),
       child: child,
     );
   }
 }
 
-/// A light-themed text field.
+/// Standard form text field aligned with [AppTheme.light].
 class GlassTextField extends StatelessWidget {
   const GlassTextField({
     super.key,
@@ -97,15 +95,6 @@ class GlassTextField extends StatelessWidget {
   final int maxLines;
   final Iterable<String>? autofillHints;
 
-  static const _textColor = Color(0xFF111827);
-  static const _cursorColor = Color(0xFF4F46E5);
-  static const _hintColor = Color(0xFF6B7280);
-  static const _fillColor = Color(0xFFF9FAFB);
-  static const _borderColor = Color(0xFFE5E7EB);
-  static const _focusBorderColor = Color(0xFF4F46E5);
-  static const _errorBorderColor = Color(0xFFDC2626);
-  static const _iconColor = Color(0xFF6B7280);
-
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -116,65 +105,47 @@ class GlassTextField extends StatelessWidget {
       validator: validator,
       maxLines: maxLines,
       autofillHints: autofillHints,
-      style: const TextStyle(color: _textColor),
-      cursorColor: _cursorColor,
+      style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+      cursorColor: AppColors.primary,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        labelStyle: const TextStyle(color: _hintColor),
-        hintStyle: const TextStyle(color: _hintColor),
-        prefixIcon: icon == null ? null : Icon(icon, color: _iconColor),
+        prefixIcon: icon == null ? null : Icon(icon, size: 20),
         suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: _fillColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _borderColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _focusBorderColor, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _errorBorderColor),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: _errorBorderColor, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
       ),
     );
   }
 }
 
-/// Indigo primary button style for light screens.
+/// Primary Oxford Navy button style.
 ButtonStyle glassPrimaryButtonStyle() => FilledButton.styleFrom(
-  backgroundColor: const Color(0xFF4F46E5),
+  backgroundColor: AppColors.primary,
   foregroundColor: Colors.white,
-  minimumSize: const Size.fromHeight(52),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+  elevation: 0,
+  minimumSize: const Size.fromHeight(48),
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  textStyle: const TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.1,
+  ),
 );
 
-/// Outline button style for light screens.
+/// Secondary outline button style.
 ButtonStyle glassGhostButtonStyle() => OutlinedButton.styleFrom(
-  foregroundColor: const Color(0xFF374151),
-  side: const BorderSide(color: Color(0xFFD1D5DB)),
-  minimumSize: const Size.fromHeight(52),
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  foregroundColor: AppColors.textPrimary,
+  backgroundColor: AppColors.surface,
+  side: const BorderSide(color: AppColors.border),
+  minimumSize: const Size.fromHeight(48),
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  textStyle: const TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.1,
+  ),
 );
 
-/// Shared heading for login screens.
+/// Editorial heading for authentication screens.
 class GlassLoginHeader extends StatelessWidget {
   const GlassLoginHeader({
     super.key,
@@ -192,31 +163,34 @@ class GlassLoginHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: const Color(0xFFEEF2FF),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFFE0E7FF)),
-          ),
-          child: Icon(icon, color: const Color(0xFF4F46E5), size: 30),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: const Color(0xFF111827),
-            fontWeight: FontWeight.w700,
-          ),
+        Row(
+          children: [
+            Icon(icon, color: AppColors.primary, size: 22),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 6),
-        Text(subtitle, style: const TextStyle(color: Color(0xFF6B7280))),
+        Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.textTertiary,
+          ),
+        ),
       ],
     );
   }
 }
 
-/// Inline error banner for light screens.
+/// Inline error banner.
 class GlassError extends StatelessWidget {
   const GlassError({super.key, required this.message});
 
@@ -225,20 +199,24 @@ class GlassError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFFEF2F2),
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.dangerLight,
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: const Color(0xFFFECACA)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFFDC2626)),
-          const SizedBox(width: 8),
+          const Icon(Icons.error_outline, color: AppColors.danger, size: 18),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(color: Color(0xFFDC2626)),
+              style: const TextStyle(
+                color: AppColors.danger,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
