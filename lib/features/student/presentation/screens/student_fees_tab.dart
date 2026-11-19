@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import 'package:academy_management/core/widgets/glass.dart';
+import 'package:academy_management/core/theme/app_colors.dart';
 import 'package:academy_management/features/admissions/domain/student.dart';
 import 'package:academy_management/features/fees/domain/fee_invoice.dart';
 import 'package:academy_management/features/fees/domain/fee_payment.dart';
@@ -66,7 +67,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                     child: Text(
                       'Fee Account Status',
                       style: theme.textTheme.titleSmall?.copyWith(
-                        color: const Color(0xFF111827),
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                       maxLines: 1,
@@ -79,14 +80,14 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: (isFullyPaid
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFF59E0B))
+                              ? AppColors.success
+                              : AppColors.warning)
                           .withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isFullyPaid
-                            ? const Color(0xFF10B981)
-                            : const Color(0xFFF59E0B),
+                            ? AppColors.success
+                            : AppColors.warning,
                         width: 0.8,
                       ),
                     ),
@@ -112,7 +113,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                   Text(
                     'Outstanding Balance',
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 12,
                     ),
                   ),
@@ -132,7 +133,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
               ),
 
               const SizedBox(height: 16),
-              const Divider(color: Color(0xFFF3F4F6), height: 1),
+              const Divider(color: AppColors.surfaceMuted, height: 1),
               const SizedBox(height: 14),
 
               // Breakdown: Total Billed vs Paid
@@ -145,7 +146,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                         Text(
                           'Total Invoiced',
                           style: TextStyle(
-                            color: const Color(0xFF9CA3AF),
+                            color: AppColors.textMuted,
                             fontSize: 11,
                           ),
                         ),
@@ -153,7 +154,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                         Text(
                           'Rs ${totalBilled.toStringAsFixed(0)}',
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),
@@ -164,7 +165,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                   Container(
                     height: 28,
                     width: 1,
-                    color: const Color(0xFFF3F4F6),
+                    color: AppColors.surfaceMuted,
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -174,7 +175,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                         Text(
                           'Total Paid',
                           style: TextStyle(
-                            color: const Color(0xFF9CA3AF),
+                            color: AppColors.textMuted,
                             fontSize: 11,
                           ),
                         ),
@@ -202,9 +203,9 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: const Color(0xFF111827),
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFF3F4F6)),
+            border: Border.all(color: AppColors.border),
           ),
           child: Row(
             children: [
@@ -243,7 +244,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
             Text(
               'Fee Invoices (${invoices.length})',
               style: theme.textTheme.titleSmall?.copyWith(
-                color: const Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -270,7 +271,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
             Text(
               'Payment Receipts Ledger (${payments.length})',
               style: theme.textTheme.titleSmall?.copyWith(
-                color: const Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -301,12 +302,12 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6366F1) : Colors.transparent,
+          color: isSelected ? AppColors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFF6366F1).withValues(alpha: 0.4),
+                    color: AppColors.primary.withValues(alpha: 0.4),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -319,14 +320,14 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? Colors.white : const Color(0xFF9CA3AF),
+              color: isSelected ? Colors.white : AppColors.textMuted,
             ),
             const SizedBox(width: 6),
             Flexible(
               child: Text(
                 title,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF6B7280),
+                  color: isSelected ? Colors.white : AppColors.textTertiary,
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
@@ -372,7 +373,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                             ? invoice.title
                             : 'Tuition & Academic Term Fee',
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
@@ -383,7 +384,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                       Text(
                         'Invoice #${invoice.invoiceNo.isNotEmpty ? invoice.invoiceNo : invoice.id.substring(0, 8).toUpperCase()}',
                         style: TextStyle(
-                          color: const Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                           fontSize: 11,
                           fontFamily: 'monospace',
                         ),
@@ -396,14 +397,14 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: (isPaid
-                            ? const Color(0xFF10B981)
-                            : const Color(0xFFEF4444))
+                            ? AppColors.success
+                            : AppColors.danger)
                         .withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                       color: isPaid
-                          ? const Color(0xFF10B981)
-                          : const Color(0xFFEF4444),
+                          ? AppColors.success
+                          : AppColors.danger,
                       width: 0.8,
                     ),
                   ),
@@ -421,7 +422,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
               ],
             ),
             const SizedBox(height: 12),
-            const Divider(color: Color(0xFFF3F4F6), height: 1),
+            const Divider(color: AppColors.surfaceMuted, height: 1),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -432,7 +433,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                       Text(
                         'Total Payable',
                         style: TextStyle(
-                          color: const Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                           fontSize: 10,
                         ),
                         maxLines: 1,
@@ -442,7 +443,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                       Text(
                         'Rs ${invoice.totalAmount.toStringAsFixed(0)}',
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                         ),
@@ -459,7 +460,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                       Text(
                         'Paid Amount',
                         style: TextStyle(
-                          color: const Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                           fontSize: 10,
                         ),
                         maxLines: 1,
@@ -486,7 +487,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                       Text(
                         'Due Date',
                         style: TextStyle(
-                          color: const Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                           fontSize: 10,
                         ),
                         maxLines: 1,
@@ -496,7 +497,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                       Text(
                         dueDateStr,
                         style: const TextStyle(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -514,9 +515,9 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
               width: double.infinity,
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF38BDF8),
+                  foregroundColor: AppColors.secondary,
                   side: BorderSide(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.4),
+                    color: AppColors.secondary.withValues(alpha: 0.4),
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -570,9 +571,9 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF111827).withValues(alpha: 0.6),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         children: [
@@ -581,7 +582,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                  color: AppColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
@@ -598,7 +599,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                     Text(
                       'Rs ${payment.amount.toStringAsFixed(0)}',
                       style: const TextStyle(
-                        color: Color(0xFF111827),
+                        color: AppColors.textPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
@@ -607,7 +608,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
                     Text(
                       '${payment.method.toUpperCase()} • Ref #${payment.reference.isNotEmpty ? payment.reference : payment.id.substring(0, 6)}',
                       style: TextStyle(
-                        color: const Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                         fontSize: 11,
                       ),
                     ),
@@ -616,9 +617,9 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
               ),
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF38BDF8),
+                  foregroundColor: AppColors.secondary,
                   side: BorderSide(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.3),
+                    color: AppColors.secondary.withValues(alpha: 0.3),
                   ),
                   visualDensity: VisualDensity.compact,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -661,14 +662,14 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
               Text(
                 'Paid on $dateStr',
                 style: TextStyle(
-                  color: const Color(0xFF9CA3AF),
+                  color: AppColors.textMuted,
                   fontSize: 10,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                  color: AppColors.success.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Text(
@@ -695,19 +696,19 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: const Color(0xFF111827).withValues(alpha: 0.4),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Center(
         child: Column(
           children: [
-            Icon(icon, size: 44, color: const Color(0xFFD1D5DB)),
+            Icon(icon, size: 44, color: AppColors.border),
             const SizedBox(height: 10),
             Text(
               title,
               style: const TextStyle(
-                color: Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
@@ -717,7 +718,7 @@ class _StudentFeesTabState extends ConsumerState<StudentFeesTab> {
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: const Color(0xFF6B7280),
+                color: AppColors.textTertiary,
                 fontSize: 12,
               ),
             ),

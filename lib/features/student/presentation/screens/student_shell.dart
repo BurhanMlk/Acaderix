@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:academy_management/core/widgets/app_logo.dart';
+import 'package:academy_management/core/theme/app_colors.dart';
+import 'package:academy_management/core/widgets/app_motion.dart';
 import 'package:academy_management/core/widgets/confirmation_dialog.dart';
 import 'package:academy_management/core/widgets/glass.dart';
 import 'package:academy_management/features/auth/application/auth_controller.dart';
@@ -73,12 +75,12 @@ class _StudentShellState extends ConsumerState<StudentShell> {
           final isWide = constraints.maxWidth >= 640;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFFFFFFF),
+            backgroundColor: AppColors.background,
             appBar: AppBar(
-              backgroundColor: const Color(0xFFF9FAFB),
+              backgroundColor: AppColors.surfaceMuted,
               elevation: 0,
               scrolledUnderElevation: 0,
-              iconTheme: const IconThemeData(color: Color(0xFF374151)),
+              iconTheme: const IconThemeData(color: AppColors.textSecondary),
               leadingWidth: 48,
               leading: const Padding(
                 padding: EdgeInsets.only(left: 12),
@@ -93,7 +95,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
@@ -103,7 +105,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -115,7 +117,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                   tooltip: 'Messages',
                   icon: const Icon(
                     Icons.chat_bubble_outline,
-                    color: Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                     size: 20,
                   ),
                   onPressed: () {
@@ -135,12 +137,12 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                 ),
                 IconButton(
                   tooltip: 'Digital ID Pass',
-                  icon: const Icon(Icons.badge_outlined, color: Color(0xFF38BDF8)),
+                  icon: const Icon(Icons.badge_outlined, color: AppColors.secondary),
                   onPressed: () => showStudentProfileModal(context),
                 ),
                 IconButton(
                   tooltip: 'Sign out',
-                  icon: const Icon(Icons.logout, color: Color(0xFF6B7280)),
+                  icon: const Icon(Icons.logout, color: AppColors.textTertiary),
                   onPressed: () async {
                     final confirmed = await showConfirmationDialog(
                       context,
@@ -167,18 +169,18 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                             setState(() => _currentIndex = index),
                         labelType: NavigationRailLabelType.all,
                         selectedIconTheme: const IconThemeData(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                         ),
                         unselectedIconTheme: IconThemeData(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                         ),
                         selectedLabelTextStyle: const TextStyle(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                         ),
                         unselectedLabelTextStyle: TextStyle(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 11,
                         ),
                         destinations: const [
@@ -210,52 +212,43 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                         ],
                       ),
                       const VerticalDivider(
-                        color: Color(0xFFF3F4F6),
+                        color: AppColors.border,
                         width: 1,
                         thickness: 1,
                       ),
                       Expanded(
-                        child: IndexedStack(
-                          index: _currentIndex,
-                          children: pages,
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 1200),
+                            child: SmoothTabSwitcher(
+                              child: KeyedSubtree(
+                                key: ValueKey(_currentIndex),
+                                child: pages[_currentIndex],
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   )
-                : IndexedStack(
-                    index: _currentIndex,
-                    children: pages,
+                : SmoothTabSwitcher(
+                    child: KeyedSubtree(
+                      key: ValueKey(_currentIndex),
+                      child: pages[_currentIndex],
+                    ),
                   ),
             bottomNavigationBar: isWide
                 ? null
-                : NavigationBarTheme(
-                    data: NavigationBarThemeData(
-                      indicatorColor: const Color(0xFF6366F1).withValues(alpha: 0.35),
-                      iconTheme: WidgetStateProperty.resolveWith((states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return const IconThemeData(color: Color(0xFF38BDF8));
-                        }
-                        return IconThemeData(
-                          color: const Color(0xFF6B7280),
-                        );
-                      }),
-                      labelTextStyle: WidgetStateProperty.resolveWith((states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return const TextStyle(
-                            color: Color(0xFF38BDF8),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          );
-                        }
-                        return TextStyle(
-                          color: const Color(0xFF6B7280),
-                          fontSize: 11,
-                        );
-                      }),
+                : Container(
+                    decoration: const BoxDecoration(
+                      color: AppColors.surface,
+                      border: Border(
+                        top: BorderSide(color: AppColors.border),
+                      ),
                     ),
                     child: NavigationBar(
-                      backgroundColor: const Color(0xFF0F172A).withValues(alpha: 0.95),
-                      elevation: 8,
+                      backgroundColor: AppColors.surface,
+                      elevation: 0,
                       selectedIndex: _currentIndex,
                       onDestinationSelected: (index) =>
                           setState(() => _currentIndex = index),

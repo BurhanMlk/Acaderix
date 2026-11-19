@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/widgets/confirmation_dialog.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/glass.dart';
@@ -40,7 +41,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     final ticketsAsync = ref.watch(supportTicketsStreamProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: ticketsAsync.when(
         loading: () => _buildLoadingState(),
         error: (err, _) => ErrorState(
@@ -50,7 +51,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
         data: (tickets) => _buildContent(context, tickets),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF6366F1),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_task_rounded),
         label: const Text('Log Ticket'),
@@ -131,7 +132,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       title: 'Total Tickets',
                       value: totalCount.toString(),
                       icon: Icons.support_agent_rounded,
-                      color: const Color(0xFF6366F1),
+                      color: AppColors.primary,
                     ),
                   ),
                   SizedBox(
@@ -140,7 +141,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       title: 'Open',
                       value: openCount.toString(),
                       icon: Icons.error_outline_rounded,
-                      color: const Color(0xFFEF4444),
+                      color: AppColors.danger,
                     ),
                   ),
                   SizedBox(
@@ -149,7 +150,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       title: 'In Progress',
                       value: inProgressCount.toString(),
                       icon: Icons.pending_actions_rounded,
-                      color: const Color(0xFFF59E0B),
+                      color: AppColors.warning,
                     ),
                   ),
                   SizedBox(
@@ -158,7 +159,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       title: 'Resolved',
                       value: resolvedCount.toString(),
                       icon: Icons.check_circle_outline_rounded,
-                      color: const Color(0xFF10B981),
+                      color: AppColors.success,
                     ),
                   ),
                 ],
@@ -171,14 +172,14 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
           TextField(
             controller: _searchController,
             onChanged: (_) => setState(() {}),
-            style: const TextStyle(color: Color(0xFF111827)),
+            style: const TextStyle(color: AppColors.textPrimary),
             decoration: InputDecoration(
               hintText: 'Search by ticket #, academy, subject...',
-              hintStyle: TextStyle(color: const Color(0xFF9CA3AF)),
-              prefixIcon: const Icon(Icons.search, color: Color(0xFF6B7280)),
+              hintStyle: TextStyle(color: AppColors.textMuted),
+              prefixIcon: const Icon(Icons.search, color: AppColors.textTertiary),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: Color(0xFF6B7280)),
+                      icon: const Icon(Icons.clear, color: AppColors.textTertiary),
                       onPressed: () {
                         _searchController.clear();
                         setState(() {});
@@ -186,22 +187,22 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     )
                   : null,
               filled: true,
-              fillColor: const Color(0xFFF9FAFB),
+              fillColor: AppColors.surfaceMuted,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: const Color(0xFFE5E7EB),
+                  color: AppColors.border,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: const Color(0xFFE5E7EB),
+                  color: AppColors.border,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Color(0xFF6366F1)),
+                borderSide: const BorderSide(color: AppColors.primary),
               ),
             ),
           ),
@@ -306,17 +307,17 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
       label: Text(label),
       selected: isSelected,
       onSelected: (_) => onSelected(value),
-      selectedColor: const Color(0xFF6366F1).withValues(alpha: 0.35),
-      backgroundColor: const Color(0xFFF9FAFB),
+      selectedColor: AppColors.primary.withValues(alpha: 0.35),
+      backgroundColor: AppColors.surfaceMuted,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : const Color(0xFF6B7280),
+        color: isSelected ? const Color(0xFF312E81) : AppColors.textTertiary,
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         fontSize: 13,
       ),
       side: BorderSide(
         color: isSelected
-            ? const Color(0xFF6366F1)
-            : const Color(0xFFF3F4F6),
+            ? AppColors.primary
+            : AppColors.surfaceMuted,
       ),
     );
   }
@@ -327,7 +328,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -345,7 +346,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                 SnackBar(
                   content: Text('Ticket updated to "$newStatus".'),
                   behavior: SnackBarBehavior.floating,
-                  backgroundColor: const Color(0xFF10B981),
+                  backgroundColor: AppColors.success,
                 ),
               );
             }
@@ -380,7 +381,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                 const SnackBar(
                   content: Text('Reply dispatched to academy administrator.'),
                   behavior: SnackBarBehavior.floating,
-                  backgroundColor: Color(0xFF10B981),
+                  backgroundColor: AppColors.success,
                 ),
               );
             }
@@ -431,7 +432,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -447,7 +448,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                 const SnackBar(
                   content: Text('Support ticket logged successfully!'),
                   behavior: SnackBarBehavior.floating,
-                  backgroundColor: Color(0xFF10B981),
+                  backgroundColor: AppColors.success,
                 ),
               );
             }
@@ -498,17 +499,17 @@ class _TicketCard extends StatelessWidget {
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color:
-                              const Color(0xFF6366F1).withValues(alpha: 0.15),
+                              AppColors.primary.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
                             color:
-                                const Color(0xFF6366F1).withValues(alpha: 0.4),
+                                AppColors.primary.withValues(alpha: 0.4),
                           ),
                         ),
                         child: Text(
                           ticket.ticketNumber,
                           style: const TextStyle(
-                            color: Color(0xFF818CF8),
+                            color: AppColors.primary,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                           ),
@@ -525,7 +526,7 @@ class _TicketCard extends StatelessWidget {
               Text(
                 ticket.subject,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -536,13 +537,13 @@ class _TicketCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF374151),
+                  color: AppColors.textSecondary,
                   fontSize: 13,
                   height: 1.4,
                 ),
               ),
               const SizedBox(height: 14),
-              const Divider(color: Color(0xFFF3F4F6)),
+              const Divider(color: AppColors.surfaceMuted),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -557,7 +558,7 @@ class _TicketCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -567,7 +568,7 @@ class _TicketCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: const Color(0xFF9CA3AF),
+                            color: AppColors.textMuted,
                             fontSize: 11,
                           ),
                         ),
@@ -582,7 +583,7 @@ class _TicketCard extends StatelessWidget {
                 child: Text(
                   DateFormat('MMM dd • hh:mm a').format(ticket.updatedAt),
                   style: TextStyle(
-                    color: const Color(0xFFD1D5DB),
+                    color: AppColors.border,
                     fontSize: 11,
                   ),
                 ),
@@ -596,10 +597,10 @@ class _TicketCard extends StatelessWidget {
 
   Widget _priorityBadge(String priority) {
     final (color, label) = switch (priority.toLowerCase()) {
-      'urgent' => (const Color(0xFFEF4444), 'URGENT'),
-      'high' => (const Color(0xFFF59E0B), 'HIGH'),
-      'low' => (const Color(0xFF10B981), 'LOW'),
-      _ => (const Color(0xFF38BDF8), 'MEDIUM'),
+      'urgent' => (AppColors.danger, 'URGENT'),
+      'high' => (AppColors.warning, 'HIGH'),
+      'low' => (AppColors.success, 'LOW'),
+      _ => (AppColors.secondary, 'MEDIUM'),
     };
 
     return Container(
@@ -621,9 +622,9 @@ class _TicketCard extends StatelessWidget {
 
   Widget _statusBadge(String status) {
     final (color, label) = switch (status.toLowerCase()) {
-      'open' => (const Color(0xFFEF4444), 'Open'),
-      'in_progress' => (const Color(0xFFF59E0B), 'In Progress'),
-      'resolved' => (const Color(0xFF10B981), 'Resolved'),
+      'open' => (AppColors.danger, 'Open'),
+      'in_progress' => (AppColors.warning, 'In Progress'),
+      'resolved' => (AppColors.success, 'Resolved'),
       _ => (Colors.grey, 'Closed'),
     };
 
@@ -694,7 +695,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE5E7EB),
+                  color: AppColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -705,7 +706,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                 Text(
                   t.ticketNumber,
                   style: const TextStyle(
-                    color: Color(0xFF818CF8),
+                    color: AppColors.primary,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -715,12 +716,12 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF3F4F6),
+                    color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     t.categoryLabel,
-                    style: const TextStyle(color: Color(0xFF6B7280), fontSize: 11),
+                    style: const TextStyle(color: AppColors.textTertiary, fontSize: 11),
                   ),
                 ),
                 const Spacer(),
@@ -736,7 +737,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             Text(
               t.subject,
               style: const TextStyle(
-                color: Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
@@ -745,13 +746,13 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             Text(
               t.description,
               style: TextStyle(
-                color: const Color(0xFF374151),
+                color: AppColors.textSecondary,
                 fontSize: 14,
                 height: 1.5,
               ),
             ),
             const SizedBox(height: 16),
-            const Divider(color: Color(0xFFF3F4F6)),
+            const Divider(color: AppColors.surfaceMuted),
             const SizedBox(height: 10),
 
             // Academy & Contact Info
@@ -766,7 +767,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                       Text(
                         t.academyName,
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -774,7 +775,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                       Text(
                         '${t.contactName} (${t.contactEmail})',
                         style: TextStyle(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                         ),
                       ),
@@ -790,7 +791,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
               const Text(
                 'Activity Thread',
                 style: TextStyle(
-                  color: Color(0xFF6B7280),
+                  color: AppColors.textTertiary,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
@@ -801,13 +802,13 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: msg.isStaffReply
-                        ? const Color(0xFF6366F1).withValues(alpha: 0.15)
-                        : const Color(0xFFF9FAFB),
+                        ? AppColors.primary.withValues(alpha: 0.15)
+                        : AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: msg.isStaffReply
-                          ? const Color(0xFF6366F1).withValues(alpha: 0.3)
-                          : const Color(0xFFF3F4F6),
+                          ? AppColors.primary.withValues(alpha: 0.3)
+                          : AppColors.surfaceMuted,
                     ),
                   ),
                   child: Column(
@@ -819,8 +820,8 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                             msg.senderName,
                             style: TextStyle(
                               color: msg.isStaffReply
-                                  ? const Color(0xFF818CF8)
-                                  : Colors.white,
+                                  ? AppColors.primary
+                                  : AppColors.textPrimary,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -830,7 +831,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                             DateFormat('MMM dd • hh:mm a')
                                 .format(msg.createdAt),
                             style: TextStyle(
-                              color: const Color(0xFF9CA3AF),
+                              color: AppColors.textMuted,
                               fontSize: 10,
                             ),
                           ),
@@ -840,7 +841,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                       Text(
                         msg.message,
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 13,
                           height: 1.4,
                         ),
@@ -856,7 +857,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             const Text(
               'Update Status',
               style: TextStyle(
-                color: Color(0xFF6B7280),
+                color: AppColors.textTertiary,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -869,8 +870,8 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                 if (!t.isInProgress)
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFF59E0B),
-                      side: const BorderSide(color: Color(0xFFF59E0B)),
+                      foregroundColor: AppColors.warning,
+                      side: const BorderSide(color: AppColors.warning),
                     ),
                     icon: const Icon(Icons.pending_actions_rounded, size: 16),
                     label: const Text('Mark In Progress'),
@@ -879,7 +880,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                 if (!t.isResolved)
                   FilledButton.icon(
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
+                      backgroundColor: AppColors.success,
                     ),
                     icon: const Icon(Icons.check_circle_outline, size: 16),
                     label: const Text('Mark Resolved'),
@@ -891,8 +892,8 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
                 if (!t.isClosed)
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF6B7280),
-                      side: const BorderSide(color: Color(0xFFE5E7EB)),
+                      foregroundColor: AppColors.textTertiary,
+                      side: const BorderSide(color: AppColors.border),
                     ),
                     icon: const Icon(Icons.close_rounded, size: 16),
                     label: const Text('Close Ticket'),
@@ -906,7 +907,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             const Text(
               'Add Admin Response / Resolution Note',
               style: TextStyle(
-                color: Color(0xFF6B7280),
+                color: AppColors.textTertiary,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -915,17 +916,17 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
             TextField(
               controller: _replyController,
               maxLines: 2,
-              style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Type response to academy administrator...',
                 hintStyle:
-                    TextStyle(color: const Color(0xFF9CA3AF)),
+                    TextStyle(color: AppColors.textMuted),
                 filled: true,
-                fillColor: const Color(0xFFF9FAFB),
+                fillColor: AppColors.surfaceMuted,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                   ),
                 ),
               ),
@@ -935,7 +936,7 @@ class _TicketDetailsViewState extends State<_TicketDetailsView> {
               alignment: Alignment.centerRight,
               child: FilledButton.icon(
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF6366F1),
+                  backgroundColor: AppColors.primary,
                 ),
                 icon: const Icon(Icons.send_rounded, size: 16),
                 label: const Text('Send Reply'),
@@ -1046,7 +1047,7 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1055,7 +1056,7 @@ class _NewTicketFormState extends State<_NewTicketForm> {
               const Text(
                 'Log New Support Ticket',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1064,7 +1065,7 @@ class _NewTicketFormState extends State<_NewTicketForm> {
               Text(
                 'Record an incoming inquiry or technical request for an academy.',
                 style: TextStyle(
-                  color: const Color(0xFF6B7280),
+                  color: AppColors.textTertiary,
                   fontSize: 13,
                 ),
               ),
@@ -1072,13 +1073,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
 
               TextFormField(
                 controller: _academyName,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Academy Name *',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1093,13 +1094,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                   Expanded(
                     child: TextFormField(
                       controller: _academyCode,
-                      style: const TextStyle(color: Color(0xFF111827)),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         labelText: 'Academy Code *',
                         labelStyle: TextStyle(
-                            color: const Color(0xFF6B7280)),
+                            color: AppColors.textTertiary),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1112,13 +1113,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                   Expanded(
                     child: TextFormField(
                       controller: _contactName,
-                      style: const TextStyle(color: Color(0xFF111827)),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         labelText: 'Contact Person *',
                         labelStyle: TextStyle(
-                            color: const Color(0xFF6B7280)),
+                            color: AppColors.textTertiary),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1133,14 +1134,14 @@ class _NewTicketFormState extends State<_NewTicketForm> {
 
               TextFormField(
                 controller: _contactEmail,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: 'Contact Email *',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1157,13 +1158,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                       initialValue: _category,
                       isExpanded: true,
                       dropdownColor: Colors.white,
-                      style: const TextStyle(color: Color(0xFF111827)),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         labelText: 'Category',
                         labelStyle: TextStyle(
-                            color: const Color(0xFF6B7280)),
+                            color: AppColors.textTertiary),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1189,13 +1190,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
                       initialValue: _priority,
                       isExpanded: true,
                       dropdownColor: Colors.white,
-                      style: const TextStyle(color: Color(0xFF111827)),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         labelText: 'Priority',
                         labelStyle: TextStyle(
-                            color: const Color(0xFF6B7280)),
+                            color: AppColors.textTertiary),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -1220,13 +1221,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
 
               TextFormField(
                 controller: _subject,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Subject *',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1239,13 +1240,13 @@ class _NewTicketFormState extends State<_NewTicketForm> {
               TextFormField(
                 controller: _description,
                 maxLines: 3,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Inquiry Description *',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

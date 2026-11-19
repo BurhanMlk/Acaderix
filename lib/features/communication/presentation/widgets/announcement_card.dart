@@ -1,4 +1,5 @@
 import 'package:academy_management/core/widgets/glass.dart';
+import 'package:academy_management/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,9 +24,9 @@ class AnnouncementCard extends StatelessWidget {
     final dateStr = DateFormat('MMM d, yyyy • hh:mm a').format(announcement.createdAt);
 
     final (audienceColor, audienceLabel) = switch (announcement.audience) {
-      'staff' => (const Color(0xFF6366F1), 'Staff Only'),
-      'students' => (const Color(0xFF38BDF8), 'Students Only'),
-      _ => (const Color(0xFF10B981), 'All Campus'),
+      'staff' => (AppColors.primary, 'Staff Only'),
+      'students' => (AppColors.secondary, 'Students Only'),
+      _ => (AppColors.success, 'All Campus'),
     };
 
     return Container(
@@ -46,10 +47,10 @@ class AnnouncementCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                      color: AppColors.danger.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                        color: const Color(0xFFEF4444),
+                        color: AppColors.danger,
                         width: 0.8,
                       ),
                     ),
@@ -89,13 +90,13 @@ class AnnouncementCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF3F4F6),
+                    color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     announcement.category,
                     style: const TextStyle(
-                      color: Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                     ),
@@ -109,7 +110,7 @@ class AnnouncementCard extends StatelessWidget {
                   ),
                 if (onDelete != null)
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Color(0xFFD1D5DB), size: 18),
+                    icon: const Icon(Icons.delete_outline, color: AppColors.border, size: 18),
                     visualDensity: VisualDensity.compact,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -123,7 +124,7 @@ class AnnouncementCard extends StatelessWidget {
             Text(
               announcement.title,
               style: const TextStyle(
-                color: Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
@@ -134,7 +135,7 @@ class AnnouncementCard extends StatelessWidget {
             Text(
               announcement.content,
               style: TextStyle(
-                color: const Color(0xFF374151),
+                color: AppColors.textSecondary,
                 fontSize: 13,
                 height: 1.4,
               ),
@@ -144,13 +145,13 @@ class AnnouncementCard extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.book_outlined, size: 13, color: Color(0xFF38BDF8)),
+                  const Icon(Icons.book_outlined, size: 13, color: AppColors.secondary),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       announcement.courseName,
                       style: const TextStyle(
-                        color: Color(0xFF38BDF8),
+                        color: AppColors.secondary,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
@@ -163,7 +164,7 @@ class AnnouncementCard extends StatelessWidget {
             ],
 
             const SizedBox(height: 12),
-            const Divider(color: Color(0xFFF3F4F6), height: 1),
+            const Divider(color: AppColors.surfaceMuted, height: 1),
             const SizedBox(height: 10),
 
             // Footer: Author & Timestamp
@@ -175,15 +176,15 @@ class AnnouncementCard extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 10,
-                        backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.3),
-                        child: const Icon(Icons.person, size: 12, color: Color(0xFF6B7280)),
+                        backgroundColor: AppColors.primary.withValues(alpha: 0.3),
+                        child: const Icon(Icons.person, size: 12, color: AppColors.textTertiary),
                       ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
                           announcement.authorName,
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
@@ -197,7 +198,7 @@ class AnnouncementCard extends StatelessWidget {
                 Text(
                   dateStr,
                   style: TextStyle(
-                    color: const Color(0xFFD1D5DB),
+                    color: AppColors.border,
                     fontSize: 10,
                   ),
                 ),

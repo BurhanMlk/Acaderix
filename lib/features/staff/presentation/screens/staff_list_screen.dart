@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/id_generators.dart';
 import '../../../../core/widgets/async_list_state.dart';
@@ -96,12 +97,12 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0284C7).withValues(alpha: 0.2),
+                  color: AppColors.info.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.lock_reset,
-                  color: Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                   size: 20,
                 ),
               ),
@@ -110,7 +111,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                 child: Text(
                   'Reset Staff Password',
                   style: TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -133,10 +134,10 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF9FAFB),
+                          color: AppColors.surfaceMuted,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: const Color(0xFFF3F4F6),
+                            color: AppColors.surfaceMuted,
                           ),
                         ),
                         child: Column(
@@ -145,7 +146,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                             Text(
                               member.fullName,
                               style: const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
                               ),
@@ -154,7 +155,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                             Text(
                               'Staff ID: ${member.staffId.isNotEmpty ? member.staffId : member.id}',
                               style: const TextStyle(
-                                color: Color(0xFF38BDF8),
+                                color: AppColors.secondary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                               ),
@@ -166,7 +167,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                       TextFormField(
                         controller: passwordController,
                         obscureText: obscurePassword,
-                        style: const TextStyle(color: Color(0xFF111827)),
+                        style: const TextStyle(color: AppColors.textPrimary),
                         decoration: InputDecoration(
                           labelText: 'New Password',
                           prefixIcon: const Icon(Icons.lock_outline),
@@ -175,7 +176,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                               obscurePassword
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: const Color(0xFF6B7280),
+                              color: AppColors.textTertiary,
                               size: 20,
                             ),
                             tooltip: obscurePassword
@@ -204,14 +205,14 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                         child: ActionChip(
                           visualDensity: VisualDensity.compact,
                           backgroundColor:
-                              const Color(0xFFF3F4F6),
+                              AppColors.surfaceMuted,
                           side: BorderSide(
-                            color: const Color(0xFFE5E7EB),
+                            color: AppColors.border,
                           ),
                           label: const Text(
                             'Generate Random Password',
                             style: TextStyle(
-                              color: Color(0xFF38BDF8),
+                              color: AppColors.secondary,
                               fontSize: 11,
                             ),
                           ),
@@ -275,12 +276,12 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                color: AppColors.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.badge_outlined,
-                color: Color(0xFFA5B4FC),
+                color: AppColors.primary,
                 size: 20,
               ),
             ),
@@ -289,7 +290,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
               child: Text(
                 'Staff Credentials',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -310,7 +311,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                 const Text(
                   'Password updated successfully! Share these updated credentials with the staff member so they can sign in.',
                   style: TextStyle(
-                    color: Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 13,
                     height: 1.4,
                   ),
@@ -319,16 +320,16 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
+                    color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFFE5E7EB),
+                      color: AppColors.border,
                     ),
                   ),
                   child: Column(
                     children: [
                       _CredentialRow(label: 'Full Name', value: staff.fullName),
-                      const Divider(color: Color(0xFFF3F4F6), height: 16),
+                      const Divider(color: AppColors.surfaceMuted, height: 16),
                       _CredentialRow(
                         label: 'Staff ID',
                         value:
@@ -337,14 +338,14 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                                 : staff.id,
                         isHighlight: true,
                       ),
-                      const Divider(color: Color(0xFFF3F4F6), height: 16),
+                      const Divider(color: AppColors.surfaceMuted, height: 16),
                       _CredentialRow(
                         label: 'New Password',
                         value: staff.password,
                         isHighlight: true,
                       ),
                       if (staff.jobTitle.isNotEmpty) ...[
-                        const Divider(color: Color(0xFFF3F4F6), height: 16),
+                        const Divider(color: AppColors.surfaceMuted, height: 16),
                         _CredentialRow(
                           label: 'Designation',
                           value: staff.jobTitle,
@@ -359,8 +360,8 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                   label: const Text('Copy Credentials'),
                   style: OutlinedButton.styleFrom(
                     visualDensity: VisualDensity.compact,
-                    foregroundColor: const Color(0xFF38BDF8),
-                    side: const BorderSide(color: Color(0xFF38BDF8)),
+                    foregroundColor: AppColors.secondary,
+                    side: const BorderSide(color: AppColors.secondary),
                   ),
                   onPressed: () {
                     final sId =
@@ -404,7 +405,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.addStaff),
         icon: const Icon(Icons.person_add),
@@ -443,7 +444,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                       padding: EdgeInsets.all(24),
                       child: Text(
                         'No staff members match search or branch filter.',
-                        style: TextStyle(color: Color(0xFF6B7280)),
+                        style: TextStyle(color: AppColors.textTertiary),
                       ),
                     ),
                   );
@@ -460,10 +461,10 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
 
                     return Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9FAFB),
+                        color: AppColors.surfaceMuted,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFFE5E7EB),
+                          color: AppColors.border,
                         ),
                       ),
                       child: Padding(
@@ -504,7 +505,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                                       Text(
                                         member.fullName,
                                         style: const TextStyle(
-                                          color: Color(0xFF111827),
+                                          color: AppColors.textPrimary,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 15,
                                         ),
@@ -530,7 +531,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                                           child: Text(
                                             member.staffId,
                                             style: const TextStyle(
-                                              color: Color(0xFFA5B4FC),
+                                              color: AppColors.primary,
                                               fontSize: 10,
                                               fontWeight: FontWeight.w700,
                                             ),
@@ -557,7 +558,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                                           child: Text(
                                             branch.name,
                                             style: const TextStyle(
-                                              color: Color(0xFF38BDF8),
+                                              color: AppColors.secondary,
                                               fontSize: 10,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -587,7 +588,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                                               ? member.jobTitle
                                               : 'Faculty Staff',
                                           style: const TextStyle(
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textTertiary,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -611,13 +612,13 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                                             const Icon(
                                               Icons.phone_outlined,
                                               size: 13,
-                                              color: Color(0xFF9CA3AF),
+                                              color: AppColors.textMuted,
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
                                               member.phone,
                                               style: const TextStyle(
-                                                color: Color(0xFF9CA3AF),
+                                                color: AppColors.textMuted,
                                                 fontSize: 11,
                                               ),
                                             ),
@@ -660,7 +661,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                             PopupMenuButton<String>(
                               icon: const Icon(
                                 Icons.more_vert,
-                                color: Color(0xFF9CA3AF),
+                                color: AppColors.textMuted,
                               ),
                               onSelected: (val) {
                                 if (val == 'edit') {
@@ -696,7 +697,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
                                       Icon(
                                         Icons.lock_reset,
                                         size: 18,
-                                        color: Color(0xFF38BDF8),
+                                        color: AppColors.secondary,
                                       ),
                                       SizedBox(width: 8),
                                       Text('Reset Password'),
@@ -761,7 +762,7 @@ class _CredentialRow extends StatelessWidget {
             width: 105,
             child: Text(
               label,
-              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+              style: const TextStyle(color: AppColors.textTertiary, fontSize: 13),
             ),
           ),
           const SizedBox(width: 8),
@@ -770,7 +771,9 @@ class _CredentialRow extends StatelessWidget {
               value,
               textAlign: TextAlign.end,
               style: TextStyle(
-                color: isHighlight ? const Color(0xFF38BDF8) : Colors.white,
+                color: isHighlight
+                    ? AppColors.info
+                    : AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
                 fontSize: isHighlight ? 14 : 13,
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_formatters.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../application/subscription_providers.dart';
@@ -91,10 +92,10 @@ class _ExtendSubscriptionScreenState
       clipBehavior: Clip.antiAlias,
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color ?? const Color(0xFFF3F4F6),
+        color: color ?? AppColors.surfaceMuted,
         borderRadius: radius,
         border: Border.all(
-          color: borderColor ?? const Color(0xFFE5E7EB),
+          color: borderColor ?? AppColors.border,
           width: 1.2,
         ),
       ),
@@ -119,11 +120,11 @@ class _ExtendSubscriptionScreenState
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF6366F1),
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
               onPrimary: Colors.white,
-              surface: Color(0xFFFFFFFF),
-              onSurface: Colors.white,
+              surface: AppColors.surface,
+              onSurface: AppColors.textPrimary,
             ),
           ),
           child: child ?? const SizedBox.shrink(),
@@ -191,7 +192,7 @@ class _ExtendSubscriptionScreenState
 
     if (!_isLoading && sub == null) {
       return Scaffold(
-        backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: AppColors.surface,
         body: SafeArea(
           child: Center(
             child: Padding(
@@ -202,13 +203,13 @@ class _ExtendSubscriptionScreenState
                   const Icon(
                     Icons.error_outline,
                     size: 54,
-                    color: Color(0xFFF59E0B),
+                    color: AppColors.warning,
                   ),
                   const SizedBox(height: 16),
                   const Text(
                     'Subscription Record Not Found',
                     style: TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),
@@ -217,7 +218,7 @@ class _ExtendSubscriptionScreenState
                   const Text(
                     'Unable to load subscription details for this academy.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+                    style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
                   ),
                   const SizedBox(height: 20),
                   FilledButton.icon(
@@ -240,7 +241,7 @@ class _ExtendSubscriptionScreenState
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -284,7 +285,7 @@ class _ExtendSubscriptionScreenState
                                 Text(
                                   'Extend Subscription',
                                   style: TextStyle(
-                                    color: Color(0xFF111827),
+                                    color: AppColors.textPrimary,
                                     fontSize: 22,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -293,7 +294,7 @@ class _ExtendSubscriptionScreenState
                                 Text(
                                   'Extend renewal date and maintain active status',
                                   style: TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -323,7 +324,7 @@ class _ExtendSubscriptionScreenState
                                     Text(
                                       sub.academyName,
                                       style: const TextStyle(
-                                        color: Color(0xFF111827),
+                                        color: AppColors.textPrimary,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 16,
                                       ),
@@ -332,7 +333,7 @@ class _ExtendSubscriptionScreenState
                                     Text(
                                       '${sub.academyCode} · ${sub.planName} Plan',
                                       style: const TextStyle(
-                                        color: Color(0xFF6B7280),
+                                        color: AppColors.textTertiary,
                                         fontSize: 13,
                                       ),
                                     ),
@@ -353,7 +354,7 @@ class _ExtendSubscriptionScreenState
                               const Text(
                                 'Current Subscription Status',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -366,7 +367,7 @@ class _ExtendSubscriptionScreenState
                                   const Text(
                                     'Current Expiry Date',
                                     style: TextStyle(
-                                      color: Color(0xFF111827),
+                                      color: AppColors.textPrimary,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -374,10 +375,10 @@ class _ExtendSubscriptionScreenState
                                     DateFormatters.date(sub.renewalDate),
                                     style: TextStyle(
                                       color: sub.isExpired
-                                          ? const Color(0xFFEF4444)
+                                          ? AppColors.danger
                                           : (sub.isExpiringSoon
-                                                ? const Color(0xFFF59E0B)
-                                                : Colors.white),
+                                                ? AppColors.warning
+                                                : AppColors.textPrimary),
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14,
                                     ),
@@ -392,7 +393,7 @@ class _ExtendSubscriptionScreenState
                                   const Text(
                                     'Time Remaining',
                                     style: TextStyle(
-                                      color: Color(0xFF6B7280),
+                                      color: AppColors.textTertiary,
                                       fontSize: 13,
                                     ),
                                   ),
@@ -402,8 +403,8 @@ class _ExtendSubscriptionScreenState
                                         : '${sub.daysRemaining} days remaining',
                                     style: TextStyle(
                                       color: sub.isExpired
-                                          ? const Color(0xFFEF4444)
-                                          : const Color(0xFF10B981),
+                                          ? AppColors.danger
+                                          : AppColors.success,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
                                     ),
@@ -423,7 +424,7 @@ class _ExtendSubscriptionScreenState
                             const Text(
                               'Quick Add Extension Duration',
                               style: TextStyle(
-                                color: Color(0xFF6B7280),
+                                color: AppColors.textTertiary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -458,10 +459,10 @@ class _ExtendSubscriptionScreenState
                                   vertical: 12,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF9FAFB),
+                                  color: AppColors.surfaceMuted,
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: const Color(0xFFE5E7EB),
+                                    color: AppColors.border,
                                   ),
                                 ),
                                 child: const Row(
@@ -471,14 +472,14 @@ class _ExtendSubscriptionScreenState
                                     Text(
                                       'Pick Custom Calendar Date',
                                       style: TextStyle(
-                                        color: Color(0xFF111827),
+                                        color: AppColors.textPrimary,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     Icon(
                                       Icons.calendar_today,
-                                      color: Color(0xFF818CF8),
+                                      color: AppColors.primary,
                                       size: 18,
                                     ),
                                   ],
@@ -492,8 +493,8 @@ class _ExtendSubscriptionScreenState
 
                       // New Expiry Date Preview
                       _glassCard(
-                        borderColor: const Color(0xFF6366F1),
-                        color: const Color(0xFF6366F1).withValues(alpha: 0.12),
+                        borderColor: AppColors.primary,
+                        color: AppColors.primary.withValues(alpha: 0.12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -503,7 +504,7 @@ class _ExtendSubscriptionScreenState
                                 Text(
                                   'New Expiry Date',
                                   style: TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -512,7 +513,7 @@ class _ExtendSubscriptionScreenState
                                 Text(
                                   'Status will be set to Active',
                                   style: TextStyle(
-                                    color: Color(0xFF9CA3AF),
+                                    color: AppColors.textMuted,
                                     fontSize: 11,
                                   ),
                                 ),
@@ -521,7 +522,7 @@ class _ExtendSubscriptionScreenState
                             Text(
                               DateFormatters.date(_selectedDate),
                               style: const TextStyle(
-                                color: Color(0xFF818CF8),
+                                color: AppColors.primary,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 18,
                               ),
@@ -543,7 +544,7 @@ class _ExtendSubscriptionScreenState
                                   height: 18,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Color(0xFF111827),
+                                    color: AppColors.textPrimary,
                                   ),
                                 )
                               : const Icon(Icons.check_circle_outline),
@@ -557,7 +558,7 @@ class _ExtendSubscriptionScreenState
                             ),
                           ),
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF6366F1),
+                            backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),

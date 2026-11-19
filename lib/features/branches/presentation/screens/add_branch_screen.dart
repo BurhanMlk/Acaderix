@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/utils/validators.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/loading_button.dart';
 import '../../../../shared/current_academy_provider.dart';
@@ -81,7 +82,7 @@ class _AddBranchScreenState extends ConsumerState<AddBranchScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Branch "${branch.name}" created successfully!'),
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -104,7 +105,7 @@ class _AddBranchScreenState extends ConsumerState<AddBranchScreen> {
     final isLimitReached = !isUnlimited && branches.length >= maxBranches;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Form(
           key: _formKey,

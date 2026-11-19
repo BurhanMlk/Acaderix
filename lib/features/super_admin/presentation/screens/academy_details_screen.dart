@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_formatters.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/error_state.dart';
@@ -150,8 +151,8 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
   }
 
   Widget _glassCard({required Widget child, Color? color, Color? borderColor}) {
-    final effectiveColor = color ?? const Color(0xFFF3F4F6);
-    final effectiveBorder = borderColor ?? const Color(0xFFE5E7EB);
+    final effectiveColor = color ?? AppColors.surfaceMuted;
+    final effectiveBorder = borderColor ?? AppColors.border;
 
     return Material(
       clipBehavior: Clip.antiAlias,
@@ -207,14 +208,14 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
 
     final academy = _academy!;
     final (statusColor, statusLabel) = switch (academy.status.toLowerCase()) {
-      'active' => (const Color(0xFF10B981), 'ACTIVE'),
-      'suspended' => (const Color(0xFFEF4444), 'SUSPENDED'),
-      'pending' => (const Color(0xFFF59E0B), 'PENDING'),
+      'active' => (AppColors.success, 'ACTIVE'),
+      'suspended' => (AppColors.danger, 'SUSPENDED'),
+      'pending' => (AppColors.warning, 'PENDING'),
       _ => (Colors.grey, academy.status.toUpperCase()),
     };
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 900),
@@ -250,7 +251,7 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
                         Text(
                           'View full profile, update status, and manage this academy record.',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                           ),
                         ),
                       ],
@@ -535,8 +536,8 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
 
               // Danger Zone
               _glassCard(
-                color: const Color(0xFFEF4444).withValues(alpha: 0.12),
-                borderColor: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                color: AppColors.danger.withValues(alpha: 0.12),
+                borderColor: AppColors.danger.withValues(alpha: 0.35),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -546,14 +547,14 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
                         children: [
                           Icon(
                             Icons.warning_amber_rounded,
-                            color: Color(0xFFEF4444),
+                            color: AppColors.danger,
                           ),
                           SizedBox(width: 8),
                           Text(
                             'Danger Zone',
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFFEF4444),
+                              color: AppColors.danger,
                               fontSize: 16,
                             ),
                           ),
@@ -563,7 +564,7 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
                       const Text(
                         'Permanently delete this academy and all its records from the platform. This action is irreversible and the deleted data cannot be recovered. The unique academy code will become available for new registrations.',
                         style: TextStyle(
-                          color: Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           height: 1.4,
                           fontSize: 13.5,
                         ),
@@ -574,7 +575,7 @@ class _AcademyDetailsScreenState extends ConsumerState<AcademyDetailsScreen> {
                         icon: const Icon(Icons.delete_forever, size: 18),
                         label: const Text('Delete Academy Record'),
                         style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFFEF4444),
+                          backgroundColor: AppColors.danger,
                           foregroundColor: Colors.white,
                         ),
                       ),
@@ -608,7 +609,7 @@ class _DetailTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: const Color(0xFF818CF8)),
+          Icon(icon, size: 20, color: AppColors.primary),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -617,7 +618,7 @@ class _DetailTile extends StatelessWidget {
                 Text(
                   label,
                   style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 12,
                   ),
                 ),
@@ -627,7 +628,7 @@ class _DetailTile extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],

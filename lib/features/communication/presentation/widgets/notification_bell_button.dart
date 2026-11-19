@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/communication_providers.dart';
@@ -25,7 +26,7 @@ class NotificationBellButton extends ConsumerWidget {
       children: [
         IconButton(
           tooltip: 'Notifications',
-          icon: const Icon(Icons.notifications_outlined, color: Color(0xFF374151)),
+          icon: const Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
           onPressed: () =>
               showNotificationCenterModal(context, academyId: academyId),
         ),
@@ -38,13 +39,13 @@ class NotificationBellButton extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                 constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEF4444),
+                  color: AppColors.danger,
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: const Color(0xFF0F172A), width: 1.5),
+                      Border.all(color: Colors.white, width: 1.5),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFEF4444).withValues(alpha: 0.5),
+                      color: AppColors.danger.withValues(alpha: 0.5),
                       blurRadius: 4,
                     ),
                   ],
@@ -53,7 +54,7 @@ class NotificationBellButton extends ConsumerWidget {
                   child: Text(
                     unreadCount > 9 ? '9+' : '$unreadCount',
                     style: const TextStyle(
-                      color: Color(0xFF111827),
+                      color: Colors.white,
                       fontSize: 9,
                       fontWeight: FontWeight.w800,
                     ),

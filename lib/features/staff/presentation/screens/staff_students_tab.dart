@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/empty_state.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../admissions/domain/student.dart';
 import '../../../communication/application/communication_providers.dart';
 import '../../../communication/presentation/screens/academic_chat_screen.dart';
@@ -44,7 +45,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD1D5DB),
+                    color: AppColors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -55,13 +56,13 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                   CircleAvatar(
                     radius: 26,
                     backgroundColor:
-                        const Color(0xFF6366F1).withValues(alpha: 0.3),
+                        AppColors.primary.withValues(alpha: 0.3),
                     child: Text(
                       student.fullName.isNotEmpty
                           ? student.fullName[0].toUpperCase()
                           : 'S',
                       style: const TextStyle(
-                        color: Color(0xFF111827),
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w800,
                         fontSize: 20,
                       ),
@@ -77,7 +78,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontWeight: FontWeight.w800,
                             fontSize: 18,
                           ),
@@ -86,7 +87,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                         Text(
                           'Roll #${student.rollNumber}${student.academicSession.isNotEmpty ? " • ${student.academicSession}" : ""}',
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 13,
                           ),
                         ),
@@ -96,7 +97,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                 ],
               ),
               const SizedBox(height: 18),
-              Divider(color: const Color(0xFFF3F4F6), height: 1),
+              Divider(color: AppColors.surfaceMuted, height: 1),
               const SizedBox(height: 14),
 
               _DetailItem(label: 'Gender', value: student.gender),
@@ -111,10 +112,10 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF38BDF8).withValues(alpha: 0.1),
+                  color: AppColors.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.25),
+                    color: AppColors.secondary.withValues(alpha: 0.25),
                   ),
                 ),
                 child: Row(
@@ -122,14 +123,14 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                     const Icon(
                       Icons.shield_outlined,
                       size: 20,
-                      color: Color(0xFF38BDF8),
+                      color: AppColors.secondary,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         'Parent phone numbers are restricted to protect family privacy. Communication is conducted via in-app chat.',
                         style: TextStyle(
-                          color: const Color(0xFF374151),
+                          color: AppColors.textSecondary,
                           fontSize: 11,
                           height: 1.3,
                         ),
@@ -143,7 +144,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                 width: double.infinity,
                 child: FilledButton.icon(
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF38BDF8),
+                    backgroundColor: AppColors.secondary,
                     foregroundColor: const Color(0xFF0F172A),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -233,7 +234,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -246,19 +247,19 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                 TextField(
                   onChanged: (v) =>
                       setState(() => _query = v.trim().toLowerCase()),
-                  style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                   decoration: InputDecoration(
                     hintText: 'Search student name, roll #, or grade...',
                     hintStyle: TextStyle(
-                      color: const Color(0xFF9CA3AF),
+                      color: AppColors.textMuted,
                     ),
                     prefixIcon: const Icon(
                       Icons.search,
-                      color: Color(0xFFF59E0B),
+                      color: AppColors.warning,
                       size: 20,
                     ),
                     filled: true,
-                    fillColor: const Color(0xFFF9FAFB),
+                    fillColor: AppColors.surfaceMuted,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 10,
@@ -266,13 +267,13 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: const Color(0xFFF3F4F6),
+                        color: AppColors.surfaceMuted,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: const Color(0xFFF3F4F6),
+                        color: AppColors.surfaceMuted,
                       ),
                     ),
                   ),
@@ -284,7 +285,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                       Icon(
                         Icons.location_city_outlined,
                         size: 13,
-                        color: const Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
@@ -293,7 +294,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
@@ -301,7 +302,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                       ),
                       TextButton.icon(
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF38BDF8),
+                          foregroundColor: AppColors.secondary,
                           visualDensity: VisualDensity.compact,
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                         ),
@@ -344,24 +345,24 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                           margin: const EdgeInsets.only(bottom: 10),
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF9FAFB),
+                            color: AppColors.surfaceMuted,
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: const Color(0xFFF3F4F6),
+                              color: AppColors.surfaceMuted,
                             ),
                           ),
                           child: Row(
                             children: [
                               CircleAvatar(
                                 radius: 20,
-                                backgroundColor: const Color(0xFF6366F1)
+                                backgroundColor: AppColors.primary
                                     .withValues(alpha: 0.25),
                                 child: Text(
                                   s.fullName.isNotEmpty
                                       ? s.fullName[0].toUpperCase()
                                       : 'S',
                                   style: const TextStyle(
-                                    color: Color(0xFF111827),
+                                    color: AppColors.textPrimary,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 15,
                                   ),
@@ -377,7 +378,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
-                                        color: Color(0xFF111827),
+                                        color: AppColors.textPrimary,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 14,
                                       ),
@@ -395,7 +396,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                                             vertical: 2,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF38BDF8)
+                                            color: AppColors.secondary
                                                 .withValues(alpha: 0.15),
                                             borderRadius:
                                                 BorderRadius.circular(6),
@@ -403,7 +404,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                                           child: Text(
                                             'Roll #${s.rollNumber}',
                                             style: const TextStyle(
-                                              color: Color(0xFF38BDF8),
+                                              color: AppColors.secondary,
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -415,7 +416,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
-                                              color: const Color(0xFF111827)
+                                              color: AppColors.textPrimary
                                                   .withValues(alpha: 0.6),
                                               fontSize: 11,
                                             ),
@@ -427,7 +428,7 @@ class _StaffStudentsTabState extends ConsumerState<StaffStudentsTab> {
                               ),
                               Icon(
                                 Icons.chevron_right,
-                                color: const Color(0xFFD1D5DB),
+                                color: AppColors.border,
                                 size: 20,
                               ),
                             ],
@@ -462,7 +463,7 @@ class _DetailItem extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                color: const Color(0xFF6B7280),
+                color: AppColors.textTertiary,
                 fontSize: 12,
               ),
             ),
@@ -471,7 +472,7 @@ class _DetailItem extends StatelessWidget {
             child: Text(
               value,
               style: const TextStyle(
-                color: Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
               ),

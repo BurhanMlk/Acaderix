@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/utils/date_formatters.dart';
 import '../../../../core/widgets/skeleton.dart';
@@ -107,10 +108,10 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
       clipBehavior: Clip.antiAlias,
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color ?? const Color(0xFFF3F4F6),
+        color: color ?? AppColors.surfaceMuted,
         borderRadius: radius,
         border: Border.all(
-          color: borderColor ?? const Color(0xFFE5E7EB),
+          color: borderColor ?? AppColors.border,
           width: 1.2,
         ),
       ),
@@ -184,7 +185,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -230,7 +231,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                   Text(
                                     'Record Payment',
                                     style: TextStyle(
-                                      color: Color(0xFF111827),
+                                      color: AppColors.textPrimary,
                                       fontSize: 22,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -239,7 +240,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                   Text(
                                     'Enter subscription fee receipt details',
                                     style: TextStyle(
-                                      color: Color(0xFF6B7280),
+                                      color: AppColors.textTertiary,
                                       fontSize: 13,
                                     ),
                                   ),
@@ -259,7 +260,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                 const Text(
                                   'Select Academy',
                                   style: TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -277,7 +278,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                       : (_availableSubs.isNotEmpty
                                             ? _availableSubs.first.academyId
                                             : null),
-                                  dropdownColor: const Color(0xFFFFFFFF),
+                                  dropdownColor: AppColors.surface,
                                   isExpanded: true,
                                   decoration: const InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(
@@ -292,7 +293,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                         child: Text(
                                           '${sub.academyName} (${sub.academyCode})',
                                           style: const TextStyle(
-                                            color: Color(0xFF111827),
+                                            color: AppColors.textPrimary,
                                             fontSize: 14,
                                           ),
                                           overflow: TextOverflow.ellipsis,
@@ -331,7 +332,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                             Text(
                                               _selectedSub!.academyName,
                                               style: const TextStyle(
-                                                color: Color(0xFF111827),
+                                                color: AppColors.textPrimary,
                                                 fontWeight: FontWeight.w700,
                                                 fontSize: 14,
                                               ),
@@ -340,7 +341,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                             Text(
                                               'Current Plan: ${_selectedSub!.planName} · Renewal: ${DateFormatters.date(_selectedSub!.renewalDate)}',
                                               style: const TextStyle(
-                                                color: Color(0xFF9CA3AF),
+                                                color: AppColors.textMuted,
                                                 fontSize: 12,
                                               ),
                                             ),
@@ -363,7 +364,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                               const Text(
                                 'Payment Amount (PKR)',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -392,7 +393,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                               const Text(
                                 'Payment Method',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -421,7 +422,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                               const Text(
                                 'Payment Date',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -436,10 +437,10 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                     vertical: 12,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFF9FAFB),
+                                    color: AppColors.surfaceMuted,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: const Color(0xFFE5E7EB),
+                                      color: AppColors.border,
                                     ),
                                   ),
                                   child: Row(
@@ -449,14 +450,14 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                       Text(
                                         DateFormatters.date(_paymentDate),
                                         style: const TextStyle(
-                                          color: Color(0xFF111827),
+                                          color: AppColors.textPrimary,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       const Icon(
                                         Icons.calendar_month,
-                                        color: Color(0xFF818CF8),
+                                        color: AppColors.primary,
                                         size: 20,
                                       ),
                                     ],
@@ -468,7 +469,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                               const Text(
                                 'Reference / Transaction #',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -485,7 +486,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                               const Text(
                                 'Notes / Memo (Optional)',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -522,7 +523,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                             children: [
                               Icon(
                                 Icons.info_outline,
-                                color: Color(0xFF10B981),
+                                color: AppColors.success,
                                 size: 20,
                               ),
                               SizedBox(width: 10),
@@ -530,7 +531,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                 child: Text(
                                   'Recording this payment will generate a receipt, update subscription status to Active, and extend renewal date by 30 days.',
                                   style: TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 12.5,
                                   ),
                                 ),
@@ -552,7 +553,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                                     height: 18,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Color(0xFF111827),
+                                      color: AppColors.textPrimary,
                                     ),
                                   )
                                 : const Icon(Icons.check_circle_outline),
@@ -566,7 +567,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                               ),
                             ),
                             style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF10B981),
+                              backgroundColor: AppColors.success,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),

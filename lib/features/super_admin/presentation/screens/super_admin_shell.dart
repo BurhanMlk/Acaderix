@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_motion.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../../shared/academy_logo.dart';
@@ -48,21 +50,33 @@ class SuperAdminShell extends ConsumerWidget {
         builder: (context, constraints) {
           if (constraints.maxWidth >= 760) {
             return Scaffold(
-              backgroundColor: const Color(0xFFFFFFFF),
+              backgroundColor: AppColors.background,
               body: Row(
                 children: [
                   _SuperAdminSidebar(location: location, isDrawer: false),
                   VerticalDivider(
                     width: 1,
                     thickness: 1,
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                   ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _ContentHeader(title: _title),
-                        Expanded(child: child),
+                        Expanded(
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 1200),
+                              child: SmoothTabSwitcher(
+                                child: KeyedSubtree(
+                                  key: ValueKey(location),
+                                  child: child,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -72,22 +86,22 @@ class SuperAdminShell extends ConsumerWidget {
           }
 
           return Scaffold(
-            backgroundColor: const Color(0xFFFFFFFF),
+            backgroundColor: AppColors.background,
             appBar: AppBar(
-              backgroundColor: const Color(0xFFF9FAFB),
+              backgroundColor: AppColors.surfaceMuted,
               elevation: 0,
               scrolledUnderElevation: 0,
-              iconTheme: const IconThemeData(color: Color(0xFF374151)),
+              iconTheme: const IconThemeData(color: AppColors.textSecondary),
               title: Text(
                 _title,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ),
             drawer: Drawer(
-              backgroundColor: const Color(0xFFFFFFFF).withValues(alpha: 0.95),
+              backgroundColor: AppColors.background.withValues(alpha: 0.95),
               child: _SuperAdminSidebar(location: location, isDrawer: true),
             ),
             body: child,
@@ -108,17 +122,17 @@ class _ContentHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: AppColors.surfaceMuted,
         border: Border(
           bottom: BorderSide(
-            color: const Color(0xFFE5E7EB),
+            color: AppColors.border,
           ),
         ),
       ),
       child: Text(
         title,
         style: const TextStyle(
-          color: Color(0xFF111827),
+          color: AppColors.textPrimary,
           fontSize: 20,
           fontWeight: FontWeight.w700,
         ),
@@ -150,7 +164,7 @@ class _SuperAdminSidebar extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDrawer
             ? Colors.transparent
-            : const Color(0xFFFFFFFF).withValues(alpha: 0.75),
+            : AppColors.background.withValues(alpha: 0.75),
       ),
       child: SafeArea(
         child: Column(
@@ -169,7 +183,7 @@ class _SuperAdminSidebar extends ConsumerWidget {
                         Text(
                           'Acadrix',
                           style: TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
                           ),
@@ -177,7 +191,7 @@ class _SuperAdminSidebar extends ConsumerWidget {
                         Text(
                           'Super Admin',
                           style: TextStyle(
-                            color: Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 12,
                           ),
                         ),
@@ -186,14 +200,14 @@ class _SuperAdminSidebar extends ConsumerWidget {
                   ),
                   if (isDrawer)
                     IconButton(
-                      icon: const Icon(Icons.close, color: Color(0xFF6B7280)),
+                      icon: const Icon(Icons.close, color: AppColors.textTertiary),
                       tooltip: 'Close menu',
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                 ],
               ),
             ),
-            Divider(color: const Color(0xFFE5E7EB), height: 1),
+            Divider(color: AppColors.border, height: 1),
             const SizedBox(height: 12),
             for (final module in superAdminModules)
               _SidebarItem(
@@ -202,7 +216,7 @@ class _SuperAdminSidebar extends ConsumerWidget {
                 onTap: () => _navigate(context, module.route),
               ),
             const Spacer(),
-            Divider(color: const Color(0xFFE5E7EB), height: 1),
+            Divider(color: AppColors.border, height: 1),
             _SidebarAction(
               icon: Icons.logout,
               label: 'Sign out',
@@ -244,9 +258,11 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final background = selected
-        ? const Color(0xFFE5E7EB)
+        ? AppColors.border
         : Colors.transparent;
-    final foreground = selected ? Colors.white : const Color(0xFF6B7280);
+    final foreground = selected
+        ? AppColors.textPrimary
+        : AppColors.textTertiary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
@@ -261,7 +277,7 @@ class _SidebarItem extends StatelessWidget {
                 ? BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFFD1D5DB),
+                      color: AppColors.border,
                     ),
                   )
                 : null,
@@ -316,12 +332,12 @@ class _SidebarAction extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
               children: [
-                Icon(icon, color: const Color(0xFF6B7280), size: 20),
+                Icon(icon, color: AppColors.textTertiary, size: 20),
                 const SizedBox(width: 12),
                 Text(
                   label,
                   style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),

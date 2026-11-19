@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/domain/attendance_calculator.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../academics/domain/course.dart';
@@ -57,7 +58,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
           content: Text(
             'Advance attendance is locked. Attendance cannot be recorded for future dates.',
           ),
-          backgroundColor: Color(0xFFEF4444),
+          backgroundColor: AppColors.danger,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -90,7 +91,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to save attendance: $e'),
-            backgroundColor: const Color(0xFFEF4444),
+            backgroundColor: AppColors.danger,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -122,7 +123,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
           content: Text(
             'Advance attendance is locked. Attendance cannot be recorded for future dates.',
           ),
-          backgroundColor: Color(0xFFEF4444),
+          backgroundColor: AppColors.danger,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -156,7 +157,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('All enrolled students marked Present for today!'),
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -166,7 +167,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to mark all present: $e'),
-            backgroundColor: const Color(0xFFEF4444),
+            backgroundColor: AppColors.danger,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -197,7 +198,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to generate attendance PDF: $e'),
-            backgroundColor: const Color(0xFFEF4444),
+            backgroundColor: AppColors.danger,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -224,10 +225,10 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: recordsAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+          child: CircularProgressIndicator(color: AppColors.secondary),
         ),
         error: (err, _) => ErrorState(
           message: err.toString(),
@@ -310,13 +311,13 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF9FAFB),
+                  color: AppColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFF3F4F6)),
+                  border: Border.all(color: AppColors.surfaceMuted),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.event, color: Color(0xFFF59E0B), size: 18),
+                    const Icon(Icons.event, color: AppColors.warning, size: 18),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Column(
@@ -325,7 +326,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                           Text(
                             DateFormat('EEE, MMM d, yyyy').format(_date),
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
                             ),
@@ -336,7 +337,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                             Text(
                               branch.name,
                               style: TextStyle(
-                                color: const Color(0xFF6B7280),
+                                color: AppColors.textTertiary,
                                 fontSize: 11,
                               ),
                               maxLines: 1,
@@ -351,7 +352,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                         _showAnalytics
                             ? Icons.analytics
                             : Icons.analytics_outlined,
-                        color: const Color(0xFF38BDF8),
+                        color: AppColors.secondary,
                         size: 19,
                       ),
                       visualDensity: VisualDensity.compact,
@@ -365,7 +366,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                       tooltip: 'Export PDF Register',
                       icon: const Icon(
                         Icons.picture_as_pdf_outlined,
-                        color: Color(0xFF38BDF8),
+                        color: AppColors.secondary,
                         size: 19,
                       ),
                       visualDensity: VisualDensity.compact,
@@ -386,14 +387,14 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                       icon: const Icon(Icons.calendar_today, size: 12),
                       label: const Text('Date'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppColors.textPrimary,
                         visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 4,
                         ),
                         side: BorderSide(
-                          color: const Color(0xFFE5E7EB),
+                          color: AppColors.border,
                         ),
                       ),
                       onPressed: () async {
@@ -426,15 +427,15 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+                    color: AppColors.danger.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFFEF4444).withValues(alpha: 0.35),
+                      color: AppColors.danger.withValues(alpha: 0.35),
                     ),
                   ),
                   child: const Row(
                     children: [
-                      Icon(Icons.lock_clock, color: Color(0xFFEF4444), size: 18),
+                      Icon(Icons.lock_clock, color: AppColors.danger, size: 18),
                       SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -458,24 +459,24 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.08),
+                    color: AppColors.secondary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFF38BDF8).withValues(alpha: 0.2),
+                      color: AppColors.secondary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.menu_book,
-                        color: Color(0xFF38BDF8),
+                        color: AppColors.secondary,
                         size: 18,
                       ),
                       const SizedBox(width: 8),
                       const Text(
                         'Course:',
                         style: TextStyle(
-                          color: Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -494,7 +495,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                             dropdownColor: Colors.white,
                             isExpanded: true,
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
@@ -532,7 +533,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                   _StatChip(
                     label: 'Present',
                     count: present,
-                    color: const Color(0xFF10B981),
+                    color: AppColors.success,
                     isSelected: _statusFilter == AttendanceStatus.present,
                     onTap: () {
                       setState(() {
@@ -547,7 +548,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                   _StatChip(
                     label: 'Late',
                     count: late,
-                    color: const Color(0xFFF59E0B),
+                    color: AppColors.warning,
                     isSelected: _statusFilter == AttendanceStatus.late,
                     onTap: () {
                       setState(() {
@@ -562,7 +563,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                   _StatChip(
                     label: 'Absent',
                     count: absent,
-                    color: const Color(0xFFEF4444),
+                    color: AppColors.danger,
                     isSelected: _statusFilter == AttendanceStatus.absent,
                     onTap: () {
                       setState(() {
@@ -592,7 +593,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                   _StatChip(
                     label: 'Total',
                     count: students.length,
-                    color: const Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                     isSelected: _statusFilter == null && !_showUnmarkedOnly,
                     onTap: () {
                       setState(() {
@@ -618,7 +619,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                       style: TextStyle(
                         color: unmarked == 0 && students.isNotEmpty
                             ? const Color(0xFF34D399)
-                            : const Color(0xFF6B7280),
+                            : AppColors.textTertiary,
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
                       ),
@@ -629,7 +630,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                     icon: const Icon(Icons.done_all, size: 14),
                     label: const Text('Mark All Present'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
+                      backgroundColor: AppColors.success,
                       foregroundColor: Colors.white,
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.symmetric(
@@ -655,10 +656,10 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
+                    color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: const Color(0xFF38BDF8).withValues(alpha: 0.25),
+                      color: AppColors.secondary.withValues(alpha: 0.25),
                     ),
                   ),
                   child: Column(
@@ -670,7 +671,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                           const Text(
                             'Daily Roll Breakdown',
                             style: TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
                             ),
@@ -682,8 +683,8 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                             ),
                             decoration: BoxDecoration(
                               color: (rate >= 75
-                                      ? const Color(0xFF10B981)
-                                      : const Color(0xFFEF4444))
+                                      ? AppColors.success
+                                      : AppColors.danger)
                                   .withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
@@ -714,36 +715,36 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                                   sections: [
                                     if (present > 0)
                                       PieChartSectionData(
-                                        color: const Color(0xFF10B981),
+                                        color: AppColors.success,
                                         value: present.toDouble(),
                                         title: '$present',
                                         radius: 34,
                                         titleStyle: const TextStyle(
-                                          color: Color(0xFF111827),
+                                          color: AppColors.textPrimary,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 11,
                                         ),
                                       ),
                                     if (late > 0)
                                       PieChartSectionData(
-                                        color: const Color(0xFFF59E0B),
+                                        color: AppColors.warning,
                                         value: late.toDouble(),
                                         title: '$late',
                                         radius: 34,
                                         titleStyle: const TextStyle(
-                                          color: Color(0xFF111827),
+                                          color: AppColors.textPrimary,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 11,
                                         ),
                                       ),
                                     if (absent > 0)
                                       PieChartSectionData(
-                                        color: const Color(0xFFEF4444),
+                                        color: AppColors.danger,
                                         value: absent.toDouble(),
                                         title: '$absent',
                                         radius: 34,
                                         titleStyle: const TextStyle(
-                                          color: Color(0xFF111827),
+                                          color: AppColors.textPrimary,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 11,
                                         ),
@@ -755,19 +756,19 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                                         title: '$leave',
                                         radius: 34,
                                         titleStyle: const TextStyle(
-                                          color: Color(0xFF111827),
+                                          color: AppColors.textPrimary,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 11,
                                         ),
                                       ),
                                     if (unmarked > 0)
                                       PieChartSectionData(
-                                        color: const Color(0xFFE5E7EB),
+                                        color: AppColors.border,
                                         value: unmarked.toDouble(),
                                         title: '$unmarked',
                                         radius: 34,
                                         titleStyle: const TextStyle(
-                                          color: Color(0xFF6B7280),
+                                          color: AppColors.textTertiary,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 11,
                                         ),
@@ -784,18 +785,18 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _legendItem(
-                                      'Present', present, const Color(0xFF10B981)),
+                                      'Present', present, AppColors.success),
                                   const SizedBox(height: 4),
-                                  _legendItem('Late', late, const Color(0xFFF59E0B)),
+                                  _legendItem('Late', late, AppColors.warning),
                                   const SizedBox(height: 4),
                                   _legendItem(
-                                      'Absent', absent, const Color(0xFFEF4444)),
+                                      'Absent', absent, AppColors.danger),
                                   const SizedBox(height: 4),
                                   _legendItem(
                                       'Leave', leave, const Color(0xFF8B5CF6)),
                                   if (unmarked > 0) ...[
                                     const SizedBox(height: 4),
-                                    _legendItem('Unmarked', unmarked, const Color(0xFFD1D5DB)),
+                                    _legendItem('Unmarked', unmarked, AppColors.border),
                                   ],
                                 ],
                               ),
@@ -814,23 +815,23 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                 children: [
                   Expanded(
                     child: TextField(
-                      style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
                       decoration: InputDecoration(
                         isDense: true,
                         hintText: 'Search roll # or student name...',
                         hintStyle: TextStyle(
-                          color: const Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                           fontSize: 12,
                         ),
                         prefixIcon: const Icon(
                           Icons.search,
                           size: 18,
-                          color: Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                         ),
                         suffixIcon: _searchQuery.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(Icons.clear, size: 16),
-                                color: const Color(0xFF9CA3AF),
+                                color: AppColors.textMuted,
                                 onPressed: () =>
                                     setState(() => _searchQuery = ''),
                               )
@@ -840,23 +841,23 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                           vertical: 8,
                         ),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(
-                            color: const Color(0xFFF3F4F6),
+                            color: AppColors.surfaceMuted,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(
-                            color: const Color(0xFFF3F4F6),
+                            color: AppColors.surfaceMuted,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: const BorderSide(
-                            color: Color(0xFF38BDF8),
+                            color: AppColors.secondary,
                           ),
                         ),
                       ),
@@ -873,12 +874,12 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: _showUnmarkedOnly
-                              ? Colors.black
-                              : Colors.amberAccent,
+                              ? const Color(0xFF92400E)
+                              : const Color(0xFFB45309),
                         ),
                       ),
-                      backgroundColor: Colors.amber.withValues(alpha: 0.1),
-                      selectedColor: Colors.amberAccent,
+                      backgroundColor: const Color(0xFFFEF3C7),
+                      selectedColor: const Color(0xFFFDE68A),
                       showCheckmark: false,
                       visualDensity: VisualDensity.compact,
                       onSelected: (val) {
@@ -912,13 +913,13 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                       children: [
                         const Icon(
                           Icons.search_off,
-                          color: Color(0xFFD1D5DB),
+                          color: AppColors.border,
                           size: 36,
                         ),
                         const SizedBox(height: 8),
                         const Text(
                           'No students matching current filter',
-                          style: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+                          style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
                         ),
                         TextButton(
                           onPressed: () {
@@ -945,10 +946,10 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF9FAFB),
+                      color: AppColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFFF3F4F6),
+                        color: AppColors.surfaceMuted,
                       ),
                     ),
                     child: Row(
@@ -956,13 +957,13 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                         CircleAvatar(
                           radius: 18,
                           backgroundColor:
-                              const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                              AppColors.secondary.withValues(alpha: 0.15),
                           child: Text(
                             student.fullName.isNotEmpty
                                 ? student.fullName.substring(0, 1).toUpperCase()
                                 : 'S',
                             style: const TextStyle(
-                              color: Color(0xFF38BDF8),
+                              color: AppColors.secondary,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
                             ),
@@ -978,7 +979,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  color: Color(0xFF111827),
+                                  color: AppColors.textPrimary,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
                                 ),
@@ -988,7 +989,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: const Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 11,
                                 ),
                               ),
@@ -1034,7 +1035,7 @@ class _StaffAttendanceTabState extends ConsumerState<StaffAttendanceTab> {
         Text(
           '$label: $count',
           style: const TextStyle(
-            color: Color(0xFF6B7280),
+            color: AppColors.textTertiary,
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -1082,7 +1083,7 @@ class _StatChip extends StatelessWidget {
               Text(
                 '$count',
                 style: TextStyle(
-                  color: isSelected ? Colors.white : color,
+                  color: isSelected ? AppColors.textPrimary : color,
                   fontWeight: FontWeight.w800,
                   fontSize: 15,
                 ),
@@ -1093,8 +1094,8 @@ class _StatChip extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: isSelected
-                      ? Colors.white
-                      : const Color(0xFF374151),
+                      ? AppColors.textPrimary
+                      : AppColors.textSecondary,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1130,7 +1131,7 @@ class _AttendanceStatusSelector extends StatelessWidget {
           _StatusCircleBtn(
             label: 'P',
             tooltip: isLocked ? 'Advance attendance is locked' : 'Present',
-            color: const Color(0xFF10B981),
+            color: AppColors.success,
             isSelected: currentStatus == AttendanceStatus.present,
             onTap: isLocked
                 ? () {}
@@ -1140,7 +1141,7 @@ class _AttendanceStatusSelector extends StatelessWidget {
           _StatusCircleBtn(
             label: 'L',
             tooltip: isLocked ? 'Advance attendance is locked' : 'Late',
-            color: const Color(0xFFF59E0B),
+            color: AppColors.warning,
             isSelected: currentStatus == AttendanceStatus.late,
             onTap: isLocked
                 ? () {}
@@ -1150,7 +1151,7 @@ class _AttendanceStatusSelector extends StatelessWidget {
           _StatusCircleBtn(
             label: 'A',
             tooltip: isLocked ? 'Advance attendance is locked' : 'Absent',
-            color: const Color(0xFFEF4444),
+            color: AppColors.danger,
             isSelected: currentStatus == AttendanceStatus.absent,
             onTap: isLocked
                 ? () {}

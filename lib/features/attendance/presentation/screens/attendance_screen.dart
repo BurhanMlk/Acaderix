@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 
 import '../../../../core/domain/attendance_calculator.dart';
 import '../../../../core/widgets/async_list_state.dart';
@@ -48,7 +49,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           content: Text(
             'Advance attendance is locked. Attendance cannot be recorded for future dates.',
           ),
-          backgroundColor: Color(0xFFEF4444),
+          backgroundColor: AppColors.danger,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -84,7 +85,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -116,7 +117,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       height: 4,
                       margin: const EdgeInsets.only(bottom: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE5E7EB),
+                        color: AppColors.border,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -130,7 +131,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             Text(
                               course.name,
                               style: const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                               ),
@@ -138,7 +139,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             Text(
                               'Teacher: ${course.teacherName.isNotEmpty ? course.teacherName : "Unassigned"}',
                               style: TextStyle(
-                                color: const Color(0xFF6B7280),
+                                color: AppColors.textTertiary,
                                 fontSize: 12,
                               ),
                             ),
@@ -146,7 +147,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.picture_as_pdf_outlined, color: Color(0xFF38BDF8)),
+                        icon: const Icon(Icons.picture_as_pdf_outlined, color: AppColors.secondary),
                         tooltip: 'Export Course Register PDF',
                         onPressed: () async {
                           await AttendancePdfGenerator.printOrShareAttendanceRegister(
@@ -161,13 +162,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Color(0xFF6B7280)),
+                        icon: const Icon(Icons.close, color: AppColors.textTertiary),
                         onPressed: () => Navigator.of(modalCtx).pop(),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Divider(color: const Color(0xFFF3F4F6), height: 1),
+                  Divider(color: AppColors.surfaceMuted, height: 1),
                   const SizedBox(height: 12),
 
                   Expanded(
@@ -175,7 +176,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         ? const Center(
                             child: Text(
                               'No students enrolled in this course.',
-                              style: TextStyle(color: Color(0xFF6B7280)),
+                              style: TextStyle(color: AppColors.textTertiary),
                             ),
                           )
                         : ListView.separated(
@@ -190,9 +191,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                               return Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF9FAFB),
+                                  color: AppColors.surfaceMuted,
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: const Color(0xFFF3F4F6)),
+                                  border: Border.all(color: AppColors.surfaceMuted),
                                 ),
                                 child: Row(
                                   children: [
@@ -205,7 +206,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
-                                              color: Color(0xFF111827),
+                                              color: AppColors.textPrimary,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14,
                                             ),
@@ -215,7 +216,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
-                                              color: const Color(0xFF6B7280),
+                                              color: AppColors.textTertiary,
                                               fontSize: 11,
                                             ),
                                           ),
@@ -227,7 +228,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                       status: AttendanceStatus.present,
                                       isSelected: currentStatus == AttendanceStatus.present,
                                       label: 'P',
-                                      color: const Color(0xFF10B981),
+                                      color: AppColors.success,
                                       onTap: () async {
                                         setModalState(() {
                                           modalOverrides[student.id] = AttendanceStatus.present;
@@ -245,7 +246,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                       status: AttendanceStatus.late,
                                       isSelected: currentStatus == AttendanceStatus.late,
                                       label: 'L',
-                                      color: const Color(0xFFF59E0B),
+                                      color: AppColors.warning,
                                       onTap: () async {
                                         setModalState(() {
                                           modalOverrides[student.id] = AttendanceStatus.late;
@@ -263,7 +264,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                       status: AttendanceStatus.absent,
                                       isSelected: currentStatus == AttendanceStatus.absent,
                                       label: 'A',
-                                      color: const Color(0xFFEF4444),
+                                      color: AppColors.danger,
                                       onTap: () async {
                                         setModalState(() {
                                           modalOverrides[student.id] = AttendanceStatus.absent;
@@ -323,7 +324,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -336,9 +337,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
+                color: AppColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFF3F4F6)),
+                border: Border.all(color: AppColors.surfaceMuted),
               ),
               child: Row(
                 children: [
@@ -359,7 +360,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.event, color: Color(0xFFF59E0B), size: 18),
+                          const Icon(Icons.event, color: AppColors.warning, size: 18),
                           const SizedBox(width: 8),
                           Flexible(
                             child: Text(
@@ -367,7 +368,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
                               ),
@@ -382,7 +383,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     tooltip: 'Export Campus Attendance Register',
                     icon: const Icon(
                       Icons.picture_as_pdf_outlined,
-                      color: Color(0xFF38BDF8),
+                      color: AppColors.secondary,
                       size: 20,
                     ),
                     visualDensity: VisualDensity.compact,
@@ -413,13 +414,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     icon: const Icon(Icons.calendar_today, size: 12),
                     label: const Text('Date'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.textPrimary,
                       minimumSize: Size.zero,
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       visualDensity: VisualDensity.compact,
                       side: BorderSide(
-                        color: const Color(0xFFE5E7EB),
+                        color: AppColors.border,
                       ),
                     ),
                     onPressed: () async {
@@ -450,13 +451,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
                         color: _viewMode == 0
-                            ? const Color(0xFF38BDF8).withValues(alpha: 0.2)
+                            ? AppColors.secondary.withValues(alpha: 0.2)
                             : const Color(0xFFFCFCFD),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: _viewMode == 0
-                              ? const Color(0xFF38BDF8)
-                              : const Color(0xFFF3F4F6),
+                              ? AppColors.secondary
+                              : AppColors.surfaceMuted,
                         ),
                       ),
                       alignment: Alignment.center,
@@ -471,16 +472,16 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 Icons.rule,
                                 size: 15,
                                 color: _viewMode == 0
-                                    ? const Color(0xFF38BDF8)
-                                    : const Color(0xFF6B7280),
+                                    ? AppColors.secondary
+                                    : AppColors.textTertiary,
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 'Course Monitoring',
                                 style: TextStyle(
                                   color: _viewMode == 0
-                                      ? const Color(0xFF38BDF8)
-                                      : const Color(0xFF6B7280),
+                                      ? AppColors.secondary
+                                      : AppColors.textTertiary,
                                   fontWeight: _viewMode == 0
                                       ? FontWeight.w700
                                       : FontWeight.w500,
@@ -503,13 +504,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
                         color: _viewMode == 1
-                            ? const Color(0xFF38BDF8).withValues(alpha: 0.2)
+                            ? AppColors.secondary.withValues(alpha: 0.2)
                             : const Color(0xFFFCFCFD),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: _viewMode == 1
-                              ? const Color(0xFF38BDF8)
-                              : const Color(0xFFF3F4F6),
+                              ? AppColors.secondary
+                              : AppColors.surfaceMuted,
                         ),
                       ),
                       alignment: Alignment.center,
@@ -524,16 +525,16 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 Icons.people_outline,
                                 size: 15,
                                 color: _viewMode == 1
-                                    ? const Color(0xFF38BDF8)
-                                    : const Color(0xFF6B7280),
+                                    ? AppColors.secondary
+                                    : AppColors.textTertiary,
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 'General Roster',
                                 style: TextStyle(
                                   color: _viewMode == 1
-                                      ? const Color(0xFF38BDF8)
-                                      : const Color(0xFF6B7280),
+                                      ? AppColors.secondary
+                                      : AppColors.textTertiary,
                                   fontWeight: _viewMode == 1
                                       ? FontWeight.w700
                                       : FontWeight.w500,
@@ -600,13 +601,13 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   const Icon(
                     Icons.menu_book_outlined,
                     size: 40,
-                    color: Color(0xFFD1D5DB),
+                    color: AppColors.border,
                   ),
                   const SizedBox(height: 12),
                   const Text(
                     'No Courses Created Yet',
                     style: TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                     ),
@@ -615,12 +616,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   const Text(
                     'Courses allow teachers to take class-specific attendance.\nSwitch to "General Roster" or create a course.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
+                    style: TextStyle(color: AppColors.textMuted, fontSize: 13),
                   ),
                   const SizedBox(height: 14),
                   FilledButton.icon(
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF38BDF8),
+                      backgroundColor: AppColors.secondary,
                     ),
                     icon: const Icon(Icons.add, size: 16),
                     label: const Text('Add Course'),
@@ -656,19 +657,19 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                 _StatBadge(
                   label: 'Submitted',
                   count: submittedCourses,
-                  color: const Color(0xFF10B981),
+                  color: AppColors.success,
                 ),
                 const SizedBox(width: 8),
                 _StatBadge(
                   label: 'Pending',
                   count: pendingCourses,
-                  color: const Color(0xFFF59E0B),
+                  color: AppColors.warning,
                 ),
                 const SizedBox(width: 8),
                 _StatBadge(
                   label: 'Total Courses',
                   count: filteredCourses.length,
-                  color: const Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                 ),
               ],
             ),
@@ -701,12 +702,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF9FAFB),
+                  color: AppColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isSubmitted
-                        ? const Color(0xFF10B981).withValues(alpha: 0.3)
-                        : const Color(0xFFF59E0B).withValues(alpha: 0.3),
+                        ? AppColors.success.withValues(alpha: 0.3)
+                        : AppColors.warning.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -723,7 +724,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  color: Color(0xFF111827),
+                                  color: AppColors.textPrimary,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 15,
                                 ),
@@ -732,7 +733,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 Text(
                                   course.courseCode,
                                   style: const TextStyle(
-                                    color: Color(0xFF38BDF8),
+                                    color: AppColors.secondary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -748,14 +749,14 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: (isSubmitted
-                                    ? const Color(0xFF10B981)
-                                    : const Color(0xFFF59E0B))
+                                    ? AppColors.success
+                                    : AppColors.warning)
                                 .withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: isSubmitted
-                                  ? const Color(0xFF10B981)
-                                  : const Color(0xFFF59E0B),
+                                  ? AppColors.success
+                                  : AppColors.warning,
                             ),
                           ),
                           child: Text(
@@ -785,7 +786,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                           children: [
                             const Icon(
                               Icons.badge_outlined,
-                              color: Color(0xFF6B7280),
+                              color: AppColors.textTertiary,
                               size: 14,
                             ),
                             const SizedBox(width: 4),
@@ -794,7 +795,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                   ? course.teacherName
                                   : 'Assigned Teacher',
                               style: const TextStyle(
-                                color: Color(0xFF6B7280),
+                                color: AppColors.textTertiary,
                                 fontSize: 12,
                               ),
                             ),
@@ -806,14 +807,14 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             children: [
                               const Icon(
                                 Icons.schedule_outlined,
-                                color: Color(0xFFF59E0B),
+                                color: AppColors.warning,
                                 size: 14,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 course.schedule,
                                 style: TextStyle(
-                                  color: const Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 12,
                                 ),
                               ),
@@ -827,7 +828,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       Text(
                         'Roster: $presentCount Present • $absentCount Absent • $lateCount Late',
                         style: TextStyle(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                         ),
                       ),
@@ -835,7 +836,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
                     const SizedBox(height: 10),
                     Divider(
-                      color: const Color(0xFFF3F4F6),
+                      color: AppColors.surfaceMuted,
                       height: 1,
                     ),
                     const SizedBox(height: 8),
@@ -859,8 +860,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                             ),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: isSubmitted
-                                  ? const Color(0xFF38BDF8)
-                                  : const Color(0xFFF59E0B),
+                                  ? AppColors.secondary
+                                  : AppColors.warning,
                               minimumSize: Size.zero,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 10,
@@ -869,8 +870,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               side: BorderSide(
                                 color: (isSubmitted
-                                        ? const Color(0xFF38BDF8)
-                                        : const Color(0xFFF59E0B))
+                                        ? AppColors.secondary
+                                        : AppColors.warning)
                                     .withValues(alpha: 0.4),
                               ),
                               visualDensity: VisualDensity.compact,
@@ -894,7 +895,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         );
       },
       loading: () => const Center(
-        child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+        child: CircularProgressIndicator(color: AppColors.secondary),
       ),
       error: (err, _) => Center(
         child: Text(
@@ -928,7 +929,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
               padding: EdgeInsets.all(24),
               child: Text(
                 'No students match the selected branch.',
-                style: TextStyle(color: Color(0xFF6B7280)),
+                style: TextStyle(color: AppColors.textTertiary),
               ),
             ),
           );
@@ -961,7 +962,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   _StatBadge(
                     label: 'Present',
                     count: presentCount,
-                    color: const Color(0xFF10B981),
+                    color: AppColors.success,
                   ),
                   const SizedBox(width: 8),
                   _StatBadge(
@@ -979,7 +980,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   _StatBadge(
                     label: 'Total',
                     count: filtered.length,
-                    color: const Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                   ),
                 ],
               );
@@ -1001,8 +1002,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         CircleAvatar(
                           radius: 18,
                           backgroundColor:
-                              const Color(0xFF6366F1).withValues(alpha: 0.2),
-                          foregroundColor: const Color(0xFF818CF8),
+                              AppColors.primary.withValues(alpha: 0.2),
+                          foregroundColor: AppColors.primary,
                           child: Text(
                             student.fullName.isNotEmpty
                                 ? student.fullName.substring(0, 1).toUpperCase()
@@ -1033,7 +1034,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: const Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                 ),
                               ),
                             ],
@@ -1162,7 +1163,7 @@ class _StatBadge extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF374151),
+                  color: AppColors.textSecondary,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1183,7 +1184,7 @@ class _StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, label) = switch (status) {
-      AttendanceStatus.present => (const Color(0xFF10B981), 'Present'),
+      AttendanceStatus.present => (AppColors.success, 'Present'),
       AttendanceStatus.absent => (Colors.redAccent, 'Absent'),
       AttendanceStatus.late => (Colors.orangeAccent, 'Late'),
       AttendanceStatus.leave => (Colors.amber, 'Leave'),
@@ -1221,7 +1222,7 @@ class _StatusButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, label) = switch (status) {
-      AttendanceStatus.present => (const Color(0xFF10B981), 'Present'),
+      AttendanceStatus.present => (AppColors.success, 'Present'),
       AttendanceStatus.absent => (Colors.redAccent, 'Absent'),
       AttendanceStatus.late => (Colors.orangeAccent, 'Late'),
       AttendanceStatus.leave => (Colors.amber, 'Leave'),

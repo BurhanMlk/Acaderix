@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
@@ -67,7 +68,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Course "${course.name}" created successfully!'),
-            backgroundColor: const Color(0xFF10B981),
+            backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -97,10 +98,10 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
         ref.watch(staffStreamProvider(academyId)).value ?? const <Staff>[];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
         title: const Text('Add Course / Batch'),
-        backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: AppColors.surface,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -113,16 +114,16 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
               // Course Name
               TextFormField(
                 controller: _nameCtrl,
-                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Course Name *',
                   hintText: 'e.g. Physics 10th - Batch A',
-                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                  labelStyle: const TextStyle(color: AppColors.textTertiary),
                   hintStyle: TextStyle(
-                    color: const Color(0xFF9CA3AF),
+                    color: AppColors.textMuted,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -135,16 +136,16 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
               // Course Code
               TextFormField(
                 controller: _codeCtrl,
-                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Course Code',
                   hintText: 'e.g. PHY-101',
-                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                  labelStyle: const TextStyle(color: AppColors.textTertiary),
                   hintStyle: TextStyle(
-                    color: const Color(0xFF9CA3AF),
+                    color: AppColors.textMuted,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -160,12 +161,12 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                     : null,
                 isExpanded: true,
                 dropdownColor: Colors.white,
-                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Campus Branch',
-                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                  labelStyle: const TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -194,12 +195,12 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                     : null,
                 isExpanded: true,
                 dropdownColor: Colors.white,
-                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Assigned Teacher / Staff Member *',
-                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                  labelStyle: const TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -231,16 +232,16 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
               // Schedule
               TextFormField(
                 controller: _scheduleCtrl,
-                style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Schedule / Timetable',
                   hintText: 'e.g. Mon, Wed, Fri • 4:00 PM - 5:30 PM',
-                  labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                  labelStyle: const TextStyle(color: AppColors.textTertiary),
                   hintStyle: TextStyle(
-                    color: const Color(0xFF9CA3AF),
+                    color: AppColors.textMuted,
                   ),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -254,13 +255,13 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _roomCtrl,
-                      style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                       decoration: InputDecoration(
                         labelText: 'Room #',
                         hintText: 'e.g. Room 3',
-                        labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                        labelStyle: const TextStyle(color: AppColors.textTertiary),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -272,12 +273,12 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                     child: TextFormField(
                       controller: _feeCtrl,
                       keyboardType: TextInputType.number,
-                      style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
                       decoration: InputDecoration(
                         labelText: 'Monthly Fee (PKR)',
-                        labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                        labelStyle: const TextStyle(color: AppColors.textTertiary),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -291,7 +292,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
               // Save Button
               FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF38BDF8),
+                  backgroundColor: AppColors.secondary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -304,7 +305,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                         ),
                       )
                     : const Text(
@@ -312,7 +313,7 @@ class _AddCourseScreenState extends ConsumerState<AddCourseScreen> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                         ),
                       ),
               ),

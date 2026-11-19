@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/skeleton.dart';
@@ -13,12 +14,12 @@ import '../super_admin_modules.dart';
 import '../widgets/academy_avatar.dart';
 
 const List<Color> _moduleColors = [
-  Color(0xFF6366F1), // Indigo
-  Color(0xFF14B8A6), // Teal
-  Color(0xFFF59E0B), // Amber
+  AppColors.primary, // Indigo
+  AppColors.secondary, // Teal
+  AppColors.warning, // Amber
   Color(0xFFA855F7), // Purple
   Color(0xFFEC4899), // Pink
-  Color(0xFF38BDF8), // Sky Blue
+  AppColors.secondary, // Sky Blue
 ];
 
 /// Super Admin dashboard with signature transparent glassmorphism theme.
@@ -41,7 +42,7 @@ class SuperAdminDashboard extends ConsumerWidget {
               Text(
                 'Platform Overview',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                 ),
@@ -49,7 +50,7 @@ class SuperAdminDashboard extends ConsumerWidget {
               SizedBox(height: 4),
               Text(
                 'Manage academies, subscriptions and platform settings.',
-                style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+                style: TextStyle(color: AppColors.textTertiary, fontSize: 14),
               ),
             ],
           ),
@@ -87,7 +88,7 @@ class SuperAdminDashboard extends ConsumerWidget {
               const Text(
                 'Academies',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                 ),
@@ -97,7 +98,7 @@ class SuperAdminDashboard extends ConsumerWidget {
                 icon: const Icon(Icons.add, size: 16),
                 label: const Text('Add Academy'),
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF6366F1),
+                  backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 8,
@@ -177,25 +178,25 @@ class SuperAdminDashboard extends ConsumerWidget {
             title: 'Total Academies',
             value: '${items.length}',
             icon: Icons.apartment,
-            color: const Color(0xFF6366F1),
+            color: AppColors.primary,
           ),
           StatCard(
             title: 'Active',
             value: '$active',
             icon: Icons.check_circle_outline,
-            color: const Color(0xFF10B981),
+            color: AppColors.success,
           ),
           StatCard(
             title: 'Pending',
             value: '$pending',
             icon: Icons.pending_outlined,
-            color: const Color(0xFFF59E0B),
+            color: AppColors.warning,
           ),
           StatCard(
             title: 'Suspended',
             value: '$suspended',
             icon: Icons.block,
-            color: const Color(0xFFEF4444),
+            color: AppColors.danger,
           ),
         ],
       ),
@@ -206,7 +207,7 @@ class SuperAdminDashboard extends ConsumerWidget {
           const Text(
             'Recent additions',
             style: TextStyle(
-              color: Color(0xFF111827),
+              color: AppColors.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -246,7 +247,7 @@ class SuperAdminDashboard extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                   ),
@@ -256,7 +257,7 @@ class SuperAdminDashboard extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 13,
                   ),
                 ),
@@ -272,9 +273,9 @@ class SuperAdminDashboard extends ConsumerWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.2),
+        border: Border.all(color: AppColors.border, width: 1.2),
       ),
       child: child,
     );
@@ -297,9 +298,9 @@ class _ModuleCard extends StatelessWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB), width: 1.2),
+        border: Border.all(color: AppColors.border, width: 1.2),
       ),
       child: Material(
         color: Colors.transparent,
@@ -328,7 +329,7 @@ class _ModuleCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 13,
                     ),
@@ -351,9 +352,9 @@ class _StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, label) = switch (status.toLowerCase()) {
-      'active' => (const Color(0xFF10B981), 'Active'),
-      'suspended' => (const Color(0xFFEF4444), 'Suspended'),
-      'pending' => (const Color(0xFFF59E0B), 'Pending'),
+      'active' => (AppColors.success, 'Active'),
+      'suspended' => (AppColors.danger, 'Suspended'),
+      'pending' => (AppColors.warning, 'Pending'),
       _ => (Colors.grey, status),
     };
 

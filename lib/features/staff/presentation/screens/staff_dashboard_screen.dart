@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../communication/application/communication_providers.dart';
 import '../../../communication/presentation/screens/student_inquiries_screen.dart';
 import '../../../communication/presentation/widgets/announcement_card.dart';
@@ -41,7 +42,7 @@ class StaffDashboardScreen extends ConsumerWidget {
         // Key Metrics Header
         Row(
           children: [
-            const Icon(Icons.analytics_outlined, size: 18, color: Color(0xFF6366F1)),
+            const Icon(Icons.analytics_outlined, size: 18, color: AppColors.primary),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -49,7 +50,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF1F2937),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -76,7 +77,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                   value: '${metrics.totalStudents}',
                   subtitle: branch != null ? branch.name : 'Campus Roster',
                   icon: Icons.school_outlined,
-                  color: const Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                   onTap: () => onNavigateToTab(3),
                 ),
                 _StaffMetricCard(
@@ -84,7 +85,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                   value: '${metrics.attendanceRate.toStringAsFixed(0)}%',
                   subtitle: '${metrics.presentToday} Present • ${metrics.absentToday} Absent',
                   icon: Icons.fact_check_outlined,
-                  color: const Color(0xFF10B981),
+                  color: AppColors.success,
                   onTap: () => onNavigateToTab(1),
                 ),
                 _StaffMetricCard(
@@ -92,7 +93,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                   value: '${metrics.totalCourses}',
                   subtitle: '${assignedCourses.length} Assigned Batches',
                   icon: Icons.menu_book_outlined,
-                  color: const Color(0xFFF59E0B),
+                  color: AppColors.warning,
                   onTap: () => onNavigateToTab(1),
                 ),
                 _StaffMetricCard(
@@ -116,7 +117,7 @@ class StaffDashboardScreen extends ConsumerWidget {
               const Icon(
                 Icons.menu_book_outlined,
                 size: 18,
-                color: Color(0xFF38BDF8),
+                color: AppColors.secondary,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -125,7 +126,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: const Color(0xFF1F2937),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
                     fontSize: 15,
                   ),
@@ -143,12 +144,12 @@ class StaffDashboardScreen extends ConsumerWidget {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
+                color: AppColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSubmitted
-                      ? const Color(0xFF10B981).withValues(alpha: 0.25)
-                      : const Color(0xFFF59E0B).withValues(alpha: 0.25),
+                      ? AppColors.success.withValues(alpha: 0.25)
+                      : AppColors.warning.withValues(alpha: 0.25),
                 ),
               ),
               child: InkWell(
@@ -168,7 +169,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -180,7 +181,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                               Text(
                                 '${course.enrolledStudentIds.length} Enrolled',
                                 style: const TextStyle(
-                                  color: Color(0xFF38BDF8),
+                                  color: AppColors.secondary,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -192,7 +193,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color:
-                                        const Color(0xFF6B7280),
+                                        AppColors.textTertiary,
                                     fontSize: 11,
                                   ),
                                 ),
@@ -209,14 +210,14 @@ class StaffDashboardScreen extends ConsumerWidget {
                       ),
                       decoration: BoxDecoration(
                         color: (isSubmitted
-                                ? const Color(0xFF10B981)
-                                : const Color(0xFFF59E0B))
+                                ? AppColors.success
+                                : AppColors.warning)
                             .withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                           color: isSubmitted
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFF59E0B),
+                              ? AppColors.success
+                              : AppColors.warning,
                         ),
                       ),
                       child: Text(
@@ -241,7 +242,7 @@ class StaffDashboardScreen extends ConsumerWidget {
         // Quick Actions Section
         Row(
           children: [
-            const Icon(Icons.flash_on_outlined, size: 18, color: Color(0xFFF59E0B)),
+            const Icon(Icons.flash_on_outlined, size: 18, color: AppColors.warning),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -249,7 +250,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF1F2937),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -261,7 +262,7 @@ class StaffDashboardScreen extends ConsumerWidget {
 
         _StaffActionTile(
           icon: Icons.fact_check_outlined,
-          color: const Color(0xFF10B981),
+          color: AppColors.success,
           title: "Mark Today's Attendance",
           subtitle: "Record student attendance roster for today's classes",
           onTap: () => onNavigateToTab(1),
@@ -269,7 +270,7 @@ class StaffDashboardScreen extends ConsumerWidget {
         const SizedBox(height: 10),
         _StaffActionTile(
           icon: Icons.post_add_outlined,
-          color: const Color(0xFF38BDF8),
+          color: AppColors.secondary,
           title: 'Record Exam Marks',
           subtitle: 'Enter quiz, test, and exam scores for students',
           onTap: () => onNavigateToTab(2),
@@ -277,7 +278,7 @@ class StaffDashboardScreen extends ConsumerWidget {
         const SizedBox(height: 10),
         _StaffActionTile(
           icon: Icons.people_outline,
-          color: const Color(0xFFF59E0B),
+          color: AppColors.warning,
           title: 'Campus Student Directory',
           subtitle: 'Look up student roll numbers, branches, and grades',
           onTap: () => onNavigateToTab(3),
@@ -285,7 +286,7 @@ class StaffDashboardScreen extends ConsumerWidget {
         const SizedBox(height: 10),
         _StaffActionTile(
           icon: Icons.chat_bubble_outline,
-          color: const Color(0xFF38BDF8),
+          color: AppColors.secondary,
           title: 'Student Messages',
           subtitle: 'Direct 1-on-1 text chat with students',
           onTap: () {
@@ -318,7 +319,7 @@ class StaffDashboardScreen extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF1F2937),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
                 ),
@@ -358,24 +359,9 @@ class _StaffHeroCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF6366F1).withValues(alpha: 0.25),
-            const Color(0xFF38BDF8).withValues(alpha: 0.15),
-            const Color(0xFFF9FAFB),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,11 +370,11 @@ class _StaffHeroCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 24,
-                backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.3),
                 child: Text(
                   staffName.isNotEmpty ? staffName[0].toUpperCase() : 'S',
                   style: const TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
                     fontSize: 20,
                   ),
@@ -404,7 +390,7 @@ class _StaffHeroCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: Color(0xFF111827),
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w800,
                         fontSize: 18,
                       ),
@@ -415,7 +401,7 @@ class _StaffHeroCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: const Color(0xFF374151),
+                        color: AppColors.textSecondary,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
@@ -433,23 +419,23 @@ class _StaffHeroCard extends StatelessWidget {
               _HeroBadge(
                 icon: Icons.badge_outlined,
                 text: staffId,
-                color: const Color(0xFF38BDF8),
+                color: AppColors.secondary,
               ),
               _HeroBadge(
                 icon: Icons.location_city_outlined,
                 text: branchName,
-                color: const Color(0xFFF59E0B),
+                color: AppColors.warning,
               ),
               _HeroBadge(
                 icon: Icons.check_circle_outline,
                 text: status.toUpperCase(),
-                color: const Color(0xFF10B981),
+                color: AppColors.success,
               ),
             ],
           ),
           if (email.isNotEmpty || phone.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Divider(color: const Color(0xFFF3F4F6), height: 1),
+            Divider(color: AppColors.surfaceMuted, height: 1),
             const SizedBox(height: 10),
             Wrap(
               spacing: 12,
@@ -459,12 +445,12 @@ class _StaffHeroCard extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.email_outlined, size: 14, color: const Color(0xFF6B7280)),
+                      Icon(Icons.email_outlined, size: 14, color: AppColors.textTertiary),
                       const SizedBox(width: 6),
                       Text(
                         email,
                         style: TextStyle(
-                          color: const Color(0xFF374151),
+                          color: AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -474,12 +460,12 @@ class _StaffHeroCard extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.phone_outlined, size: 14, color: const Color(0xFF6B7280)),
+                      Icon(Icons.phone_outlined, size: 14, color: AppColors.textTertiary),
                       const SizedBox(width: 6),
                       Text(
                         phone,
                         style: TextStyle(
-                          color: const Color(0xFF374151),
+                          color: AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -562,9 +548,9 @@ class _StaffMetricCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF9FAFB),
+          color: AppColors.surfaceMuted,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF3F4F6)),
+          border: Border.all(color: AppColors.surfaceMuted),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,7 +565,7 @@ class _StaffMetricCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -601,7 +587,7 @@ class _StaffMetricCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color: const Color(0xFF111827),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w800,
                 fontSize: 18,
               ),
@@ -646,9 +632,9 @@ class _StaffActionTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF9FAFB),
+          color: AppColors.surfaceMuted,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFF3F4F6)),
+          border: Border.all(color: AppColors.surfaceMuted),
         ),
         child: Row(
           children: [
@@ -670,7 +656,7 @@ class _StaffActionTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
@@ -681,7 +667,7 @@ class _StaffActionTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 12,
                     ),
                   ),
@@ -691,7 +677,7 @@ class _StaffActionTile extends StatelessWidget {
             const SizedBox(width: 8),
             Icon(
               Icons.chevron_right,
-              color: const Color(0xFF9CA3AF),
+              color: AppColors.textMuted,
               size: 20,
             ),
           ],
@@ -717,7 +703,7 @@ class _StaffNoticeboardPreview extends ConsumerWidget {
       loading: () => const Center(
         child: Padding(
           padding: EdgeInsets.all(12),
-          child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+          child: CircularProgressIndicator(color: AppColors.secondary),
         ),
       ),
       error: (_, _) => const SizedBox.shrink(),
@@ -726,22 +712,22 @@ class _StaffNoticeboardPreview extends ConsumerWidget {
           return Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFFF9FAFB),
+              color: AppColors.surfaceMuted,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFF3F4F6)),
+              border: Border.all(color: AppColors.surfaceMuted),
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.campaign_outlined,
                   size: 20,
-                  color: const Color(0xFF9CA3AF),
+                  color: AppColors.textMuted,
                 ),
                 const SizedBox(width: 10),
                 Text(
                   'No recent broadcast announcements',
                   style: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 12,
                   ),
                 ),

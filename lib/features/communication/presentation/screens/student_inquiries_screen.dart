@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/widgets/empty_state.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_motion.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../auth/application/auth_controller.dart';
 import '../../../auth/domain/auth_state.dart';
@@ -74,12 +76,16 @@ class _StudentInquiriesScreenState
 
     return DashboardBackground(
       child: Scaffold(
-        backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: AppColors.background,
         appBar: AppBar(
-          backgroundColor: const Color(0xFFF9FAFB),
+          backgroundColor: AppColors.surface,
           elevation: 0,
           scrolledUnderElevation: 0,
-          iconTheme: const IconThemeData(color: Color(0xFF374151)),
+          iconTheme: const IconThemeData(color: AppColors.textSecondary),
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(1),
+            child: Divider(height: 1, thickness: 1, color: AppColors.border),
+          ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -88,57 +94,34 @@ class _StudentInquiriesScreenState
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.5,
+                  letterSpacing: -0.2,
                 ),
               ),
               Text(
                 isTeacher
-                    ? 'Direct 1-on-1 real-time chat with students'
-                    : 'Direct 1-on-1 real-time chat with your teachers',
+                    ? 'Direct 1-on-1 messaging with students'
+                    : 'Direct 1-on-1 messaging with your instructors',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: const Color(0xFF6B7280),
-                  fontSize: 11,
+                style: const TextStyle(
+                  color: AppColors.textTertiary,
+                  fontSize: 11.5,
                 ),
               ),
             ],
           ),
-          actions: [
-            IconButton(
-              tooltip: isTeacher ? 'New Chat with Student' : 'Message Instructor',
-              icon: const Icon(
-                Icons.add_comment_outlined,
-                color: Color(0xFF38BDF8),
-                size: 20,
-              ),
-              onPressed: () {
-                if (isTeacher) {
-                  showTeacherInitiateChatModal(
-                    context,
-                    academyId: effectiveAcademyId,
-                  );
-                } else {
-                  showStudentInitiateChatModal(
-                    context,
-                    academyId: effectiveAcademyId,
-                  );
-                }
-              },
-            ),
-            const SizedBox(width: 8),
-          ],
         ),
         floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: const Color(0xFF38BDF8),
-          foregroundColor: const Color(0xFF0F172A),
-          elevation: 4,
-          icon: const Icon(Icons.chat_bubble_outline, size: 18),
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 1,
+          icon: const Icon(Icons.add_comment_outlined, size: 18),
           label: Text(
             isTeacher ? 'Message Student' : 'Message Teacher',
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5),
           ),
           onPressed: () {
             if (isTeacher) {
@@ -154,7 +137,10 @@ class _StudentInquiriesScreenState
             }
           },
         ),
-        body: StreamBuilder<List<AcademicConversation>>(
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 820),
+            child: StreamBuilder<List<AcademicConversation>>(
           stream: repo.watchAcademicConversations(
             effectiveAcademyId,
             teacherId: isTeacher ? effectiveTeacherId : null,
@@ -173,7 +159,7 @@ class _StudentInquiriesScreenState
                       const SizedBox(height: 12),
                       Text(
                         'Failed to load messages: ${snapshot.error}',
-                        style: const TextStyle(color: Color(0xFF6B7280)),
+                        style: const TextStyle(color: AppColors.textTertiary),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -185,7 +171,7 @@ class _StudentInquiriesScreenState
             if (snapshot.connectionState == ConnectionState.waiting &&
                 !snapshot.hasData) {
               return const Center(
-                child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+                child: CircularProgressIndicator(color: AppColors.secondary),
               );
             }
 
@@ -229,41 +215,41 @@ class _StudentInquiriesScreenState
                           onChanged: (val) =>
                               setState(() => _searchQuery = val.trim()),
                           style: const TextStyle(
-                              color: Color(0xFF111827), fontSize: 13),
+                              color: AppColors.textPrimary, fontSize: 13),
                           decoration: InputDecoration(
                             hintText: isTeacher
                                 ? 'Search student name, roll #, or message...'
                                 : 'Search instructor, course, or message...',
                             hintStyle: TextStyle(
-                              color: const Color(0xFF9CA3AF),
+                              color: AppColors.textMuted,
                               fontSize: 13,
                             ),
                             prefixIcon: const Icon(Icons.search,
-                                color: Color(0xFF38BDF8), size: 18),
+                                color: AppColors.textTertiary, size: 18),
                             suffixIcon: _searchQuery.isNotEmpty
                                 ? IconButton(
                                     icon: const Icon(Icons.clear,
-                                        color: Color(0xFFD1D5DB), size: 16),
+                                        color: AppColors.textMuted, size: 16),
                                     onPressed: () =>
                                         setState(() => _searchQuery = ''),
                                   )
                                 : null,
                             filled: true,
-                            fillColor: const Color(0xFFF9FAFB),
+                            fillColor: AppColors.surface,
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 14, vertical: 10),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: AppColors.border),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFFF3F4F6)),
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: AppColors.border),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                               borderSide:
-                                  const BorderSide(color: Color(0xFF38BDF8)),
+                                  const BorderSide(color: AppColors.primary, width: 1.5),
                             ),
                           ),
                         ),
@@ -300,7 +286,11 @@ class _StudentInquiriesScreenState
                           final conv = filtered[index];
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10),
-                            child: _AcademicConversationListTile(
+                            child: FadeSlideIn(
+                              key: ValueKey(conv.id),
+                              duration: const Duration(milliseconds: 180),
+                              offsetY: 6,
+                              child: _AcademicConversationListTile(
                               conversation: conv,
                               isViewerTeacher: isTeacher,
                               onTap: () {
@@ -332,6 +322,7 @@ class _StudentInquiriesScreenState
                                 );
                               },
                             ),
+                            ),
                           );
                         },
                         childCount: filtered.length,
@@ -341,6 +332,8 @@ class _StudentInquiriesScreenState
               ],
             );
           },
+        ),
+          ),
         ),
       ),
     );
@@ -379,12 +372,12 @@ class _AcademicConversationListTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: unreadCount > 0
-                  ? const Color(0xFF38BDF8).withValues(alpha: 0.5)
-                  : const Color(0xFFF3F4F6),
+                  ? AppColors.secondary.withValues(alpha: 0.5)
+                  : AppColors.surfaceMuted,
               width: unreadCount > 0 ? 1.5 : 1.0,
             ),
           ),
@@ -394,14 +387,14 @@ class _AcademicConversationListTile extends StatelessWidget {
               CircleAvatar(
                 radius: 22,
                 backgroundColor: isViewerTeacher
-                    ? const Color(0xFF6366F1).withValues(alpha: 0.25)
-                    : const Color(0xFF38BDF8).withValues(alpha: 0.25),
+                    ? AppColors.primary.withValues(alpha: 0.25)
+                    : AppColors.secondary.withValues(alpha: 0.25),
                 child: Text(
                   displayName.isNotEmpty ? displayName[0].toUpperCase() : 'U',
                   style: TextStyle(
                     color: isViewerTeacher
-                        ? const Color(0xFF818CF8)
-                        : const Color(0xFF38BDF8),
+                        ? AppColors.primary
+                        : AppColors.secondary,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
@@ -420,7 +413,7 @@ class _AcademicConversationListTile extends StatelessWidget {
                           child: Text(
                             displayName,
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -431,7 +424,7 @@ class _AcademicConversationListTile extends StatelessWidget {
                         Text(
                           dateFormat.format(conversation.lastMessageAt),
                           style: TextStyle(
-                            color: const Color(0xFF9CA3AF),
+                            color: AppColors.textMuted,
                             fontSize: 11,
                           ),
                         ),
@@ -441,7 +434,7 @@ class _AcademicConversationListTile extends StatelessWidget {
                     Text(
                       displaySubtitle,
                       style: const TextStyle(
-                        color: Color(0xFF38BDF8),
+                        color: AppColors.secondary,
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -458,8 +451,8 @@ class _AcademicConversationListTile extends StatelessWidget {
                                 : 'Direct conversation opened',
                             style: TextStyle(
                               color: unreadCount > 0
-                                  ? Colors.white
-                                  : const Color(0xFF6B7280),
+                                  ? AppColors.textPrimary
+                                  : AppColors.textTertiary,
                               fontSize: 12,
                               fontWeight: unreadCount > 0
                                   ? FontWeight.w600
@@ -474,7 +467,7 @@ class _AcademicConversationListTile extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 7, vertical: 2),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF38BDF8),
+                              color: AppColors.secondary,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(

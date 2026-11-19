@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../academics/application/course_repository_provider.dart';
@@ -72,7 +73,7 @@ Future<void> showTeacherInitiateChatModal(
   showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: const Color(0xFFFFFFFF),
+    backgroundColor: AppColors.surface,
     builder: (ctx) => FastStudentPickerSheet(academyId: academyId),
   );
 }
@@ -125,9 +126,9 @@ class _FastStudentPickerSheetState
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: const BoxDecoration(
-        color: Color(0xFF0F172A),
+        color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border(top: BorderSide(color: Color(0xFF334155), width: 1.5)),
+        border: Border(top: BorderSide(color: AppColors.border, width: 1.5)),
       ),
       child: Column(
         children: [
@@ -138,7 +139,7 @@ class _FastStudentPickerSheetState
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFFE5E7EB),
+                color: AppColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -152,12 +153,12 @@ class _FastStudentPickerSheetState
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                    color: AppColors.secondary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.chat_bubble_outline,
-                    color: Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                     size: 22,
                   ),
                 ),
@@ -169,7 +170,7 @@ class _FastStudentPickerSheetState
                       const Text(
                         'Start Direct Chat',
                         style: TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
@@ -178,7 +179,7 @@ class _FastStudentPickerSheetState
                       Text(
                         'Select any student to open a 1-to-1 real-time conversation',
                         style: TextStyle(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                         ),
                       ),
@@ -186,13 +187,13 @@ class _FastStudentPickerSheetState
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Color(0xFF9CA3AF)),
+                  icon: const Icon(Icons.close, color: AppColors.textMuted),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
           ),
-          const Divider(color: Color(0xFF111827), height: 1),
+          const Divider(color: AppColors.textPrimary, height: 1),
 
           // Search Field
           Padding(
@@ -200,19 +201,19 @@ class _FastStudentPickerSheetState
             child: TextField(
               controller: _searchController,
               onChanged: (_) => setState(() {}),
-              style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Search student by name or roll number...',
                 hintStyle: TextStyle(
-                  color: const Color(0xFF9CA3AF),
+                  color: AppColors.textMuted,
                   fontSize: 13,
                 ),
                 prefixIcon: const Icon(Icons.search,
-                    color: Color(0xFF38BDF8), size: 18),
+                    color: AppColors.secondary, size: 18),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear,
-                            color: Color(0xFFD1D5DB), size: 16),
+                            color: AppColors.border, size: 16),
                         onPressed: () {
                           _searchController.clear();
                           setState(() {});
@@ -233,7 +234,7 @@ class _FastStudentPickerSheetState
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF38BDF8)),
+                  borderSide: const BorderSide(color: AppColors.secondary),
                 ),
               ),
             ),
@@ -243,7 +244,7 @@ class _FastStudentPickerSheetState
           Expanded(
             child: _isNavigating
                 ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+                    child: CircularProgressIndicator(color: AppColors.secondary),
                   )
                 : filteredCandidates.isEmpty
                     ? Center(
@@ -254,12 +255,12 @@ class _FastStudentPickerSheetState
                             children: [
                               Icon(Icons.search_off_outlined,
                                   size: 40,
-                                  color: const Color(0xFFD1D5DB)),
+                                  color: AppColors.border),
                               const SizedBox(height: 8),
                               const Text(
                                 'No matching students found',
                                 style: TextStyle(
-                                    color: Color(0xFF6B7280), fontSize: 13),
+                                    color: AppColors.textTertiary, fontSize: 13),
                               ),
                             ],
                           ),
@@ -270,7 +271,7 @@ class _FastStudentPickerSheetState
                             horizontal: 16, vertical: 8),
                         itemCount: filteredCandidates.length,
                         separatorBuilder: (_, _) => const Divider(
-                            color: Color(0xFF111827), height: 1),
+                            color: AppColors.surfaceMuted, height: 1),
                         itemBuilder: (ctx, i) {
                           final s = filteredCandidates[i];
                           return Material(
@@ -283,14 +284,14 @@ class _FastStudentPickerSheetState
                               ),
                               leading: CircleAvatar(
                                 radius: 18,
-                                backgroundColor: const Color(0xFF38BDF8)
+                                backgroundColor: AppColors.secondary
                                     .withValues(alpha: 0.2),
                                 child: Text(
                                   s.fullName.isNotEmpty
                                       ? s.fullName[0].toUpperCase()
                                       : 'S',
                                   style: const TextStyle(
-                                    color: Color(0xFF38BDF8),
+                                    color: AppColors.secondary,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -299,7 +300,7 @@ class _FastStudentPickerSheetState
                               title: Text(
                                 s.fullName,
                                 style: const TextStyle(
-                                  color: Color(0xFF111827),
+                                  color: AppColors.textPrimary,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -307,7 +308,7 @@ class _FastStudentPickerSheetState
                               subtitle: Text(
                                 'Roll #${s.rollNumber}${s.notes.isNotEmpty ? " • ${s.notes}" : ""}',
                                 style: TextStyle(
-                                  color: const Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 12,
                                 ),
                                 maxLines: 1,
@@ -316,13 +317,13 @@ class _FastStudentPickerSheetState
                               trailing: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF38BDF8)
+                                  color: AppColors.secondary
                                       .withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
                                   Icons.chat_bubble_outline,
-                                  color: Color(0xFF38BDF8),
+                                  color: AppColors.secondary,
                                   size: 16,
                                 ),
                               ),
@@ -400,7 +401,7 @@ Future<void> showStudentInitiateChatModal(
   showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: const Color(0xFFFFFFFF),
+    backgroundColor: AppColors.surface,
     builder: (ctx) => FastTeacherPickerSheet(academyId: academyId),
   );
 }
@@ -482,9 +483,9 @@ class _FastTeacherPickerSheetState
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: const BoxDecoration(
-        color: Color(0xFF0F172A),
+        color: Colors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border(top: BorderSide(color: Color(0xFF334155), width: 1.5)),
+        border: Border(top: BorderSide(color: AppColors.border, width: 1.5)),
       ),
       child: Column(
         children: [
@@ -495,7 +496,7 @@ class _FastTeacherPickerSheetState
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFFE5E7EB),
+                color: AppColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -509,12 +510,12 @@ class _FastTeacherPickerSheetState
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                    color: AppColors.secondary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.chat_bubble_outline,
-                    color: Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                     size: 22,
                   ),
                 ),
@@ -526,7 +527,7 @@ class _FastTeacherPickerSheetState
                       const Text(
                         'Message Instructor',
                         style: TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
@@ -535,7 +536,7 @@ class _FastTeacherPickerSheetState
                       Text(
                         'Select an instructor to start a direct 1-to-1 conversation',
                         style: TextStyle(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                         ),
                       ),
@@ -543,13 +544,13 @@ class _FastTeacherPickerSheetState
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Color(0xFF9CA3AF)),
+                  icon: const Icon(Icons.close, color: AppColors.textMuted),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
           ),
-          const Divider(color: Color(0xFF111827), height: 1),
+          const Divider(color: AppColors.textPrimary, height: 1),
 
           // Search Field
           Padding(
@@ -557,19 +558,19 @@ class _FastTeacherPickerSheetState
             child: TextField(
               controller: _searchController,
               onChanged: (_) => setState(() {}),
-              style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Search instructor by name or subject...',
                 hintStyle: TextStyle(
-                  color: const Color(0xFF9CA3AF),
+                  color: AppColors.textMuted,
                   fontSize: 13,
                 ),
                 prefixIcon: const Icon(Icons.search,
-                    color: Color(0xFF38BDF8), size: 18),
+                    color: AppColors.secondary, size: 18),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear,
-                            color: Color(0xFFD1D5DB), size: 16),
+                            color: AppColors.border, size: 16),
                         onPressed: () {
                           _searchController.clear();
                           setState(() {});
@@ -590,7 +591,7 @@ class _FastTeacherPickerSheetState
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF38BDF8)),
+                  borderSide: const BorderSide(color: AppColors.secondary),
                 ),
               ),
             ),
@@ -600,7 +601,7 @@ class _FastTeacherPickerSheetState
           Expanded(
             child: _isNavigating
                 ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+                    child: CircularProgressIndicator(color: AppColors.secondary),
                   )
                 : teachersList.isEmpty
                     ? Center(
@@ -611,12 +612,12 @@ class _FastTeacherPickerSheetState
                             children: [
                               Icon(Icons.person_off_outlined,
                                   size: 40,
-                                  color: const Color(0xFFD1D5DB)),
+                                  color: AppColors.border),
                               const SizedBox(height: 8),
                               const Text(
                                 'No instructors available to chat',
                                 style: TextStyle(
-                                    color: Color(0xFF6B7280), fontSize: 13),
+                                    color: AppColors.textTertiary, fontSize: 13),
                               ),
                             ],
                           ),
@@ -627,7 +628,7 @@ class _FastTeacherPickerSheetState
                             horizontal: 16, vertical: 8),
                         itemCount: teachersList.length,
                         separatorBuilder: (_, _) => const Divider(
-                            color: Color(0xFF111827), height: 1),
+                            color: AppColors.surfaceMuted, height: 1),
                         itemBuilder: (ctx, i) {
                           final t = teachersList[i];
                           return Material(
@@ -640,14 +641,14 @@ class _FastTeacherPickerSheetState
                               ),
                               leading: CircleAvatar(
                                 radius: 18,
-                                backgroundColor: const Color(0xFF6366F1)
+                                backgroundColor: AppColors.primary
                                     .withValues(alpha: 0.25),
                                 child: Text(
                                   t.name.isNotEmpty
                                       ? t.name[0].toUpperCase()
                                       : 'T',
                                   style: const TextStyle(
-                                    color: Color(0xFF818CF8),
+                                    color: AppColors.primary,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -656,7 +657,7 @@ class _FastTeacherPickerSheetState
                               title: Text(
                                 t.name,
                                 style: const TextStyle(
-                                  color: Color(0xFF111827),
+                                  color: AppColors.textPrimary,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -664,7 +665,7 @@ class _FastTeacherPickerSheetState
                               subtitle: Text(
                                 t.courseName,
                                 style: TextStyle(
-                                  color: const Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 12,
                                 ),
                                 maxLines: 1,
@@ -673,13 +674,13 @@ class _FastTeacherPickerSheetState
                               trailing: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF38BDF8)
+                                  color: AppColors.secondary
                                       .withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
                                   Icons.chat_bubble_outline,
-                                  color: Color(0xFF38BDF8),
+                                  color: AppColors.secondary,
                                   size: 16,
                                 ),
                               ),

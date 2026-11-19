@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../shared/branch_tab_bar.dart';
@@ -49,7 +50,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
           ),
           title: Row(
             children: [
-              const Icon(Icons.group_add, color: Color(0xFF38BDF8), size: 22),
+              const Icon(Icons.group_add, color: AppColors.secondary, size: 22),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -57,7 +58,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
                   ),
@@ -72,7 +73,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                 ? const Center(
                     child: Text(
                       'No students found in this branch.',
-                      style: TextStyle(color: Color(0xFF6B7280)),
+                      style: TextStyle(color: AppColors.textTertiary),
                     ),
                   )
                 : ListView.builder(
@@ -83,12 +84,12 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
 
                       return CheckboxListTile(
                         value: isEnrolled,
-                        activeColor: const Color(0xFF38BDF8),
+                        activeColor: AppColors.secondary,
                         checkColor: Colors.black,
                         title: Text(
                           s.fullName,
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -96,7 +97,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                         subtitle: Text(
                           'Roll #${s.rollNumber}${s.academicSession.isNotEmpty ? " • ${s.academicSession}" : ""}',
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 12,
                           ),
                         ),
@@ -116,11 +117,11 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogCtx).pop(),
-              child: const Text('Cancel', style: TextStyle(color: Color(0xFF6B7280))),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textTertiary)),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF38BDF8),
+                backgroundColor: AppColors.secondary,
               ),
               onPressed: () async {
                 final updated = course.copyWith(
@@ -135,7 +136,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                       content: Text(
                         'Enrolled ${selectedIds.length} students into ${course.name}',
                       ),
-                      backgroundColor: const Color(0xFF10B981),
+                      backgroundColor: AppColors.success,
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -156,9 +157,9 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF38BDF8),
+        backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: const Text('Add Course'),
@@ -175,20 +176,20 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
               onChanged: (v) => setState(() => _query = v.trim().toLowerCase()),
-              style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
               decoration: InputDecoration(
                 hintText: 'Search courses by name, code, or teacher...',
                 hintStyle: TextStyle(
-                  color: const Color(0xFF9CA3AF),
+                  color: AppColors.textMuted,
                   fontSize: 13,
                 ),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                   size: 20,
                 ),
                 filled: true,
-                fillColor: const Color(0xFFF9FAFB),
+                fillColor: AppColors.surfaceMuted,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 10,
@@ -196,13 +197,13 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: const Color(0xFFF3F4F6),
+                    color: AppColors.surfaceMuted,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: const Color(0xFFF3F4F6),
+                    color: AppColors.surfaceMuted,
                   ),
                 ),
               ),
@@ -283,7 +284,7 @@ class _CoursesListScreenState extends ConsumerState<CoursesListScreen> {
                 );
               },
               loading: () => const Center(
-                child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+                child: CircularProgressIndicator(color: AppColors.secondary),
               ),
               error: (err, _) => Center(
                 child: Text(
@@ -318,9 +319,9 @@ class _CourseCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.surfaceMuted),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,7 +337,7 @@ class _CourseCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: Color(0xFF111827),
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
@@ -345,7 +346,7 @@ class _CourseCard extends StatelessWidget {
                       Text(
                         course.courseCode,
                         style: const TextStyle(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -357,10 +358,10 @@ class _CourseCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                  color: AppColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                    color: AppColors.success.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
@@ -388,14 +389,14 @@ class _CourseCard extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.person_outline,
-                      color: Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       size: 14,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       course.teacherName,
                       style: const TextStyle(
-                        color: Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                         fontSize: 12,
                       ),
                     ),
@@ -407,14 +408,14 @@ class _CourseCard extends StatelessWidget {
                   children: [
                     const Icon(
                       Icons.schedule_outlined,
-                      color: Color(0xFFF59E0B),
+                      color: AppColors.warning,
                       size: 14,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       course.schedule,
                       style: TextStyle(
-                        color: const Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                         fontSize: 12,
                       ),
                     ),
@@ -423,7 +424,7 @@ class _CourseCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          Divider(color: const Color(0xFFF3F4F6), height: 1),
+          Divider(color: AppColors.surfaceMuted, height: 1),
           const SizedBox(height: 8),
 
           // Action Buttons
@@ -434,9 +435,9 @@ class _CourseCard extends StatelessWidget {
                 icon: const Icon(Icons.group_add, size: 14),
                 label: const Text('Enroll Students'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF38BDF8),
+                  foregroundColor: AppColors.secondary,
                   side: BorderSide(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.4),
+                    color: AppColors.secondary.withValues(alpha: 0.4),
                   ),
                   visualDensity: VisualDensity.compact,
                 ),
@@ -445,7 +446,7 @@ class _CourseCard extends StatelessWidget {
               const SizedBox(width: 8),
               IconButton(
                 tooltip: 'Edit Course',
-                icon: const Icon(Icons.edit, color: Color(0xFF6B7280), size: 18),
+                icon: const Icon(Icons.edit, color: AppColors.textTertiary, size: 18),
                 onPressed: onEdit,
               ),
               IconButton(

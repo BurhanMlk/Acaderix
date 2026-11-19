@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/domain/result_calculator.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../academy_admin/application/academy_admin_providers.dart';
@@ -70,12 +71,12 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
             ),
             title: const Row(
               children: [
-                Icon(Icons.post_add, color: Color(0xFF38BDF8), size: 22),
+                Icon(Icons.post_add, color: AppColors.secondary, size: 22),
                 SizedBox(width: 8),
                 Text(
                   'Record Exam Result',
                   style: TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w700,
                     fontSize: 17,
                   ),
@@ -95,7 +96,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                       const Text(
                         'Select Student',
                         style: TextStyle(
-                          color: Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -106,16 +107,16 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                         isExpanded: true,
                         dropdownColor: Colors.white,
                         style: const TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 13,
                         ),
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: const Color(0xFFF9FAFB),
+                          fillColor: AppColors.surfaceMuted,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: const Color(0xFFE5E7EB),
+                              color: AppColors.border,
                             ),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
@@ -145,7 +146,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                         const Text(
                           'Select Exam',
                           style: TextStyle(
-                            color: Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -156,12 +157,12 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                           isExpanded: true,
                           dropdownColor: Colors.white,
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontSize: 13,
                           ),
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: const Color(0xFFF9FAFB),
+                            fillColor: AppColors.surfaceMuted,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -199,15 +200,15 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                                     decimal: true,
                                   ),
                               style: const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
                                 labelText: 'Obtained Marks',
                                 labelStyle:
-                                    const TextStyle(color: Color(0xFF6B7280)),
+                                    const TextStyle(color: AppColors.textTertiary),
                                 filled: true,
-                                fillColor: const Color(0xFFF9FAFB),
+                                fillColor: AppColors.surfaceMuted,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -230,15 +231,15 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                                     decimal: true,
                                   ),
                               style: const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontSize: 13,
                               ),
                               decoration: InputDecoration(
                                 labelText: 'Total Marks',
                                 labelStyle:
-                                    const TextStyle(color: Color(0xFF6B7280)),
+                                    const TextStyle(color: AppColors.textTertiary),
                                 filled: true,
-                                fillColor: const Color(0xFFF9FAFB),
+                                fillColor: AppColors.surfaceMuted,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -262,10 +263,10 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF9FAFB),
+                          color: AppColors.surfaceMuted,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: const Color(0xFFF3F4F6),
+                            color: AppColors.surfaceMuted,
                           ),
                         ),
                         child: Wrap(
@@ -277,7 +278,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                             Text(
                               'Percentage: ${pct.toStringAsFixed(1)}%',
                               style: const TextStyle(
-                                color: Color(0xFF38BDF8),
+                                color: AppColors.secondary,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12,
                               ),
@@ -286,8 +287,8 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                               'Grade: ${gradeResult.label} (${gradeResult.passed ? "Pass" : "Fail"})',
                               style: TextStyle(
                                 color: gradeResult.passed
-                                    ? const Color(0xFF10B981)
-                                    : const Color(0xFFEF4444),
+                                    ? AppColors.success
+                                    : AppColors.danger,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12,
                               ),
@@ -303,11 +304,11 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogCtx).pop(),
-                child: const Text('Cancel', style: TextStyle(color: Color(0xFF6B7280))),
+                child: const Text('Cancel', style: TextStyle(color: AppColors.textTertiary)),
               ),
               FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF38BDF8),
+                  backgroundColor: AppColors.secondary,
                 ),
                 onPressed: () async {
                   if (!formKey.currentState!.validate()) return;
@@ -335,7 +336,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Exam result saved successfully!'),
-                        backgroundColor: Color(0xFF10B981),
+                        backgroundColor: AppColors.success,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
@@ -362,9 +363,9 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
     final examMap = {for (final e in exams) e.id: e};
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF38BDF8),
+        backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.post_add),
         label: const Text('Add Result'),
@@ -378,21 +379,21 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               onChanged: (v) => setState(() => _query = v.trim().toLowerCase()),
-              style: const TextStyle(color: Color(0xFF111827), fontSize: 14),
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
               decoration: InputDecoration(
                 hintText: 'Search by student name or roll #...',
-                hintStyle: TextStyle(color: const Color(0xFF9CA3AF)),
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF38BDF8), size: 20),
+                hintStyle: TextStyle(color: AppColors.textMuted),
+                prefixIcon: const Icon(Icons.search, color: AppColors.secondary, size: 20),
                 filled: true,
-                fillColor: const Color(0xFFF9FAFB),
+                fillColor: AppColors.surfaceMuted,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: const Color(0xFFF3F4F6)),
+                  borderSide: BorderSide(color: AppColors.surfaceMuted),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: const Color(0xFFF3F4F6)),
+                  borderSide: BorderSide(color: AppColors.surfaceMuted),
                 ),
               ),
             ),
@@ -444,10 +445,10 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                       margin: const EdgeInsets.only(bottom: 10),
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9FAFB),
+                        color: AppColors.surfaceMuted,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: const Color(0xFFF3F4F6),
+                          color: AppColors.surfaceMuted,
                         ),
                       ),
                       child: Column(
@@ -464,7 +465,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
-                                        color: Color(0xFF111827),
+                                        color: AppColors.textPrimary,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 15,
                                       ),
@@ -473,7 +474,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                                       Text(
                                         'Roll #${student.rollNumber}',
                                         style: TextStyle(
-                                          color: const Color(0xFF6B7280),
+                                          color: AppColors.textTertiary,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -488,14 +489,14 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: (res.passed
-                                          ? const Color(0xFF10B981)
-                                          : const Color(0xFFEF4444))
+                                          ? AppColors.success
+                                          : AppColors.danger)
                                       .withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     color: res.passed
-                                        ? const Color(0xFF10B981)
-                                        : const Color(0xFFEF4444),
+                                        ? AppColors.success
+                                        : AppColors.danger,
                                   ),
                                 ),
                                 child: Text(
@@ -505,7 +506,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                                   style: TextStyle(
                                     color: res.passed
                                         ? const Color(0xFF34D399)
-                                        : const Color(0xFFEF4444),
+                                        : AppColors.danger,
                                     fontWeight: FontWeight.w800,
                                     fontSize: 12,
                                   ),
@@ -515,7 +516,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                           ),
                           const SizedBox(height: 10),
                           Divider(
-                            color: const Color(0xFFF3F4F6),
+                            color: AppColors.surfaceMuted,
                             height: 1,
                           ),
                           const SizedBox(height: 8),
@@ -529,7 +530,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                               Text(
                                 exam?.name ?? 'General Evaluation',
                                 style: const TextStyle(
-                                  color: Color(0xFF38BDF8),
+                                  color: AppColors.secondary,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13,
                                 ),
@@ -541,7 +542,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                                   Text(
                                     '${res.obtainedMarks.toStringAsFixed(0)} / ${res.totalMarks.toStringAsFixed(0)} marks',
                                     style: const TextStyle(
-                                      color: Color(0xFF6B7280),
+                                      color: AppColors.textTertiary,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12,
                                     ),
@@ -552,7 +553,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFF3F4F6),
+                                      color: AppColors.surfaceMuted,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -577,7 +578,7 @@ class _StaffResultsTabState extends ConsumerState<StaffResultsTab> {
                 );
               },
               loading: () => const Center(
-                child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+                child: CircularProgressIndicator(color: AppColors.secondary),
               ),
               error: (err, _) => ErrorState(
                 message: err.toString(),

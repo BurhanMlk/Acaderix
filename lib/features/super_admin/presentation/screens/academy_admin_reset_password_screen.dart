@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/error_state.dart';
@@ -478,7 +479,7 @@ class _AcademyAdminResetPasswordScreenState
                               height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                               ),
                             )
                           : const Icon(Icons.send_rounded, size: 18),

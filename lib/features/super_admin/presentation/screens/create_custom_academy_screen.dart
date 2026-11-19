@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/id_generators.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
@@ -194,13 +195,13 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Row(
             children: [
-              Icon(Icons.check_circle, color: Color(0xFF10B981), size: 28),
+              Icon(Icons.check_circle, color: AppColors.success, size: 28),
               SizedBox(width: 10),
               Expanded(
                 child: Text(
                   'Academy & Owner Created!',
                   style: TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -215,15 +216,15 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
               children: [
                 const Text(
                   'The academy and owner account have been provisioned successfully with custom package limits.',
-                  style: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+                  style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
                 ),
                 const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0F172A),
+                    color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: const Color(0xFFF3F4F6)),
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,7 +233,7 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
                       _slipRow('Academy Code', academyCode, isBold: true),
                       _slipRow('Owner Email', ownerEmail),
                       _slipRow('Password', ownerPassword, isSecret: true),
-                      const Divider(color: Color(0xFFF3F4F6), height: 16),
+                      const Divider(color: AppColors.border, height: 16),
                       _slipRow('Branches Quota', branchesStr),
                       _slipRow('Students Quota', studentsStr),
                       _slipRow('Monthly Fee', 'PKR $monthlyFee'),
@@ -249,7 +250,7 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Credentials and package details copied to clipboard!'),
-                    backgroundColor: Color(0xFF10B981),
+                    backgroundColor: AppColors.success,
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
@@ -257,14 +258,14 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
               icon: const Icon(Icons.copy, size: 16),
               label: const Text('Copy Slip'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: const BorderSide(color: Color(0xFFE5E7EB)),
+                foregroundColor: AppColors.textPrimary,
+                side: const BorderSide(color: AppColors.border),
               ),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogCtx).pop(),
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF6366F1),
+                backgroundColor: AppColors.primary,
               ),
               child: const Text('Done'),
             ),
@@ -286,7 +287,7 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
             child: Text(
               label,
               style: const TextStyle(
-                color: Color(0xFF9CA3AF),
+                color: AppColors.textMuted,
                 fontSize: 12,
               ),
             ),
@@ -295,7 +296,9 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
             child: Text(
               value,
               style: TextStyle(
-                color: isSecret ? const Color(0xFFFBBF24) : Colors.white,
+                color: isSecret
+                    ? const Color(0xFFB45309)
+                    : AppColors.textPrimary,
                 fontSize: 13,
                 fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
                 fontFamily: isSecret ? 'monospace' : null,
@@ -310,7 +313,7 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -339,7 +342,7 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
                         child: Text(
                           'Create Custom Academy',
                           style: TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -584,11 +587,11 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
                           labelText: 'Billing Cycle',
                           prefixIcon: const Icon(Icons.repeat),
                           filled: true,
-                          fillColor: const Color(0xFFF9FAFB),
+                          fillColor: AppColors.surfaceMuted,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                                color: const Color(0xFFF3F4F6)),
+                                color: AppColors.surfaceMuted),
                           ),
                         ),
                         dropdownColor: Colors.white,
@@ -612,11 +615,11 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
                           labelText: 'Academy Status',
                           prefixIcon: const Icon(Icons.toggle_on_outlined),
                           filled: true,
-                          fillColor: const Color(0xFFF9FAFB),
+                          fillColor: AppColors.surfaceMuted,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                                color: const Color(0xFFF3F4F6)),
+                                color: AppColors.surfaceMuted),
                           ),
                         ),
                         dropdownColor: Colors.white,
@@ -640,11 +643,11 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
                           labelText: 'Initial Payment Status',
                           prefixIcon: const Icon(Icons.receipt_long_outlined),
                           filled: true,
-                          fillColor: const Color(0xFFF9FAFB),
+                          fillColor: AppColors.surfaceMuted,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                                color: const Color(0xFFF3F4F6)),
+                                color: AppColors.surfaceMuted),
                           ),
                         ),
                         dropdownColor: Colors.white,
@@ -804,10 +807,10 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withValues(alpha: 0.15),
+            color: AppColors.primary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: const Color(0xFF818CF8), size: 20),
+          child: Icon(icon, color: AppColors.primary, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -817,7 +820,7 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
               Text(
                 title,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -826,7 +829,7 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
               Text(
                 subtitle,
                 style: TextStyle(
-                  color: const Color(0xFF6B7280),
+                  color: AppColors.textTertiary,
                   fontSize: 12,
                 ),
               ),
@@ -841,9 +844,9 @@ Login Portal: Download Acaderix Mobile App or sign in as Academy Admin.
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: AppColors.surfaceMuted),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

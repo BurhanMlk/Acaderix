@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../auth/application/auth_controller.dart';
@@ -26,7 +27,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
     };
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -339,7 +340,7 @@ class PlatformSettingsScreen extends ConsumerWidget {
                           ),
                         ),
                         value: platformSettings.allowRegistrations,
-                        activeThumbColor: const Color(0xFF6366F1),
+                        activeThumbColor: AppColors.primary,
                         onChanged: (val) {
                           ref
                               .read(platformSettingsProvider.notifier)

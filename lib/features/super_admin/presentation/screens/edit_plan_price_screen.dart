@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../application/subscription_providers.dart';
@@ -74,10 +75,10 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
       clipBehavior: Clip.antiAlias,
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color ?? const Color(0xFFF3F4F6),
+        color: color ?? AppColors.surfaceMuted,
         borderRadius: radius,
         border: Border.all(
-          color: borderColor ?? const Color(0xFFE5E7EB),
+          color: borderColor ?? AppColors.border,
           width: 1.2,
         ),
       ),
@@ -131,13 +132,13 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
   Widget build(BuildContext context) {
     final plan = _plan;
     final planColor = switch (plan?.id.toLowerCase()) {
-      'basic' => const Color(0xFF0EA5E9),
-      'premium' => const Color(0xFFA855F7),
-      _ => const Color(0xFF6366F1),
+      'basic' => AppColors.info,
+      'premium' => AppColors.primary,
+      _ => AppColors.primary,
     };
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -183,7 +184,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                   Text(
                                     'Edit ${plan?.name ?? 'Plan'} Fee',
                                     style: const TextStyle(
-                                      color: Color(0xFF111827),
+                                      color: AppColors.textPrimary,
                                       fontSize: 22,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -192,7 +193,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                   const Text(
                                     'Update standard monthly pricing tier',
                                     style: TextStyle(
-                                      color: Color(0xFF6B7280),
+                                      color: AppColors.textTertiary,
                                       fontSize: 13,
                                     ),
                                   ),
@@ -218,7 +219,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                     Text(
                                       plan.name,
                                       style: const TextStyle(
-                                        color: Color(0xFF111827),
+                                        color: AppColors.textPrimary,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 20,
                                       ),
@@ -239,7 +240,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                       ? 'Unlimited Students · Unlimited Branches'
                                       : 'Up to ${plan.maxStudents} Students · Up to ${plan.maxBranches} Campus Branches',
                                   style: const TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -256,7 +257,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                               const Text(
                                 'New Monthly Price (PKR)',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -286,7 +287,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                               const Text(
                                 'Quick Presets',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -329,7 +330,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                 const Text(
                                   'Included Features for This Tier',
                                   style: TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -343,14 +344,14 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                       const Icon(
                                         Icons.check_circle_rounded,
                                         size: 16,
-                                        color: Color(0xFF10B981),
+                                        color: AppColors.success,
                                       ),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           feat,
                                           style: const TextStyle(
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textTertiary,
                                             fontSize: 13,
                                             height: 1.3,
                                           ),
@@ -383,7 +384,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                             children: [
                               Icon(
                                 Icons.info_outline,
-                                color: Color(0xFF818CF8),
+                                color: AppColors.primary,
                                 size: 20,
                               ),
                               SizedBox(width: 10),
@@ -391,7 +392,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                 child: Text(
                                   'Updating the plan price sets the new standard monthly rate for academies newly registering or renewing under this tier.',
                                   style: TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 12.5,
                                   ),
                                 ),
@@ -413,7 +414,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                                     height: 18,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Color(0xFF111827),
+                                      color: AppColors.textPrimary,
                                     ),
                                   )
                                 : const Icon(Icons.check_circle_outline),
@@ -427,7 +428,7 @@ class _EditPlanPriceScreenState extends ConsumerState<EditPlanPriceScreen> {
                               ),
                             ),
                             style: FilledButton.styleFrom(
-                              backgroundColor: const Color(0xFF6366F1),
+                              backgroundColor: AppColors.primary,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),

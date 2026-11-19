@@ -1,6 +1,7 @@
 import 'package:academy_management/features/auth/application/auth_controller.dart';
 import 'package:academy_management/features/auth/domain/auth_state.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -13,7 +14,7 @@ Future<void> showNotificationCenterModal(BuildContext context, {String? academyI
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: const Color(0xFFFFFFFF),
+    backgroundColor: AppColors.surface,
     builder: (ctx) => NotificationCenterModal(academyId: academyId),
   );
 }
@@ -65,10 +66,10 @@ class _NotificationCenterModalState
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
+        color: Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(
-          color: const Color(0xFFE5E7EB),
+          color: AppColors.border,
           width: 1,
         ),
       ),
@@ -82,7 +83,7 @@ class _NotificationCenterModalState
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: const Color(0xFFD1D5DB),
+                color: AppColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -95,7 +96,7 @@ class _NotificationCenterModalState
               children: [
                 const Icon(
                   Icons.notifications_active_outlined,
-                  color: Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                   size: 22,
                 ),
                 const SizedBox(width: 8),
@@ -105,7 +106,7 @@ class _NotificationCenterModalState
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
@@ -119,13 +120,13 @@ class _NotificationCenterModalState
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6366F1),
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       '$unreadCount',
                       style: const TextStyle(
-                        color: Color(0xFF111827),
+                        color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                       ),
@@ -136,7 +137,7 @@ class _NotificationCenterModalState
                 if (unreadCount > 0 && academyId.isNotEmpty)
                   TextButton.icon(
                     style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF38BDF8),
+                      foregroundColor: AppColors.secondary,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       visualDensity: VisualDensity.compact,
                     ),
@@ -153,7 +154,7 @@ class _NotificationCenterModalState
                   )
                 else
                   IconButton(
-                    icon: const Icon(Icons.close, color: Color(0xFF9CA3AF), size: 20),
+                    icon: const Icon(Icons.close, color: AppColors.textMuted, size: 20),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
               ],
@@ -176,7 +177,7 @@ class _NotificationCenterModalState
           ),
 
           const SizedBox(height: 6),
-          const Divider(color: Color(0xFFF3F4F6), height: 1),
+          const Divider(color: AppColors.surfaceMuted, height: 1),
 
           // Notifications List
           Flexible(
@@ -190,13 +191,13 @@ class _NotificationCenterModalState
                           Icon(
                             Icons.notifications_none,
                             size: 48,
-                            color: const Color(0xFFD1D5DB),
+                            color: AppColors.border,
                           ),
                           const SizedBox(height: 12),
                           const Text(
                             "You're all caught up!",
                             style: TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                             ),
@@ -205,7 +206,7 @@ class _NotificationCenterModalState
                           Text(
                             'No new notifications or alerts at this time.',
                             style: TextStyle(
-                              color: const Color(0xFF6B7280),
+                              color: AppColors.textTertiary,
                               fontSize: 12,
                             ),
                           ),
@@ -235,17 +236,17 @@ class _NotificationCenterModalState
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF6366F1).withValues(alpha: 0.25)
+              ? AppColors.primary.withValues(alpha: 0.25)
               : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? const Color(0xFF6366F1) : const Color(0xFFF3F4F6),
+            color: isSelected ? AppColors.primary : AppColors.surfaceMuted,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? const Color(0xFF818CF8) : const Color(0xFF9CA3AF),
+            color: isSelected ? AppColors.primary : AppColors.textSecondary,
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
@@ -256,10 +257,10 @@ class _NotificationCenterModalState
 
   Widget _buildNotificationTile(AppNotification notif, String academyId) {
     final (icon, iconColor) = switch (notif.type) {
-      'broadcast' => (Icons.campaign_outlined, const Color(0xFFF59E0B)),
-      'inquiry_question' => (Icons.help_outline, const Color(0xFF38BDF8)),
-      'inquiry_reply' => (Icons.mark_chat_read_outlined, const Color(0xFF10B981)),
-      _ => (Icons.notifications_outlined, const Color(0xFF818CF8)),
+      'broadcast' => (Icons.campaign_outlined, AppColors.warning),
+      'inquiry_question' => (Icons.help_outline, AppColors.secondary),
+      'inquiry_reply' => (Icons.mark_chat_read_outlined, AppColors.success),
+      _ => (Icons.notifications_outlined, AppColors.primary),
     };
 
     final timeStr = _formatRelativeTime(notif.createdAt);
@@ -271,7 +272,7 @@ class _NotificationCenterModalState
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
-          color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+          color: AppColors.danger.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Icon(Icons.delete_outline, color: Color(0xFFF87171)),
@@ -318,13 +319,13 @@ class _NotificationCenterModalState
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: notif.isRead
-                  ? const Color(0xFF9CA3AF)
-                  : const Color(0xFF374151),
+                  ? Colors.white
+                  : AppColors.surfaceMuted,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: notif.isRead
-                    ? const Color(0xFFF3F4F6)
-                    : const Color(0xFF6366F1).withValues(alpha: 0.4),
+                    ? AppColors.border
+                    : AppColors.primary.withValues(alpha: 0.4),
                 width: notif.isRead ? 0.8 : 1.2,
               ),
             ),
@@ -350,7 +351,7 @@ class _NotificationCenterModalState
                             child: Text(
                               notif.title,
                               style: TextStyle(
-                                color: const Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontSize: 13,
                                 fontWeight: notif.isRead
                                     ? FontWeight.w600
@@ -366,7 +367,7 @@ class _NotificationCenterModalState
                               width: 8,
                               height: 8,
                               decoration: const BoxDecoration(
-                                color: Color(0xFF38BDF8),
+                                color: AppColors.secondary,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -377,7 +378,7 @@ class _NotificationCenterModalState
                       Text(
                         notif.body,
                         style: TextStyle(
-                          color: const Color(0xFF374151),
+                          color: AppColors.textSecondary,
                           fontSize: 12,
                           height: 1.3,
                         ),
@@ -388,7 +389,7 @@ class _NotificationCenterModalState
                       Text(
                         timeStr,
                         style: TextStyle(
-                          color: const Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                         ),

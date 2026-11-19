@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/validators.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -74,7 +75,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Branch "${updated.name}" updated successfully!'),
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -128,7 +129,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -139,10 +140,10 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: AppColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                   ),
                 ),
                 child: Row(
@@ -153,7 +154,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
                       ).withValues(alpha: 0.3),
                       child: const Icon(
                         Icons.account_balance,
-                        color: Color(0xFF111827),
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -164,7 +165,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
                           const Text(
                             'Branch Campus Profile',
                             style: TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                             ),
@@ -174,7 +175,7 @@ class _EditBranchScreenState extends ConsumerState<EditBranchScreen> {
                                 ? widget.branch.city
                                 : 'Campus Branch',
                             style: const TextStyle(
-                              color: Color(0xFF9CA3AF),
+                              color: AppColors.textMuted,
                               fontSize: 12,
                             ),
                           ),

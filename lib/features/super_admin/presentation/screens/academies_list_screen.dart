@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/async_list_state.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../application/academy_repository_provider.dart';
@@ -89,7 +90,7 @@ class _AcademiesListScreenState extends ConsumerState<AcademiesListScreen> {
     final academies = ref.watch(academiesStreamProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.createAcademy),
         icon: const Icon(Icons.add_business),

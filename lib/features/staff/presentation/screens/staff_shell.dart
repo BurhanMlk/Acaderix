@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_motion.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/glass.dart';
 import '../../../auth/application/auth_controller.dart';
@@ -68,12 +70,12 @@ class _StaffShellState extends ConsumerState<StaffShell> {
           final isWide = constraints.maxWidth >= 640;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFFFFFFF),
+            backgroundColor: AppColors.background,
             appBar: AppBar(
-              backgroundColor: const Color(0xFFF9FAFB),
+              backgroundColor: AppColors.surfaceMuted,
               elevation: 0,
               scrolledUnderElevation: 0,
-              iconTheme: const IconThemeData(color: Color(0xFF374151)),
+              iconTheme: const IconThemeData(color: AppColors.textSecondary),
               leadingWidth: 48,
               leading: const Padding(
                 padding: EdgeInsets.only(left: 12),
@@ -88,7 +90,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
@@ -100,7 +102,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 11,
                     ),
                   ),
@@ -111,7 +113,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                   tooltip: 'Student Messages',
                   icon: const Icon(
                     Icons.chat_bubble_outline,
-                    color: Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                     size: 20,
                   ),
                   onPressed: () {
@@ -134,16 +136,16 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                    color: AppColors.secondary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: const Color(0xFF38BDF8).withValues(alpha: 0.3),
+                      color: AppColors.secondary.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Text(
                     staffId,
                     style: const TextStyle(
-                      color: Color(0xFF38BDF8),
+                      color: AppColors.secondary,
                       fontWeight: FontWeight.w700,
                       fontSize: 11,
                     ),
@@ -153,7 +155,7 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                   tooltip: 'Sign Out',
                   icon: const Icon(
                     Icons.logout,
-                    color: Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     size: 20,
                   ),
                   onPressed: () async {
@@ -175,19 +177,19 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                 ? Row(
                     children: [
                       NavigationRail(
-                        backgroundColor: const Color(0xFFF9FAFB),
+                        backgroundColor: AppColors.surfaceMuted,
                         selectedIndex: _currentIndex,
                         onDestinationSelected: (val) =>
                             setState(() => _currentIndex = val),
                         labelType: NavigationRailLabelType.selected,
                         selectedIconTheme: const IconThemeData(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                         ),
                         unselectedIconTheme: IconThemeData(
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                         ),
                         selectedLabelTextStyle: const TextStyle(
-                          color: Color(0xFF38BDF8),
+                          color: AppColors.secondary,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                         ),
@@ -222,28 +224,37 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                       const VerticalDivider(
                         width: 1,
                         thickness: 1,
-                        color: Color(0xFFF3F4F6),
+                        color: AppColors.border,
                       ),
                       Expanded(
-                        child: IndexedStack(
-                          index: _currentIndex,
-                          children: pages,
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 1200),
+                            child: SmoothTabSwitcher(
+                              child: KeyedSubtree(
+                                key: ValueKey(_currentIndex),
+                                child: pages[_currentIndex],
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   )
-                : IndexedStack(
-                    index: _currentIndex,
-                    children: pages,
+                : SmoothTabSwitcher(
+                    child: KeyedSubtree(
+                      key: ValueKey(_currentIndex),
+                      child: pages[_currentIndex],
+                    ),
                   ),
             bottomNavigationBar: isWide
                 ? null
                 : Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0F172A).withValues(alpha: 0.95),
+                    decoration: const BoxDecoration(
+                      color: AppColors.surface,
                       border: Border(
                         top: BorderSide(
-                          color: const Color(0xFFF3F4F6),
+                          color: AppColors.border,
                         ),
                       ),
                     ),
@@ -251,10 +262,10 @@ class _StaffShellState extends ConsumerState<StaffShell> {
                       currentIndex: _currentIndex,
                       onTap: (val) => setState(() => _currentIndex = val),
                       type: BottomNavigationBarType.fixed,
-                      backgroundColor: const Color(0xFFFFFFFF),
+                      backgroundColor: AppColors.surface,
                       elevation: 0,
-                      selectedItemColor: const Color(0xFF38BDF8),
-                      unselectedItemColor: const Color(0xFF9CA3AF),
+                      selectedItemColor: AppColors.primary,
+                      unselectedItemColor: AppColors.textTertiary,
                       selectedFontSize: 11,
                       unselectedFontSize: 11,
                       selectedLabelStyle:

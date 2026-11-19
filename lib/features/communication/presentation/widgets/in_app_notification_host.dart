@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 
 import '../../application/push_notification_service.dart';
 
@@ -106,10 +107,10 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                     color: Colors.transparent,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0F172A).withValues(alpha: 0.95),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: const Color(0xFF38BDF8).withValues(alpha: 0.4),
+                          color: AppColors.border,
                           width: 1.2,
                         ),
                         boxShadow: [
@@ -119,7 +120,7 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                             offset: const Offset(0, 8),
                           ),
                           BoxShadow(
-                            color: const Color(0xFF38BDF8)
+                            color: AppColors.secondary
                                 .withValues(alpha: 0.2),
                             blurRadius: 12,
                             offset: const Offset(0, 2),
@@ -136,12 +137,12 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFF38BDF8)
+                              color: AppColors.secondary
                                   .withValues(alpha: 0.15),
                             ),
                             child: const Icon(
                               Icons.notifications_active_outlined,
-                              color: Color(0xFF38BDF8),
+                              color: AppColors.secondary,
                               size: 20,
                             ),
                           ),
@@ -155,7 +156,7 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                                   _currentNotification?['title'] ??
                                       'New Notification',
                                   style: const TextStyle(
-                                    color: Color(0xFF111827),
+                                    color: AppColors.textPrimary,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 13,
                                   ),
@@ -166,7 +167,7 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                                 Text(
                                   _currentNotification?['body'] ?? '',
                                   style: TextStyle(
-                                    color: const Color(0xFF374151),
+                                    color: AppColors.textSecondary,
                                     fontSize: 12,
                                   ),
                                   maxLines: 2,
@@ -179,7 +180,7 @@ class _InAppNotificationHostState extends State<InAppNotificationHost>
                           IconButton(
                             icon: const Icon(
                               Icons.close,
-                              color: Color(0xFF9CA3AF),
+                              color: AppColors.textMuted,
                               size: 18,
                             ),
                             padding: EdgeInsets.zero,

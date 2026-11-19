@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/currency.dart';
 import '../../../../core/widgets/skeleton.dart';
 import '../../application/subscription_providers.dart';
@@ -79,10 +80,10 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
       clipBehavior: Clip.antiAlias,
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color ?? const Color(0xFFF3F4F6),
+        color: color ?? AppColors.surfaceMuted,
         borderRadius: radius,
         border: Border.all(
-          color: borderColor ?? const Color(0xFFE5E7EB),
+          color: borderColor ?? AppColors.border,
           width: 1.2,
         ),
       ),
@@ -142,7 +143,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
     final sub = _subscription;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -186,7 +187,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                 Text(
                                   'Change Subscription Plan',
                                   style: TextStyle(
-                                    color: Color(0xFF111827),
+                                    color: AppColors.textPrimary,
                                     fontSize: 22,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -195,7 +196,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                 Text(
                                   'Select a new monthly pricing tier',
                                   style: TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -225,7 +226,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                     Text(
                                       sub.academyName,
                                       style: const TextStyle(
-                                        color: Color(0xFF111827),
+                                        color: AppColors.textPrimary,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 16,
                                       ),
@@ -240,7 +241,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                         Text(
                                           sub.academyCode,
                                           style: const TextStyle(
-                                            color: Color(0xFF6B7280),
+                                            color: AppColors.textTertiary,
                                             fontSize: 13,
                                           ),
                                         ),
@@ -265,7 +266,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                           child: Text(
                                             'CURRENT: ${sub.planName.toUpperCase()}',
                                             style: const TextStyle(
-                                              color: Color(0xFF818CF8),
+                                              color: AppColors.primary,
                                               fontWeight: FontWeight.w700,
                                               fontSize: 11,
                                             ),
@@ -292,7 +293,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                   Text(
                                     'Billing Cycle',
                                     style: TextStyle(
-                                      color: Color(0xFF6B7280),
+                                      color: AppColors.textTertiary,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -301,7 +302,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                   Text(
                                     'Monthly Plan (billed every 30 days)',
                                     style: TextStyle(
-                                      color: Color(0xFF9CA3AF),
+                                      color: AppColors.textMuted,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -328,7 +329,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                               child: const Text(
                                 'Monthly Billing',
                                 style: TextStyle(
-                                  color: Color(0xFF818CF8),
+                                  color: AppColors.primary,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 12,
                                 ),
@@ -342,7 +343,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                       const Text(
                         'Available Plans',
                         style: TextStyle(
-                          color: Color(0xFF111827),
+                          color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
@@ -369,7 +370,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                                   height: 18,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Color(0xFF111827),
+                                    color: AppColors.textPrimary,
                                   ),
                                 )
                               : const Icon(Icons.check_circle_outline),
@@ -383,7 +384,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                             ),
                           ),
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF6366F1),
+                            backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -403,17 +404,17 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
   Widget _buildPlanSelectionCard(SubscriptionPlan plan) {
     final isSelected = _selectedPlanId == plan.id;
     final planColor = switch (plan.id.toLowerCase()) {
-      'basic' => const Color(0xFF0EA5E9),
-      'premium' => const Color(0xFFA855F7),
-      _ => const Color(0xFF6366F1),
+      'basic' => AppColors.info,
+      'premium' => AppColors.primary,
+      _ => AppColors.primary,
     };
 
     return _glassCard(
       padding: EdgeInsets.zero,
-      borderColor: isSelected ? planColor : const Color(0xFFF3F4F6),
+      borderColor: isSelected ? planColor : AppColors.surfaceMuted,
       color: isSelected
           ? planColor.withValues(alpha: 0.16)
-          : const Color(0xFFF9FAFB),
+          : AppColors.surfaceMuted,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -436,7 +437,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                       isSelected
                           ? Icons.radio_button_checked
                           : Icons.radio_button_off,
-                      color: isSelected ? planColor : const Color(0xFF9CA3AF),
+                      color: isSelected ? planColor : AppColors.textMuted,
                       size: 22,
                     ),
                     const SizedBox(width: 12),
@@ -448,8 +449,8 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                             plan.name,
                             style: TextStyle(
                               color: isSelected
-                                  ? Colors.white
-                                  : const Color(0xFF6B7280),
+                                  ? AppColors.textPrimary
+                                  : AppColors.textTertiary,
                               fontWeight: FontWeight.w700,
                               fontSize: 18,
                             ),
@@ -467,7 +468,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                               child: const Text(
                                 'POPULAR',
                                 style: TextStyle(
-                                  color: Color(0xFF111827),
+                                  color: AppColors.textPrimary,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 10,
                                 ),
@@ -495,7 +496,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                     Text(
                       ' / month',
                       style: const TextStyle(
-                        color: Color(0xFF6B7280),
+                        color: AppColors.textTertiary,
                         fontSize: 13,
                       ),
                     ),
@@ -512,7 +513,7 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                             ? 'Unlimited Students · Unlimited Campus Branches'
                             : 'Up to ${plan.maxStudents} Students · Up to ${plan.maxBranches} Branches',
                         style: const TextStyle(
-                          color: Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
@@ -525,14 +526,14 @@ class _ChangePlanScreenState extends ConsumerState<ChangePlanScreen> {
                             const Icon(
                               Icons.check_circle_rounded,
                               size: 15,
-                              color: Color(0xFF10B981),
+                              color: AppColors.success,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 feat,
                                 style: const TextStyle(
-                                  color: Color(0xFF6B7280),
+                                  color: AppColors.textTertiary,
                                   fontSize: 12.5,
                                   height: 1.3,
                                 ),

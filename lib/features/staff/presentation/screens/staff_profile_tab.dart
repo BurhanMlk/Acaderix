@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/confirmation_dialog.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../auth/application/auth_controller.dart';
 import '../../application/staff_providers.dart';
 import '../../application/staff_repository_provider.dart';
@@ -37,12 +38,12 @@ class StaffProfileTab extends ConsumerWidget {
           ),
           title: const Row(
             children: [
-              Icon(Icons.lock_reset, color: Color(0xFFA855F7), size: 22),
+              Icon(Icons.lock_reset, color: AppColors.primary, size: 22),
               SizedBox(width: 8),
               Text(
                 'Change Password',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w700,
                   fontSize: 17,
                 ),
@@ -60,18 +61,18 @@ class StaffProfileTab extends ConsumerWidget {
                   children: [
                     const Text(
                       'Choose a new password for your Staff ID portal account.',
-                      style: TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+                      style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: newPassCtrl,
                       obscureText: obscureNew,
-                      style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
                       decoration: InputDecoration(
                         labelText: 'New Password',
-                        labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                        labelStyle: const TextStyle(color: AppColors.textTertiary),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -80,7 +81,7 @@ class StaffProfileTab extends ConsumerWidget {
                             obscureNew
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: const Color(0xFF9CA3AF),
+                            color: AppColors.textMuted,
                             size: 18,
                           ),
                           tooltip: obscureNew ? 'Show password' : 'Hide password',
@@ -99,12 +100,12 @@ class StaffProfileTab extends ConsumerWidget {
                     TextFormField(
                       controller: confirmPassCtrl,
                       obscureText: obscureConfirm,
-                      style: const TextStyle(color: Color(0xFF111827), fontSize: 13),
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
                       decoration: InputDecoration(
                         labelText: 'Confirm Password',
-                        labelStyle: const TextStyle(color: Color(0xFF6B7280)),
+                        labelStyle: const TextStyle(color: AppColors.textTertiary),
                         filled: true,
-                        fillColor: const Color(0xFFF9FAFB),
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -113,7 +114,7 @@ class StaffProfileTab extends ConsumerWidget {
                             obscureConfirm
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: const Color(0xFF9CA3AF),
+                            color: AppColors.textMuted,
                             size: 18,
                           ),
                           tooltip:
@@ -138,11 +139,11 @@ class StaffProfileTab extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogCtx).pop(),
-              child: const Text('Cancel', style: TextStyle(color: Color(0xFF6B7280))),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textTertiary)),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFFA855F7),
+                backgroundColor: AppColors.primary,
               ),
               onPressed: () async {
                 if (!formKey.currentState!.validate()) return;
@@ -159,7 +160,7 @@ class StaffProfileTab extends ConsumerWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Password updated successfully!'),
-                        backgroundColor: Color(0xFF10B981),
+                        backgroundColor: AppColors.success,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
@@ -202,19 +203,19 @@ class StaffProfileTab extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFFF3F4F6)),
+            border: Border.all(color: AppColors.surfaceMuted),
           ),
           child: Column(
             children: [
               CircleAvatar(
                 radius: 36,
-                backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.3),
                 child: Text(
                   staffName.isNotEmpty ? staffName[0].toUpperCase() : 'S',
                   style: const TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
                     fontSize: 28,
                   ),
@@ -225,7 +226,7 @@ class StaffProfileTab extends ConsumerWidget {
                 staffName,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w800,
                   fontSize: 20,
                 ),
@@ -237,7 +238,7 @@ class StaffProfileTab extends ConsumerWidget {
                     : 'Faculty Member',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: const Color(0xFF6B7280),
+                  color: AppColors.textTertiary,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -246,16 +247,16 @@ class StaffProfileTab extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF38BDF8).withValues(alpha: 0.15),
+                  color: AppColors.secondary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.3),
+                    color: AppColors.secondary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   'Staff ID: $staffId',
                   style: const TextStyle(
-                    color: Color(0xFF38BDF8),
+                    color: AppColors.secondary,
                     fontWeight: FontWeight.w700,
                     fontSize: 12,
                   ),
@@ -272,9 +273,9 @@ class StaffProfileTab extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFF3F4F6)),
+            border: Border.all(color: AppColors.surfaceMuted),
           ),
           child: Column(
             children: [
@@ -303,9 +304,9 @@ class StaffProfileTab extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFF3F4F6)),
+            border: Border.all(color: AppColors.surfaceMuted),
           ),
           child: Column(
             children: [
@@ -327,21 +328,21 @@ class StaffProfileTab extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF9FAFB),
+            color: AppColors.surfaceMuted,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFF3F4F6)),
+            border: Border.all(color: AppColors.surfaceMuted),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               OutlinedButton.icon(
-                icon: const Icon(Icons.lock_reset, size: 18, color: Color(0xFFA855F7)),
+                icon: const Icon(Icons.lock_reset, size: 18, color: AppColors.primary),
                 label: const Text(
                   'Change Password',
-                  style: TextStyle(color: Color(0xFF111827), fontWeight: FontWeight.w600),
+                  style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: const Color(0xFFA855F7).withValues(alpha: 0.4)),
+                  side: BorderSide(color: AppColors.primary.withValues(alpha: 0.4)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -399,12 +400,12 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: const Color(0xFF6366F1)),
+        Icon(icon, size: 16, color: AppColors.primary),
         const SizedBox(width: 8),
         Text(
           title,
           style: TextStyle(
-            color: const Color(0xFF1F2937),
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
             fontSize: 14,
           ),
@@ -439,7 +440,7 @@ class _ProfileRow extends StatelessWidget {
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: const Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 12,
                   ),
                 ),
@@ -448,7 +449,7 @@ class _ProfileRow extends StatelessWidget {
                 child: Text(
                   value,
                   style: const TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -458,7 +459,7 @@ class _ProfileRow extends StatelessWidget {
           ),
         ),
         if (!isLast)
-          Divider(color: const Color(0xFFF9FAFB), height: 1),
+          Divider(color: AppColors.surfaceMuted, height: 1),
       ],
     );
   }

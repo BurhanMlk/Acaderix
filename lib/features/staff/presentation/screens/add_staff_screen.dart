@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/utils/id_generators.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -148,12 +149,12 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                color: AppColors.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.badge_outlined,
-                color: Color(0xFFA5B4FC),
+                color: AppColors.primary,
                 size: 20,
               ),
             ),
@@ -162,7 +163,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
               child: Text(
                 'Staff Credentials',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -183,7 +184,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                   const Text(
                     'A staff account has been created. Please share these login credentials with the staff member.',
                     style: TextStyle(
-                      color: Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 13,
                       height: 1.4,
                     ),
@@ -192,36 +193,36 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF9FAFB),
+                      color: AppColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFFE5E7EB),
+                        color: AppColors.border,
                       ),
                     ),
                     child: Column(
                       children: [
                         _CredentialRow(label: 'Full Name', value: staff.fullName),
-                        const Divider(color: Color(0xFFF3F4F6), height: 16),
+                        const Divider(color: AppColors.surfaceMuted, height: 16),
                         _CredentialRow(
                           label: 'Staff ID',
                           value: staff.staffId,
                           isHighlight: true,
                         ),
-                        const Divider(color: Color(0xFFF3F4F6), height: 16),
+                        const Divider(color: AppColors.surfaceMuted, height: 16),
                         _CredentialRow(
                           label: 'Initial Password',
                           value: staff.password,
                           isHighlight: true,
                         ),
                         if (staff.jobTitle.isNotEmpty) ...[
-                          const Divider(color: Color(0xFFF3F4F6), height: 16),
+                          const Divider(color: AppColors.surfaceMuted, height: 16),
                           _CredentialRow(
                             label: 'Designation',
                             value: staff.jobTitle,
                           ),
                         ],
                         if (assignedCourses.isNotEmpty) ...[
-                          const Divider(color: Color(0xFFF3F4F6), height: 16),
+                          const Divider(color: AppColors.surfaceMuted, height: 16),
                           _CredentialRow(
                             label: 'Assigned Courses',
                             value: assignedCourses.join(', '),
@@ -236,8 +237,8 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                     label: const Text('Copy Credentials'),
                     style: OutlinedButton.styleFrom(
                       visualDensity: VisualDensity.compact,
-                      foregroundColor: const Color(0xFF38BDF8),
-                      side: const BorderSide(color: Color(0xFF38BDF8)),
+                      foregroundColor: AppColors.secondary,
+                      side: const BorderSide(color: AppColors.secondary),
                     ),
                     onPressed: () {
                       final courseListStr = assignedCourses.isNotEmpty
@@ -280,7 +281,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
     final coursesAsync = ref.watch(coursesStreamProvider(academyId));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -472,7 +473,7 @@ class _CredentialRow extends StatelessWidget {
             width: 105,
             child: Text(
               label,
-              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+              style: const TextStyle(color: AppColors.textTertiary, fontSize: 13),
             ),
           ),
           const SizedBox(width: 8),
@@ -481,7 +482,9 @@ class _CredentialRow extends StatelessWidget {
               value,
               textAlign: TextAlign.end,
               style: TextStyle(
-                color: isHighlight ? const Color(0xFF38BDF8) : Colors.white,
+                color: isHighlight
+                    ? AppColors.info
+                    : AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
                 fontSize: isHighlight ? 14 : 13,
               ),

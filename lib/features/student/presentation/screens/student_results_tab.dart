@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:academy_management/core/widgets/glass.dart';
+import 'package:academy_management/core/theme/app_colors.dart';
 import 'package:academy_management/features/admissions/domain/student.dart';
 import 'package:academy_management/features/student/application/student_providers.dart';
 import 'package:academy_management/features/student/presentation/utils/student_pdf_generator.dart';
@@ -62,7 +63,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                     child: Text(
                       'Academic Performance',
                       style: theme.textTheme.titleSmall?.copyWith(
-                        color: const Color(0xFF111827),
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                       maxLines: 1,
@@ -74,15 +75,14 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                      ),
+                      color: AppColors.primaryLight,
                       borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: Text(
                       'Grade ${metrics.academicGrade}',
                       style: const TextStyle(
-                        color: Color(0xFF111827),
+                        color: AppColors.primary,
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                       ),
@@ -99,7 +99,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                     child: _buildMetricTile(
                       'Overall Average',
                       '${avgScore.toStringAsFixed(1)}%',
-                      const Color(0xFF38BDF8),
+                      AppColors.secondary,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -107,7 +107,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                     child: _buildMetricTile(
                       'Total Exams',
                       '$totalExams',
-                      const Color(0xFFA855F7),
+                      AppColors.primary,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -117,14 +117,14 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                       totalExams > 0
                           ? '${((passedExams / totalExams) * 100).toStringAsFixed(0)}%'
                           : '100%',
-                      const Color(0xFF10B981),
+                      AppColors.success,
                     ),
                   ),
                 ],
               ),
 
               const SizedBox(height: 16),
-              const Divider(color: Color(0xFFF3F4F6), height: 1),
+              const Divider(color: AppColors.surfaceMuted, height: 1),
               const SizedBox(height: 14),
 
               // PDF Report Card Download Button
@@ -132,7 +132,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4F46E5),
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -146,7 +146,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                           height: 16,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                           ),
                         )
                       : const Icon(Icons.picture_as_pdf_outlined, size: 18),
@@ -205,14 +205,14 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                   children: [
                     const Icon(
                       Icons.bar_chart,
-                      color: Color(0xFF818CF8),
+                      color: AppColors.primary,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Exam Scores (%)',
                       style: theme.textTheme.titleSmall?.copyWith(
-                        color: const Color(0xFF111827),
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -235,7 +235,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                             return BarTooltipItem(
                               '$title\n${rod.toY.toStringAsFixed(1)}%',
                               const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11,
                               ),
@@ -260,7 +260,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                               return Text(
                                 '${value.toInt()}%',
                                 style: TextStyle(
-                                  color: const Color(0xFF9CA3AF),
+                                  color: AppColors.textMuted,
                                   fontSize: 10,
                                 ),
                               );
@@ -278,7 +278,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                                   child: Text(
                                     'E${idx + 1}',
                                     style: TextStyle(
-                                      color: const Color(0xFF6B7280),
+                                      color: AppColors.textTertiary,
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -295,7 +295,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                         drawVerticalLine: false,
                         horizontalInterval: 25,
                         getDrawingHorizontalLine: (_) => FlLine(
-                          color: const Color(0xFFF3F4F6),
+                          color: AppColors.surfaceMuted,
                           strokeWidth: 1,
                         ),
                       ),
@@ -311,22 +311,10 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                           barRods: [
                             BarChartRodData(
                               toY: pct,
-                              gradient: LinearGradient(
-                                colors: isPass
-                                    ? [
-                                        const Color(0xFF6366F1),
-                                        const Color(0xFF38BDF8),
-                                      ]
-                                    : [
-                                        const Color(0xFFEF4444),
-                                        const Color(0xFFF87171),
-                                      ],
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                              ),
+                              color: isPass ? AppColors.primary : AppColors.danger,
                               width: 18,
                               borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(6),
+                                top: Radius.circular(4),
                               ),
                             ),
                           ],
@@ -345,7 +333,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
         Text(
           'Examination Breakdown (${results.length})',
           style: theme.textTheme.titleSmall?.copyWith(
-            color: const Color(0xFF111827),
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -355,9 +343,9 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: const Color(0xFF111827).withValues(alpha: 0.4),
+              color: AppColors.surfaceMuted,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFF3F4F6)),
+              border: Border.all(color: AppColors.border),
             ),
             child: Center(
               child: Column(
@@ -365,13 +353,13 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                   const Icon(
                     Icons.assignment_outlined,
                     size: 44,
-                    color: Color(0xFFD1D5DB),
+                    color: AppColors.border,
                   ),
                   const SizedBox(height: 10),
                   Text(
                     'No Examination Results Yet',
                     style: theme.textTheme.titleSmall?.copyWith(
-                      color: const Color(0xFF111827),
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -380,7 +368,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                     'Your official marks and grade sheets will appear here once published by your instructors.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: const Color(0xFF6B7280),
+                      color: AppColors.textTertiary,
                       fontSize: 12,
                     ),
                   ),
@@ -402,9 +390,9 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF111827).withValues(alpha: 0.6),
+                color: AppColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFFF3F4F6)),
+                border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
@@ -413,8 +401,8 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                     height: 44,
                     decoration: BoxDecoration(
                       color: (isPass
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFEF4444))
+                              ? AppColors.success
+                              : AppColors.danger)
                           .withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -439,7 +427,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                         Text(
                           examName,
                           style: const TextStyle(
-                            color: Color(0xFF111827),
+                            color: AppColors.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),
@@ -450,7 +438,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                         Text(
                           'Marks: ${r.obtainedMarks.toStringAsFixed(0)} / ${r.totalMarks.toStringAsFixed(0)} ($pct%)',
                           style: TextStyle(
-                            color: const Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -465,14 +453,14 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
                     ),
                     decoration: BoxDecoration(
                       color: (isPass
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFEF4444))
+                              ? AppColors.success
+                              : AppColors.danger)
                           .withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
                         color: isPass
-                            ? const Color(0xFF10B981)
-                            : const Color(0xFFEF4444),
+                            ? AppColors.success
+                            : AppColors.danger,
                         width: 0.8,
                       ),
                     ),
@@ -517,7 +505,7 @@ class _StudentResultsTabState extends ConsumerState<StudentResultsTab> {
           Text(
             label,
             style: TextStyle(
-              color: const Color(0xFF6B7280),
+              color: AppColors.textTertiary,
               fontSize: 10,
             ),
             textAlign: TextAlign.center,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../auth/application/auth_controller.dart';
@@ -104,7 +105,7 @@ class _SuperAdminResetPasswordScreenState
     };
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680),
@@ -323,7 +324,7 @@ class _SuperAdminResetPasswordScreenState
                                   width: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Color(0xFF111827),
+                                    color: AppColors.textPrimary,
                                   ),
                                 )
                               : const Text(

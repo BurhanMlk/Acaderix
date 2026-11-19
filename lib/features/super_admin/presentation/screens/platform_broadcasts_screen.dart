@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/widgets/confirmation_dialog.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/glass.dart';
@@ -40,7 +41,7 @@ class _PlatformBroadcastsScreenState
     final broadcastsAsync = ref.watch(platformBroadcastsStreamProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: broadcastsAsync.when(
         loading: () => _buildLoadingState(),
         error: (err, _) => ErrorState(
@@ -50,7 +51,7 @@ class _PlatformBroadcastsScreenState
         data: (broadcasts) => _buildContent(context, broadcasts),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF6366F1),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.campaign_rounded),
         label: const Text('New Broadcast'),
@@ -132,7 +133,7 @@ class _PlatformBroadcastsScreenState
                       title: 'Total Broadcasts',
                       value: totalCount.toString(),
                       icon: Icons.campaign_outlined,
-                      color: const Color(0xFF6366F1),
+                      color: AppColors.primary,
                     ),
                   ),
                   SizedBox(
@@ -141,7 +142,7 @@ class _PlatformBroadcastsScreenState
                       title: 'Active Notices',
                       value: activeCount.toString(),
                       icon: Icons.check_circle_outline_rounded,
-                      color: const Color(0xFF10B981),
+                      color: AppColors.success,
                     ),
                   ),
                   SizedBox(
@@ -150,7 +151,7 @@ class _PlatformBroadcastsScreenState
                       title: 'Urgent Alerts',
                       value: urgentCount.toString(),
                       icon: Icons.priority_high_rounded,
-                      color: const Color(0xFFEF4444),
+                      color: AppColors.danger,
                     ),
                   ),
                 ],
@@ -163,14 +164,14 @@ class _PlatformBroadcastsScreenState
           TextField(
             controller: _searchController,
             onChanged: (_) => setState(() {}),
-            style: const TextStyle(color: Color(0xFF111827)),
+            style: const TextStyle(color: AppColors.textPrimary),
             decoration: InputDecoration(
               hintText: 'Search broadcasts by title or keyword...',
-              hintStyle: TextStyle(color: const Color(0xFF9CA3AF)),
-              prefixIcon: const Icon(Icons.search, color: Color(0xFF6B7280)),
+              hintStyle: TextStyle(color: AppColors.textMuted),
+              prefixIcon: const Icon(Icons.search, color: AppColors.textTertiary),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: Color(0xFF6B7280)),
+                      icon: const Icon(Icons.clear, color: AppColors.textTertiary),
                       onPressed: () {
                         _searchController.clear();
                         setState(() {});
@@ -178,22 +179,22 @@ class _PlatformBroadcastsScreenState
                     )
                   : null,
               filled: true,
-              fillColor: const Color(0xFFF9FAFB),
+              fillColor: AppColors.surfaceMuted,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: const Color(0xFFE5E7EB),
+                  color: AppColors.border,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: const Color(0xFFE5E7EB),
+                  color: AppColors.border,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Color(0xFF6366F1)),
+                borderSide: const BorderSide(color: AppColors.primary),
               ),
             ),
           ),
@@ -288,17 +289,17 @@ class _PlatformBroadcastsScreenState
       label: Text(label),
       selected: isSelected,
       onSelected: (_) => onSelected(value),
-      selectedColor: const Color(0xFF6366F1).withValues(alpha: 0.35),
-      backgroundColor: const Color(0xFFF9FAFB),
+      selectedColor: AppColors.primary.withValues(alpha: 0.35),
+      backgroundColor: AppColors.surfaceMuted,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : const Color(0xFF6B7280),
+        color: isSelected ? const Color(0xFF312E81) : AppColors.textTertiary,
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         fontSize: 13,
       ),
       side: BorderSide(
         color: isSelected
-            ? const Color(0xFF6366F1)
-            : const Color(0xFFF3F4F6),
+            ? AppColors.primary
+            : AppColors.surfaceMuted,
       ),
     );
   }
@@ -382,7 +383,7 @@ class _PlatformBroadcastsScreenState
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -403,7 +404,7 @@ class _PlatformBroadcastsScreenState
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -437,7 +438,7 @@ class _PlatformBroadcastsScreenState
                       style: TextStyle(
                         color: broadcast.isActive
                             ? Colors.greenAccent
-                            : const Color(0xFF9CA3AF),
+                            : AppColors.textMuted,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -449,7 +450,7 @@ class _PlatformBroadcastsScreenState
               Text(
                 broadcast.title,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -458,13 +459,13 @@ class _PlatformBroadcastsScreenState
               Text(
                 broadcast.message,
                 style: TextStyle(
-                  color: const Color(0xFF374151),
+                  color: AppColors.textSecondary,
                   fontSize: 14,
                   height: 1.5,
                 ),
               ),
               const SizedBox(height: 20),
-              const Divider(color: Color(0xFFF3F4F6)),
+              const Divider(color: AppColors.surfaceMuted),
               const SizedBox(height: 12),
               _detailRow(Icons.groups_outlined, 'Target Audience',
                   broadcast.audienceLabel),
@@ -489,9 +490,9 @@ class _PlatformBroadcastsScreenState
                 child: OutlinedButton(
                   onPressed: () => Navigator.of(ctx).pop(),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.textSecondary,
                     side: BorderSide(
-                        color: const Color(0xFFE5E7EB)),
+                        color: AppColors.border),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: const Text('Close'),
@@ -507,17 +508,17 @@ class _PlatformBroadcastsScreenState
   Widget _detailRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: const Color(0xFF9CA3AF)),
+        Icon(icon, size: 16, color: AppColors.textMuted),
         const SizedBox(width: 8),
         Text(
           '$label: ',
-          style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
+          style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
         ),
         Expanded(
           child: Text(
             value,
             style: const TextStyle(
-              color: Color(0xFF111827),
+              color: AppColors.textPrimary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -533,7 +534,7 @@ class _PlatformBroadcastsScreenState
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -556,7 +557,7 @@ class _PlatformBroadcastsScreenState
                 const SnackBar(
                   content: Text('Broadcast published successfully!'),
                   behavior: SnackBarBehavior.floating,
-                  backgroundColor: Color(0xFF10B981),
+                  backgroundColor: AppColors.success,
                 ),
               );
             }
@@ -578,9 +579,9 @@ class _PlatformBroadcastsScreenState
   Widget _priorityBadge(String priority) {
     final p = priority.toLowerCase();
     final (color, label) = switch (p) {
-      'urgent' => (const Color(0xFFEF4444), 'URGENT'),
-      'high' => (const Color(0xFFF59E0B), 'HIGH'),
-      _ => (const Color(0xFF38BDF8), 'NORMAL'),
+      'urgent' => (AppColors.danger, 'URGENT'),
+      'high' => (AppColors.warning, 'HIGH'),
+      _ => (AppColors.secondary, 'NORMAL'),
     };
 
     return Container(
@@ -606,13 +607,13 @@ class _PlatformBroadcastsScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         category.toUpperCase(),
         style: const TextStyle(
-          color: Color(0xFF6B7280),
+          color: AppColors.textTertiary,
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
@@ -654,11 +655,11 @@ class _BroadcastCard extends StatelessWidget {
                       width: 8,
                       height: 8,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFEF4444),
+                        color: AppColors.danger,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Color(0xFFEF4444),
+                            color: AppColors.danger,
                             blurRadius: 6,
                             spreadRadius: 1,
                           ),
@@ -680,7 +681,7 @@ class _BroadcastCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: const Color(0xFF9CA3AF),
+                          color: AppColors.textMuted,
                           fontSize: 11,
                         ),
                       ),
@@ -692,7 +693,7 @@ class _BroadcastCard extends StatelessWidget {
               Text(
                 broadcast.title,
                 style: const TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -703,7 +704,7 @@ class _BroadcastCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: const Color(0xFF374151),
+                  color: AppColors.textSecondary,
                   fontSize: 13,
                   height: 1.4,
                 ),
@@ -718,7 +719,7 @@ class _BroadcastCard extends StatelessWidget {
                         Icon(
                           Icons.groups_outlined,
                           size: 14,
-                          color: const Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                         ),
                         const SizedBox(width: 4),
                         Flexible(
@@ -727,7 +728,7 @@ class _BroadcastCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              color: const Color(0xFF6B7280),
+                              color: AppColors.textTertiary,
                               fontSize: 11,
                             ),
                           ),
@@ -786,9 +787,9 @@ class _BroadcastCard extends StatelessWidget {
   Widget _priorityBadge(String priority) {
     final p = priority.toLowerCase();
     final (color, label) = switch (p) {
-      'urgent' => (const Color(0xFFEF4444), 'URGENT'),
-      'high' => (const Color(0xFFF59E0B), 'HIGH'),
-      _ => (const Color(0xFF38BDF8), 'NORMAL'),
+      'urgent' => (AppColors.danger, 'URGENT'),
+      'high' => (AppColors.warning, 'HIGH'),
+      _ => (AppColors.secondary, 'NORMAL'),
     };
 
     return Container(
@@ -812,13 +813,13 @@ class _BroadcastCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
         category.toUpperCase(),
         style: const TextStyle(
-          color: Color(0xFF6B7280),
+          color: AppColors.textTertiary,
           fontSize: 10,
           fontWeight: FontWeight.w600,
         ),
@@ -895,7 +896,7 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -904,7 +905,7 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
               const Text(
                 'Create Platform Broadcast',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -913,7 +914,7 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
               Text(
                 'Publish system updates or notices to academy administrators.',
                 style: TextStyle(
-                  color: const Color(0xFF6B7280),
+                  color: AppColors.textTertiary,
                   fontSize: 13,
                 ),
               ),
@@ -922,13 +923,13 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
               // Title Field
               TextFormField(
                 controller: _titleController,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Notice Title *',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -942,13 +943,13 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
               DropdownButtonFormField<String>(
                 initialValue: _category,
                 dropdownColor: Colors.white,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Category',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -972,13 +973,13 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
               DropdownButtonFormField<String>(
                 initialValue: _targetAudience,
                 dropdownColor: Colors.white,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Target Audience',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1002,13 +1003,13 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
               DropdownButtonFormField<String>(
                 initialValue: _priority,
                 dropdownColor: Colors.white,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Priority Level',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1026,13 +1027,13 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
               TextFormField(
                 controller: _messageController,
                 maxLines: 4,
-                style: const TextStyle(color: Color(0xFF111827)),
+                style: const TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Detailed Message *',
                   labelStyle:
-                      TextStyle(color: const Color(0xFF6B7280)),
+                      TextStyle(color: AppColors.textTertiary),
                   filled: true,
-                  fillColor: const Color(0xFFF9FAFB),
+                  fillColor: AppColors.surfaceMuted,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1047,17 +1048,17 @@ class _NewBroadcastFormState extends State<_NewBroadcastForm> {
                 contentPadding: EdgeInsets.zero,
                 title: const Text(
                   'Send Device Push Notification',
-                  style: TextStyle(color: Color(0xFF111827), fontSize: 14),
+                  style: TextStyle(color: AppColors.textPrimary, fontSize: 14),
                 ),
                 subtitle: Text(
                   'Broadcast instant alerts to all enrolled academy mobile devices',
                   style: TextStyle(
-                    color: const Color(0xFF9CA3AF),
+                    color: AppColors.textMuted,
                     fontSize: 12,
                   ),
                 ),
                 value: _sendPush,
-                activeThumbColor: const Color(0xFF6366F1),
+                activeThumbColor: AppColors.primary,
                 onChanged: (val) => setState(() => _sendPush = val),
               ),
               const SizedBox(height: 20),

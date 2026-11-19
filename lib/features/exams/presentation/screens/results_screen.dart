@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/domain/result_calculator.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/async_list_state.dart';
 import '../../../../shared/branch_tab_bar.dart';
@@ -36,7 +37,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     final selectedBranchId = ref.watch(selectedBranchIdProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addResult(context, ref, academyId),
         icon: const Icon(Icons.add),
@@ -103,7 +104,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       padding: EdgeInsets.all(24),
                       child: Text(
                         'No exam results found for the selected filter.',
-                        style: TextStyle(color: Color(0xFF6B7280)),
+                        style: TextStyle(color: AppColors.textTertiary),
                       ),
                     ),
                   );
@@ -127,7 +128,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                           _ResultMetricCard(
                             label: 'Total Assessed',
                             value: '${filtered.length}',
-                            color: const Color(0xFF818CF8),
+                            color: AppColors.primary,
                           ),
                           const SizedBox(width: 8),
                           _ResultMetricCard(
@@ -141,7 +142,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                             value: filtered.isNotEmpty
                                 ? '${((passedCount / filtered.length) * 100).toStringAsFixed(0)}%'
                                 : '0%',
-                            color: const Color(0xFF38BDF8),
+                            color: AppColors.secondary,
                           ),
                         ],
                       );
@@ -174,7 +175,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                 CircleAvatar(
                                   radius: 20,
                                   backgroundColor: result.passed
-                                      ? const Color(0xFF10B981)
+                                      ? AppColors.success
                                           .withValues(alpha: 0.2)
                                       : Colors.redAccent
                                           .withValues(alpha: 0.2),
@@ -200,7 +201,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                             ? student.fullName
                                             : 'Student ${result.studentId}',
                                         style: const TextStyle(
-                                          color: Color(0xFF111827),
+                                          color: AppColors.textPrimary,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 14,
                                         ),
@@ -217,7 +218,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                               Text(
                                                 'Roll #${student.rollNumber}',
                                                 style: const TextStyle(
-                                                  color: Color(0xFF9CA3AF),
+                                                  color: AppColors.textMuted,
                                                   fontSize: 11,
                                                 ),
                                               ),
@@ -230,7 +231,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                                   vertical: 1.5,
                                                 ),
                                                 decoration: BoxDecoration(
-                                                  color: const Color(0xFF38BDF8)
+                                                  color: AppColors.secondary
                                                       .withValues(alpha: 0.15),
                                                   borderRadius:
                                                       BorderRadius.circular(4),
@@ -238,7 +239,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                                 child: Text(
                                                   branch.name,
                                                   style: const TextStyle(
-                                                    color: Color(0xFF38BDF8),
+                                                    color: AppColors.secondary,
                                                     fontSize: 10,
                                                     fontWeight: FontWeight.w600,
                                                   ),
@@ -258,13 +259,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: (result.passed
-                                            ? const Color(0xFF10B981)
+                                            ? AppColors.success
                                             : Colors.redAccent)
                                         .withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
                                       color: (result.passed
-                                              ? const Color(0xFF10B981)
+                                              ? AppColors.success
                                               : Colors.redAccent)
                                           .withValues(alpha: 0.4),
                                     ),
@@ -287,7 +288,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                             const SizedBox(height: 8),
                             Divider(
                               height: 1,
-                              color: const Color(0xFFF3F4F6),
+                              color: AppColors.surfaceMuted,
                             ),
                             const SizedBox(height: 8),
 
@@ -297,13 +298,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                 const Icon(
                                   Icons.assignment_turned_in_outlined,
                                   size: 14,
-                                  color: Color(0xFF9CA3AF),
+                                  color: AppColors.textMuted,
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
                                   '${result.obtainedMarks.toStringAsFixed(0)} / ${result.totalMarks.toStringAsFixed(0)} marks',
                                   style: const TextStyle(
-                                    color: Color(0xFF6B7280),
+                                    color: AppColors.textTertiary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -315,7 +316,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                     vertical: 1.5,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFF3F4F6),
+                                    color: AppColors.surfaceMuted,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -365,12 +366,12 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                color: AppColors.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.assessment_outlined,
-                color: Color(0xFFA5B4FC),
+                color: AppColors.primary,
                 size: 20,
               ),
             ),
@@ -379,7 +380,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
               child: Text(
                 'Add Result',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -403,7 +404,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       const Text(
                         'Select Student',
                         style: TextStyle(
-                          color: Color(0xFF6B7280),
+                          color: AppColors.textTertiary,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
@@ -419,14 +420,14 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                 child: ActionChip(
                                   visualDensity: VisualDensity.compact,
                                   backgroundColor:
-                                      const Color(0xFFF3F4F6),
+                                      AppColors.surfaceMuted,
                                   side: BorderSide(
-                                    color: const Color(0xFFE5E7EB),
+                                    color: AppColors.border,
                                   ),
                                   label: Text(
                                     '${s.fullName} (${s.rollNumber})',
                                     style: const TextStyle(
-                                      color: Color(0xFF111827),
+                                      color: AppColors.textPrimary,
                                       fontSize: 11,
                                     ),
                                   ),
@@ -445,7 +446,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                     ],
                     TextFormField(
                       controller: studentRollController,
-                      style: const TextStyle(color: Color(0xFF111827)),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         labelText: 'Student roll no.',
@@ -460,7 +461,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       controller: marksController,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(color: Color(0xFF111827)),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         labelText: 'Obtained marks',
@@ -475,7 +476,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       controller: totalController,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(color: Color(0xFF111827)),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       textInputAction: TextInputAction.done,
                       decoration: const InputDecoration(
                         labelText: 'Total marks',
@@ -552,7 +553,7 @@ class _ResultMetricCard extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 10),
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

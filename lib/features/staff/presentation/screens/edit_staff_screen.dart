@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/id_generators.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
@@ -143,7 +144,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
           content: Text(
             'Staff member "${updated.fullName}" updated successfully!',
           ),
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -208,12 +209,12 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0284C7).withValues(alpha: 0.2),
+                  color: AppColors.info.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.lock_reset,
-                  color: Color(0xFF38BDF8),
+                  color: AppColors.secondary,
                   size: 20,
                 ),
               ),
@@ -222,7 +223,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                 child: Text(
                   'Reset Staff Password',
                   style: TextStyle(
-                    color: Color(0xFF111827),
+                    color: AppColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -245,10 +246,10 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF9FAFB),
+                          color: AppColors.surfaceMuted,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: const Color(0xFFF3F4F6),
+                            color: AppColors.surfaceMuted,
                           ),
                         ),
                         child: Column(
@@ -257,7 +258,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                             Text(
                               widget.staff.fullName,
                               style: const TextStyle(
-                                color: Color(0xFF111827),
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
                               ),
@@ -266,7 +267,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                             Text(
                               'Staff ID: ${widget.staff.staffId.isNotEmpty ? widget.staff.staffId : widget.staff.id}',
                               style: const TextStyle(
-                                color: Color(0xFF38BDF8),
+                                color: AppColors.secondary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                               ),
@@ -278,7 +279,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                       TextFormField(
                         controller: passwordController,
                         obscureText: obscurePassword,
-                        style: const TextStyle(color: Color(0xFF111827)),
+                        style: const TextStyle(color: AppColors.textPrimary),
                         decoration: InputDecoration(
                           labelText: 'New Password',
                           prefixIcon: const Icon(Icons.lock_outline),
@@ -287,7 +288,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                               obscurePassword
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: const Color(0xFF6B7280),
+                              color: AppColors.textTertiary,
                               size: 20,
                             ),
                             tooltip: obscurePassword
@@ -316,14 +317,14 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                         child: ActionChip(
                           visualDensity: VisualDensity.compact,
                           backgroundColor:
-                              const Color(0xFFF3F4F6),
+                              AppColors.surfaceMuted,
                           side: BorderSide(
-                            color: const Color(0xFFE5E7EB),
+                            color: AppColors.border,
                           ),
                           label: const Text(
                             'Generate Random Password',
                             style: TextStyle(
-                              color: Color(0xFF38BDF8),
+                              color: AppColors.secondary,
                               fontSize: 11,
                             ),
                           ),
@@ -385,12 +386,12 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                color: AppColors.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.badge_outlined,
-                color: Color(0xFFA5B4FC),
+                color: AppColors.primary,
                 size: 20,
               ),
             ),
@@ -399,7 +400,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
               child: Text(
                 'Staff Credentials',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -420,7 +421,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                 const Text(
                   'Password updated successfully! Share these updated credentials with the staff member so they can sign in.',
                   style: TextStyle(
-                    color: Color(0xFF6B7280),
+                    color: AppColors.textTertiary,
                     fontSize: 13,
                     height: 1.4,
                   ),
@@ -429,10 +430,10 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
+                    color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFFE5E7EB),
+                      color: AppColors.border,
                     ),
                   ),
                   child: Column(
@@ -441,7 +442,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                         label: 'Full Name',
                         value: widget.staff.fullName,
                       ),
-                      const Divider(color: Color(0xFFF3F4F6), height: 16),
+                      const Divider(color: AppColors.surfaceMuted, height: 16),
                       _CredentialRow(
                         label: 'Staff ID',
                         value:
@@ -450,14 +451,14 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                                 : widget.staff.id,
                         isHighlight: true,
                       ),
-                      const Divider(color: Color(0xFFF3F4F6), height: 16),
+                      const Divider(color: AppColors.surfaceMuted, height: 16),
                       _CredentialRow(
                         label: 'New Password',
                         value: newPassword,
                         isHighlight: true,
                       ),
                       if (widget.staff.jobTitle.isNotEmpty) ...[
-                        const Divider(color: Color(0xFFF3F4F6), height: 16),
+                        const Divider(color: AppColors.surfaceMuted, height: 16),
                         _CredentialRow(
                           label: 'Designation',
                           value: widget.staff.jobTitle,
@@ -472,8 +473,8 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                   label: const Text('Copy Credentials'),
                   style: OutlinedButton.styleFrom(
                     visualDensity: VisualDensity.compact,
-                    foregroundColor: const Color(0xFF38BDF8),
-                    side: const BorderSide(color: Color(0xFF38BDF8)),
+                    foregroundColor: AppColors.secondary,
+                    side: const BorderSide(color: AppColors.secondary),
                   ),
                   onPressed: () {
                     final sId =
@@ -531,7 +532,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -542,10 +543,10 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: AppColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                   ),
                 ),
                 child: Column(
@@ -556,7 +557,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                           backgroundColor: const Color(
                             0xFF14B8A6,
                           ).withValues(alpha: 0.3),
-                          child: const Icon(Icons.badge, color: Color(0xFF374151)),
+                          child: const Icon(Icons.badge, color: AppColors.textSecondary),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -571,7 +572,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                                   Text(
                                     widget.staff.fullName,
                                     style: const TextStyle(
-                                      color: Color(0xFF111827),
+                                      color: AppColors.textPrimary,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 16,
                                     ),
@@ -597,7 +598,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                                       child: Text(
                                         widget.staff.staffId,
                                         style: const TextStyle(
-                                          color: Color(0xFFA5B4FC),
+                                          color: AppColors.primary,
                                           fontSize: 11,
                                           fontWeight: FontWeight.w700,
                                         ),
@@ -611,7 +612,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                                     ? widget.staff.jobTitle
                                     : 'Faculty Staff',
                                 style: const TextStyle(
-                                  color: Color(0xFF9CA3AF),
+                                  color: AppColors.textMuted,
                                   fontSize: 12,
                                 ),
                               ),
@@ -639,7 +640,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    const Divider(color: Color(0xFFF3F4F6), height: 1),
+                    const Divider(color: AppColors.surfaceMuted, height: 1),
                     const SizedBox(height: 10),
                     Wrap(
                       alignment: WrapAlignment.spaceBetween,
@@ -650,7 +651,7 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                         const Text(
                           'Staff Login Credentials',
                           style: TextStyle(
-                            color: Color(0xFF6B7280),
+                            color: AppColors.textTertiary,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -660,9 +661,9 @@ class _EditStaffScreenState extends ConsumerState<EditStaffScreen> {
                           label: const Text('Reset Password'),
                           style: OutlinedButton.styleFrom(
                             visualDensity: VisualDensity.compact,
-                            foregroundColor: const Color(0xFF38BDF8),
+                            foregroundColor: AppColors.secondary,
                             side: const BorderSide(
-                              color: Color(0xFF38BDF8),
+                              color: AppColors.secondary,
                               width: 1,
                             ),
                             padding: const EdgeInsets.symmetric(
@@ -910,7 +911,7 @@ class _CredentialRow extends StatelessWidget {
             width: 105,
             child: Text(
               label,
-              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+              style: const TextStyle(color: AppColors.textTertiary, fontSize: 13),
             ),
           ),
           const SizedBox(width: 8),
@@ -919,7 +920,9 @@ class _CredentialRow extends StatelessWidget {
               value,
               textAlign: TextAlign.end,
               style: TextStyle(
-                color: isHighlight ? const Color(0xFF38BDF8) : Colors.white,
+                color: isHighlight
+                    ? AppColors.info
+                    : AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
                 fontSize: isHighlight ? 14 : 13,
               ),
