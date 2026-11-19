@@ -34,6 +34,11 @@ const List<AcademyAdminModule> academyAdminModules = [
     AppRoutes.staffList,
   ),
   AcademyAdminModule(
+    'Payroll',
+    Icons.account_balance_wallet_outlined,
+    AppRoutes.payroll,
+  ),
+  AcademyAdminModule(
     'Courses',
     Icons.menu_book_outlined,
     AppRoutes.coursesList,

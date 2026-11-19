@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/currency.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../auth/application/auth_controller.dart';
+import '../../../payroll/application/payroll_providers.dart';
+import '../../../payroll/domain/salary_record.dart';
 import '../../application/staff_providers.dart';
 import '../../application/staff_repository_provider.dart';
 
@@ -298,6 +301,31 @@ class StaffProfileTab extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
 
+        // Salary & Payslips History
+        _SectionHeader(
+          title: 'Salary & Payslips',
+          icon: Icons.account_balance_wallet_outlined,
+        ),
+        const SizedBox(height: 8),
+        if (staff != null)
+          _StaffPayslipsCard(
+            academyId: staff.academyId,
+            staffId: staff.id,
+          )
+        else
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceMuted,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Text(
+              'No payslip records available.',
+              style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
+            ),
+          ),
+        const SizedBox(height: 16),
+
         // Contact Information Card
         _SectionHeader(title: 'Contact Information', icon: Icons.contact_mail_outlined),
         const SizedBox(height: 8),
@@ -385,6 +413,132 @@ class StaffProfileTab extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 32),
+      ],
+    );
+  }
+}
+
+class _StaffPayslipsCard extends ConsumerWidget {
+  const _StaffPayslipsCard({
+    required this.academyId,
+    required this.staffId,
+  });
+
+  final String academyId;
+  final String staffId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final payslipsAsync = ref.watch(
+      staffSalariesStreamProvider((academyId: academyId, staffId: staffId)),
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.surfaceMuted),
+      ),
+      child: payslipsAsync.when(
+        loading: () => const Center(
+          child: Padding(
+            padding: EdgeInsets.all(12),
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+        error: (e, _) => Text(
+          'Could not load payslips: $e',
+          style: const TextStyle(color: AppColors.textTertiary, fontSize: 12),
+        ),
+        data: (records) {
+          if (records.isEmpty) {
+            return const Text(
+              'No salary slips issued yet.',
+              style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
+            );
+          }
+          return Column(
+            children: [
+              for (var i = 0; i < records.length; i++) ...[
+                _PayslipRow(record: records[i]),
+                if (i < records.length - 1)
+                  const Divider(color: AppColors.border, height: 16),
+              ],
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _PayslipRow extends StatelessWidget {
+  const _PayslipRow({required this.record});
+
+  final SalaryRecord record;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                record.monthLabel,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+              if (record.bonus > 0 || record.deductions > 0)
+                Text(
+                  'Base ${CurrencyFormatter.pkr(record.baseSalary)}'
+                  '${record.bonus > 0 ? " +${CurrencyFormatter.pkr(record.bonus)}" : ""}'
+                  '${record.deductions > 0 ? " -${CurrencyFormatter.pkr(record.deductions)}" : ""}',
+                  style: const TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: 11,
+                  ),
+                ),
+            ],
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              CurrencyFormatter.pkr(record.netSalary),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: (record.isPaid ? AppColors.success : Colors.amber)
+                    .withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                record.isPaid ? 'PAID' : 'PENDING',
+                style: TextStyle(
+                  color: record.isPaid
+                      ? AppColors.success
+                      : Colors.amber.shade800,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

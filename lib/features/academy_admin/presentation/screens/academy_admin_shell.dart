@@ -49,6 +49,7 @@ class AcademyAdminShell extends ConsumerWidget {
     if (location == AppRoutes.editCourse) return 'Edit Course';
     if (location == AppRoutes.attendance) return 'Attendance Monitoring';
     if (location == AppRoutes.fees) return 'Fee Management';
+    if (location == AppRoutes.payroll) return 'Staff Payroll';
     if (location == AppRoutes.results) return 'Exams & Results';
     if (location == AppRoutes.academyConversations) {
       return 'Conversations';

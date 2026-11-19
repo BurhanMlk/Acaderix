@@ -46,6 +46,7 @@ import '../features/admissions/presentation/screens/edit_student_screen.dart';
 import '../features/admissions/presentation/screens/students_list_screen.dart';
 import '../features/fees/presentation/screens/fee_structures_screen.dart';
 import '../features/fees/presentation/screens/fees_screen.dart';
+import '../features/payroll/presentation/screens/payroll_screen.dart';
 import '../features/attendance/presentation/screens/attendance_screen.dart';
 import '../features/exams/presentation/screens/results_screen.dart';
 import '../features/staff/domain/staff.dart';
@@ -99,6 +100,7 @@ abstract final class AppRoutes {
   static const String editStudent = '/academy-admin/students/edit';
   static const String fees = '/academy-admin/fees';
   static const String feeStructures = '/academy-admin/fee-structures';
+  static const String payroll = '/academy-admin/payroll';
   static const String attendance = '/academy-admin/attendance';
   static const String results = '/academy-admin/results';
   static const String staffList = '/academy-admin/staff';
@@ -175,6 +177,7 @@ final Map<AppRole, Set<String>> _roleRoutes = {
     AppRoutes.staffList,
     AppRoutes.addStaff,
     AppRoutes.editStaff,
+    AppRoutes.payroll,
     AppRoutes.branchesList,
     AppRoutes.addBranch,
     AppRoutes.editBranch,
@@ -490,6 +493,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.feeStructures,
             builder: (context, state) => const FeeStructuresScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.payroll,
+            builder: (context, state) => const PayrollScreen(),
           ),
           GoRoute(
             path: AppRoutes.attendance,
