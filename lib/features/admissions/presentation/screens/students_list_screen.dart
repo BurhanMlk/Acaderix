@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/async_list_state.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../shared/branch_tab_bar.dart';
@@ -13,6 +14,7 @@ import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../../branches/domain/branch.dart';
 import '../../application/student_repository_provider.dart';
 import '../../domain/student.dart';
+import '../widgets/reset_student_pin_dialog.dart';
 
 /// List of students for an academy with search, branch tabs, and full CRUD management.
 class StudentsListScreen extends ConsumerStatefulWidget {
@@ -91,7 +93,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
     final isAtLimit = !isUnlimited && studentCount >= maxStudents;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.addStudent),
         icon: const Icon(Icons.person_add),
@@ -124,12 +126,12 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                   decoration: BoxDecoration(
                     color: isAtLimit
                         ? Colors.amber.withValues(alpha: 0.15)
-                        : const Color(0xFFF3F4F6),
+                        : AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isAtLimit
                           ? Colors.amber.withValues(alpha: 0.4)
-                          : const Color(0xFFF3F4F6),
+                          : AppColors.surfaceMuted,
                     ),
                   ),
                   child: Row(
@@ -138,13 +140,13 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                       Icon(
                         isAtLimit ? Icons.warning_amber_rounded : Icons.people,
                         size: 14,
-                        color: isAtLimit ? Colors.amber : const Color(0xFF6B7280),
+                        color: isAtLimit ? Colors.amber : AppColors.textTertiary,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         'Capacity: $studentCount / ${isUnlimited ? '∞' : maxStudents} Students',
                         style: TextStyle(
-                          color: isAtLimit ? Colors.amber : const Color(0xFF6B7280),
+                          color: isAtLimit ? Colors.amber : AppColors.textTertiary,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -155,7 +157,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                 Text(
                   access?.planName ?? 'Standard',
                   style: const TextStyle(
-                    color: Color(0xFFD1D5DB),
+                    color: AppColors.border,
                     fontSize: 11,
                   ),
                 ),
@@ -180,7 +182,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                       padding: EdgeInsets.all(24),
                       child: Text(
                         'No students match search or branch filter.',
-                        style: TextStyle(color: Color(0xFF6B7280)),
+                        style: TextStyle(color: AppColors.textTertiary),
                       ),
                     ),
                   );
@@ -212,7 +214,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                 backgroundColor: const Color(
                                   0xFF6366F1,
                                 ).withValues(alpha: 0.2),
-                                foregroundColor: const Color(0xFF818CF8),
+                                foregroundColor: AppColors.primary,
                                 child: Text(
                                   student.fullName.isNotEmpty
                                       ? student.fullName
@@ -240,7 +242,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                         Text(
                                           student.fullName,
                                           style: const TextStyle(
-                                            color: Color(0xFF111827),
+                                            color: AppColors.textPrimary,
                                             fontWeight: FontWeight.w700,
                                             fontSize: 15,
                                           ),
@@ -252,19 +254,19 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                               vertical: 2,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: const Color(0xFF38BDF8)
+                                              color: AppColors.secondary
                                                   .withValues(alpha: 0.15),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               border: Border.all(
-                                                color: const Color(0xFF38BDF8)
+                                                color: AppColors.secondary
                                                     .withValues(alpha: 0.35),
                                               ),
                                             ),
                                             child: Text(
                                               branch.name,
                                               style: const TextStyle(
-                                                color: Color(0xFF38BDF8),
+                                                color: AppColors.secondary,
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -287,7 +289,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                             vertical: 2,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF111827)
+                                            color: AppColors.textPrimary
                                                 .withValues(alpha: 0.08),
                                             borderRadius:
                                                 BorderRadius.circular(4),
@@ -295,7 +297,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                           child: Text(
                                             'Roll #${student.rollNumber}',
                                             style: const TextStyle(
-                                              color: Color(0xFFA5B4FC),
+                                              color: AppColors.primary,
                                               fontSize: 11,
                                               fontWeight: FontWeight.w700,
                                             ),
@@ -305,7 +307,7 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                           Text(
                                             student.notes,
                                             style: const TextStyle(
-                                              color: Color(0xFF6B7280),
+                                              color: AppColors.textTertiary,
                                               fontSize: 11,
                                             ),
                                           ),
@@ -320,13 +322,13 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                           const Icon(
                                             Icons.phone_outlined,
                                             size: 13,
-                                            color: Color(0xFF9CA3AF),
+                                            color: AppColors.textMuted,
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
                                             '${student.guardianRelation.isNotEmpty ? '${student.guardianRelation}: ' : ''}${student.guardianPhone}',
                                             style: const TextStyle(
-                                              color: Color(0xFF9CA3AF),
+                                              color: AppColors.textMuted,
                                               fontSize: 11,
                                             ),
                                           ),
@@ -339,13 +341,19 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                               PopupMenuButton<String>(
                                 icon: const Icon(
                                   Icons.more_vert,
-                                  color: Color(0xFF9CA3AF),
+                                  color: AppColors.textMuted,
                                 ),
                                 onSelected: (val) {
                                   if (val == 'edit') {
                                     context.push(
                                       AppRoutes.editStudent,
                                       extra: student,
+                                    );
+                                  } else if (val == 'reset_pin') {
+                                    showResetStudentPinDialog(
+                                      context,
+                                      ref,
+                                      student,
                                     );
                                   } else if (val == 'delete') {
                                     _deleteStudent(academyId, student);
@@ -359,6 +367,20 @@ class _StudentsListScreenState extends ConsumerState<StudentsListScreen> {
                                         Icon(Icons.edit_outlined, size: 18),
                                         SizedBox(width: 8),
                                         Text('Edit Details'),
+                                      ],
+                                    ),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 'reset_pin',
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.lock_reset,
+                                          size: 18,
+                                          color: AppColors.secondary,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text('Reset PIN'),
                                       ],
                                     ),
                                   ),

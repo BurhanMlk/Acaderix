@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/validators.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/loading_button.dart';
 import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../application/student_repository_provider.dart';
 import '../../domain/student.dart';
+import '../widgets/reset_student_pin_dialog.dart';
 
 /// Screen for Academy Admin to edit or delete an existing student record with branch assignment.
 class EditStudentScreen extends ConsumerStatefulWidget {
@@ -89,7 +91,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Student "${updated.fullName}" updated successfully!'),
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -143,7 +145,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -154,10 +156,10 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: AppColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: const Color(0xFFE5E7EB),
+                    color: AppColors.border,
                   ),
                 ),
                 child: Row(
@@ -166,7 +168,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                       backgroundColor: const Color(
                         0xFF6366F1,
                       ).withValues(alpha: 0.3),
-                      child: const Icon(Icons.school, color: Color(0xFF374151)),
+                      child: const Icon(Icons.school, color: AppColors.textSecondary),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -176,7 +178,7 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                           Text(
                             'Roll Number: ${widget.student.rollNumber}',
                             style: const TextStyle(
-                              color: Color(0xFF111827),
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                             ),
@@ -184,11 +186,23 @@ class _EditStudentScreenState extends ConsumerState<EditStudentScreen> {
                           const Text(
                             'Roll numbers are permanent identifiers',
                             style: TextStyle(
-                              color: Color(0xFF9CA3AF),
+                              color: AppColors.textMuted,
                               fontSize: 12,
                             ),
                           ),
                         ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Reset PIN',
+                      icon: const Icon(
+                        Icons.lock_reset,
+                        color: AppColors.secondary,
+                      ),
+                      onPressed: () => showResetStudentPinDialog(
+                        context,
+                        ref,
+                        widget.student,
                       ),
                     ),
                     IconButton(

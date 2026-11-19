@@ -91,6 +91,18 @@ class _FakeStudentRepo implements StudentRepository {
   }
 
   @override
+  Future<bool> isRollNumberTaken(String academyId, String rollNumber) async {
+    return _students.any((s) => s.rollNumber.trim() == rollNumber.trim());
+  }
+
+  @override
+  Future<void> resetPin(
+    String academyId,
+    String studentId,
+    String newPin,
+  ) async {}
+
+  @override
   Future<void> create(Student student) async {
     _students.add(student);
   }

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/network/firestore_ext.dart';
 import '../../../core/utils/id_generators.dart';
+import '../../../core/utils/security_utils.dart';
 import '../domain/student.dart';
 import '../domain/student_repository.dart';
 
@@ -53,9 +54,69 @@ final class FirestoreStudentRepository implements StudentRepository {
   }
 
   @override
-  Future<void> create(Student student) {
+  Future<bool> isRollNumberTaken(String academyId, String rollNumber) async {
+    final cleanRoll = rollNumber.trim();
+    if (cleanRoll.isEmpty) return false;
+    final snap = await _collection(academyId)
+        .where('rollNumber', isEqualTo: cleanRoll)
+        .limit(1)
+        .get();
+    return snap.docs.isNotEmpty;
+  }
+
+  @override
+  Future<void> resetPin(
+    String academyId,
+    String studentId,
+    String newPin,
+  ) async {
+    final docRef = _collection(academyId).doc(studentId);
+    final snap = await docRef.get();
+    final sData = snap.data() ?? {};
+    final rollNumber = (sData['rollNumber'] as String? ?? '').trim();
+    final fullName = sData['fullName'] as String? ?? '';
+    final branchId = sData['branchId'] as String? ?? '';
+    final status = sData['status'] as String? ?? 'active';
+
+    final hashedPin = SecurityUtils.hashPin(newPin);
+    await docRef.update({'pin': hashedPin});
+
+    if (rollNumber.isNotEmpty) {
+      final acadSnap = await _firestore
+          .collection(FirestorePaths.academies)
+          .doc(academyId)
+          .get();
+      final acadCode =
+          (acadSnap.data()?['code'] as String? ?? '').trim().toUpperCase();
+      if (acadCode.isNotEmpty) {
+        await _firestore
+            .collection('student_accounts')
+            .doc('${acadCode}_$rollNumber')
+            .set({
+          'academyCode': acadCode,
+          'academyId': academyId,
+          'studentDocId': studentId,
+          'rollNumber': rollNumber,
+          'fullName': fullName,
+          'branchId': branchId,
+          'pin': hashedPin,
+          'status': status,
+        }, SetOptions(merge: true));
+      }
+    }
+  }
+
+  @override
+  Future<void> create(Student student) async {
+    final cleanRoll = student.rollNumber.trim();
+    if (cleanRoll.isNotEmpty &&
+        await isRollNumberTaken(student.academyId, cleanRoll)) {
+      throw StateError(
+        'Roll number "$cleanRoll" is already assigned to another student.',
+      );
+    }
     final data = toFirestoreData(student.toJson())..remove('id');
-    return _collection(student.academyId).doc(student.id).set(data);
+    await _collection(student.academyId).doc(student.id).set(data);
   }
 
   @override

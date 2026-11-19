@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/network/firebase_services.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/id_generators.dart';
-import '../../../../core/utils/security_utils.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/loading_button.dart';
@@ -15,7 +14,7 @@ import '../../../academy_admin/application/academy_admin_providers.dart';
 import '../../application/student_repository_provider.dart';
 import '../../domain/student.dart';
 
-/// Multi-field student admission form with branch selection and auto-roll allocation.
+/// Multi-field student admission form with branch selection, explicit unique roll number, and PIN generator.
 class AddStudentScreen extends ConsumerStatefulWidget {
   const AddStudentScreen({super.key});
 
@@ -26,6 +25,8 @@ class AddStudentScreen extends ConsumerStatefulWidget {
 class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
   final _formKey = GlobalKey<FormState>();
   final _fullName = TextEditingController();
+  final _rollNumber = TextEditingController();
+  final _pin = TextEditingController();
   final _fatherName = TextEditingController();
   final _guardianPhone = TextEditingController();
   final _guardianRelation = TextEditingController();
@@ -37,6 +38,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
   final _address = TextEditingController();
 
   String? _branchId;
+  bool _obscurePin = true;
   bool _submitting = false;
   String? _error;
 
@@ -50,6 +52,8 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
   void dispose() {
     for (final c in [
       _fullName,
+      _rollNumber,
+      _pin,
       _fatherName,
       _guardianPhone,
       _guardianRelation,
@@ -91,8 +95,20 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
 
     try {
       final repository = ref.read(studentRepositoryProvider);
-      final rollNumber = await repository.allocateRollNumber(academyId);
-      final pin = IdGenerators.generatePin();
+      final rollNumber = _rollNumber.text.trim();
+      final pin = _pin.text.trim();
+
+      final isTaken =
+          currentStudents.any((s) => s.rollNumber.trim() == rollNumber) ||
+          await repository.isRollNumberTaken(academyId, rollNumber);
+      if (isTaken) {
+        setState(() {
+          _error =
+              'Roll number "$rollNumber" is already assigned to another student. Please enter a unique roll number.';
+          _submitting = false;
+        });
+        return;
+      }
 
       final student = Student(
         id: const Uuid().v4(),
@@ -110,32 +126,8 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
       );
 
       await repository.create(student);
+      await repository.resetPin(academyId, student.id, pin);
       ref.invalidate(studentsStreamProvider(academyId));
-
-      try {
-        final firestore = ref.read(firestoreProvider);
-        final acadSnap = await firestore
-            .collection('academies')
-            .doc(academyId)
-            .get();
-        final acadCode =
-            (acadSnap.data()?['code'] as String? ?? '').toUpperCase();
-        if (acadCode.isNotEmpty) {
-          await firestore
-              .collection('student_accounts')
-              .doc('${acadCode}_$rollNumber')
-              .set({
-            'academyCode': acadCode,
-            'academyId': academyId,
-            'studentDocId': student.id,
-            'rollNumber': rollNumber,
-            'fullName': student.fullName,
-            'branchId': student.branchId,
-            'pin': SecurityUtils.hashPin(pin),
-            'status': 'active',
-          });
-        }
-      } catch (_) {}
 
       if (!mounted) return;
       await _showCredentialSlip(rollNumber: rollNumber, pin: pin);
@@ -160,12 +152,12 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                color: AppColors.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.vpn_key_outlined,
-                color: Color(0xFFA5B4FC),
+                color: AppColors.primary,
                 size: 20,
               ),
             ),
@@ -174,7 +166,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
               child: Text(
                 'Student Credentials',
                 style: TextStyle(
-                  color: Color(0xFF111827),
+                  color: AppColors.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -193,22 +185,22 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
                 const Text(
                   'A student account has been created. The PIN below is '
                   'temporary and will not be shown again.',
-                  style: TextStyle(color: Color(0xFF6B7280), fontSize: 13, height: 1.4),
+                  style: TextStyle(color: AppColors.textTertiary, fontSize: 13, height: 1.4),
                 ),
                 const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
+                    color: AppColors.surfaceMuted,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: const Color(0xFFE5E7EB),
+                      color: AppColors.border,
                     ),
                   ),
                   child: Column(
                     children: [
                       _CredentialRow(label: 'Roll Number', value: rollNumber),
-                      const Divider(color: Color(0xFFF3F4F6), height: 16),
+                      const Divider(color: AppColors.surfaceMuted, height: 16),
                       _CredentialRow(label: 'Temporary PIN', value: pin),
                     ],
                   ),
@@ -239,7 +231,7 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
     final isLimitReached = !isUnlimited && students.length >= maxStudents;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -281,6 +273,77 @@ class _AddStudentScreenState extends ConsumerState<AddStudentScreen> {
                 textInputAction: TextInputAction.next,
                 validator: (v) => Validators.required(v, 'Full name'),
                 enabled: !isLimitReached,
+              ),
+              const SizedBox(height: 12),
+              AppTextField(
+                controller: _rollNumber,
+                label: 'Roll number (6 digits)',
+                hint: 'e.g. 100001',
+                icon: Icons.pin_outlined,
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
+                enabled: !isLimitReached,
+                validator: (v) {
+                  final base = Validators.rollNumber(v);
+                  if (base != null) return base;
+                  final clean = v!.trim();
+                  if (students.any((s) => s.rollNumber.trim() == clean)) {
+                    return 'Roll number "$clean" is already assigned';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              AppTextField(
+                controller: _pin,
+                label: 'Login PIN (4 digits)',
+                hint: 'Enter 4-digit PIN or generate',
+                icon: Icons.lock_outline,
+                obscureText: _obscurePin,
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
+                enabled: !isLimitReached,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePin
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: AppColors.textTertiary,
+                    size: 20,
+                  ),
+                  tooltip: _obscurePin ? 'Show PIN' : 'Hide PIN',
+                  onPressed: () => setState(() => _obscurePin = !_obscurePin),
+                ),
+                validator: Validators.pin,
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ActionChip(
+                  visualDensity: VisualDensity.compact,
+                  backgroundColor: AppColors.surfaceMuted,
+                  side: const BorderSide(color: AppColors.border),
+                  avatar: const Icon(
+                    Icons.casino_outlined,
+                    size: 16,
+                    color: AppColors.secondary,
+                  ),
+                  label: const Text(
+                    'Generate Random PIN',
+                    style: TextStyle(
+                      color: AppColors.secondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                  onPressed: isLimitReached
+                      ? null
+                      : () {
+                          setState(() {
+                            _pin.text = IdGenerators.generatePin();
+                            _obscurePin = false;
+                          });
+                        },
+                ),
               ),
               const SizedBox(height: 12),
               AppTextField(
@@ -456,8 +519,18 @@ class _CredentialRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w700)),
+          Text(
+            label,
+            style: const TextStyle(color: AppColors.textTertiary, fontSize: 13),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+          ),
         ],
       ),
     );

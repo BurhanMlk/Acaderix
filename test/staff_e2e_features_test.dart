@@ -100,6 +100,17 @@ class _FakeStudentRepo implements StudentRepository {
   Future<String> allocateRollNumber(String academyId) async => '2001';
 
   @override
+  Future<bool> isRollNumberTaken(String academyId, String rollNumber) async =>
+      _students.any((s) => s.rollNumber.trim() == rollNumber.trim());
+
+  @override
+  Future<void> resetPin(
+    String academyId,
+    String studentId,
+    String newPin,
+  ) async {}
+
+  @override
   Future<void> create(Student student) async => _students.add(student);
 
   @override
